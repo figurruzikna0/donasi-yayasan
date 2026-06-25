@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash; // Buat enkripsi password
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,9 +20,11 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'baitulyatim123',
+            'name' => 'Admin Yayasan',
+            'email' => 'admindonasi@yayasan.com',
+            'password' => Hash::make('baitulyatim123'), // Passwordnya: baitulyatim123
+            'role' => 'admin',
         ]);
+    
     }
 }
