@@ -127,7 +127,7 @@
                         <div class="text-center py-10">
                             <p class="text-gray-400 mb-4">Belum ada catatan sedekah. Yuk, mulai donasi pertamamu!</p>
                             <button class="px-6 py-2 rounded-lg font-bold transition" style="background-color: var(--sea-green); color: var(--black);" onmouseover="this.style.backgroundColor='var(--malachite)'" onmouseout="this.style.backgroundColor='var(--sea-green)'">
-                                Mulai Donasi
+                                Start Donasi
                             </button>
                         </div>
                     @else
