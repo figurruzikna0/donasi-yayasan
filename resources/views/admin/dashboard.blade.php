@@ -147,8 +147,8 @@
     </style>
 
     <x-slot name="header">
-        <h2 class="font-bold text-2xl admin-header leading-tight text-center md:text-left">
-            {{ __('Dashboard Admin Yayasan') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard Admin') }} - {{ $profil?->nama_yayasan ?? 'Nama Yayasan Belum Diisi' }}
         </h2>
     </x-slot>
 
@@ -170,7 +170,7 @@
 
                 {{-- ② Navigation pills ── --}}
                 <div class="top-nav-wrapper">
-                    <a href="#" class="action-btn btn-outline">
+                    <a href="{{ route('admin.profil.index') }}" class="action-btn btn-outline">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         Profil Yayasan
                     </a>
@@ -239,7 +239,7 @@
             if      (hour >= 5  && hour < 12) greeting = 'Selamat Pagi';
             else if (hour >= 12 && hour < 15) greeting = 'Selamat Siang';
             else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
-            else                               greeting = 'Selamat Malam';
+            else                              greeting = 'Selamat Malam';
 
             const el = document.getElementById('dynamic-greeting');
             if (el) el.innerText = greeting + ' di Panel Admin';

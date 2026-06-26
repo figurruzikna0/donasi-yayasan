@@ -180,10 +180,10 @@
 
             {{-- Page heading --}}
             <div class="mb-6 px-4 sm:px-0">
-                <h2 class="font-extrabold text-2xl header-title leading-tight">
-                    {{ __('Dashboard Donatur') }}
-                </h2>
-                <p class="text-sm mt-1 header-subtitle">Pantau riwayat sedekah dan kontribusi Anda.</p>
+             <h2 class="font-extrabold text-2xl header-title leading-tight">
+                 Dashboard Donatur {{ $profil->nama_yayasan ?? 'Yayasan' }}
+             </h2>
+             <p class="text-sm mt-1 header-subtitle">Pantau riwayat sedekah dan kontribusi Anda.</p>
             </div>
 
             <div class="card-panel">
