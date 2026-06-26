@@ -4,8 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\DonationController;
-use App\Http\Controllers\DonorController; // <-- Import controller donatur baru kita
-use App\Http\Controllers\FosterChildController;
+use App\Http\Controllers\DonorController;
+use App\Http\Controllers\Admin\FosterChildController;
 use App\Models\Campaign;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // --- RUTE UNTUK ADMIN ---
+// Cukup dibungkus 1 grup aja biar nggak tumpang tindih
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard Khusus Admin
@@ -43,23 +44,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         return view('admin.dashboard', compact('totalFunds', 'activeCampaigns', 'fosterChildren'));
     })->name('dashboard');
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {    
+    // Route Kelola Data Anak Asuh (Sudah pakai tanda hubung '-')
+    // Di dalam group admin kamu
+    Route::resource('foster_children', App\Http\Controllers\Admin\FosterChildController::class);
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Route untuk kelola data anak asuh
-    Route::resource('foster_children', FosterChildController::class);
-    Route::resource('transactions', TransactionController::class);
-});
-
-    // Route untuk kelola kampanye
+    // Route Kelola Kampanye
     Route::resource('campaigns', CampaignController::class);
     
-    // Route untuk melihat daftar transaksi donasi
+    // Route Kelola Transaksi (Index, Hapus, & ACC)
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    
-    // RUTE BARU: UNTUK TOMBOL HAPUS DATA TESTING (TONG SAMPAH)
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+    Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
 });
-
 
 require __DIR__.'/auth.php';

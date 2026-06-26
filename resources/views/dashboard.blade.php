@@ -1,40 +1,55 @@
 <x-app-layout>
     <style>
         :root {
-            --black: #020202ff;
-            --evergreen: #0d2818ff;
-            --black-forest: #04471cff;
-            --sea-green: #058c42ff;
-            --malachite: #16db65ff;
+            --celadon:       #b3e093;
+            --lime-cream:    #d6ec89;
+            --muted-olive:   #a1c181;
+            --muted-olive-2: #8bb650;
+            --sage-green:    #76a45b;
+            --fern:          #5c8148;
         }
 
-        /* Container & Text Overrides */
         .dashboard-container {
-            /* Timpa background bawaan app-layout jika diperlukan */
-            background-color: var(--black);
+            background: linear-gradient(160deg, #eafcd4 0%, var(--lime-cream) 40%, var(--celadon) 100%);
             min-height: 100vh;
-            color: #e2e8f0; /* warna teks default (slate-200) */
+            color: var(--fern);
         }
 
+        /* ── Card Panel ── */
         .card-panel {
-            background-color: var(--evergreen);
-            border: 1px solid var(--black-forest);
-            box-shadow: 0 4px 6px -1px rgba(22, 219, 101, 0.1);
-            border-radius: 0.75rem;
+            background-color: #ffffff;
+            border: 1px solid var(--celadon);
+            box-shadow: 0 8px 24px rgba(92, 129, 72, 0.10);
+            border-radius: 1rem;
+            overflow: hidden;
         }
 
+        /* ── Page heading ── */
         .header-title {
-            color: var(--malachite) !important;
-            text-shadow: 0 0 10px rgba(22, 219, 101, 0.2);
+            color: var(--fern) !important;
+        }
+        .header-subtitle {
+            color: var(--sage-green);
         }
 
+        /* ── Section title with gradient underline ── */
         .section-title {
-            color: var(--sea-green);
-            border-bottom: 2px solid var(--black-forest);
+            color: var(--fern);
+            font-weight: 800;
             padding-bottom: 0.75rem;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--fern), var(--sage-green), var(--muted-olive), transparent);
+            border-radius: 2px;
         }
 
-        /* Table Styling */
+        /* ── Table ── */
         .custom-table {
             width: 100%;
             border-collapse: separate;
@@ -42,111 +57,177 @@
         }
 
         .custom-table th {
-            background-color: var(--black-forest);
-            color: var(--malachite);
-            font-weight: 600;
+            background-color: var(--fern);
+            color: #ffffff;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-        }
-
-        .custom-table tr {
-            transition: all 0.3s ease;
+            font-size: 0.75rem;
         }
 
         .custom-table tbody tr {
-            background-color: var(--evergreen);
+            background-color: #ffffff;
+            transition: all 0.2s ease;
         }
 
         .custom-table tbody tr:hover {
-            background-color: var(--black-forest);
-            transform: scale(1.01);
-            box-shadow: 0 0 15px rgba(5, 140, 66, 0.2);
+            background-color: rgba(214, 236, 137, 0.3); /* lime-cream transparan */
+            transform: scale(1.005);
+            box-shadow: 0 2px 12px rgba(92, 129, 72, 0.12);
             z-index: 10;
             position: relative;
         }
 
         .custom-table td {
-            border-bottom: 1px solid var(--black-forest);
-            color: #cbd5e1;
+            border-bottom: 1px solid #e8f5d9;
+            color: var(--fern);
         }
 
-        /* Status Badges */
+        .custom-table td.td-campaign {
+            color: var(--fern);
+            font-weight: 600;
+        }
+
+        .custom-table td.td-amount {
+            color: var(--muted-olive-2);
+            font-weight: 700;
+        }
+
+        .custom-table td.td-date {
+            color: var(--sage-green);
+        }
+
+        /* ── Status Badges ── */
         .badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
             display: inline-block;
         }
 
         .badge-sukses {
-            background-color: rgba(22, 219, 101, 0.1);
-            color: var(--malachite);
-            border: 1px solid var(--malachite);
+            background-color: var(--celadon);
+            color: var(--fern);
+            border: 1px solid var(--muted-olive);
         }
+        .badge-sukses::before { background-color: var(--sage-green); }
 
         .badge-tertunda {
             background-color: rgba(234, 179, 8, 0.1);
-            color: #facc15;
-            border: 1px solid #facc15;
+            color: #92651a;
+            border: 1px solid #f0c040;
         }
+        .badge-tertunda::before { background-color: #f0c040; }
 
         .badge-gagal {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-            border: 1px solid #f87171;
+            background-color: rgba(239, 68, 68, 0.08);
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
         }
+        .badge-gagal::before { background-color: #f87171; }
 
-        /* Interactive JS effect class */
+        /* ── Row click animation ── */
         .row-clicked {
-            animation: pulse-green 0.5s ease;
+            animation: pulse-green 0.45s ease;
         }
 
         @keyframes pulse-green {
-            0% { background-color: var(--black-forest); }
-            50% { background-color: var(--sea-green); color: var(--black); }
-            100% { background-color: var(--evergreen); }
+            0%   { background-color: #ffffff; }
+            40%  { background-color: rgba(139, 182, 80, 0.25); }
+            100% { background-color: #ffffff; }
+        }
+
+        /* ── Empty state ── */
+        .empty-state-icon {
+            background-color: var(--celadon);
+            color: var(--fern);
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--muted-olive-2) 0%, var(--sage-green) 100%);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 10px rgba(92, 129, 72, 0.25);
+        }
+        .btn-start:hover {
+            background: linear-gradient(135deg, var(--sage-green) 0%, var(--fern) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(92, 129, 72, 0.35);
         }
     </style>
 
     <div class="dashboard-container py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+
+            {{-- Page heading --}}
             <div class="mb-6 px-4 sm:px-0">
-                <h2 class="font-semibold text-2xl header-title leading-tight">
+                <h2 class="font-extrabold text-2xl header-title leading-tight">
                     {{ __('Dashboard Donatur') }}
                 </h2>
-                <p class="text-sm mt-1" style="color: var(--sea-green)">Pantau riwayat sedekah dan kontribusi Anda.</p>
+                <p class="text-sm mt-1 header-subtitle">Pantau riwayat sedekah dan kontribusi Anda.</p>
             </div>
 
-            <div class="card-panel overflow-hidden sm:rounded-lg">
+            <div class="card-panel">
                 <div class="p-6">
-                    <h3 class="text-lg font-bold mb-6 section-title">Riwayat Sedekah</h3>
-                    
+                    <h3 class="text-lg mb-6 section-title">Riwayat Sedekah</h3>
+
                     @if($donations->isEmpty())
-                        <div class="text-center py-10">
-                            <p class="text-gray-400 mb-4">Belum ada catatan sedekah. Yuk, mulai donasi pertamamu!</p>
-                            <button class="px-6 py-2 rounded-lg font-bold transition" style="background-color: var(--sea-green); color: var(--black);" onmouseover="this.style.backgroundColor='var(--malachite)'" onmouseout="this.style.backgroundColor='var(--sea-green)'">
-                                Start Donasi
-                            </button>
+                        {{-- Empty state --}}
+                        <div class="text-center py-14">
+                            <div class="empty-state-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold mb-1" style="color: var(--fern);">Belum ada catatan sedekah</p>
+                            <p class="text-sm mb-5" style="color: var(--sage-green);">Yuk, mulai donasi pertamamu dan ukir kebaikan hari ini!</p>
+                            <button class="btn-start">Mulai Donasi</button>
                         </div>
                     @else
-                        <div class="overflow-x-auto rounded-lg border border-gray-800" style="border-color: var(--black-forest)">
+                        <div class="overflow-x-auto rounded-xl"
+                             style="border: 1px solid var(--celadon);">
                             <table class="custom-table text-sm text-left">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="px-6 py-4">Tanggal</th>
-                                        <th scope="col" class="px-6 py-4">Kampanye</th>
-                                        <th scope="col" class="px-6 py-4">Nominal</th>
-                                        <th scope="col" class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4">Tanggal</th>
+                                        <th class="px-6 py-4">Kampanye</th>
+                                        <th class="px-6 py-4">Nominal</th>
+                                        <th class="px-6 py-4">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($donations as $donasi)
                                         <tr onclick="highlightRow(this)" class="cursor-pointer">
-                                            <td class="px-6 py-4 whitespace-nowrap">{{ $donasi->created_at->format('d M Y') }}</td>
-                                            <td class="px-6 py-4 font-medium" style="color: white;">{{ $donasi->campaign->title ?? 'Donasi Umum' }}</td>
-                                            <td class="px-6 py-4 font-bold" style="color: var(--malachite);">Rp {{ number_format($donasi->amount, 0, ',', '.') }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap td-date">
+                                                {{ $donasi->created_at->format('d M Y') }}
+                                            </td>
+                                            <td class="px-6 py-4 td-campaign">
+                                                {{ $donasi->campaign->title ?? 'Donasi Umum' }}
+                                            </td>
+                                            <td class="px-6 py-4 td-amount">
+                                                Rp {{ number_format($donasi->amount, 0, ',', '.') }}
+                                            </td>
                                             <td class="px-6 py-4">
                                                 @if($donasi->status == 'Sukses')
                                                     <span class="badge badge-sukses">Sukses</span>
@@ -165,23 +246,16 @@
 
                 </div>
             </div>
+
         </div>
     </div>
 
     <script>
         function highlightRow(row) {
-            // Reset class animasi di semua baris
-            const rows = document.querySelectorAll('.custom-table tbody tr');
-            rows.forEach(r => r.classList.remove('row-clicked'));
-            
-            // Trigger reflow biar animasi bisa jalan berulang kali saat diklik
-            void row.offsetWidth;
-            
-            // Tambahkan class animasi ke baris yang diklik
+            document.querySelectorAll('.custom-table tbody tr')
+                    .forEach(r => r.classList.remove('row-clicked'));
+            void row.offsetWidth; // reflow trigger
             row.classList.add('row-clicked');
-            
-            // Opsional: Logika tambahan misal redirect ke halaman detail donasi
-            // window.location.href = '/donasi/detail/' + row.dataset.id;
         }
     </script>
 </x-app-layout>
