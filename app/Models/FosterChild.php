@@ -17,4 +17,9 @@ class FosterChild extends Model
         'photo',
         'status',
     ];
+
+    public function sponsorships()
+    {
+        return $this->hasMany(Sponsorship::class);
+    }
 }

@@ -1,280 +1,1057 @@
 <x-app-layout>
-    <!-- MENGGUNAKAN LAYOUT FULL SCREEN SAAS -->
-    <div class="flex h-screen bg-[#F8FAFC] font-sans overflow-hidden text-[#0F172A]">
-        
-        <!-- SIDEBAR MODERN -->
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-            <div class="h-16 flex items-center px-6 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center shadow-lg shadow-blue-500/30">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <span class="text-xl font-black tracking-tight text-[#0F172A]">Yayasan<span class="text-[#2563EB]">Hub</span></span>
+    <style>
+        :root {
+            --celadon:       #b3e093;
+            --lime-cream:    #d6ec89;
+            --muted-olive:   #a1c181;
+            --muted-olive-2: #8bb650;
+            --sage-green:    #76a45b;
+            --fern:          #5c8148;
+            --fern-dark:     #47623a;
+            --fern-deep:     #354a2b;
+        }
+
+        /* ── Full-screen shell ── */
+        .shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f3fbea;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--fern-deep);
+        }
+
+        /* ══════════════════════════════
+           SIDEBAR
+        ══════════════════════════════ */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: var(--fern);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+        }
+
+        /* Logo strip */
+        .sidebar-logo {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-icon {
+            width: 34px; height: 34px;
+            background: var(--celadon);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-icon svg { color: var(--fern); }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-text span {
+            color: var(--celadon);
+        }
+
+        /* Nav section */
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-section-label {
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.45);
+            padding: 0 10px;
+            margin: 12px 0 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            font-size: 0.845rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            transition: all 0.18s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .nav-item svg {
+            width: 17px; height: 17px;
+            flex-shrink: 0;
+            opacity: 0.7;
+            transition: opacity 0.18s;
+        }
+
+        .nav-item:hover svg { opacity: 1; }
+
+        /* Active state */
+        .nav-item.active {
+            background-color: rgba(255,255,255,0.12);
+            color: #ffffff;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 20%; bottom: 20%;
+            width: 3px;
+            background: var(--celadon);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .nav-item.active svg { opacity: 1; }
+
+        /* Badge count */
+        .nav-badge {
+            margin-left: auto;
+            background: var(--celadon);
+            color: var(--fern);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 1px 7px;
+            border-radius: 99px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* User footer */
+        .sidebar-footer {
+            padding: 14px 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+
+        .user-card:hover { background: rgba(255,255,255,0.08); }
+
+        .user-card img {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .user-card .user-name {
+            font-size: 0.82rem; font-weight: 700; color: #ffffff;
+        }
+
+        .user-card .user-email {
+            font-size: 0.72rem; color: rgba(255,255,255,0.5);
+        }
+
+        /* ══════════════════════════════
+           MAIN AREA
+        ══════════════════════════════ */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top bar */
+        .topbar {
+            height: 64px;
+            background: rgba(243, 251, 234, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #d4edbe;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .search-wrap {
+            position: relative;
+            width: 280px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 11px; top: 50%;
+            transform: translateY(-50%);
+            width: 15px; height: 15px;
+            color: var(--muted-olive);
+        }
+
+        .search-input-top {
+            width: 100%;
+            padding: 7px 12px 7px 34px;
+            background: #ffffff;
+            border: 1.5px solid var(--celadon);
+            border-radius: 10px;
+            font-size: 0.82rem;
+            color: var(--fern);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input-top::placeholder { color: var(--muted-olive); }
+
+        .search-input-top:focus {
+            border-color: var(--muted-olive-2);
+            box-shadow: 0 0 0 3px rgba(139,182,80,0.15);
+        }
+
+        .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+        .icon-btn {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1.5px solid var(--celadon);
+            color: var(--sage-green);
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .icon-btn:hover { background: var(--celadon); color: var(--fern); }
+        .icon-btn svg { width: 17px; height: 17px; }
+
+        /* ══════════════════════════════
+           SCROLLABLE CONTENT
+        ══════════════════════════════ */
+        .content-area {
+            flex: 1;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 28px;
+            background: #f3fbea;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 78px; right: 24px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #ffffff;
+            border: 1px solid var(--celadon);
+            border-left: 4px solid var(--sage-green);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(92,129,72,0.15);
+            max-width: 340px;
+            animation: slideDown 0.35s ease-out;
+        }
+
+        .toast-icon {
+            width: 30px; height: 30px;
+            background: var(--celadon);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-icon svg { width: 15px; height: 15px; color: var(--fern); }
+        .toast-msg { font-size: 0.83rem; font-weight: 700; color: var(--fern); flex: 1; }
+
+        .toast-close {
+            width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--muted-olive);
+            transition: all 0.15s;
+        }
+
+        .toast-close:hover { background: #f3fbea; color: var(--fern); }
+        .toast-close svg { width: 13px; height: 13px; }
+
+        @keyframes slideDown {
+            from { transform: translateY(-16px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
+        }
+
+        /* Page header */
+        .page-header {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--muted-olive);
+            margin-bottom: 4px;
+        }
+
+        .breadcrumb a { color: var(--sage-green); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--fern); }
+        .breadcrumb-sep { color: var(--muted-olive); }
+
+        .page-title {
+            font-size: 1.45rem;
+            font-weight: 900;
+            color: var(--fern);
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            font-size: 0.82rem;
+            color: var(--sage-green);
+            margin-top: 3px;
+        }
+
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            background: #ffffff;
+            border: 1.5px solid var(--muted-olive);
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--sage-green);
+            cursor: pointer;
+            transition: all 0.18s;
+            white-space: nowrap;
+        }
+
+        .btn-export:hover {
+            background: var(--celadon);
+            border-color: var(--sage-green);
+            color: var(--fern);
+        }
+
+        .btn-export svg { width: 15px; height: 15px; }
+
+        /* ══════════════════════════════
+           TABLE CARD
+        ══════════════════════════════ */
+        .table-card {
+            background: #ffffff;
+            border: 1px solid #d4edbe;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(92,129,72,0.07);
+        }
+
+        /* Toolbar */
+        .toolbar {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e8f5d9;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fdf4;
+        }
+
+        .search-table-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .search-table-wrap svg {
+            position: absolute;
+            left: 11px; top: 50%;
+            transform: translateY(-50%);
+            width: 14px; height: 14px;
+            color: var(--muted-olive);
+        }
+
+        .table-search-input {
+            width: 100%;
+            padding: 7px 12px 7px 32px;
+            background: #ffffff;
+            border: 1.5px solid var(--celadon);
+            border-radius: 9px;
+            font-size: 0.8rem;
+            color: var(--fern);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .table-search-input::placeholder { color: var(--muted-olive); }
+
+        .table-search-input:focus {
+            border-color: var(--muted-olive-2);
+            box-shadow: 0 0 0 3px rgba(139,182,80,0.15);
+            background: #fff;
+        }
+
+        /* Filter selects */
+        .filters-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .filter-select-wrap { position: relative; }
+
+        .filter-select {
+            appearance: none;
+            padding: 7px 30px 7px 12px;
+            background: #ffffff;
+            border: 1.5px solid var(--celadon);
+            border-radius: 9px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--sage-green);
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.18s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--muted-olive-2);
+            box-shadow: 0 0 0 3px rgba(139,182,80,0.12);
+        }
+
+        .filter-chevron {
+            pointer-events: none;
+            position: absolute;
+            right: 9px; top: 50%;
+            transform: translateY(-50%);
+            width: 13px; height: 13px;
+            color: var(--muted-olive);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: #f3fbea;
+            border-bottom: 1.5px solid #d4edbe;
+        }
+
+        .data-table th {
+            padding: 11px 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--sage-green);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #edf7e2;
+            transition: background 0.15s;
+        }
+
+        .data-table tbody tr:last-child { border-bottom: none; }
+
+        .data-table tbody tr:hover { background: rgba(214,236,137,0.18); }
+
+        .data-table td { padding: 13px 20px; vertical-align: middle; }
+
+        /* Donor cell */
+        .donor-cell { display: flex; align-items: center; gap: 11px; }
+
+        .donor-avatar {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: 2px solid var(--celadon);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .donor-name {
+            font-size: 0.84rem; font-weight: 800;
+            color: var(--fern);
+        }
+
+        .donor-email {
+            font-size: 0.72rem; color: var(--muted-olive);
+            margin: 1px 0 4px;
+        }
+
+        .campaign-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #edf7e2;
+            border: 1px solid var(--celadon);
+            border-radius: 6px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--sage-green);
+        }
+
+        .package-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #fdf6e3;
+            border: 1px solid #e8d8a0;
+            border-radius: 6px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #92651a;
+        }
+
+        /* Amount cell */
+        .amount-value {
+            font-size: 0.9rem; font-weight: 900;
+            color: var(--fern);
+        }
+
+        .order-id {
+            font-size: 0.68rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--muted-olive);
+            margin-top: 3px;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .order-id svg { width: 11px; height: 11px; }
+
+        .payment-method-note {
+            font-size: 0.68rem;
+            color: var(--muted-olive);
+            margin-top: 1px;
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .badge-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .badge-sukses {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border: 1px solid rgba(34,197,94,0.25);
+        }
+        .badge-sukses .badge-dot { background: #22c55e; }
+
+        .badge-pending {
+            background: rgba(234, 179, 8, 0.1);
+            color: #92651a;
+            border: 1px solid rgba(234,179,8,0.3);
+        }
+        .badge-pending .badge-dot { background: #eab308; animation: pulse 1.5s infinite; }
+
+        .badge-gagal {
+            background: rgba(239, 68, 68, 0.08);
+            color: #b91c1c;
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .badge-gagal .badge-dot { background: #ef4444; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
+        /* Date cell */
+        .date-main {
+            font-size: 0.82rem; font-weight: 700; color: var(--fern);
+            text-align: right;
+        }
+
+        .date-time {
+            font-size: 0.7rem; color: var(--muted-olive);
+            text-align: right; margin-top: 2px;
+        }
+
+        /* Action buttons */
+        .action-cell { display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+        .delete-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--muted-olive);
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239,68,68,0.1);
+            color: #dc2626;
+        }
+
+        .delete-btn svg { width: 16px; height: 16px; }
+
+        .approve-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--muted-olive);
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .approve-btn:hover {
+            background: rgba(34,197,94,0.1);
+            color: #16a34a;
+        }
+
+        .approve-btn svg { width: 16px; height: 16px; }
+
+        /* Empty state */
+        .empty-state {
+            padding: 64px 24px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 56px; height: 56px;
+            background: #edf7e2;
+            border: 1px solid var(--celadon);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px;
+        }
+
+        .empty-icon svg { width: 26px; height: 26px; color: var(--muted-olive); }
+
+        .empty-title {
+            font-size: 0.95rem; font-weight: 800; color: var(--fern);
+        }
+
+        .empty-sub {
+            font-size: 0.78rem; color: var(--sage-green); margin-top: 4px;
+        }
+
+        /* Pagination footer */
+        .table-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #e8f5d9;
+            background: #f9fdf4;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .pagination-info {
+            font-size: 0.78rem;
+            color: var(--sage-green);
+        }
+
+        .pagination-info strong { color: var(--fern); }
+
+        .pagination-btns { display: flex; align-items: center; gap: 6px; }
+
+        .page-btn {
+            min-width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            border: 1.5px solid var(--celadon);
+            background: #ffffff;
+            font-size: 0.78rem; font-weight: 700;
+            color: var(--sage-green);
+            cursor: pointer;
+            transition: all 0.15s;
+            padding: 0 10px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--celadon);
+            border-color: var(--muted-olive);
+            color: var(--fern);
+        }
+
+        .page-btn.active {
+            background: var(--fern);
+            border-color: var(--fern);
+            color: #ffffff;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Responsive: hide sidebar on mobile */
+        @media (max-width: 767px) {
+            .sidebar { display: none; }
+        }
+    </style>
+
+    <div class="shell">
+
+        {{-- ══ SIDEBAR ══ --}}
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
                 </div>
+                <span class="logo-text">Baitul<span>Yatim</span></span>
             </div>
-            
-            <div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1.5">
-                <p class="px-2 text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Main Menu</p>
-                
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-[#64748B] hover:bg-slate-50 hover:text-[#0F172A] rounded-xl font-medium transition-all group">
-                    <svg class="w-5 h-5 group-hover:text-[#2563EB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                    Dashboard Overview
+
+            <nav class="sidebar-nav">
+                <p class="nav-section-label">Menu Utama</p>
+
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    Dashboard
                 </a>
-                
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-[#64748B] hover:bg-slate-50 hover:text-[#0F172A] rounded-xl font-medium transition-all group">
-                    <svg class="w-5 h-5 group-hover:text-[#2563EB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
                     Manajemen User
                 </a>
 
-                <!-- MENU AKTIF: Manajemen Donasi -->
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 bg-[#2563EB]/10 text-[#2563EB] rounded-xl font-semibold transition-all relative">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                {{-- AKTIF --}}
+                <a href="#" class="nav-item active">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                     Manajemen Donasi
-                    <span class="absolute right-3 bg-[#2563EB] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $donations->where('status', 'pending')->count() }}</span>
+                    <span class="nav-badge">{{ $transactions->where('status', 'pending')->count() }}</span>
                 </a>
 
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-[#64748B] hover:bg-slate-50 hover:text-[#0F172A] rounded-xl font-medium transition-all group">
-                    <svg class="w-5 h-5 group-hover:text-[#2563EB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
                     Orang Tua Asuh
                 </a>
-            </div>
-            
-            <div class="p-4 border-t border-slate-200">
-                <div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer transition">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=f8fafc&color=0f172a&rounded=true&bold=true" class="w-10 h-10 rounded-full border border-slate-200" alt="Admin">
-                    <div class="flex-1 overflow-hidden">
-                        <p class="text-sm font-bold text-[#0F172A] truncate">Admin Pusat</p>
-                        <p class="text-xs text-[#64748B] truncate">admin@yayasan.org</p>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=b3e093&color=5c8148&rounded=true&bold=true" alt="Admin">
+                    <div>
+                        <p class="user-name">Admin Pusat</p>
+                        <p class="user-email">admin@yayasan.org</p>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
-        <div class="flex-1 flex flex-col overflow-hidden relative">
-            
-            <!-- TOP NAVBAR -->
-            <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 z-10 sticky top-0">
-                <div class="flex items-center gap-4">
-                    <button class="md:hidden text-[#64748B] hover:text-[#0F172A]">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    </button>
-                    <!-- Global Search Nav -->
-                    <div class="relative hidden sm:block w-64 lg:w-96">
-                        <svg class="w-4 h-4 absolute left-3 top-2.5 text-[#64748B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" placeholder="Pencarian cepat (Ctrl+K)" class="w-full pl-9 pr-4 py-1.5 bg-[#F8FAFC] border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] focus:bg-white transition-all outline-none">
-                    </div>
-                </div>
+        {{-- ══ MAIN ══ --}}
+        <div class="main-area">
 
-                <div class="flex items-center gap-3">
-                    <button class="relative p-2 text-[#64748B] hover:text-[#0F172A] transition bg-slate-50 hover:bg-slate-100 rounded-full">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            {{-- Topbar --}}
+            <header class="topbar">
+                <div class="search-wrap">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" class="search-input-top" placeholder="Pencarian cepat…">
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
                     </button>
                 </div>
             </header>
 
-            <!-- SCROLLABLE CONTENT -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#F8FAFC] p-6 lg:p-8">
-                
-                <!-- TOAST NOTIFICATION -->
+            {{-- Scrollable content --}}
+            <main class="content-area">
+
+                {{-- Toast --}}
                 @if(session('success'))
-                    <div id="toast-success" class="fixed top-20 right-8 z-50 flex items-center w-full max-w-sm p-4 text-[#0F172A] bg-white rounded-xl shadow-xl border border-slate-100" style="animation: slideDown 0.4s ease-out forwards;" role="alert">
-                        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-[#10B981] bg-[#10B981]/10 rounded-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    <div class="toast" id="toast-success">
+                        <div class="toast-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                            </svg>
                         </div>
-                        <div class="ml-3 text-sm font-bold">{{ session('success') }}</div>
-                        <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-[#64748B] hover:text-[#EF4444] rounded-lg p-1.5 hover:bg-slate-50 inline-flex h-8 w-8 transition" onclick="document.getElementById('toast-success').remove()">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
+                        <span class="toast-msg">{{ session('success') }}</span>
+                        <div class="toast-close" onclick="this.closest('#toast-success').remove()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </div>
                     </div>
                 @endif
-                <style>@keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }</style>
 
-                <!-- PAGE HEADER -->
-                <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                @if(session('error'))
+                    <div class="toast" id="toast-error" style="border-left-color:#dc2626;">
+                        <div class="toast-icon" style="background:#fee2e2;">
+                            <svg fill="none" stroke="#dc2626" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </div>
+                        <span class="toast-msg">{{ session('error') }}</span>
+                        <div class="toast-close" onclick="this.closest('#toast-error').remove()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Page header --}}
+                <div class="page-header">
                     <div>
-                        <nav class="flex text-sm text-[#64748B] font-medium mb-1.5">
-                            <ol class="flex items-center space-x-2">
-                                <li><a href="#" class="hover:text-[#2563EB] transition">Dashboard</a></li>
-                                <li><span class="mx-2">/</span></li>
-                                <li class="text-[#0F172A]">Manajemen Donasi</li>
-                            </ol>
+                        <nav class="breadcrumb">
+                            <a href="#">Dashboard</a>
+                            <span class="breadcrumb-sep">/</span>
+                            <span>Manajemen Donasi</span>
                         </nav>
-                        <h1 class="text-2xl font-black text-[#0F172A] tracking-tight">Manajemen Donasi</h1>
-                        <p class="text-[#64748B] mt-1 text-sm">Kelola semua transaksi donasi yang masuk ke sistem yayasan.</p>
+                        <h1 class="page-title">Manajemen Donasi</h1>
+                        <p class="page-subtitle">Kelola semua transaksi donasi & sponsorship yang masuk ke sistem yayasan.</p>
                     </div>
-                    
-                    <!-- Tombol Aksi Premium -->
-                    <div class="flex gap-3">
-                        <button class="px-4 py-2 text-sm font-semibold text-[#0F172A] bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition shadow-sm flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[#64748B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Export CSV
-                        </button>
-                    </div>
+                    <button class="btn-export">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Export CSV
+                    </button>
                 </div>
 
-                <!-- TABLE SECTION (SaaS Grade) -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-                    
-                    <!-- TOOLBAR (Search & Filters) -->
-                    <div class="p-4 border-b border-slate-200 flex flex-col lg:flex-row gap-4 items-center justify-between bg-white">
-                        
-                        <!-- Search Box Modern -->
-                        <div class="relative w-full lg:w-80">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <svg class="h-4 w-4 text-[#64748B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            </div>
-                            <input type="text" id="tableSearch" class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl leading-5 bg-[#F8FAFC] placeholder-[#64748B] text-sm text-[#0F172A] focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] transition-all" placeholder="Cari nama, email, order ID...">
+                {{-- Table card --}}
+                <div class="table-card">
+
+                    {{-- Toolbar --}}
+                    <div class="toolbar">
+                        <div class="search-table-wrap">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <input type="text" id="tableSearch" class="table-search-input"
+                                   placeholder="Cari nama, email, order ID…">
                         </div>
 
-                        <!-- Filters Dropdown -->
-                        <div class="flex gap-3 w-full lg:w-auto">
-                            <!-- Status Filter -->
-                            <div class="relative w-full lg:w-40">
-                                <select id="statusFilter" class="appearance-none block w-full pl-3 pr-10 py-2 text-sm font-semibold text-[#0F172A] bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] cursor-pointer transition">
+                        <div class="filters-row">
+                            <div class="filter-select-wrap">
+                                <select id="statusFilter" class="filter-select">
                                     <option value="all">Semua Status</option>
                                     <option value="success">Sukses</option>
                                     <option value="pending">Tertunda</option>
                                     <option value="gagal">Gagal</option>
                                 </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#64748B]">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </div>
+                                <svg class="filter-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
                             </div>
-                            <!-- Waktu Filter -->
-                            <div class="relative w-full lg:w-40">
-                                <select id="timeFilter" class="appearance-none block w-full pl-3 pr-10 py-2 text-sm font-semibold text-[#0F172A] bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] cursor-pointer transition">
+                            <div class="filter-select-wrap">
+                                <select id="timeFilter" class="filter-select">
                                     <option value="all">Semua Waktu</option>
                                     <option value="today">Hari Ini</option>
                                     <option value="week">Minggu Ini</option>
                                     <option value="month">Bulan Ini</option>
                                 </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#64748B]">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </div>
+                                <svg class="filter-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
                             </div>
                         </div>
                     </div>
 
-                    <!-- TABLE CONTENT -->
+                    {{-- Table --}}
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <!-- STICKY HEADER -->
-                            <thead class="bg-[#F8FAFC] border-b border-slate-200 text-[#64748B] sticky top-0 z-10">
+                        <table class="data-table">
+                            <thead>
                                 <tr>
-                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-[#0F172A] transition group">
-                                        Donatur & Program
-                                        <svg class="inline w-3 h-3 ml-1 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
-                                    </th>
-                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-[#0F172A] transition group">
-                                        Nominal Transaksi
-                                    </th>
-                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center whitespace-nowrap">
-                                        Status
-                                    </th>
-                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider whitespace-nowrap text-right">
-                                        Tanggal Dibuat
-                                    </th>
-                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center whitespace-nowrap">
-                                        Aksi
-                                    </th>
+                                    <th>Donatur &amp; Program</th>
+                                    <th>Nominal</th>
+                                    <th style="text-align:center;">Status</th>
+                                    <th style="text-align:right;">Tanggal</th>
+                                    <th style="text-align:center;">Aksi</th>
                                 </tr>
                             </thead>
-                            
-                            <tbody id="tableBody" class="divide-y divide-slate-100 bg-white">
-                                @forelse($donations as $donation)
-                                    <!-- BARIS DATA DENGAN HOVER MODERN -->
-                                    <tr class="hover:bg-[#F8FAFC] transition-colors duration-200 data-row group" 
-                                        data-search="{{ strtolower($donation->donor_name . ' ' . $donation->donor_email . ' ' . $donation->order_id) }}"
-                                        data-status="{{ strtolower($donation->status == 'cancel' ? 'gagal' : $donation->status) }}"
-                                        data-date="{{ $donation->created_at ? $donation->created_at->format('Y-m-d') : '' }}">
-                                        
-                                        <!-- KOLOM 1: Donatur -->
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center gap-3">
-                                                <img class="h-10 w-10 rounded-full border border-slate-200 object-cover" src="https://ui-avatars.com/api/?name={{ urlencode($donation->donor_name) }}&background=f1f5f9&color=0f172a&rounded=true&bold=true" alt="Avatar">
+                            <tbody id="tableBody">
+                                @forelse($transactions as $transaction)
+                                    @php
+                                        $statusKey = match($transaction->status) {
+                                            'success' => 'success',
+                                            'pending' => 'pending',
+                                            default => 'gagal',
+                                        };
+                                    @endphp
+                                    <tr class="data-row"
+                                        data-search="{{ strtolower($transaction->donor_name . ' ' . $transaction->donor_email . ' ' . $transaction->order_id) }}"
+                                        data-status="{{ $statusKey }}"
+                                        data-date="{{ $transaction->created_at ? $transaction->created_at->format('Y-m-d') : '' }}">
+
+                                        {{-- Donatur --}}
+                                        <td>
+                                            <div class="donor-cell">
+                                                <img class="donor-avatar"
+                                                     src="https://ui-avatars.com/api/?name={{ urlencode($transaction->donor_name) }}&background=b3e093&color=5c8148&rounded=true&bold=true"
+                                                     alt="{{ $transaction->donor_name }}">
                                                 <div>
-                                                    <div class="text-sm font-bold text-[#0F172A]">{{ $donation->donor_name }}</div>
-                                                    <div class="text-xs text-[#64748B] mb-1">{{ $donation->donor_email }}</div>
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-[#64748B] border border-slate-200">
-                                                        {{ $donation->campaign->title ?? 'Program Dihapus' }}
-                                                    </span>
+                                                    <div class="donor-name">{{ $transaction->donor_name }}</div>
+                                                    <div class="donor-email">{{ $transaction->donor_email }}</div>
+                                                    <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:3px;">
+                                                        <span class="campaign-tag">{{ $transaction->target }}</span>
+                                                        @if($transaction->type === 'sponsorship')
+                                                            <span class="package-tag">{{ $transaction->package ?? 'Sponsor' }}</span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
 
-                                        <!-- KOLOM 2: Nominal -->
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-black text-[#0F172A]">
-                                                Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                                        {{-- Nominal --}}
+                                        <td>
+                                            <div class="amount-value">Rp {{ number_format($transaction->amount, 0, ',', '.') }}</div>
+                                            <div class="order-id">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                                                </svg>
+                                                {{ $transaction->order_id ?? '-' }}
                                             </div>
-                                            <div class="text-[11px] font-mono font-semibold text-[#64748B] mt-1 flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                                                {{ $donation->order_id ?? '-' }}
-                                            </div>
+                                            @if($transaction->payment_method)
+                                                <div class="payment-method-note">via {{ $transaction->payment_method }}</div>
+                                            @endif
                                         </td>
 
-                                        <!-- KOLOM 3: Status Badge -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            @if($donation->status == 'success')
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-[#10B981] mr-1.5"></span> Sukses
+                                        {{-- Status --}}
+                                        <td style="text-align:center;">
+                                            @if($transaction->status == 'success')
+                                                <span class="badge badge-sukses">
+                                                    <span class="badge-dot"></span> Sukses
                                                 </span>
-                                            @elseif($donation->status == 'pending')
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mr-1.5 animate-pulse"></span> Tertunda
+                                            @elseif($transaction->status == 'pending')
+                                                <span class="badge badge-pending">
+                                                    <span class="badge-dot"></span> Tertunda
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-[#EF4444] mr-1.5"></span> Gagal
+                                                <span class="badge badge-gagal">
+                                                    <span class="badge-dot"></span> Gagal
                                                 </span>
                                             @endif
                                         </td>
 
-                                        <!-- KOLOM 4: Tanggal -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-right">
-                                            <div class="text-sm font-semibold text-[#0F172A]">
-                                                {{ $donation->created_at ? $donation->created_at->format('d M Y') : '-' }}
-                                            </div>
-                                            <div class="text-xs font-medium text-[#64748B] mt-0.5">
-                                                {{ $donation->created_at ? $donation->created_at->format('H:i') . ' WIB' : '' }}
-                                            </div>
+                                        {{-- Tanggal --}}
+                                        <td>
+                                            <div class="date-main">{{ $transaction->created_at ? $transaction->created_at->format('d M Y') : '-' }}</div>
+                                            <div class="date-time">{{ $transaction->created_at ? $transaction->created_at->format('H:i') . ' WIB' : '' }}</div>
                                         </td>
 
-                                        <!-- KOLOM 5: Aksi (Hover muncul) -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <form action="{{ route('admin.transactions.destroy', $donation->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data donasi ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <!-- Tombol Delete bergaya modern, background transparan saat diam, merah saat dihover -->
-                                                <button type="submit" class="p-2 text-[#64748B] hover:text-[#EF4444] hover:bg-[#EF4444]/10 rounded-lg transition-all focus:ring-2 focus:ring-[#EF4444]/20 outline-none" title="Hapus Data">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                            </form>
+                                        {{-- Aksi --}}
+                                        <td style="text-align:center;">
+                                            <div class="action-cell">
+                                                @if($transaction->status === 'pending')
+                                                    <form action="{{ route('admin.transactions.approve', $transaction->order_id) }}" method="POST"
+                                                          onsubmit="return confirm('Setujui transaksi ini?');">
+                                                        @csrf @method('PATCH')
+                                                        <button type="submit" class="approve-btn" title="Setujui">
+                                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <form action="{{ route('admin.transactions.destroy', $transaction->order_id) }}" method="POST"
+                                                      onsubmit="return confirm('Yakin ingin menghapus transaksi ini?');">
+                                                    @csrf @method('DELETE')
+                                                    <button type="submit" class="delete-btn" title="Hapus">
+                                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
-                                    <!-- EMPTY STATE DESIGN -->
                                     <tr id="emptyInitRow">
-                                        <td colspan="5" class="px-6 py-20 text-center">
-                                            <div class="flex flex-col items-center justify-center">
-                                                <div class="w-16 h-16 bg-[#F8FAFC] border border-slate-100 rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                                                    <svg class="w-8 h-8 text-[#64748B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                        <td colspan="5">
+                                            <div class="empty-state">
+                                                <div class="empty-icon">
+                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                                    </svg>
                                                 </div>
-                                                <h3 class="text-lg font-bold text-[#0F172A]">Belum Ada Data Transaksi</h3>
-                                                <p class="text-sm text-[#64748B] mt-1">Data donasi yang masuk ke Midtrans akan muncul di sini.</p>
+                                                <p class="empty-title">Belum Ada Transaksi</p>
+                                                <p class="empty-sub">Donasi dan sponsorship yang masuk lewat Midtrans akan tampil di sini.</p>
                                             </div>
                                         </td>
                                     </tr>
                                 @endforelse
-                                
-                                <!-- BARIS JIKA PENCARIAN KOSONG -->
+
                                 <tr id="noResultRow" class="hidden">
-                                    <td colspan="5" class="px-6 py-20 text-center">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                            <h3 class="text-base font-bold text-[#0F172A]">Data Tidak Ditemukan</h3>
-                                            <p class="text-sm text-[#64748B] mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                            </div>
+                                            <p class="empty-title">Tidak Ditemukan</p>
+                                            <p class="empty-sub">Coba kata kunci pencarian yang berbeda.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -282,19 +1059,15 @@
                         </table>
                     </div>
 
-                    <!-- PAGINATION FOOTER -->
-                    <div class="px-6 py-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <div id="paginationInfo" class="text-sm text-[#64748B]">
-                            Menampilkan <span class="font-bold text-[#0F172A]">0</span> hasil
+                    {{-- Pagination footer --}}
+                    <div class="table-footer">
+                        <div class="pagination-info" id="paginationInfo">
+                            Menampilkan <strong>0</strong> hasil
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button id="prevBtn" class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-[#0F172A] bg-white hover:bg-[#F8FAFC] transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                Previous
-                            </button>
-                            <div id="pageNumbers" class="flex gap-1 hidden sm:flex"></div>
-                            <button id="nextBtn" class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-[#0F172A] bg-white hover:bg-[#F8FAFC] transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                Next
-                            </button>
+                        <div class="pagination-btns">
+                            <button id="prevBtn" class="page-btn" disabled>← Prev</button>
+                            <div id="pageNumbers" class="pagination-btns"></div>
+                            <button id="nextBtn" class="page-btn" disabled>Next →</button>
                         </div>
                     </div>
 
@@ -303,101 +1076,91 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT UNTUK FILTER, SEARCH & PAGINATION -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const rowsPerPage = 5; 
+        document.addEventListener('DOMContentLoaded', function () {
+            const rowsPerPage = 5;
             let currentPage = 1;
-            
-            const searchInput = document.getElementById('tableSearch');
+
+            const searchInput  = document.getElementById('tableSearch');
             const statusFilter = document.getElementById('statusFilter');
-            const timeFilter = document.getElementById('timeFilter');
-            const allRows = Array.from(document.querySelectorAll('.data-row'));
-            const noResultRow = document.getElementById('noResultRow');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const pageNumbersContainer = document.getElementById('pageNumbers');
-            const paginationInfo = document.getElementById('paginationInfo');
+            const timeFilter   = document.getElementById('timeFilter');
+            const allRows      = Array.from(document.querySelectorAll('.data-row'));
+            const noResultRow  = document.getElementById('noResultRow');
+            const prevBtn      = document.getElementById('prevBtn');
+            const nextBtn      = document.getElementById('nextBtn');
+            const pageNums     = document.getElementById('pageNumbers');
+            const pageInfo     = document.getElementById('paginationInfo');
 
             let filteredRows = [...allRows];
 
-            function checkDateMatch(rowDateStr, filterValue) {
-                if (filterValue === 'all') return true;
-                if (!rowDateStr) return false;
+            function checkDate(dateStr, filter) {
+                if (filter === 'all' || !dateStr) return filter === 'all';
                 const today = new Date(); today.setHours(0,0,0,0);
-                const rowDate = new Date(rowDateStr); rowDate.setHours(0,0,0,0);
-                const diffDays = Math.ceil((today - rowDate) / (1000 * 60 * 60 * 24));
-                if (filterValue === 'today') return diffDays === 0;
-                if (filterValue === 'week') return diffDays >= 0 && diffDays <= 7;
-                if (filterValue === 'month') return diffDays >= 0 && diffDays <= 30;
+                const d     = new Date(dateStr); d.setHours(0,0,0,0);
+                const diff  = Math.ceil((today - d) / 864e5);
+                if (filter === 'today') return diff === 0;
+                if (filter === 'week')  return diff >= 0 && diff <= 7;
+                if (filter === 'month') return diff >= 0 && diff <= 30;
                 return true;
             }
 
-            function updateTable() {
-                const totalRows = filteredRows.length;
-                
-                if (totalRows === 0) {
+            function render() {
+                const total = filteredRows.length;
+
+                if (total === 0) {
                     noResultRow.classList.remove('hidden');
-                    paginationInfo.innerHTML = "Menampilkan <span class='font-bold text-[#0F172A]'>0</span> hasil";
-                    prevBtn.disabled = true; nextBtn.disabled = true;
-                    pageNumbersContainer.innerHTML = '';
                     allRows.forEach(r => r.classList.add('hidden'));
+                    pageInfo.innerHTML = "Menampilkan <strong>0</strong> hasil";
+                    prevBtn.disabled = nextBtn.disabled = true;
+                    pageNums.innerHTML = '';
                     return;
-                } else {
-                    noResultRow.classList.add('hidden');
                 }
 
-                const totalPages = Math.ceil(totalRows / rowsPerPage);
-                if (currentPage > totalPages) currentPage = totalPages;
-                if (currentPage < 1) currentPage = 1;
-
-                const startIdx = (currentPage - 1) * rowsPerPage;
-                const endIdx = Math.min(startIdx + rowsPerPage, totalRows);
+                noResultRow.classList.add('hidden');
+                const totalPages = Math.ceil(total / rowsPerPage);
+                currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+                const start = (currentPage - 1) * rowsPerPage;
+                const end   = Math.min(start + rowsPerPage, total);
 
                 allRows.forEach(r => r.classList.add('hidden'));
-                for (let i = startIdx; i < endIdx; i++) {
-                    filteredRows[i].classList.remove('hidden');
-                }
+                for (let i = start; i < end; i++) filteredRows[i].classList.remove('hidden');
 
-                paginationInfo.innerHTML = `Menampilkan <span class="font-bold text-[#0F172A]">${startIdx + 1} - ${endIdx}</span> dari <span class="font-bold text-[#0F172A]">${totalRows}</span> hasil`;
-                prevBtn.disabled = (currentPage === 1);
-                nextBtn.disabled = (currentPage === totalPages);
+                pageInfo.innerHTML = `Menampilkan <strong>${start + 1}–${end}</strong> dari <strong>${total}</strong> transaksi`;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
 
-                pageNumbersContainer.innerHTML = '';
+                pageNums.innerHTML = '';
                 for (let i = 1; i <= totalPages; i++) {
-                    const btn = document.createElement('button');
-                    btn.textContent = i;
-                    // Styling tombol nomor halaman ala SaaS
-                    btn.className = `w-9 h-9 rounded-lg text-sm font-semibold transition ${i === currentPage ? 'bg-[#2563EB] text-white' : 'text-[#64748B] hover:bg-[#F8FAFC]'}`;
-                    btn.addEventListener('click', () => { currentPage = i; updateTable(); });
-                    pageNumbersContainer.appendChild(btn);
+                    const b = document.createElement('button');
+                    b.textContent = i;
+                    b.className = 'page-btn' + (i === currentPage ? ' active' : '');
+                    b.addEventListener('click', () => { currentPage = i; render(); });
+                    pageNums.appendChild(b);
                 }
             }
 
-            function applyFilters() {
-                const query = searchInput.value.toLowerCase().trim();
+            function filter() {
+                const q    = searchInput.value.toLowerCase().trim();
                 const stat = statusFilter.value;
                 const time = timeFilter.value;
 
-                filteredRows = allRows.filter(row => {
-                    let textMatch = row.getAttribute('data-search').includes(query);
-                    let statMatch = (stat === 'all') ? true : row.getAttribute('data-status') === stat;
-                    let timeMatch = checkDateMatch(row.getAttribute('data-date'), time);
-                    
-                    return textMatch && statMatch && timeMatch;
-                });
+                filteredRows = allRows.filter(row =>
+                    row.dataset.search.includes(q) &&
+                    (stat === 'all' || row.dataset.status === stat) &&
+                    checkDate(row.dataset.date, time)
+                );
 
-                currentPage = 1; 
-                updateTable();
+                currentPage = 1;
+                render();
             }
 
-            searchInput.addEventListener('input', applyFilters);
-            statusFilter.addEventListener('change', applyFilters);
-            timeFilter.addEventListener('change', applyFilters);
-            prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; updateTable(); } });
-            nextBtn.addEventListener('click', () => { if (currentPage < Math.ceil(filteredRows.length / rowsPerPage)) { currentPage++; updateTable(); } });
+            searchInput.addEventListener('input', filter);
+            statusFilter.addEventListener('change', filter);
+            timeFilter.addEventListener('change', filter);
+            prevBtn.addEventListener('click', () => { currentPage--; render(); });
+            nextBtn.addEventListener('click', () => { currentPage++; render(); });
 
-            updateTable();
+            render();
         });
     </script>
 </x-app-layout>
