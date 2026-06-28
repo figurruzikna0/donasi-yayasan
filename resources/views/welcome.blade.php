@@ -203,11 +203,189 @@
             margin-top: auto;
         }
 
-        /* OTA section header accent */
         .ota-section-badge {
             background: rgba(255,255,255,0.7);
             border: 1px solid var(--muted-olive);
             color: var(--fern);
+        }
+
+        /* ══════════════════════════════════════
+           NEWS CAROUSEL
+        ══════════════════════════════════════ */
+        .news-section {
+            background: #ffffff;
+            border-top: 1px solid rgba(179, 224, 147, 0.5);
+            border-bottom: 1px solid rgba(179, 224, 147, 0.5);
+        }
+
+        /* Wrapper — hides overflow so only N cards are visible */
+        .news-carousel-outer {
+            position: relative;
+        }
+        .news-carousel-track-wrap {
+            overflow: hidden;
+        }
+        .news-carousel-track {
+            display: flex;
+            gap: 24px;
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        /* Each card — fixed width so JS can calculate offset */
+        .news-slide {
+            flex: 0 0 calc((100% - 48px) / 3); /* 3 cards, 2 gaps of 24px */
+            min-width: 0;
+        }
+        @media (max-width: 1024px) {
+            .news-slide { flex: 0 0 calc((100% - 24px) / 2); }
+        }
+        @media (max-width: 640px) {
+            .news-slide { flex: 0 0 100%; }
+        }
+
+        .news-card {
+            background: #fff;
+            border: 1px solid rgba(179,224,147,0.45);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(92,129,72,0.06);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(92,129,72,0.13);
+            border-color: var(--muted-olive);
+        }
+
+        .news-card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--celadon), var(--lime-cream));
+        }
+        .news-card-img-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--celadon) 0%, var(--lime-cream) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .news-card-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-kategori-badge {
+            display: inline-block;
+            background: #f0fdf4;
+            color: var(--sage-green);
+            border: 1px solid var(--celadon);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            margin-bottom: 10px;
+        }
+
+        .news-card-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--fern);
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-card-excerpt {
+            font-size: 0.8rem;
+            color: var(--sage-green);
+            line-height: 1.6;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .news-card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--muted-olive);
+            font-weight: 600;
+            border-top: 1px solid rgba(179,224,147,0.4);
+            padding-top: 12px;
+            margin-top: auto;
+        }
+
+        /* Nav buttons */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--muted-olive);
+            background: #ffffff;
+            color: var(--fern);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(92,129,72,0.18);
+            transition: all 0.2s;
+        }
+        .carousel-btn:hover {
+            background: var(--fern);
+            border-color: var(--fern);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(92,129,72,0.3);
+        }
+        .carousel-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .carousel-btn-prev { left: -20px; }
+        .carousel-btn-next { right: -20px; }
+
+        /* Dots */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 28px;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            background: var(--celadon);
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .carousel-dot.active {
+            width: 24px;
+            background: var(--fern);
         }
     </style>
 </head>
@@ -232,8 +410,6 @@
                     <a href="#tentang-kami" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Tentang Kami</a>
                     <a href="#berkas-yayasan" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Legalitas & Struktur</a>
                     <a href="#pendiri" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Pengurus</a>
-
-                    {{-- ★ Tombol baru Program OTA ★ --}}
                     <a href="#program-ota"
                        class="text-sm font-bold px-4 py-1.5 rounded-full transition"
                        style="background: linear-gradient(135deg, var(--muted-olive-2), var(--sage-green)); color:#ffffff; box-shadow: 0 2px 8px rgba(92,129,72,0.25);"
@@ -241,7 +417,8 @@
                        onmouseout="this.style.background='linear-gradient(135deg,var(--muted-olive-2),var(--sage-green))'">
                         🤝 Program OTA
                     </a>
-
+                    {{-- ★ Link Berita ★ --}}
+                    <a href="#berita-kegiatan" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">📰 Berita</a>
                     <a href="#kampanye" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Program Donasi</a>
                     <a href="{{ route('admin.dashboard') }}" class="border border-emerald-600 text-emerald-700 text-xs px-4 py-2 rounded-xl font-bold shadow-sm hover:bg-emerald-600 hover:text-white transition">
                         Dashboard Admin →
@@ -281,7 +458,6 @@
     {{-- SECTION: TENTANG KAMI --}}
     <section id="tentang-kami" class="relative py-20 bg-[#f7fdf3] overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
             <div data-aos="fade-up" class="text-center max-w-3xl mx-auto mb-16">
                 <span class="text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-800 inline-block mb-3 border border-emerald-200 shadow-sm">
                     Mengenal Kami
@@ -403,11 +579,9 @@
         </div>
     </section>
 
-    {{-- ★★★ SECTION BARU: PROGRAM ORANG TUA ASUH ★★★ --}}
+    {{-- ★★★ SECTION: PROGRAM ORANG TUA ASUH ★★★ --}}
     <section id="program-ota" class="ota-section py-24 border-t border-emerald-200/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            {{-- Section header --}}
             <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-16">
                 <span class="ota-section-badge text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full inline-block mb-3 shadow-sm">
                     💚 Program Kebaikan Berkelanjutan
@@ -421,7 +595,6 @@
                 </p>
             </div>
 
-            {{-- Statistik ringkas --}}
             <div data-aos="fade-up" data-aos-delay="50" class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-14">
                 <div class="bg-white rounded-2xl p-5 text-center border border-celadon shadow-sm" style="border-color: var(--celadon);">
                     <p class="text-3xl font-extrabold" style="color: var(--fern);">{{ $fosterChildren->count() }}</p>
@@ -437,12 +610,9 @@
                 </div>
             </div>
 
-            {{-- Grid anak asuh --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @forelse($fosterChildren as $child)
                     <div data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}" class="ota-card">
-
-                        {{-- Foto --}}
                         @if($child->photo)
                             <img src="{{ asset('storage/' . $child->photo) }}"
                                  alt="Foto {{ $child->name }}"
@@ -457,64 +627,127 @@
                                 </svg>
                             </div>
                         @endif
-
                         <div class="ota-card-body">
-                            {{-- Badge umur & status --}}
                             <div class="flex items-center justify-between mb-2 flex-wrap gap-1">
-                                <span class="ota-age-badge">
-                                    🗓 {{ $child->age }} Tahun
-                                </span>
+                                <span class="ota-age-badge">🗓 {{ $child->age }} Tahun</span>
                                 @if($child->status == 'Tersedia')
                                     <span class="ota-status-available">Tersedia</span>
                                 @else
                                     <span class="ota-status-taken">Diasuh</span>
                                 @endif
                             </div>
-
-                            {{-- Nama --}}
-                            <h3 class="font-bold text-base mb-2" style="color: var(--fern);">
-                                {{ $child->name }}
-                            </h3>
-
-                            {{-- Deskripsi singkat --}}
+                            <h3 class="font-bold text-base mb-2" style="color: var(--fern);">{{ $child->name }}</h3>
                             @if($child->description)
-                                <p class="text-xs leading-relaxed mb-4 line-clamp-3" style="color: var(--sage-green);">
-                                    {{ $child->description }}
-                                </p>
+                                <p class="text-xs leading-relaxed mb-4 line-clamp-3" style="color: var(--sage-green);">{{ $child->description }}</p>
                             @else
                                 <p class="text-xs italic mb-4" style="color: var(--muted-olive);">Belum ada cerita yang ditambahkan.</p>
                             @endif
-
-                            {{-- Tombol aksi --}}
                             @if($child->status == 'Tersedia')
-                                <a href="{{ route('sponsor.form', $child->id) }}" class="btn-ota">
-                                    🤝 Asuh Sekarang
-                                </a>
+                                <a href="{{ route('sponsor.form', $child->id) }}" class="btn-ota">🤝 Asuh Sekarang</a>
                             @else
                                 <span class="btn-ota-disabled">✓ Sudah Diasuh</span>
                             @endif
                         </div>
-
                     </div>
                 @empty
                     <div class="col-span-full text-center py-16 rounded-2xl border-2 border-dashed" style="border-color: var(--muted-olive);">
-                        <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background-color: var(--celadon);">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
-                                 style="stroke: var(--fern);"
-                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                        </div>
                         <p class="font-bold text-base mb-1" style="color: var(--fern);">Belum ada data anak asuh</p>
                         <p class="text-sm" style="color: var(--sage-green);">Admin belum menambahkan data anak ke dalam sistem.</p>
                     </div>
                 @endforelse
             </div>
+        </div>
+    </section>
+
+    {{-- ══════════════════════════════════════════════════
+         ★★★ SECTION BARU: BERITA & KEGIATAN CAROUSEL ★★★
+    ══════════════════════════════════════════════════ --}}
+    @if(isset($newsList) && $newsList->count() > 0)
+    <section id="berita-kegiatan" class="news-section py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- Header --}}
+            <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full inline-block mb-3 shadow-sm"
+                      style="background: rgba(179,224,147,0.35); border: 1px solid var(--muted-olive); color: var(--fern);">
+                    📰 Liputan Terkini
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mt-2" style="color: var(--fern);">
+                    Berita & Kegiatan Yayasan
+                </h2>
+                <p class="mt-3 text-sm font-medium leading-relaxed" style="color: var(--sage-green);">
+                    Ikuti perkembangan program, kegiatan, dan laporan terbaru dari lapangan.
+                </p>
+            </div>
+
+            {{-- Carousel --}}
+            <div data-aos="fade-up" data-aos-delay="100" class="news-carousel-outer px-6">
+                {{-- Prev button --}}
+                <button class="carousel-btn carousel-btn-prev" id="news-prev" aria-label="Sebelumnya">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+
+                <div class="news-carousel-track-wrap">
+                    <div class="news-carousel-track" id="news-track">
+                        @foreach($newsList as $item)
+                        <div class="news-slide">
+                            <div class="news-card">
+                                {{-- Foto --}}
+                                @if($item->foto_utama)
+                                    <img src="{{ asset('storage/' . $item->foto_utama) }}"
+                                         alt="{{ $item->judul }}"
+                                         class="news-card-img">
+                                @else
+                                    <div class="news-card-img-placeholder">
+                                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
+                                             style="stroke: var(--fern); opacity: 0.4;"
+                                             stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                                            <path d="m21 15-5-5L5 21"/>
+                                        </svg>
+                                    </div>
+                                @endif
+
+                                <div class="news-card-body">
+                                    <span class="news-kategori-badge">{{ $item->kategori }}</span>
+                                    <h3 class="news-card-title">{{ $item->judul }}</h3>
+                                    <p class="news-card-excerpt">
+                                        {{ $item->ringkasan ?: \Illuminate\Support\Str::limit(strip_tags($item->konten), 120) }}
+                                    </p>
+                                    <div class="news-card-meta">
+                                        <span>📅 {{ $item->tanggal_kegiatan->translatedFormat('d M Y') }}</span>
+                                        @if($item->lokasi)
+                                            <span>📍 {{ \Illuminate\Support\Str::limit($item->lokasi, 22) }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Next button --}}
+                <button class="carousel-btn carousel-btn-next" id="news-next" aria-label="Berikutnya">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Dots --}}
+            <div class="carousel-dots" id="news-dots"></div>
 
         </div>
     </section>
+    @endif
 
     {{-- SECTION: KAMPANYE DONASI --}}
     <main id="kampanye" class="bg-white border-t border-emerald-100/60 py-24">
@@ -584,6 +817,107 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true, offset: 50 });
+    </script>
+
+    {{-- ══════════════════════════════════
+         Carousel JS — vanilla, no deps
+    ══════════════════════════════════ --}}
+    <script>
+    (function () {
+        const track    = document.getElementById('news-track');
+        const dotsWrap = document.getElementById('news-dots');
+        const btnPrev  = document.getElementById('news-prev');
+        const btnNext  = document.getElementById('news-next');
+
+        if (!track) return; // section hidden when no news
+
+        const slides = Array.from(track.querySelectorAll('.news-slide'));
+        if (slides.length === 0) return;
+
+        let current = 0;
+
+        // How many cards are visible depends on viewport width
+        function visibleCount() {
+            if (window.innerWidth >= 1024) return 3;
+            if (window.innerWidth >= 640)  return 2;
+            return 1;
+        }
+
+        function maxIndex() {
+            return Math.max(0, slides.length - visibleCount());
+        }
+
+        // Build dots
+        function buildDots() {
+            dotsWrap.innerHTML = '';
+            const total = maxIndex() + 1;
+            for (let i = 0; i < total; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'carousel-dot' + (i === current ? ' active' : '');
+                btn.setAttribute('aria-label', 'Slide ' + (i + 1));
+                btn.addEventListener('click', () => goTo(i));
+                dotsWrap.appendChild(btn);
+            }
+        }
+
+        function updateDots() {
+            Array.from(dotsWrap.children).forEach((d, i) => {
+                d.classList.toggle('active', i === current);
+            });
+        }
+
+        function updateButtons() {
+            btnPrev.disabled = current === 0;
+            btnNext.disabled = current >= maxIndex();
+        }
+
+        function goTo(index) {
+            current = Math.max(0, Math.min(index, maxIndex()));
+
+            // Calculate the width of one slide + gap
+            const slideEl   = slides[0];
+            const gap       = 24; // matches CSS gap: 24px
+            const slideW    = slideEl.getBoundingClientRect().width;
+            const offset    = current * (slideW + gap);
+
+            track.style.transform = `translateX(-${offset}px)`;
+            updateDots();
+            updateButtons();
+        }
+
+        btnPrev.addEventListener('click', () => goTo(current - 1));
+        btnNext.addEventListener('click', () => goTo(current + 1));
+
+        // Auto-play every 5 s
+        let timer = setInterval(() => {
+            goTo(current >= maxIndex() ? 0 : current + 1);
+        }, 5000);
+
+        // Pause on hover
+        track.closest('.news-carousel-outer').addEventListener('mouseenter', () => clearInterval(timer));
+        track.closest('.news-carousel-outer').addEventListener('mouseleave', () => {
+            timer = setInterval(() => goTo(current >= maxIndex() ? 0 : current + 1), 5000);
+        });
+
+        // Touch / swipe support
+        let touchStartX = 0;
+        track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend',   e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+        });
+
+        // Rebuild on resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { buildDots(); goTo(current); }, 150);
+        });
+
+        // Init
+        buildDots();
+        updateButtons();
+    })();
     </script>
 </body>
 </html>

@@ -14,13 +14,11 @@
             min-height: 100vh;
         }
 
-        /* ── Header slot ── */
         .admin-header {
             color: var(--fern) !important;
             letter-spacing: 0.02em;
         }
 
-        /* ── Greeting banner (top) ── */
         .greeting-banner {
             background: linear-gradient(100deg, var(--fern) 0%, var(--sage-green) 55%, var(--muted-olive) 100%);
             border-radius: 16px;
@@ -33,38 +31,11 @@
             box-shadow: 0 6px 20px rgba(92, 129, 72, 0.25);
             margin-bottom: 2rem;
         }
+        .greeting-banner .greeting-text { color: #ffffff; }
+        .greeting-banner .greeting-text h3 { font-size: 1.4rem; font-weight: 800; margin: 0 0 4px; }
+        .greeting-banner .greeting-text p  { font-size: 0.88rem; color: rgba(255,255,255,0.82); margin: 0; max-width: 520px; line-height: 1.55; }
+        .greeting-banner .greeting-icon   { width: 52px; height: 52px; background: rgba(255,255,255,0.18); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
 
-        .greeting-banner .greeting-text {
-            color: #ffffff;
-        }
-
-        .greeting-banner .greeting-text h3 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin: 0 0 4px;
-        }
-
-        .greeting-banner .greeting-text p {
-            font-size: 0.88rem;
-            color: rgba(255,255,255,0.82);
-            margin: 0;
-            max-width: 520px;
-            line-height: 1.55;
-        }
-
-        .greeting-banner .greeting-icon {
-            width: 52px;
-            height: 52px;
-            background: rgba(255,255,255,0.18);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            flex-shrink: 0;
-        }
-
-        /* ── Nav pill buttons ── */
         .top-nav-wrapper {
             display: flex;
             flex-wrap: wrap;
@@ -100,30 +71,6 @@
             box-shadow: 0 4px 10px rgba(92, 129, 72, 0.15);
         }
 
-        .btn-solid {
-            background: linear-gradient(135deg, var(--muted-olive-2), var(--sage-green));
-            color: #ffffff;
-            border: 1.5px solid transparent;
-        }
-        .btn-solid:hover {
-            background: linear-gradient(135deg, var(--sage-green), var(--fern));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(92, 129, 72, 0.28);
-        }
-
-        .btn-highlight {
-            background-color: var(--fern);
-            color: #ffffff;
-            border: 1.5px solid var(--fern);
-        }
-        .btn-highlight:hover {
-            background-color: var(--sage-green);
-            border-color: var(--sage-green);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(92, 129, 72, 0.25);
-        }
-
-        /* ── Stat cards ── */
         .stat-card {
             background-color: #ffffff;
             border: 1px solid var(--celadon);
@@ -142,7 +89,7 @@
         .border-accent-3 { border-left: 5px solid var(--fern); }
 
         .stat-title { color: var(--sage-green); font-weight: 700; }
-        .stat-value { color: var(--fern); }
+        .stat-value  { color: var(--fern); }
         .stat-unit   { color: var(--muted-olive-2); }
     </style>
 
@@ -156,7 +103,7 @@
         <div class="py-10">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                {{-- ① Greeting banner — paling atas ── --}}
+                {{-- Greeting banner --}}
                 <div class="greeting-banner">
                     <div class="greeting-text">
                         <h3><span id="dynamic-greeting">Selamat Datang</span> 👋</h3>
@@ -168,16 +115,19 @@
                     <div class="greeting-icon">🌿</div>
                 </div>
 
-                {{-- ② Navigation pills ── --}}
+                {{-- Navigation pills --}}
                 <div class="top-nav-wrapper">
                     <a href="{{ route('admin.profil.index') }}" class="action-btn btn-outline">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         Profil Yayasan
                     </a>
-                    <a href="#" class="action-btn btn-outline">
+
+                    {{-- ✅ Berita Kegiatan — sudah diarahkan ke route --}}
+                    <a href="{{ route('admin.news.index') }}" class="action-btn btn-outline">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"/></svg>
                         Berita Kegiatan
                     </a>
+
                     <a href="{{ route('admin.campaigns.index') }}" class="action-btn btn-outline">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V9a2 2 0 00-2-2m2 4v4a2 2 0 104 0v-1m-4-3H9m2 0h4m6 1a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Kelola Kampanye
@@ -190,7 +140,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         Data Anak Asuh
                     </a>
-                    <a href="{{ route('admin.transactions.index') ?? '#' }}" class="action-btn btn-outline">
+                    <a href="{{ route('admin.transactions.index') }}" class="action-btn btn-outline">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Riwayat Transaksi
                     </a>
@@ -200,7 +150,7 @@
                     </a>
                 </div>
 
-                {{-- ③ Stat cards ── --}}
+                {{-- Stat cards --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                     <div class="stat-card border-accent-1 p-6">

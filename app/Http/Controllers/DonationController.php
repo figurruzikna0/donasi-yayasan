@@ -81,50 +81,52 @@ class DonationController extends Controller
      * Memproses form sponsor & generate Snap token Midtrans.
      */
     public function sponsorStore(Request $request, $id)
-    {
-        $child = FosterChild::findOrFail($id);
+{
+    $child = FosterChild::findOrFail($id);
 
-        $validated = $request->validate([
-            'donor_name' => 'required|string|max:255',
-            'donor_email' => 'required|email|max:255',
-            'amount' => 'required|numeric|min:1000',
-            'paket_komitmen' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'payment_method' => 'nullable|string|max:255',
-        ]);
+    $validated = $request->validate([
+        'donor_name' => 'required|string|max:255',
+        'donor_email' => 'required|email|max:255',
+        'donor_phone' => 'required|string|max:20',
+        'amount' => 'required|numeric|min:1000',
+        'paket_komitmen' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'payment_method' => 'nullable|string|max:255',
+    ]);
 
-        $this->initMidtrans();
+    $this->initMidtrans();
 
-        $orderId = 'SPONSOR-' . uniqid();
+    $orderId = 'SPONSOR-' . uniqid();
 
-        $sponsorship = Sponsorship::create([
-            'foster_child_id' => $child->id,
+    $sponsorship = Sponsorship::create([
+        'foster_child_id' => $child->id,
+        'order_id' => $orderId,
+        'donor_name' => $validated['donor_name'],
+        'donor_email' => $validated['donor_email'],
+        'donor_phone' => $validated['donor_phone'],
+        'amount' => $validated['amount'],
+        'package' => $validated['paket_komitmen'],
+        'package_description' => $validated['description'] ?? null,
+        'payment_method' => $validated['payment_method'] ?? null,
+        'status' => 'pending',
+    ]);
+
+    $params = [
+        'transaction_details' => [
             'order_id' => $orderId,
-            'donor_name' => $validated['donor_name'],
-            'donor_email' => $validated['donor_email'],
-            'amount' => $validated['amount'],
-            'package' => $validated['paket_komitmen'],
-            'package_description' => $validated['description'] ?? null,
-            'payment_method' => $validated['payment_method'] ?? null,
-            'status' => 'pending',
-        ]);
+            'gross_amount' => (int) $sponsorship->amount,
+        ],
+        'customer_details' => [
+            'first_name' => $sponsorship->donor_name,
+            'email' => $sponsorship->donor_email,
+        ],
+    ];
 
-        $params = [
-            'transaction_details' => [
-                'order_id' => $orderId,
-                'gross_amount' => (int) $sponsorship->amount,
-            ],
-            'customer_details' => [
-                'first_name' => $sponsorship->donor_name,
-                'email' => $sponsorship->donor_email,
-            ],
-        ];
+    $snapToken = Snap::getSnapToken($params);
+    $sponsorship->update(['snap_token' => $snapToken]);
 
-        $snapToken = Snap::getSnapToken($params);
-        $sponsorship->update(['snap_token' => $snapToken]);
-
-        return view('donations.sponsor_payment', compact('sponsorship', 'child', 'snapToken'));
-    }
+    return view('donations.sponsor_payment', compact('sponsorship', 'child', 'snapToken'));
+}
 
     public function callback(Request $request)
     {
@@ -136,23 +138,26 @@ class DonationController extends Controller
         $orderId = $notification->order_id;
 
         if (str_starts_with($orderId, 'SPONSOR-')) {
-            $sponsorship = Sponsorship::where('order_id', $orderId)->first();
+    $sponsorship = Sponsorship::where('order_id', $orderId)->first();
 
-            if ($sponsorship) {
-                if (in_array($status, ['settlement', 'capture'])) {
-                    $sponsorship->update(['status' => 'success']);
+    if ($sponsorship) {
+        if (in_array($status, ['settlement', 'capture'])) {
+            $sponsorship->update([
+                'status' => 'success',
+                'starts_at' => now(),
+                'expires_at' => now()->addMonth(),
+            ]);
 
-                    // Tandai anak sudah diasuh
-                    $child = FosterChild::find($sponsorship->foster_child_id);
-                    if ($child) {
-                        $child->update(['status' => 'Diasuh']);
-                    }
-                } elseif ($status == 'pending') {
-                    $sponsorship->update(['status' => 'pending']);
-                } else {
-                    $sponsorship->update(['status' => 'failed']);
-                }
+            $child = FosterChild::find($sponsorship->foster_child_id);
+            if ($child) {
+                $child->update(['status' => 'Diasuh']);
             }
+        } elseif ($status == 'pending') {
+            $sponsorship->update(['status' => 'pending']);
+        } else {
+            $sponsorship->update(['status' => 'failed']);
+        }
+    }
         } else {
             $donation = Donation::where('order_id', $orderId)->first();
 

@@ -6,17 +6,26 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\Admin\FosterChildController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Models\Campaign;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProfilYayasanController;
 use App\Http\Controllers\Admin\PendiriController;
+use App\Http\Controllers\Admin\SponsorshipController;
 
 // --- RUTE HALAMAN DEPAN ---
 Route::get('/', function () {
     $campaigns = Campaign::where('status', 'active')->latest()->get();
     $profil = \App\Models\ProfilYayasan::first();
-    $fosterChildren = \App\Models\FosterChild::latest()->get(); // ← tambah ini
-    return view('welcome', compact('campaigns', 'profil', 'fosterChildren')); // ← dan ini
+    $fosterChildren = \App\Models\FosterChild::latest()->get();
+
+    // ★ TAMBAHAN BARU ★
+    $newsList = \App\Models\News::published()
+        ->latest('tanggal_kegiatan')
+        ->take(9)
+        ->get();
+
+    return view('welcome', compact('campaigns', 'profil', 'fosterChildren', 'newsList'));
 });
 
 // --- RUTE PUBLIK (Donasi & Sponsor Anak Asuh) ---
@@ -67,10 +76,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Kelola Data Anak Asuh
     Route::resource('foster-children', FosterChildController::class);
-    
+    Route::get('/sponsorships', [SponsorshipController::class, 'index'])->name('sponsorships.index');
+    Route::patch('/sponsorships/{id}/approve', [SponsorshipController::class, 'approve'])->name('sponsorships.approve');
+    Route::delete('/sponsorships/{id}', [SponsorshipController::class, 'destroy'])->name('sponsorships.destroy');
+
+    // Kelola Berita Kegiatan
+    Route::resource('news', NewsController::class);
+
     // Kelola Kampanye
     Route::resource('campaigns', CampaignController::class);
-    
+
     // Kelola Transaksi
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
