@@ -29,10 +29,11 @@ class Sponsorship extends Model
         'reminder_sent_at' => 'datetime',
     ];
 
+    // app/Models/Sponsorship.php
     public function fosterChild()
     {
-        return $this->belongsTo(FosterChild::class);
-    }
+        return $this->belongsTo(FosterChild::class, 'foster_child_id');
+    }   
 
     /**
      * Normalisasi nomor WA jadi format internasional (62xxx) tanpa spasi/strip,

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Donation;
+use App\Models\FosterChild;
 use App\Models\Sponsorship;
 use Illuminate\Http\Request;
 
@@ -45,5 +47,15 @@ class SponsorshipController extends Controller
         $sponsorship->delete();
 
         return redirect()->back()->with('success', 'Data sponsorship berhasil dihapus!');
+    }
+
+    public function contacts()
+    {
+        $children = FosterChild::with('activeSponsorship')->orderBy('name')->get();
+
+        $pendingCount = Donation::where('status', 'pending')->count()
+            + Sponsorship::where('status', 'pending')->count();
+
+        return view('admin.sponsorships.contacts', compact('children', 'pendingCount'));
     }
 }

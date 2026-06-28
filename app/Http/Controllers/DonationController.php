@@ -129,55 +129,110 @@ class DonationController extends Controller
 }
 
     public function callback(Request $request)
-    {
-        // Panggil fungsi konfigurasi
-        $this->initMidtrans();
+{
+    $this->initMidtrans();
 
-        $notification = new \Midtrans\Notification();
-        $status = $notification->transaction_status;
-        $orderId = $notification->order_id;
+    $notification = new \Midtrans\Notification();
+    $status = $notification->transaction_status;
+    $orderId = $notification->order_id;
 
-        if (str_starts_with($orderId, 'SPONSOR-')) {
-    $sponsorship = Sponsorship::where('order_id', $orderId)->first();
-
-    if ($sponsorship) {
-        if (in_array($status, ['settlement', 'capture'])) {
-            $sponsorship->update([
-                'status' => 'success',
-                'starts_at' => now(),
-                'expires_at' => now()->addMonth(),
-            ]);
-
-            $child = FosterChild::find($sponsorship->foster_child_id);
-            if ($child) {
-                $child->update(['status' => 'Diasuh']);
-            }
-        } elseif ($status == 'pending') {
-            $sponsorship->update(['status' => 'pending']);
-        } else {
-            $sponsorship->update(['status' => 'failed']);
-        }
+    try {
+        $paymentMethod = $this->extractPaymentMethod($notification);
+    } catch (\Throwable $e) {
+        $paymentMethod = null;
     }
-        } else {
-            $donation = Donation::where('order_id', $orderId)->first();
 
-            if ($donation) {
-                if (in_array($status, ['settlement', 'capture'])) {
-                    $donation->update(['status' => 'success']);
+    if (str_starts_with($orderId, 'SPONSOR-')) {
+        $sponsorship = Sponsorship::where('order_id', $orderId)->first();
 
-                    // Update total dana di campaign
-                    $campaign = Campaign::find($donation->campaign_id);
-                    if ($campaign) {
-                        $campaign->increment('collected_amount', $donation->amount);
-                    }
-                } elseif ($status == 'pending') {
-                    $donation->update(['status' => 'pending']);
-                } else {
-                    $donation->update(['status' => 'failed']);
+        if ($sponsorship) {
+            if (in_array($status, ['settlement', 'capture'])) {
+                $sponsorship->update([
+                    'status' => 'success',
+                    'starts_at' => now(),
+                    'expires_at' => now()->addMonth(),
+                    'payment_method' => $paymentMethod ?? $sponsorship->payment_method,
+                ]);
+
+                $child = FosterChild::find($sponsorship->foster_child_id);
+                if ($child) {
+                    $child->update(['status' => 'Diasuh']);
                 }
+            } elseif ($status == 'pending') {
+                $sponsorship->update(['status' => 'pending']);
+            } else {
+                $sponsorship->update(['status' => 'failed']);
             }
         }
+    } else {
+        $donation = Donation::where('order_id', $orderId)->first();
 
-        return response()->json(['message' => 'Laporan diterima']);
+        if ($donation) {
+            if (in_array($status, ['settlement', 'capture'])) {
+                $donation->update([
+                    'status' => 'success',
+                    'payment_method' => $paymentMethod,
+                ]);
+
+                $campaign = Campaign::find($donation->campaign_id);
+                if ($campaign) {
+                    $campaign->increment('collected_amount', $donation->amount);
+                }
+            } elseif ($status == 'pending') {
+                $donation->update(['status' => 'pending']);
+            } else {
+                $donation->update(['status' => 'failed']);
+            }
+        }
     }
+
+    return response()->json(['message' => 'Laporan diterima']);
+}
+
+/**
+ * Terjemahkan payment_type dari notifikasi Midtrans jadi label yang gampang dibaca.
+ */
+private function extractPaymentMethod($notification): ?string
+    {
+    $type = $notification->payment_type ?? null;
+
+    if (! $type) {
+        return null;
+    }
+
+    if ($type === 'bank_transfer') {
+        $vaNumbers = $notification->va_numbers ?? null;
+        $bank = null;
+
+        if (is_array($vaNumbers) && isset($vaNumbers[0])) {
+            $first = $vaNumbers[0];
+            $bank = is_object($first) ? ($first->bank ?? null) : ($first['bank'] ?? null);
+        }
+
+        return $bank ? 'Transfer Bank ' . strtoupper($bank) : 'Transfer Bank';
+    }
+
+    if ($type === 'echannel') {
+        return 'Mandiri Bill Payment';
+    }
+
+    if ($type === 'cstore') {
+        $store = $notification->store ?? null;
+        return $store ? ucfirst($store) : 'Convenience Store';
+    }
+
+    if ($type === 'credit_card') {
+        $bank = $notification->bank ?? null;
+        return $bank ? 'Kartu Kredit (' . strtoupper($bank) . ')' : 'Kartu Kredit';
+    }
+
+    $labels = [
+        'gopay' => 'GoPay',
+        'qris' => 'QRIS',
+        'shopeepay' => 'ShopeePay',
+        'akulaku' => 'Akulaku',
+    ];
+
+    return $labels[$type] ?? strtoupper(str_replace('_', ' ', $type));
+}
 }

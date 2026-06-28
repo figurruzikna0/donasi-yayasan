@@ -22,4 +22,11 @@ class FosterChild extends Model
     {
         return $this->hasMany(Sponsorship::class);
     }
+
+    public function activeSponsorship()
+    {
+        return $this->hasOne(Sponsorship::class)
+            ->where('status', 'success')
+            ->latestOfMany('expires_at');
+    }
 }

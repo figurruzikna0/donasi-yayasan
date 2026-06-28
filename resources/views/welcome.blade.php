@@ -391,10 +391,81 @@
 </head>
 <body class="font-sans antialiased">
 
+    <style>
+        /* ── Dropdown navbar ── */
+        .nav-dropdown { position: relative; }
+
+        .nav-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #4b7a38;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .nav-dropdown-btn:hover { color: var(--fern); }
+
+        .nav-dropdown-btn .chevron {
+            width: 14px; height: 14px;
+            transition: transform 0.2s;
+            stroke: currentColor;
+        }
+        .nav-dropdown.open .chevron { transform: rotate(180deg); }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            border: 1.5px solid var(--celadon);
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(92,129,72,0.14);
+            min-width: 200px;
+            padding: 6px;
+            z-index: 100;
+        }
+        .nav-dropdown.open .nav-dropdown-menu { display: block; }
+
+        .nav-dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 14px;
+            border-radius: 9px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--fern);
+            text-decoration: none;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+        .nav-dropdown-menu a:hover { background: #f0fdf0; }
+        .nav-dropdown-menu a .menu-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Divider inside dropdown */
+        .nav-dropdown-divider {
+            height: 1px;
+            background: var(--celadon);
+            margin: 4px 10px;
+        }
+    </style>
+
     {{-- Navbar --}}
     <nav id="navbar" class="custom-nav sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
+
+                {{-- Logo --}}
                 <div class="flex items-center gap-3">
                     @if($profil && $profil->logo)
                         <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="h-9 w-9 rounded-full object-cover border border-emerald-200 shadow-sm">
@@ -405,28 +476,120 @@
                         {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}
                     </span>
                 </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#" class="text-sm font-bold text-emerald-800">Beranda</a>
-                    <a href="#tentang-kami" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Tentang Kami</a>
-                    <a href="#berkas-yayasan" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Legalitas & Struktur</a>
-                    <a href="#pendiri" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Pengurus</a>
-                    <a href="#program-ota"
-                       class="text-sm font-bold px-4 py-1.5 rounded-full transition"
-                       style="background: linear-gradient(135deg, var(--muted-olive-2), var(--sage-green)); color:#ffffff; box-shadow: 0 2px 8px rgba(92,129,72,0.25);"
-                       onmouseover="this.style.background='linear-gradient(135deg,var(--sage-green),var(--fern))'"
-                       onmouseout="this.style.background='linear-gradient(135deg,var(--muted-olive-2),var(--sage-green))'">
-                        🤝 Program OTA
-                    </a>
-                    {{-- ★ Link Berita ★ --}}
+
+                {{-- Nav items --}}
+                <div class="hidden md:flex items-center gap-6">
+
+                    {{-- 1. Beranda --}}
+                    <a href="#" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 transition">Beranda</a>
+
+                    {{-- 2. Tentang Kami (dropdown) --}}
+                    <div class="nav-dropdown" id="dd-tentang">
+                        <button class="nav-dropdown-btn" onclick="toggleDD('dd-tentang')">
+                            Tentang Kami
+                            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu">
+                            <a href="#tentang-kami">
+                                <span class="menu-icon">📖</span> Profil Yayasan
+                            </a>
+                            <div class="nav-dropdown-divider"></div>
+                            <a href="#berkas-yayasan">
+                                <span class="menu-icon">📑</span> Legalitas & Struktur
+                            </a>
+                            <a href="#pendiri">
+                                <span class="menu-icon">👤</span> Pengurus
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- 3. Donasi (dropdown) --}}
+                    <div class="nav-dropdown" id="dd-donasi">
+                        <button class="nav-dropdown-btn" onclick="toggleDD('dd-donasi')"
+                                style="color:#ffffff; background:linear-gradient(135deg,var(--muted-olive-2),var(--sage-green)); padding:6px 16px; border-radius:99px; box-shadow:0 2px 8px rgba(92,129,72,0.25);">
+                            💚 Donasi
+                            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu">
+                            <a href="#program-ota">
+                                <span class="menu-icon">🤝</span> Orang Tua Asuh
+                            </a>
+                            <div class="nav-dropdown-divider"></div>
+                            <a href="#kampanye">
+                                <span class="menu-icon">❤️</span> Program Donasi
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- 4. Berita --}}
                     <a href="#berita-kegiatan" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">📰 Berita</a>
-                    <a href="#kampanye" class="text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">Program Donasi</a>
-                    <a href="{{ route('admin.dashboard') }}" class="border border-emerald-600 text-emerald-700 text-xs px-4 py-2 rounded-xl font-bold shadow-sm hover:bg-emerald-600 hover:text-white transition">
+
+                    {{-- Admin --}}
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="border border-emerald-600 text-emerald-700 text-xs px-4 py-2 rounded-xl font-bold shadow-sm hover:bg-emerald-600 hover:text-white transition">
                         Dashboard Admin →
                     </a>
                 </div>
+
+                {{-- Mobile hamburger --}}
+                <div class="flex md:hidden items-center">
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg" style="color:var(--fern);">
+                        <svg id="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                            <path d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+
             </div>
+
+            {{-- Mobile menu --}}
+            <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-emerald-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="#" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-800 hover:bg-emerald-50">🏠 Beranda</a>
+                    <a href="#tentang-kami" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 hover:bg-emerald-50">📖 Profil Yayasan</a>
+                    <a href="#berkas-yayasan" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 hover:bg-emerald-50">📑 Legalitas & Struktur</a>
+                    <a href="#pendiri" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 hover:bg-emerald-50">👤 Pengurus</a>
+                    <a href="#program-ota" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 hover:bg-emerald-50">🤝 Orang Tua Asuh</a>
+                    <a href="#kampanye" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 hover:bg-emerald-50">❤️ Program Donasi</a>
+                    <a href="#berita-kegiatan" class="px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 hover:bg-emerald-50">📰 Berita</a>
+                    <a href="{{ route('admin.dashboard') }}" class="mt-2 mx-3 text-center py-2 rounded-xl text-xs font-bold border border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white transition">Dashboard Admin →</a>
+                </div>
+            </div>
+
         </div>
     </nav>
+
+    <script>
+        // Dropdown toggle — tutup semua dulu, buka yang diklik
+        function toggleDD(id) {
+            const all = document.querySelectorAll('.nav-dropdown');
+            all.forEach(d => { if (d.id !== id) d.classList.remove('open'); });
+            document.getElementById(id).classList.toggle('open');
+        }
+
+        // Klik di luar → tutup semua dropdown
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('open'));
+            }
+        });
+
+        // Klik item dalam dropdown → tutup dropdown & scroll smooth
+        document.querySelectorAll('.nav-dropdown-menu a').forEach(a => {
+            a.addEventListener('click', () => {
+                document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('open'));
+            });
+        });
+
+        // Mobile menu
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+    </script>
 
     {{-- Hero --}}
     <header class="hero-section py-28 px-4 text-center border-b border-emerald-100 overflow-hidden">
