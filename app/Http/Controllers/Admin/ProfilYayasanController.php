@@ -30,7 +30,7 @@ class ProfilYayasanController extends Controller
     // 3. Simpan atau Update Data dari Form
     public function update(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_yayasan'    => 'required|string|max:255',
             'logo'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'alamat'          => 'required|string',
@@ -42,6 +42,11 @@ class ProfilYayasanController extends Controller
             'legalitas'       => 'nullable|string', 
             'foto_legalitas'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'foto_struktur'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+             // Pendiri baru — cuma divalidasi ketat kalau 'pendiri_nama' diisi
+            'pendiri_nama' => 'nullable|string|max:255',
+            'pendiri_jabatan' => 'required_with:pendiri_nama|string|max:255',
+            'pendiri_deskripsi' => 'nullable|string',
+            'pendiri_foto' => 'required_with:pendiri_nama|image|max:1024',
         ]);
 
         $profil = ProfilYayasan::first();
@@ -69,6 +74,16 @@ class ProfilYayasanController extends Controller
             $data['foto_struktur'] = $request->file('foto_struktur')->store('struktur', 'public');
         }
 
+        // Tambahan: kalau admin ngisi nama pendiri di form yang sama, buat record baru
+        if ($request->filled('pendiri_nama')) {
+            Pendiri::create([
+                'nama' => $validated['pendiri_nama'],
+                'jabatan' => $validated['pendiri_jabatan'],
+                'deskripsi' => $validated['pendiri_deskripsi'] ?? null,
+                'foto' => $request->file('pendiri_foto')->store('pendiri', 'public'),
+            ]);
+        }
+        
         ProfilYayasan::updateOrCreate(['id' => $profil ? $profil->id : null], $data);
 
         return redirect()->route('admin.profil.index')->with('success', 'Profil Yayasan beserta gambar berhasil diperbarui!');

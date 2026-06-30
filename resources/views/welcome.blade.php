@@ -732,7 +732,12 @@
                         <img src="{{ asset('storage/' . $person->foto) }}" alt="{{ $person->nama }}" class="w-full h-full object-cover">
                     </div>
                     <h3 class="text-lg font-bold text-emerald-900">{{ $person->nama }}</h3>
-                    <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider mt-1">{{ $person->jabatan }}</p>
+                    <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider mt-1 mb-3">{{ $person->jabatan }}</p>
+                    @if($person->deskripsi)
+                        <p class="text-xs text-gray-500 italic leading-relaxed border-t border-emerald-50 pt-3 mt-1">
+                            "{{ $person->deskripsi }}"
+                        </p>
+                    @endif
                 </div>
             @empty
                 <div class="col-span-full text-center py-8 text-sm text-gray-400 border border-dashed rounded-xl max-w-md mx-auto w-full">

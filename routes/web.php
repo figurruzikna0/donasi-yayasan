@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 
 // Controllers — Admin
 use App\Http\Controllers\Admin\CampaignController;
+use App\Http\Controllers\Admin\ChildDevelopmentController;
 use App\Http\Controllers\Admin\FosterChildController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PendiriController;
@@ -81,6 +82,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Kelola Data Anak Asuh (CRUD profil anak)
     Route::resource('foster-children', FosterChildController::class);
+
+    // Kelola Perkembangan Anak Asuh
+    Route::resource('child-developments', ChildDevelopmentController::class);
 
     // Kelola Sponsorship / Orang Tua Asuh
     Route::get('/sponsorships', [SponsorshipController::class, 'index'])->name('sponsorships.index');
