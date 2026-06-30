@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('jabatan');
+            $table->text('deskripsi')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
         });

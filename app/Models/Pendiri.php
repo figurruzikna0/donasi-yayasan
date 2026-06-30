@@ -10,5 +10,5 @@ class Pendiri extends Model
     use HasFactory;
 
     protected $table = 'pendiris';
-    protected $fillable = ['nama', 'jabatan', 'foto'];
+    protected $fillable = ['nama', 'jabatan', 'deskripsi','foto'];
 }

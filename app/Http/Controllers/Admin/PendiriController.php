@@ -20,10 +20,11 @@ class PendiriController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
             'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data = $request->only(['nama', 'jabatan']);
+        $data = $request->only(['nama', 'jabatan', 'deskripsi']);
 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('pendiri', 'public');

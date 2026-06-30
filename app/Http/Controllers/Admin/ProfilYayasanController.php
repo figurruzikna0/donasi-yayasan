@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProfilYayasan;
+use App\Models\Pendiri; // 👈 Tambahin ini biar kenal sama tabel Pendiri
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProfilYayasanController extends Controller
 {
-    // 1. Tampilkan Halaman Profil
+    // 1. Tampilkan Halaman Profil + Data Pendiri
     public function index()
     {
         $profil = ProfilYayasan::first();
-        return view('admin.profil.index', compact('profil'));
+        $pendiris = Pendiri::latest()->get(); // 👈 Ambil semua data pendiri
+        
+        // Lempar dua-duanya ke halaman view
+        return view('admin.profil.index', compact('profil', 'pendiris'));
     }
 
     // 2. Tampilkan Form Edit / Buat Profil
@@ -24,10 +28,8 @@ class ProfilYayasanController extends Controller
     }
 
     // 3. Simpan atau Update Data dari Form
-    // 3. Simpan atau Update Data dari Form
     public function update(Request $request)
     {
-        // Tambahin validasi buat file upload Legalitas & Struktur, serta Visi Misi
         $request->validate([
             'nama_yayasan'    => 'required|string|max:255',
             'logo'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -35,19 +37,17 @@ class ProfilYayasanController extends Controller
             'no_telp'         => 'required|string',
             'email'           => 'required|email',
             'sejarah_yayasan' => 'required',
-            'visi'            => 'required|string', // Tambahan Validasi Visi
-            'misi'            => 'required|string', // Tambahan Validasi Misi
+            'visi'            => 'required|string', 
+            'misi'            => 'required|string', 
             'legalitas'       => 'nullable|string', 
-            'foto_legalitas'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // maks 2MB
-            'foto_struktur'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // maks 2MB
+            'foto_legalitas'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_struktur'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $profil = ProfilYayasan::first();
         
-        // Pisahin file dari data teks (Otomatis menyertakan visi & misi karena tidak dikecualikan)
         $data = $request->except(['logo', 'foto_legalitas', 'foto_struktur']); 
 
-        // Upload Logo
         if ($request->hasFile('logo')) {
             if ($profil && $profil->logo) {
                 Storage::disk('public')->delete($profil->logo);
@@ -55,7 +55,6 @@ class ProfilYayasanController extends Controller
             $data['logo'] = $request->file('logo')->store('logo', 'public');
         }
 
-        // Upload Foto Legalitas
         if ($request->hasFile('foto_legalitas')) {
             if ($profil && $profil->foto_legalitas) {
                 Storage::disk('public')->delete($profil->foto_legalitas);
@@ -63,7 +62,6 @@ class ProfilYayasanController extends Controller
             $data['foto_legalitas'] = $request->file('foto_legalitas')->store('legalitas', 'public');
         }
 
-        // Upload Foto Struktur Pengurus
         if ($request->hasFile('foto_struktur')) {
             if ($profil && $profil->foto_struktur) {
                 Storage::disk('public')->delete($profil->foto_struktur);
@@ -71,7 +69,6 @@ class ProfilYayasanController extends Controller
             $data['foto_struktur'] = $request->file('foto_struktur')->store('struktur', 'public');
         }
 
-        // Simpan ke database
         ProfilYayasan::updateOrCreate(['id' => $profil ? $profil->id : null], $data);
 
         return redirect()->route('admin.profil.index')->with('success', 'Profil Yayasan beserta gambar berhasil diperbarui!');

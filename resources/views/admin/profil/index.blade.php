@@ -530,7 +530,7 @@
                 </div>
 
                 {{-- ── ACTIONS ── --}}
-                <div class="form-actions">
+                <div class="form-actions mb-10">
                     <a href="{{ route('admin.profil.index') }}" class="btn-cancel">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                         Batal
@@ -540,30 +540,80 @@
                         Simpan Perubahan
                     </button>
                 </div>
-
             </form>
+
+            <hr class="my-10 border-[#b3e093]">
+
+            <h2 class="text-2xl font-bold mb-6 text-[#354a2b]">Susunan Pendiri Yayasan</h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+                
+                <div class="bg-white p-6 rounded-lg shadow-md h-fit border border-[#b3e093]">
+                    <h3 class="text-lg font-semibold mb-4 text-[#47623a]">Tambah Pendiri</h3>
+                    <form action="{{ route('admin.pendiri.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Nama</label>
+                            <input type="text" name="nama" class="w-full px-3 py-2 border rounded-lg focus:ring-[#76a45b]" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Jabatan</label>
+                            <input type="text" name="jabatan" class="w-full px-3 py-2 border rounded-lg focus:ring-[#76a45b]" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Kata Sambutan</label>
+                            <textarea name="deskripsi" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-[#76a45b]"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Foto</label>
+                            <input type="file" name="foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-[#f3fbea] file:text-[#5c8148]" required>
+                        </div>
+                        <button type="submit" class="w-full bg-[#5c8148] hover:bg-[#47623a] text-white font-bold py-2 px-4 rounded-lg">Simpan Pendiri</button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-[#b3e093]">
+                    <h3 class="text-lg font-semibold mb-4 text-[#47623a]">Daftar Pendiri Saat Ini</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-[#f3fbea] text-[#354a2b] uppercase text-xs border-b border-[#b3e093]">
+                                    <th class="py-3 px-4 text-left">Profil</th>
+                                    <th class="py-3 px-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm">
+                                @forelse($pendiris as $pendiri)
+                                    <tr class="border-b border-gray-200">
+                                        <td class="py-3 px-4 flex gap-4">
+                                            @if($pendiri->foto)
+                                                <img src="{{ asset('storage/' . $pendiri->foto) }}" class="w-16 h-16 rounded-lg object-cover border border-[#a1c181]">
+                                            @endif
+                                            <div>
+                                                <div class="font-bold text-gray-800">{{ $pendiri->nama }}</div>
+                                                <div class="text-[#5c8148] text-xs mb-1">{{ $pendiri->jabatan }}</div>
+                                                <p class="text-gray-500 text-xs italic line-clamp-2">"{{ $pendiri->deskripsi }}"</p>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4 text-center align-middle">
+                                            <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" onsubmit="return confirm('Hapus data ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="py-6 text-center text-gray-400">Belum ada data pendiri.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
         </main>
     </div>
-
-    <script>
-    function previewFile(input, labelId, imgId) {
-        const label = document.getElementById(labelId);
-        const img   = document.getElementById(imgId);
-
-        if (input.files && input.files[0]) {
-            label.textContent = input.files[0].name;
-
-            // Tampilkan preview wrap kalau ada
-            const wrap = document.getElementById(imgId.replace('-img', '-preview-wrap'));
-            if (wrap) wrap.style.display = 'block';
-
-            const reader = new FileReader();
-            reader.onload = e => {
-                img.src = e.target.result;
-                img.style.display = 'block';
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    </script>
 </x-app-layout>
