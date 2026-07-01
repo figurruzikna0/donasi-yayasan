@@ -180,9 +180,13 @@
                 <div class="mb-6">
                     <label for="payment_method" class="custom-label">Metode Pembayaran Transfer</label>
                     <select name="payment_method" id="payment_method" class="custom-select" required>
-                        <option value="BCA"     {{ old('payment_method') == 'BCA'     ? 'selected' : '' }}>Bank BCA</option>
-                        <option value="Mandiri" {{ old('payment_method') == 'Mandiri' ? 'selected' : '' }}>Bank Mandiri</option>
-                        <option value="BSI"     {{ old('payment_method') == 'BSI'     ? 'selected' : '' }}>Bank Syariah Indonesia (BSI)</option>
+                        <option value="BCA VA"     {{ old('payment_method') == 'BCA VA'     ? 'selected' : '' }}>Virtual Account BCA</option>
+                        <option value="CIMB NIAGA VA" {{ old('payment_method') == 'CIMB NIAGA VA' ? 'selected' : '' }}>Virtual Account CIMB NIAGA</option>
+                        <option value="Permata VA"     {{ old('payment_method') == 'PERMATA VA'     ? 'selected' : '' }}>Virtual Account PERMATA</option>
+                        <option value="BNI VA"     {{ old('payment_method') == 'BNI VA'     ? 'selected' : '' }}>Virtual Account BNI</option>
+                        <option value="BSI VA"  {{ old('payment_method') == 'BSI VA'  ? 'selected' : '' }}>Virtual Account BSI</option>
+                        <option value="BRI VA"  {{ old('payment_method') == 'BRI VA'  ? 'selected' : '' }}>Virtual Account BRI</option>
+                        <option value="Lainnya"     {{ old('payment_method') == 'Lainnya'     ? 'selected' : '' }}>Metode Lainnya</option>
                     </select>
                 </div>
 
@@ -204,15 +208,15 @@
     <script>
         const dataPaket = {
             'Bronze': {
-                nominal: 150000,
+                nominal: 1500000,
                 keterangan: 'Biaya SPP pendidikan dasar dan buku pelajaran bulanan.'
             },
             'Silver': {
-                nominal: 300000,
+                nominal: 1750000,
                 keterangan: 'Biaya SPP pendidikan, buku pelajaran, dan alokasi uang saku harian.'
             },
             'Gold': {
-                nominal: 500000,
+                nominal: 2500000,
                 keterangan: 'Pembiayaan penuh (Pendidikan, uang saku, suplemen gizi, dan jaminan kesehatan bulanan).'
             }
         };

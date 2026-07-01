@@ -70,6 +70,15 @@
         }
         .form-textarea { resize: vertical; }
 
+        /* Custom select arrow */
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2376a45b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
         .field-group { margin-bottom: 20px; }
         .field-error  { font-size: 0.78rem; color: #e06b4f; margin-top: 4px; }
 
@@ -105,6 +114,33 @@
         input[type="file"].hidden-file {
             position: absolute; inset: 0; opacity: 0;
             cursor: pointer; width: 100%; height: 100%;
+        }
+
+        /* Gender radio */
+        .gender-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .gender-option { position: relative; }
+        .gender-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+        .gender-label {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-size: 0.85rem; font-weight: 700;
+            cursor: pointer;
+            border: 1.5px solid #cde8b4;
+            color: #6b7280;
+            background: #f9fef4;
+            transition: all 0.2s;
+        }
+        .gender-label svg { width: 15px; height: 15px; }
+        .gender-option input:checked + .gender-label {
+            border-color: var(--muted-olive-2);
+            box-shadow: 0 0 0 3px rgba(139,182,80,0.18);
+        }
+        .gender-option input[value="Laki-laki"]:checked + .gender-label {
+            background: #dbeafe; color: #1e40af; border-color: #93c5fd;
+        }
+        .gender-option input[value="Perempuan"]:checked + .gender-label {
+            background: #fce7f3; color: #9d174d; border-color: #fbcfe8;
         }
 
         /* Status radio */
@@ -206,9 +242,33 @@
                         <div class="field-group">
                             <label class="field-label" for="age">Usia (Tahun)</label>
                             <input type="number" id="age" name="age" class="form-input" required
-                                   min="0" max="25"
+                                   min="0" max="25" style="max-width:160px;"
                                    value="{{ old('age', $fosterChild->age) }}">
                             @error('age') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Jenis Kelamin --}}
+                        <div class="field-group">
+                            <label class="field-label">Jenis Kelamin</label>
+                            <div class="gender-group">
+                                <div class="gender-option">
+                                    <input type="radio" id="jk-laki" name="jenis_kelamin" value="Laki-laki"
+                                           @checked(old('jenis_kelamin', $fosterChild->jenis_kelamin) === 'Laki-laki')>
+                                    <label for="jk-laki" class="gender-label">
+                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 3h5m0 0v5m0-5l-6 6M12 12a5 5 0 100-10 5 5 0 000 10zm0 0v9"/></svg>
+                                        Laki-laki
+                                    </label>
+                                </div>
+                                <div class="gender-option">
+                                    <input type="radio" id="jk-perempuan" name="jenis_kelamin" value="Perempuan"
+                                           @checked(old('jenis_kelamin', $fosterChild->jenis_kelamin) === 'Perempuan')>
+                                    <label for="jk-perempuan" class="gender-label">
+                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 14a5 5 0 100-10 5 5 0 000 10zm0 0v4m-3 2h6"/></svg>
+                                        Perempuan
+                                    </label>
+                                </div>
+                            </div>
+                            @error('jenis_kelamin') <p class="field-error">{{ $message }}</p> @enderror
                         </div>
 
                         {{-- Deskripsi --}}
@@ -257,7 +317,6 @@
                             </div>
                             <p class="file-hint">JPG, PNG, WEBP — Maks 2MB</p>
 
-                            {{-- Foto saat ini --}}
                             @if($fosterChild->photo)
                                 <p class="file-hint" style="margin-top:10px;">Foto saat ini:</p>
                                 <img src="{{ asset('storage/' . $fosterChild->photo) }}"
@@ -266,7 +325,6 @@
                                      id="preview-current">
                             @endif
 
-                            {{-- Preview foto baru --}}
                             <img id="preview-new" class="preview-img" style="display:none;" alt="Preview">
                             @error('photo') <p class="field-error">{{ $message }}</p> @enderror
                         </div>
@@ -313,7 +371,6 @@
                 reader.onload = e => {
                     previewN.src = e.target.result;
                     previewN.style.display = 'block';
-                    // Sembunyikan foto lama kalau ada foto baru
                     if (previewC) previewC.style.display = 'none';
                 };
                 reader.readAsDataURL(this.files[0]);

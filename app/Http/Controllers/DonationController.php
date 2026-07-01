@@ -198,6 +198,7 @@ class DonationController extends Controller
         $fonnte      = new FonnteService();
         $namaAnak    = $child?->name ?? 'anak asuh';
         $usiaAnak    = $child?->age  ? $child->age . ' tahun' : '-';
+        $kelamin     = $child?->jenis_kelamin ?? '-';
         $paket       = $sponsorship->package   ?? '-';
         $nominal     = 'Rp ' . number_format($sponsorship->amount, 0, ',', '.');
         $mulai       = $sponsorship->starts_at
@@ -216,7 +217,8 @@ class DonationController extends Controller
                . "━━━━━━━━━━━━━━━━━\n"
                . "👦 *Data Anak Asuh*\n"
                . "Nama   : {$namaAnak}\n"
-               . "Usia   : {$usiaAnak}\n\n"
+               . "Usia   : {$usiaAnak}\n"
+               . "J.Kelamin: {$kelamin}\n\n"
                . "📦 *Rincian Paket*\n"
                . "Paket  : {$paket}\n"
                . "Nominal: {$nominal}\n"

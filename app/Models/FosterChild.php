@@ -9,13 +9,13 @@ class FosterChild extends Model
 {
     use HasFactory;
 
-    // Buka gembok kolom yang boleh diisi
     protected $fillable = [
         'name',
         'age',
         'description',
         'photo',
         'status',
+        'jenis_kelamin', // ★ TAMBAHAN
     ];
 
     public function sponsorships()
@@ -28,5 +28,12 @@ class FosterChild extends Model
         return $this->hasOne(Sponsorship::class)
             ->where('status', 'success')
             ->latestOfMany('expires_at');
+    }
+
+    // ★ TAMBAHAN: relasi ke laporan perkembangan
+    public function developments()
+    {
+        return $this->hasMany(ChildDevelopment::class)
+            ->orderByDesc('tanggal');
     }
 }

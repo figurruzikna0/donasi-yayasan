@@ -26,14 +26,15 @@ class FosterChildController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'        => 'required|string|max:255',
-            'age'         => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'status'      => 'nullable|string|max:50',
+            'name'          => 'required|string|max:255',
+            'age'           => 'required|integer|min:0',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'description'   => 'nullable|string',
+            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'status'        => 'nullable|string|max:50',
         ]);
 
-        $data = $request->only(['name', 'age', 'description', 'status']);
+        $data = $request->only(['name', 'age', 'jenis_kelamin', 'description', 'status']);
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('foster_children', 'public');
@@ -46,33 +47,33 @@ class FosterChildController extends Controller
             ->with('success', 'Data Anak Asuh berhasil ditambahkan!');
     }
 
-    // 4. Detail (opsional, dibutuhkan resource route)
+    // 4. Detail
     public function show(FosterChild $fosterChild)
     {
         return redirect()->route('admin.foster-children.edit', $fosterChild);
     }
 
-    // 5. ★ Form edit ★
+    // 5. Form edit
     public function edit(FosterChild $fosterChild)
     {
         return view('admin.foster_children.edit', compact('fosterChild'));
     }
 
-    // 6. ★ Simpan perubahan ★
+    // 6. Simpan perubahan
     public function update(Request $request, FosterChild $fosterChild)
     {
         $request->validate([
-            'name'        => 'required|string|max:255',
-            'age'         => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'status'      => 'nullable|string|max:50',
+            'name'          => 'required|string|max:255',
+            'age'           => 'required|integer|min:0',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'description'   => 'nullable|string',
+            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'status'        => 'nullable|string|max:50',
         ]);
 
-        $data = $request->only(['name', 'age', 'description', 'status']);
+        $data = $request->only(['name', 'age', 'jenis_kelamin', 'description', 'status']);
 
         if ($request->hasFile('photo')) {
-            // Hapus foto lama kalau ada
             if ($fosterChild->photo) {
                 Storage::disk('public')->delete($fosterChild->photo);
             }

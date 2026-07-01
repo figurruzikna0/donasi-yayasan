@@ -129,6 +129,34 @@
             margin-bottom: 10px;
         }
 
+        .ota-gender-laki {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            margin-bottom: 10px;
+        }
+
+        .ota-gender-perempuan {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #fce7f3;
+            color: #9d174d;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 9999px;
+            border: 1px solid #fbcfe8;
+            margin-bottom: 10px;
+        }
+
         .ota-status-available {
             display: inline-flex;
             align-items: center;
@@ -804,6 +832,13 @@
                                     <span class="ota-status-taken">Diasuh</span>
                                 @endif
                             </div>
+                            @if($child->jenis_kelamin)
+                                @if($child->jenis_kelamin == 'Laki-laki')
+                                    <span class="ota-gender-laki">♂ Laki-laki</span>
+                                @else
+                                    <span class="ota-gender-perempuan">♀ Perempuan</span>
+                                @endif
+                            @endif
                             <h3 class="font-bold text-base mb-2" style="color: var(--fern);">{{ $child->name }}</h3>
                             @if($child->description)
                                 <p class="text-xs leading-relaxed mb-4 line-clamp-3" style="color: var(--sage-green);">{{ $child->description }}</p>

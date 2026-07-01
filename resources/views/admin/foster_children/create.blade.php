@@ -267,6 +267,9 @@
                             @enderror
                         </div>
 
+
+
+
                         {{-- Umur --}}
                         <div class="field-group">
                             <label class="field-label" for="age">Umur (Tahun)</label>
@@ -286,6 +289,27 @@
                                 <p class="field-error">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        {{-- Jenis Kelamin --}}
+                        <div class="field-group">
+                            <label class="field-label" for="jenis_kelamin">Jenis Kelamin</label>
+                            <select
+                                id="jenis_kelamin"
+                                name="jenis_kelamin"
+                                required
+                                class="form-input"
+                                style="max-width: 220px; appearance: none; background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2376a45b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;"
+                            >
+                                <option value="" disabled {{ old('jenis_kelamin') ? '' : 'selected' }}>-- Pilih --</option>
+                                <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <p class="field-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-divider"></div>
 
                         <div class="form-divider"></div>
 

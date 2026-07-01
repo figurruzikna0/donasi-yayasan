@@ -125,11 +125,12 @@
         /* ══ SUMMARY CARDS ══ */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
-        @media (max-width: 720px) { .summary-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 520px) { .summary-grid { grid-template-columns: 1fr; } }
 
         .summary-card {
             background: #fff;
@@ -151,9 +152,9 @@
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
-        .summary-icon.accent {
-            background: var(--muted-olive-2); color: #fff;
-        }
+        .summary-icon.accent  { background: var(--muted-olive-2); color: #fff; }
+        .summary-icon.boy     { background: #dbeafe; color: #1d4ed8; }
+        .summary-icon.girl    { background: #fce7f3; color: #be185d; }
         .summary-icon svg { width: 22px; height: 22px; }
         .summary-label {
             font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
@@ -224,7 +225,22 @@
         .data-table tbody tr:hover { background: #fafff7; }
         .data-table td { padding: 14px 20px; vertical-align: middle; }
 
-        /* ══ BADGES ══ */
+        /* ══ GENDER BADGE ══ */
+        .badge-gender {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 11px; border-radius: 999px;
+            font-size: 0.72rem; font-weight: 700;
+        }
+        .badge-gender-laki {
+            background: #dbeafe; color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .badge-gender-perempuan {
+            background: #fce7f3; color: #9d174d;
+            border: 1px solid #fbcfe8;
+        }
+
+        /* ══ STATUS BADGES ══ */
         .badge {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 4px 12px; border-radius: 999px;
@@ -262,7 +278,6 @@
             cursor: pointer; transition: background 0.2s, border-color 0.2s;
         }
         .btn-delete:hover { background: var(--fern); border-color: var(--fern); }
-
         .btn-edit svg, .btn-delete svg { width: 13px; height: 13px; }
 
         /* ══ EMPTY STATE ══ */
@@ -364,7 +379,7 @@
                 </a>
             </div>
 
-            {{-- Summary Cards --}}
+            {{-- Summary Cards — 4 kolom, tambah Laki-laki & Perempuan --}}
             <div class="summary-grid">
                 <div class="summary-card">
                     <div class="summary-icon">
@@ -375,15 +390,29 @@
                         <div class="summary-value">{{ $children->count() }}</div>
                     </div>
                 </div>
+
                 <div class="summary-card">
-                    <div class="summary-icon">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div class="summary-icon boy">
+                        {{-- Male icon --}}
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3h5m0 0v5m0-5l-6 6M12 12a5 5 0 100-10 5 5 0 000 10zm0 0v9"/></svg>
                     </div>
                     <div>
-                        <div class="summary-label">Tersedia</div>
-                        <div class="summary-value">{{ $children->where('status', 'Tersedia')->count() }}</div>
+                        <div class="summary-label">Laki-laki</div>
+                        <div class="summary-value">{{ $children->where('jenis_kelamin', 'Laki-laki')->count() }}</div>
                     </div>
                 </div>
+
+                <div class="summary-card">
+                    <div class="summary-icon girl">
+                        {{-- Female icon --}}
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14a5 5 0 100-10 5 5 0 000 10zm0 0v4m-3 2h6"/></svg>
+                    </div>
+                    <div>
+                        <div class="summary-label">Perempuan</div>
+                        <div class="summary-value">{{ $children->where('jenis_kelamin', 'Perempuan')->count() }}</div>
+                    </div>
+                </div>
+
                 <div class="summary-card">
                     <div class="summary-icon accent">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
@@ -419,6 +448,7 @@
                                 <th>Foto</th>
                                 <th>Nama</th>
                                 <th>Umur</th>
+                                <th>Jenis Kelamin</th>
                                 <th>Status</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
@@ -452,6 +482,23 @@
                                             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                             {{ $child->age }} Tahun
                                         </span>
+                                    </td>
+
+                                    {{-- Jenis Kelamin --}}
+                                    <td>
+                                        @if($child->jenis_kelamin === 'Laki-laki')
+                                            <span class="badge-gender badge-gender-laki">
+                                                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 3h5m0 0v5m0-5l-6 6M12 12a5 5 0 100-10 5 5 0 000 10zm0 0v9"/></svg>
+                                                Laki-laki
+                                            </span>
+                                        @elseif($child->jenis_kelamin === 'Perempuan')
+                                            <span class="badge-gender badge-gender-perempuan">
+                                                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 14a5 5 0 100-10 5 5 0 000 10zm0 0v4m-3 2h6"/></svg>
+                                                Perempuan
+                                            </span>
+                                        @else
+                                            <span style="font-size:0.78rem;color:#9ca3af;">—</span>
+                                        @endif
                                     </td>
 
                                     {{-- Status --}}
@@ -491,7 +538,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5">
+                                    <td colspan="6">
                                         <div class="empty-state">
                                             <div class="empty-state-icon">
                                                 <svg fill="none" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m4-4a4 4 0 100-8 4 4 0 000 8z"/></svg>

@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ChildDevelopmentController extends Controller
 {
-    // Daftar semua laporan perkembangan
     public function index()
     {
         $developments = ChildDevelopment::with(['fosterChild', 'sponsorship', 'user'])
@@ -23,14 +22,12 @@ class ChildDevelopmentController extends Controller
         return view('admin.child-developments.index', compact('developments'));
     }
 
-    // Form tambah laporan baru
     public function create()
     {
         $children = FosterChild::where('status', 'Diasuh')->get();
         return view('admin.child-developments.create', compact('children'));
     }
 
-    // Simpan laporan baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -41,7 +38,6 @@ class ChildDevelopmentController extends Controller
             'foto'            => 'nullable|image|max:3072',
         ]);
 
-        // Cari sponsorship aktif untuk anak ini
         $sponsorship = Sponsorship::where('foster_child_id', $validated['foster_child_id'])
             ->where('status', 'success')
             ->latest()
@@ -54,7 +50,7 @@ class ChildDevelopmentController extends Controller
         }
 
         $validated['sponsorship_id'] = $sponsorship->id;
-        $validated['user_id'] = auth()->id();
+        $validated['user_id']        = auth()->id();
 
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('child-developments', 'public');
@@ -62,7 +58,6 @@ class ChildDevelopmentController extends Controller
 
         $development = ChildDevelopment::create($validated);
 
-        // ✅ Kirim notifikasi WA ke orang tua asuh
         if ($sponsorship->donor_phone) {
             try {
                 $this->kirimWaLaporan($development, $sponsorship);
@@ -75,7 +70,6 @@ class ChildDevelopmentController extends Controller
             ->with('success', 'Laporan perkembangan berhasil ditambahkan & notifikasi WA terkirim ke orang tua asuh!');
     }
 
-    // Form edit
     public function edit(ChildDevelopment $childDevelopment)
     {
         $children = FosterChild::where('status', 'Diasuh')->get();
@@ -85,7 +79,6 @@ class ChildDevelopmentController extends Controller
         ]);
     }
 
-    // Update laporan
     public function update(Request $request, ChildDevelopment $childDevelopment)
     {
         $validated = $request->validate([
@@ -108,7 +101,6 @@ class ChildDevelopmentController extends Controller
             ->with('success', 'Laporan perkembangan berhasil diperbarui!');
     }
 
-    // Hapus laporan
     public function destroy(ChildDevelopment $childDevelopment)
     {
         if ($childDevelopment->foto) {
@@ -128,6 +120,7 @@ class ChildDevelopmentController extends Controller
         $child    = $development->fosterChild;
 
         $namaAnak  = $child?->name ?? 'anak asuh';
+        $kelamin   = $child?->jenis_kelamin ?? '-';
         $namaOTA   = $sponsorship->donor_name;
         $tanggal   = $development->tanggal->translatedFormat('d F Y');
         $judul     = $development->judul;
@@ -137,38 +130,26 @@ class ChildDevelopmentController extends Controller
                . "📋 *Laporan Perkembangan Anak Asuh Anda*\n\n"
                . "Alhamdulillah, ada update terbaru tentang anak yang Anda sponsori. Berikut laporannya:\n\n"
                . "━━━━━━━━━━━━━━━━━\n"
-               . "👦 *Nama Anak* : {$namaAnak}\n"
-               . "🗓 *Tanggal*   : {$tanggal}\n\n"
+               . "👦 *Nama Anak*    : {$namaAnak}\n"
+               . "⚧  *Jenis Kelamin*: {$kelamin}\n"
+               . "🗓 *Tanggal*      : {$tanggal}\n\n"
                . "📌 *{$judul}*\n\n"
                . "{$deskripsi}\n"
                . "━━━━━━━━━━━━━━━━━\n\n"
                . "Terima kasih atas kepedulian dan dukungan Anda yang berkelanjutan. Semoga menjadi amal jariyah yang terus mengalir. 🤲\n\n"
                . "_Baitul Yatim_";
 
+        // Kirim pesan teks dulu
         $fonnte->send($sponsorship->donor_phone, $pesan);
 
-        // Kalau ada foto, kirim juga sebagai pesan terpisah (Fonnte butuh endpoint berbeda untuk media)
+        // Kirim foto sebagai pesan terpisah kalau ada
+        // (hanya berhasil kalau paket Fonnte support attachment & APP_URL bisa diakses publik)
         if ($development->foto) {
-            $this->kirimWaFoto($sponsorship->donor_phone, $development->foto);
-        }
-    }
-
-    // ── Private: kirim foto laporan via Fonnte (endpoint media) ──
-    private function kirimWaFoto(string $phone, string $fotoPath): void
-    {
-        try {
-            $url = asset('storage/' . $fotoPath);
-
-            \Illuminate\Support\Facades\Http::withHeaders([
-                'Authorization' => config('services.fonnte.token'),
-            ])->post('https://api.fonnte.com/send', [
-                'target' => $phone,
-                'url'    => $url,
-                'message' => '📸 Foto perkembangan anak asuh Anda',
-            ]);
-
-        } catch (\Throwable $e) {
-            Log::error('Gagal kirim foto WA: ' . $e->getMessage());
+            $fonnte->sendWithMedia(
+                $sponsorship->donor_phone,
+                '📸 Foto perkembangan anak asuh Anda',
+                $development->foto
+            );
         }
     }
 }
