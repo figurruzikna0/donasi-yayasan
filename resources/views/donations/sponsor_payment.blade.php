@@ -1,4 +1,3 @@
-{{-- resources/views/donations/sponsor_payment.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pembayaran Sponsor - {{ $child->name }}</title>
 
-    {{-- Midtrans Snap.js --}}
     @if(config('midtrans.is_production'))
         <script src="https://app.midtrans.com/snap/snap.js"
                 data-client-key="{{ config('midtrans.client_key') }}"></script>
@@ -15,205 +13,65 @@
                 data-client-key="{{ config('midtrans.client_key') }}"></script>
     @endif
 
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f3f4f6;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,.08);
-            max-width: 480px;
-            width: 100%;
-            padding: 40px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #ecfdf5;
-            color: #059669;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: .6px;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 999px;
-            margin-bottom: 16px;
-        }
-
-        h1 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 28px;
-        }
-
-        .divider {
-            border: none;
-            border-top: 1px solid #e5e7eb;
-            margin: 20px 0;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .detail-row .label {
-            color: #6b7280;
-            flex-shrink: 0;
-            margin-right: 12px;
-        }
-
-        .detail-row .value {
-            color: #111827;
-            font-weight: 500;
-            text-align: right;
-        }
-
-        .amount-box {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin: 20px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .amount-box .amount-label {
-            font-size: 13px;
-            color: #065f46;
-        }
-
-        .amount-box .amount-value {
-            font-size: 22px;
-            font-weight: 700;
-            color: #065f46;
-        }
-
-        .order-id {
-            font-size: 12px;
-            color: #9ca3af;
-            font-family: monospace;
-            margin-top: 4px;
-        }
-
-        .btn-pay {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background: #16a34a;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background .2s;
-            margin-top: 24px;
-        }
-
-        .btn-pay:hover { background: #15803d; }
-        .btn-pay:disabled { background: #86efac; cursor: not-allowed; }
-
-        .btn-back {
-            display: block;
-            text-align: center;
-            margin-top: 14px;
-            font-size: 14px;
-            color: #6b7280;
-            text-decoration: none;
-        }
-
-        .btn-back:hover { color: #374151; }
-
-        .info-note {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 13px;
-            color: #92400e;
-            margin-top: 20px;
-            line-height: 1.5;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="font-sans bg-base-200 min-h-screen flex items-center justify-center p-6">
 
-<div class="card">
-    <span class="badge">Sponsorship</span>
-    <h1>Konfirmasi Pembayaran</h1>
-    <p class="subtitle">Silakan periksa detail sponsorship sebelum melanjutkan pembayaran.</p>
+<div class="card bg-base-100 shadow-xl max-w-md w-full">
+    <div class="card-body p-8">
+        <span class="badge badge-success mb-4">Sponsorship</span>
+        <h1 class="text-2xl font-bold text-gray-900 mb-1">Konfirmasi Pembayaran</h1>
+        <p class="text-sm text-gray-500 mb-6">Silakan periksa detail sponsorship sebelum melanjutkan pembayaran.</p>
 
-    <div class="detail-row">
-        <span class="label">Anak Asuh</span>
-        <span class="value">{{ $child->name }}</span>
-    </div>
-    <div class="detail-row">
-        <span class="label">Donatur</span>
-        <span class="value">{{ $sponsorship->donor_name }}</span>
-    </div>
-    <div class="detail-row">
-        <span class="label">Email</span>
-        <span class="value">{{ $sponsorship->donor_email }}</span>
-    </div>
-    <div class="detail-row">
-        <span class="label">Paket</span>
-        <span class="value">{{ $sponsorship->package }}</span>
-    </div>
-    <div class="detail-row">
-        <span class="label">Keterangan</span>
-        <span class="value" style="max-width:240px;">{{ $sponsorship->package_description }}</span>
-    </div>
-    <div class="detail-row">
-        <span class="label">Metode Bayar</span>
-        <span class="value">{{ $sponsorship->payment_method }}</span>
-    </div>
-
-    <hr class="divider">
-
-    <div class="amount-box">
-        <div>
-            <div class="amount-label">Total Pembayaran</div>
-            <div class="order-id">{{ $sponsorship->order_id }}</div>
+        <div class="flex justify-between items-start mb-3 text-sm">
+            <span class="text-gray-500 flex-shrink-0 mr-3">Anak Asuh</span>
+            <span class="text-gray-900 font-medium text-right">{{ $child->name }}</span>
         </div>
-        <div class="amount-value">
-            Rp {{ number_format($sponsorship->amount, 0, ',', '.') }}
+        <div class="flex justify-between items-start mb-3 text-sm">
+            <span class="text-gray-500 flex-shrink-0 mr-3">Donatur</span>
+            <span class="text-gray-900 font-medium text-right">{{ $sponsorship->donor_name }}</span>
         </div>
+        <div class="flex justify-between items-start mb-3 text-sm">
+            <span class="text-gray-500 flex-shrink-0 mr-3">Email</span>
+            <span class="text-gray-900 font-medium text-right">{{ $sponsorship->donor_email }}</span>
+        </div>
+        <div class="flex justify-between items-start mb-3 text-sm">
+            <span class="text-gray-500 flex-shrink-0 mr-3">Paket</span>
+            <span class="text-gray-900 font-medium text-right">{{ $sponsorship->package }}</span>
+        </div>
+        <div class="flex justify-between items-start mb-3 text-sm">
+            <span class="text-gray-500 flex-shrink-0 mr-3">Keterangan</span>
+            <span class="text-gray-900 font-medium text-right max-w-[240px]">{{ $sponsorship->package_description }}</span>
+        </div>
+        <div class="flex justify-between items-start mb-3 text-sm">
+            <span class="text-gray-500 flex-shrink-0 mr-3">Metode Bayar</span>
+            <span class="text-gray-900 font-medium text-right">{{ $sponsorship->payment_method }}</span>
+        </div>
+
+        <div class="divider my-4"></div>
+
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 my-5 flex justify-between items-center">
+            <div>
+                <div class="text-xs font-semibold text-emerald-700">Total Pembayaran</div>
+                <div class="text-xs font-mono text-emerald-600 mt-1">{{ $sponsorship->order_id }}</div>
+            </div>
+            <div class="text-xl font-bold text-emerald-700">
+                Rp {{ number_format($sponsorship->amount, 0, ',', '.') }}
+            </div>
+        </div>
+
+        <div class="alert alert-warning text-sm">
+            💳 Anda akan diarahkan ke halaman pembayaran Midtrans. Selesaikan pembayaran dalam batas waktu yang ditentukan.
+        </div>
+
+        <button class="btn btn-success w-full text-white font-bold mt-5" id="pay-btn" onclick="startPayment()">
+            Bayar Sekarang
+        </button>
+
+        <a href="{{ route('sponsor.form', $child->id) }}" class="link link-hover text-gray-500 text-sm text-center block mt-3">
+            ← Kembali
+        </a>
     </div>
-
-    <div class="info-note">
-        💳 Anda akan diarahkan ke halaman pembayaran Midtrans. Selesaikan pembayaran dalam batas waktu yang ditentukan.
-    </div>
-
-    <button class="btn-pay" id="pay-btn" onclick="startPayment()">
-        Bayar Sekarang
-    </button>
-
-    <a href="{{ route('sponsor.form', $child->id) }}" class="btn-back">
-        ← Kembali
-    </a>
 </div>
 
 <script>

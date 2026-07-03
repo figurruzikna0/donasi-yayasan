@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\PendiriController;
 use App\Http\Controllers\Admin\ProfilYayasanController;
 use App\Http\Controllers\Admin\SponsorshipController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\UserController;
 
 // Models
 use App\Models\Campaign;
@@ -26,6 +27,12 @@ use App\Models\ProfilYayasan;
 
 // --- RUTE HALAMAN DEPAN ---
 Route::get('/', function () {
+    if (Auth::check()) {
+        return Auth::user()->role === 'admin'
+            ? redirect('/admin/dashboard')
+            : redirect('/dashboard');
+    }
+
     $campaigns = Campaign::where('status', 'active')->latest()->get();
     $profil = ProfilYayasan::first();
     $fosterChildren = FosterChild::latest()->get();
@@ -34,13 +41,13 @@ Route::get('/', function () {
     return view('welcome', compact('campaigns', 'profil', 'fosterChildren', 'newsList'));
 });
 
-// --- RUTE PUBLIK: DONASI KAMPANYE ---
-Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donations.create');
-Route::post('/campaign/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
-
-// --- RUTE PUBLIK: SPONSOR ORANG TUA ASUH ---
-Route::get('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorForm'])->name('sponsor.form');
-Route::post('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorStore'])->name('sponsor.store');
+// --- RUTE DONASI & SPONSOR (wajib login) ---
+Route::middleware(['auth'])->group(function () {
+    Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donations.create');
+    Route::post('/campaign/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
+    Route::get('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorForm'])->name('sponsor.form');
+    Route::post('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorStore'])->name('sponsor.store');
+});
 
 // --- RUTE CALLBACK MIDTRANS (dipanggil server Midtrans, bukan user) ---
 Route::post('/midtrans/callback', [DonationController::class, 'callback'])
@@ -102,6 +109,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
+
+    // Kelola Data User
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
 require __DIR__.'/auth.php';

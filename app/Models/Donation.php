@@ -11,10 +11,11 @@ class Donation extends Model
 
     protected $fillable = [
         'campaign_id',
-        'order_id',    // <-- Pastikan ini ada
-        'snap_token',  // <-- Pastikan ini ada
+        'order_id',
+        'snap_token',
         'donor_name',
         'donor_email',
+        'user_id',
         'amount',
         'payment_method',
         'payment_proof',
@@ -24,5 +25,10 @@ class Donation extends Model
     public function campaign()
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

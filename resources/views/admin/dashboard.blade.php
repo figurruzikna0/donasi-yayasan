@@ -1,520 +1,88 @@
 <x-app-layout>
-    <style>
-        :root {
-            --celadon:       #b3e093;
-            --lime-cream:    #d6ec89;
-            --muted-olive:   #a1c181;
-            --muted-olive-2: #8bb650;
-            --sage-green:    #76a45b;
-            --fern:          #5c8148;
-            --fern-dark:     #47623a;
-            --fern-deep:     #354a2b;
-            --bg:            #f3fbea;
-        }
-
-        /* ══ SHELL ══ */
-        .dash-shell {
-            display: flex;
-            min-height: 100vh;
-            background: var(--bg);
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-
-        /* ══ SIDEBAR ══ */
-        .dash-sidebar {
-            width: 230px;
-            flex-shrink: 0;
-            background: var(--fern);
-            display: flex;
-            flex-direction: column;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar-brand {
-            padding: 20px 18px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-brand-name {
-            font-size: 1rem;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-        }
-
-        .sidebar-brand-name span { color: var(--celadon); }
-
-        .sidebar-brand-sub {
-            font-size: 0.68rem;
-            color: rgba(255,255,255,0.5);
-            font-weight: 600;
-            margin-top: 2px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .sidebar-section {
-            padding: 16px 10px 4px;
-        }
-
-        .sidebar-section-label {
-            font-size: 0.62rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.38);
-            padding: 0 8px;
-            margin-bottom: 4px;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 9px 10px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: rgba(255,255,255,0.62);
-            text-decoration: none;
-            transition: all 0.18s;
-            margin-bottom: 1px;
-            position: relative;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.09);
-            color: #fff;
-        }
-
-        .sidebar-link.active {
-            background: rgba(255,255,255,0.13);
-            color: #fff;
-        }
-
-        .sidebar-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 22%; bottom: 22%;
-            width: 3px;
-            background: var(--celadon);
-            border-radius: 0 3px 3px 0;
-        }
-
-        .sidebar-link svg {
-            width: 16px; height: 16px;
-            flex-shrink: 0;
-            opacity: 0.65;
-        }
-
-        .sidebar-link:hover svg,
-        .sidebar-link.active svg { opacity: 1; }
-
-        .sidebar-link .link-badge {
-            margin-left: auto;
-            background: var(--celadon);
-            color: var(--fern);
-            font-size: 0.6rem;
-            font-weight: 800;
-            padding: 1px 6px;
-            border-radius: 99px;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 12px 10px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-logout {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: rgba(255,255,255,0.5);
-            text-decoration: none;
-            transition: all 0.18s;
-            cursor: pointer;
-            background: none;
-            border: none;
-            width: 100%;
-        }
-
-        .sidebar-logout:hover {
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-        }
-
-        .sidebar-logout svg { width: 15px; height: 15px; opacity: 0.6; }
-
-        /* ══ MAIN ══ */
-        .dash-main {
-            flex: 1;
-            overflow-x: hidden;
-            padding: 28px 32px;
-            min-width: 0;
-        }
-
-        /* ══ TOP BAR ══ */
-        .dash-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .dash-greeting h1 {
-            font-size: 1.35rem;
-            font-weight: 900;
-            color: var(--fern-deep);
-            margin: 0 0 3px;
-        }
-
-        .dash-greeting p {
-            font-size: 0.8rem;
-            color: var(--sage-green);
-            margin: 0;
-        }
-
-        .topbar-date {
-            background: #fff;
-            border: 1.5px solid var(--celadon);
-            border-radius: 10px;
-            padding: 7px 14px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--sage-green);
-        }
-
-        /* ══ STAT CARDS ══ */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 900px) { .stat-grid { grid-template-columns: 1fr; } }
-
-        .stat-card {
-            background: #fff;
-            border: 1px solid #d4edbe;
-            border-radius: 14px;
-            padding: 20px 22px;
-            box-shadow: 0 3px 12px rgba(92,129,72,0.07);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 4px;
-            height: 100%;
-            border-radius: 14px 0 0 14px;
-        }
-
-        .stat-card.card-dana::after  { background: var(--sage-green); }
-        .stat-card.card-camp::after  { background: var(--muted-olive-2); }
-        .stat-card.card-anak::after  { background: var(--fern); }
-
-        .stat-label {
-            font-size: 0.68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.07em;
-            color: var(--muted-olive);
-            margin-bottom: 6px;
-        }
-
-        .stat-value {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--fern-deep);
-            line-height: 1;
-        }
-
-        .stat-unit {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--muted-olive);
-            margin-left: 4px;
-        }
-
-        .stat-sub {
-            font-size: 0.7rem;
-            color: var(--sage-green);
-            margin-top: 6px;
-            font-weight: 600;
-        }
-
-        .stat-icon {
-            position: absolute;
-            top: 16px; right: 18px;
-            width: 36px; height: 36px;
-            background: #f0fdf0;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-        }
-
-        /* ══ CHART GRID ══ */
-        .chart-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 1024px) { .chart-grid { grid-template-columns: 1fr; } }
-
-        .chart-card {
-            background: #fff;
-            border: 1px solid #d4edbe;
-            border-radius: 14px;
-            padding: 20px 22px;
-            box-shadow: 0 3px 12px rgba(92,129,72,0.07);
-        }
-
-        .chart-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .chart-title {
-            font-size: 0.88rem;
-            font-weight: 800;
-            color: var(--fern-deep);
-        }
-
-        .chart-subtitle {
-            font-size: 0.7rem;
-            color: var(--muted-olive);
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-        .chart-period-btn {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--sage-green);
-            background: #f0fdf0;
-            border: 1px solid var(--celadon);
-            border-radius: 7px;
-            padding: 4px 10px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .chart-period-btn.active,
-        .chart-period-btn:hover {
-            background: var(--fern);
-            color: #fff;
-            border-color: var(--fern);
-        }
-
-        /* ══ BOTTOM ROW: Recent + Child Status ══ */
-        .bottom-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        @media (max-width: 900px) { .bottom-grid { grid-template-columns: 1fr; } }
-
-        .info-card {
-            background: #fff;
-            border: 1px solid #d4edbe;
-            border-radius: 14px;
-            padding: 20px 22px;
-            box-shadow: 0 3px 12px rgba(92,129,72,0.07);
-        }
-
-        .info-card-title {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--fern-deep);
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        /* Recent transactions list */
-        .txn-row {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 9px 0;
-            border-bottom: 1px solid #edf7e2;
-        }
-
-        .txn-row:last-child { border-bottom: none; }
-
-        .txn-avatar {
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        .txn-name {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--fern-deep);
-        }
-
-        .txn-target {
-            font-size: 0.68rem;
-            color: var(--muted-olive);
-        }
-
-        .txn-amount {
-            margin-left: auto;
-            font-size: 0.82rem;
-            font-weight: 800;
-            color: var(--fern);
-            white-space: nowrap;
-        }
-
-        .txn-badge {
-            font-size: 0.62rem;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 6px;
-            white-space: nowrap;
-        }
-
-        .txn-badge.success { background: #dcfce7; color: #16a34a; }
-        .txn-badge.pending { background: #fef9c3; color: #92651a; }
-        .txn-badge.failed  { background: #fee2e2; color: #b91c1c; }
-
-        /* Child status donut legend */
-        .legend-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid #edf7e2;
-            font-size: 0.8rem;
-        }
-
-        .legend-row:last-child { border-bottom: none; }
-
-        .legend-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .legend-label { font-weight: 700; color: var(--fern-deep); flex: 1; }
-        .legend-count { font-weight: 900; color: var(--fern); }
-        .legend-pct   { font-size: 0.68rem; color: var(--muted-olive); margin-left: 4px; }
-
-        /* Empty state */
-        .empty-txn {
-            padding: 32px 0;
-            text-align: center;
-            color: var(--muted-olive);
-            font-size: 0.8rem;
-        }
-    </style>
-
-    {{-- Hide default x-app-layout padding --}}
     <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight" style="color: var(--fern);">
+        <h2 class="font-semibold text-xl leading-tight text-emerald-700">
             Dashboard Admin
         </h2>
     </x-slot>
 
-    <div class="dash-shell">
+    <div class="flex bg-base-200 min-h-0">
 
         {{-- ══ SIDEBAR ══ --}}
-        <aside class="dash-sidebar">
-            <div class="sidebar-brand">
-                <div class="sidebar-brand-name">Baitul<span>Yatim</span></div>
-                <div class="sidebar-brand-sub">Panel Administrasi</div>
+        <aside class="w-60 shrink-0 bg-emerald-700 flex flex-col sticky top-0 h-dvh overflow-y-auto">
+            <div class="px-5 py-4 border-b border-white/10">
+                <div class="text-base font-black text-white tracking-tight leading-tight">Baitul<span class="text-emerald-300">Yatim</span></div>
+                <div class="text-[0.68rem] text-white/50 font-semibold mt-0.5 uppercase tracking-widest">Panel Administrasi</div>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-label">Menu Utama</div>
-
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link active">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <div class="px-2.5 pt-4 pb-1">
+                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Menu Utama</div>
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white transition-all duration-150 relative mb-0.5 bg-white/13 before:absolute before:left-0 before:top-[22%] before:bottom-[22%] before:w-[3px] before:bg-emerald-300 before:rounded-r-sm">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     Dashboard
                 </a>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-label">Konten</div>
+            <div class="px-2.5 pt-4 pb-1">
+                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Konten</div>
 
-                <a href="{{ route('admin.profil.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <a href="{{ route('admin.profil.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     Profil Yayasan
                 </a>
 
-                <a href="{{ route('admin.news.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"/></svg>
+                <a href="{{ route('admin.news.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"/></svg>
                     Berita Kegiatan
                 </a>
 
-                <a href="{{ route('admin.campaigns.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V9a2 2 0 00-2-2m2 4v4a2 2 0 104 0v-1m-4-3H9m2 0h4m6 1a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <a href="{{ route('admin.campaigns.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V9a2 2 0 00-2-2m2 4v4a2 2 0 104 0v-1m-4-3H9m2 0h4m6 1a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Kelola Kampanye
+                </a>
+
+                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    Kelola User
                 </a>
             </div>
 
             {{-- ✅ Section Program OTA — lengkap dengan 4 menu --}}
-            <div class="sidebar-section">
-                <div class="sidebar-section-label">Program</div>
+            <div class="px-2.5 pt-4 pb-1">
+                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Program</div>
 
-                <a href="{{ route('admin.foster-children.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <a href="{{ route('admin.foster-children.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     Data Anak Asuh
                 </a>
 
-                <a href="{{ route('admin.sponsorships.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <a href="{{ route('admin.sponsorships.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     Orang Tua Asuh
                 </a>
 
-                <a href="{{ route('admin.child-developments.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                <a href="{{ route('admin.child-developments.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
                     Isi Perkembangan Anak
                 </a>
 
-                <a href="{{ route('admin.transactions.index') }}" class="sidebar-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <a href="{{ route('admin.transactions.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
+                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Riwayat Transaksi
                     @php
                         $pendingCount = \App\Models\Donation::where('status','pending')->count()
                                       + \App\Models\Sponsorship::where('status','pending')->count();
                     @endphp
                     @if($pendingCount > 0)
-                        <span class="link-badge">{{ $pendingCount }}</span>
+                        <span class="ml-auto bg-emerald-300 text-emerald-700 text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full">{{ $pendingCount }}</span>
                     @endif
                 </a>
             </div>
 
-            <div class="sidebar-footer">
+            <div class="mt-auto px-2.5 py-3 border-t border-white/10">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="sidebar-logout">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <button type="submit" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-bold text-white/50 hover:bg-white/10 hover:text-white transition-all duration-150 cursor-pointer w-full bg-transparent border-none">
+                        <svg class="w-[15px] h-[15px] opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                         Keluar
                     </button>
                 </form>
@@ -522,167 +90,187 @@
         </aside>
 
         {{-- ══ MAIN CONTENT ══ --}}
-        <main class="dash-main">
+        <main class="flex-1 overflow-x-hidden p-7 min-w-0">
 
             {{-- Topbar --}}
-            <div class="dash-topbar">
-                <div class="dash-greeting">
-                    <h1 id="greeting-text">Selamat Datang 👋</h1>
-                    <p>{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} — Panel Administrasi</p>
+            <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <div>
+                    <h1 id="greeting-text" class="text-[1.35rem] font-black text-emerald-900 m-0 mb-0.5">Selamat Datang 👋</h1>
+                    <p class="text-sm text-emerald-600 m-0">{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} — Panel Administrasi</p>
                 </div>
-                <div class="topbar-date" id="topbar-date">—</div>
+                <div id="topbar-date" class="bg-white border-2 border-emerald-300 rounded-lg px-3.5 py-1.5 text-xs font-bold text-emerald-600">—</div>
             </div>
 
             {{-- Stat Cards --}}
-            <div class="stat-grid">
-                <div class="stat-card card-dana">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-label">Total Dana Terkumpul</div>
-                    <div class="stat-value">
-                        Rp {{ number_format($totalFunds ?? 0, 0, ',', '.') }}
-                    </div>
-                    <div class="stat-sub">Dari donasi yang berhasil</div>
+            <div class="stats shadow w-full mb-6">
+                <div class="stat">
+                    <div class="stat-figure text-2xl">💰</div>
+                    <div class="stat-title">Total Dana Terkumpul</div>
+                    <div class="stat-value text-emerald-700">Rp {{ number_format($totalFunds ?? 0, 0, ',', '.') }}</div>
+                    <div class="stat-desc">Dari donasi yang berhasil</div>
                 </div>
 
-                <div class="stat-card card-camp">
-                    <div class="stat-icon">📣</div>
-                    <div class="stat-label">Kampanye Aktif</div>
-                    <div class="stat-value">
-                        {{ $activeCampaigns ?? 0 }}<span class="stat-unit">Program</span>
-                    </div>
-                    <div class="stat-sub">Sedang berjalan saat ini</div>
+                <div class="stat">
+                    <div class="stat-figure text-2xl">📣</div>
+                    <div class="stat-title">Kampanye Aktif</div>
+                    <div class="stat-value text-emerald-700">{{ $activeCampaigns ?? 0 }}</div>
+                    <div class="stat-desc">Sedang berjalan saat ini</div>
                 </div>
 
-                <div class="stat-card card-anak">
-                    <div class="stat-icon">👦</div>
-                    <div class="stat-label">Total Anak Asuh</div>
-                    <div class="stat-value">
-                        {{ $fosterChildren ?? 0 }}<span class="stat-unit">Anak</span>
-                    </div>
-                    <div class="stat-sub">Terdaftar dalam sistem</div>
+                <div class="stat">
+                    <div class="stat-figure text-2xl">👦</div>
+                    <div class="stat-title">Total Anak Asuh</div>
+                    <div class="stat-value text-emerald-700">{{ $fosterChildren ?? 0 }}</div>
+                    <div class="stat-desc">Terdaftar dalam sistem</div>
                 </div>
             </div>
 
             {{-- Charts --}}
-            <div class="chart-grid">
+            <div class="grid grid-cols-[2fr_1fr] gap-4 mb-6 max-lg:grid-cols-1">
 
                 {{-- Cashflow Chart --}}
-                <div class="chart-card">
-                    <div class="chart-card-header">
-                        <div>
-                            <div class="chart-title">📈 Cashflow Donasi</div>
-                            <div class="chart-subtitle">Total dana masuk per bulan (Rp)</div>
+                <div class="card bg-base-100 shadow-md border">
+                    <div class="card-body p-5">
+                        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                            <div>
+                                <div class="font-extrabold text-emerald-900">📈 Cashflow Donasi</div>
+                                <div class="text-xs text-emerald-500 font-semibold mt-0.5">Total dana masuk per bulan (Rp)</div>
+                            </div>
+                            <div class="flex gap-1">
+                                <button class="btn btn-success btn-xs cashflow-btn" onclick="setCashflowPeriod('6', this)">6 Bln</button>
+                                <button class="btn btn-ghost btn-xs cashflow-btn" onclick="setCashflowPeriod('12', this)">12 Bln</button>
+                            </div>
                         </div>
-                        <div style="display:flex;gap:5px;">
-                            <button class="chart-period-btn active" onclick="setCashflowPeriod('6', this)">6 Bln</button>
-                            <button class="chart-period-btn" onclick="setCashflowPeriod('12', this)">12 Bln</button>
-                        </div>
+                        <canvas id="cashflowChart" height="200"></canvas>
                     </div>
-                    <canvas id="cashflowChart" height="200"></canvas>
                 </div>
 
                 {{-- Donut: Status Anak --}}
-                <div class="chart-card">
-                    <div class="chart-card-header">
-                        <div>
-                            <div class="chart-title">👦 Status Anak Asuh</div>
-                            <div class="chart-subtitle">Distribusi status saat ini</div>
+                <div class="card bg-base-100 shadow-md border">
+                    <div class="card-body p-5">
+                        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                            <div>
+                                <div class="font-extrabold text-emerald-900">👦 Status Anak Asuh</div>
+                                <div class="text-xs text-emerald-500 font-semibold mt-0.5">Distribusi status saat ini</div>
+                            </div>
                         </div>
+                        <canvas id="childDonut" height="170"></canvas>
+                        <div class="mt-3" id="donut-legend"></div>
                     </div>
-                    <canvas id="childDonut" height="170"></canvas>
-                    <div style="margin-top:14px;" id="donut-legend"></div>
                 </div>
 
             </div>
 
             {{-- Bottom Row --}}
-            <div class="bottom-grid">
+            <div class="grid grid-cols-2 gap-4 max-lg:grid-cols-1">
 
                 {{-- Recent Transactions --}}
-                <div class="info-card">
-                    <div class="info-card-title">
-                        🧾 Transaksi Terbaru
-                        <a href="{{ route('admin.transactions.index') }}"
-                           style="margin-left:auto;font-size:0.7rem;font-weight:700;color:var(--sage-green);text-decoration:none;">
-                            Lihat Semua →
-                        </a>
-                    </div>
-
-                    @php
-                        $recentDonations = \App\Models\Donation::with('campaign')
-                            ->latest()->take(4)->get();
-                    @endphp
-
-                    @forelse($recentDonations as $txn)
-                        <div class="txn-row">
-                            <img class="txn-avatar"
-                                 src="https://ui-avatars.com/api/?name={{ urlencode($txn->donor_name) }}&background=b3e093&color=5c8148&rounded=true&bold=true"
-                                 alt="">
-                            <div style="flex:1;min-width:0;">
-                                <div class="txn-name">{{ $txn->donor_name }}</div>
-                                <div class="txn-target">{{ $txn->campaign->title ?? '-' }}</div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div class="txn-amount">Rp {{ number_format($txn->amount, 0, ',', '.') }}</div>
-                                <span class="txn-badge {{ $txn->status === 'success' ? 'success' : ($txn->status === 'pending' ? 'pending' : 'failed') }}">
-                                    {{ $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Gagal') }}
-                                </span>
-                            </div>
+                <div class="card bg-base-100 shadow-md border">
+                    <div class="card-body p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="font-extrabold text-emerald-900">🧾 Transaksi Terbaru</div>
+                            <a href="{{ route('admin.transactions.index') }}" class="link link-hover text-xs font-bold text-emerald-600 ml-auto">
+                                Lihat Semua →
+                            </a>
                         </div>
-                    @empty
-                        <div class="empty-txn">Belum ada transaksi</div>
-                    @endforelse
+
+                        @php
+                            $recentDonations = \App\Models\Donation::with('campaign')
+                                ->latest()->take(4)->get();
+                        @endphp
+
+                        <table class="table table-zebra">
+                            <thead>
+                                <tr>
+                                    <th>Donatur</th>
+                                    <th>Kampanye</th>
+                                    <th>Jumlah</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentDonations as $txn)
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="avatar">
+                                                <div class="w-8 rounded-full">
+                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($txn->donor_name) }}&background=b3e093&color=5c8148&rounded=true&bold=true" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="font-bold text-sm">{{ $txn->donor_name }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm text-base-content/70">{{ $txn->campaign->title ?? '-' }}</td>
+                                    <td class="font-bold text-emerald-700">Rp {{ number_format($txn->amount, 0, ',', '.') }}</td>
+                                    <td>
+                                        @php
+                                            $badgeClass = $txn->status === 'success' ? 'badge-success' : ($txn->status === 'pending' ? 'badge-warning' : 'badge-error');
+                                            $badgeText = $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Gagal');
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-base-content/60 py-8">Belum ada transaksi</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {{-- Child Status Detail --}}
-                <div class="info-card">
-                    <div class="info-card-title">📊 Rincian Anak Asuh</div>
+                <div class="card bg-base-100 shadow-md border">
+                    <div class="card-body p-5">
+                        <div class="font-extrabold text-emerald-900 mb-3">📊 Rincian Anak Asuh</div>
 
-                    @php
-                        $totalAnak    = \App\Models\FosterChild::count();
-                        $tersedia     = \App\Models\FosterChild::where('status','Tersedia')->count();
-                        $diasuh       = \App\Models\FosterChild::where('status','Diasuh')->count();
-                        $lainnya      = $totalAnak - $tersedia - $diasuh;
-                    @endphp
-
-                    <div class="legend-row">
-                        <span class="legend-dot" style="background:var(--sage-green);"></span>
-                        <span class="legend-label">Tersedia / Menunggu OTA</span>
-                        <span class="legend-count">{{ $tersedia }}</span>
-                        <span class="legend-pct">({{ $totalAnak > 0 ? round($tersedia/$totalAnak*100) : 0 }}%)</span>
-                    </div>
-                    <div class="legend-row">
-                        <span class="legend-dot" style="background:var(--fern);"></span>
-                        <span class="legend-label">Sedang Diasuh</span>
-                        <span class="legend-count">{{ $diasuh }}</span>
-                        <span class="legend-pct">({{ $totalAnak > 0 ? round($diasuh/$totalAnak*100) : 0 }}%)</span>
-                    </div>
-                    @if($lainnya > 0)
-                    <div class="legend-row">
-                        <span class="legend-dot" style="background:var(--muted-olive);"></span>
-                        <span class="legend-label">Status Lainnya</span>
-                        <span class="legend-count">{{ $lainnya }}</span>
-                        <span class="legend-pct">({{ $totalAnak > 0 ? round($lainnya/$totalAnak*100) : 0 }}%)</span>
-                    </div>
-                    @endif
-
-                    <div style="margin-top:16px;padding-top:14px;border-top:1px solid #edf7e2;">
-                        <div style="font-size:0.7rem;font-weight:700;color:var(--muted-olive);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">
-                            Sponsorship Pending
-                        </div>
                         @php
-                            $pendingSpons = \App\Models\Sponsorship::where('status','pending')->count();
+                            $totalAnak    = \App\Models\FosterChild::count();
+                            $tersedia     = \App\Models\FosterChild::where('status','Tersedia')->count();
+                            $diasuh       = \App\Models\FosterChild::where('status','Diasuh')->count();
+                            $lainnya      = $totalAnak - $tersedia - $diasuh;
                         @endphp
-                        <div style="font-size:1.3rem;font-weight:900;color:var(--fern);">
-                            {{ $pendingSpons }}
-                            <span style="font-size:0.78rem;font-weight:700;color:var(--muted-olive);margin-left:4px;">transaksi</span>
+
+                        <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0 bg-emerald-600"></span>
+                            <span class="font-bold text-emerald-900 flex-1">Tersedia / Menunggu OTA</span>
+                            <span class="font-black text-emerald-700">{{ $tersedia }}</span>
+                            <span class="text-xs text-emerald-500 ml-1">({{ $totalAnak > 0 ? round($tersedia/$totalAnak*100) : 0 }}%)</span>
                         </div>
-                        @if($pendingSpons > 0)
-                            <a href="{{ route('admin.transactions.index') }}"
-                               style="display:inline-block;margin-top:8px;font-size:0.72rem;font-weight:700;color:#fff;background:var(--fern);padding:5px 12px;border-radius:8px;text-decoration:none;">
-                                Proses Sekarang →
-                            </a>
+                        <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0 bg-emerald-700"></span>
+                            <span class="font-bold text-emerald-900 flex-1">Sedang Diasuh</span>
+                            <span class="font-black text-emerald-700">{{ $diasuh }}</span>
+                            <span class="text-xs text-emerald-500 ml-1">({{ $totalAnak > 0 ? round($diasuh/$totalAnak*100) : 0 }}%)</span>
+                        </div>
+                        @if($lainnya > 0)
+                        <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0 bg-emerald-400"></span>
+                            <span class="font-bold text-emerald-900 flex-1">Status Lainnya</span>
+                            <span class="font-black text-emerald-700">{{ $lainnya }}</span>
+                            <span class="text-xs text-emerald-500 ml-1">({{ $totalAnak > 0 ? round($lainnya/$totalAnak*100) : 0 }}%)</span>
+                        </div>
                         @endif
+
+                        <div class="mt-4 pt-3.5 border-t border-emerald-100">
+                            <div class="text-[0.7rem] font-bold text-emerald-500 uppercase tracking-wider mb-1.5">
+                                Sponsorship Pending
+                            </div>
+                            @php
+                                $pendingSpons = \App\Models\Sponsorship::where('status','pending')->count();
+                            @endphp
+                            <div class="text-[1.3rem] font-black text-emerald-700">
+                                {{ $pendingSpons }}
+                                <span class="text-xs font-bold text-emerald-500 ml-1">transaksi</span>
+                            </div>
+                            @if($pendingSpons > 0)
+                                <a href="{{ route('admin.transactions.index') }}" class="btn btn-success btn-sm mt-2">
+                                    Proses Sekarang →
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -707,7 +295,6 @@
     });
 
     // ── Cashflow data dari backend (PHP → JS) ──
-    // Ambil data 12 bulan terakhir
     @php
         $cashflow12 = [];
         $labels12   = [];
@@ -725,7 +312,6 @@
     const allLabels   = @json($labels12);
     const allData     = @json($cashflow12);
 
-    let cashflowPeriod = 6;
     let cashflowChart;
 
     function buildCashflow(period) {
@@ -786,10 +372,13 @@
     }
 
     function setCashflowPeriod(p, btn) {
-        cashflowPeriod = parseInt(p);
-        document.querySelectorAll('.chart-period-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        buildCashflow(cashflowPeriod);
+        document.querySelectorAll('.cashflow-btn').forEach(b => {
+            b.classList.remove('btn-success');
+            b.classList.add('btn-ghost');
+        });
+        btn.classList.remove('btn-ghost');
+        btn.classList.add('btn-success');
+        buildCashflow(parseInt(p));
     }
 
     // ── Donut chart: status anak asuh ──
@@ -843,11 +432,11 @@
         items.forEach(item => {
             const pct = total > 0 ? Math.round(item.count / total * 100) : 0;
             legend.innerHTML += `
-                <div class="legend-row">
-                    <span class="legend-dot" style="background:${item.color};"></span>
-                    <span class="legend-label">${item.label}</span>
-                    <span class="legend-count">${item.count}</span>
-                    <span class="legend-pct">(${pct}%)</span>
+                <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${item.color};"></span>
+                    <span class="font-bold text-emerald-900 flex-1">${item.label}</span>
+                    <span class="font-black text-emerald-700">${item.count}</span>
+                    <span class="text-xs text-emerald-500 ml-1">(${pct}%)</span>
                 </div>`;
         });
     })();

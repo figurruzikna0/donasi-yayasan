@@ -8,6 +8,7 @@ class Sponsorship extends Model
 {
     protected $fillable = [
         'foster_child_id',
+        'user_id',
         'order_id',
         'donor_name',
         'donor_email',

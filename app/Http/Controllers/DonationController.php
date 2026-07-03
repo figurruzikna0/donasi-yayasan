@@ -23,15 +23,16 @@ class DonationController extends Controller
 
     public function create(Campaign $campaign)
     {
-        return view('donations.create', compact('campaign'));
+        $user = auth()->user();
+        return view('donations.create', compact('campaign', 'user'));
     }
 
     public function store(Request $request, Campaign $campaign)
     {
+        $user = auth()->user();
+
         $validated = $request->validate([
-            'donor_name'  => 'required|string|max:255',
-            'donor_email' => 'required|email|max:255',
-            'amount'      => 'required|numeric|min:1000',
+            'amount' => 'required|numeric|min:1000',
         ]);
 
         $this->initMidtrans();
@@ -40,9 +41,10 @@ class DonationController extends Controller
 
         $donation = Donation::create([
             'campaign_id' => $campaign->id,
+            'user_id'     => $user->id,
             'order_id'    => $orderId,
-            'donor_name'  => $validated['donor_name'],
-            'donor_email' => $validated['donor_email'],
+            'donor_name'  => $user->name,
+            'donor_email' => $user->email,
             'amount'      => $validated['amount'],
             'status'      => 'pending',
         ]);
@@ -67,17 +69,16 @@ class DonationController extends Controller
     public function sponsorForm($id)
     {
         $child = FosterChild::findOrFail($id);
-        return view('donations.sponsor', compact('child'));
+        $user  = auth()->user();
+        return view('donations.sponsor', compact('child', 'user'));
     }
 
     public function sponsorStore(Request $request, $id)
     {
         $child = FosterChild::findOrFail($id);
+        $user  = auth()->user();
 
         $validated = $request->validate([
-            'donor_name'      => 'required|string|max:255',
-            'donor_email'     => 'required|email|max:255',
-            'donor_phone'     => 'required|string|max:20',
             'amount'          => 'required|numeric|min:1000',
             'paket_komitmen'  => 'required|string|max:255',
             'description'     => 'nullable|string',
@@ -90,10 +91,11 @@ class DonationController extends Controller
 
         $sponsorship = Sponsorship::create([
             'foster_child_id'     => $child->id,
+            'user_id'             => $user->id,
             'order_id'            => $orderId,
-            'donor_name'          => $validated['donor_name'],
-            'donor_email'         => $validated['donor_email'],
-            'donor_phone'         => $validated['donor_phone'],
+            'donor_name'          => $user->name,
+            'donor_email'         => $user->email,
+            'donor_phone'         => $user->phone,
             'amount'              => $validated['amount'],
             'package'             => $validated['paket_komitmen'],
             'package_description' => $validated['description'] ?? null,

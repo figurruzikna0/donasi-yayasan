@@ -39,7 +39,7 @@ class AuthController extends Controller
 
         // Kalau email/password salah, tendang balik ke form login
         return back()->withErrors([
-            'email' => 'Email atau password salah, Bro!',
+            'email' => 'Email atau password salah!',
         ])->onlyInput('email');
     }
 
