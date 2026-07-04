@@ -50,6 +50,12 @@ class NewsController extends Controller
             ->with('success', 'Berita kegiatan berhasil ditambahkan!');
     }
 
+    // Detail berita
+    public function show(News $news)
+    {
+        return view('admin.news.show', compact('news'));
+    }
+
     // Form edit
     public function edit(News $news)
     {

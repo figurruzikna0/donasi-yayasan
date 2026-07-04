@@ -81,11 +81,11 @@
         window.snap.pay('{{ $snapToken }}', {
             onSuccess: function(result) {
                 alert('Pembayaran berhasil! Terima kasih atas dukungan Anda.');
-                window.location.href = '{{ route('dashboard') }}';
+                window.location.href = '{{ route("invoice.sponsorship", $sponsorship->id) }}';
             },
             onPending: function(result) {
                 alert('Pembayaran sedang diproses. Silakan selesaikan pembayaran Anda.');
-                window.location.href = '{{ route('dashboard') }}';
+                window.location.href = '{{ route("invoice.sponsorship", $sponsorship->id) }}';
             },
             onError: function(result) {
                 alert('Pembayaran gagal. Silakan coba lagi.');

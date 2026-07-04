@@ -114,6 +114,9 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center gap-2">
+                                        <a href="{{ route('admin.campaigns.show', $campaign->id) }}" class="btn btn-sm btn-ghost text-emerald-600">
+                                            👁 Detail
+                                        </a>
                                         <a href="{{ route('admin.campaigns.edit', $campaign->id) }}" class="btn btn-sm btn-ghost">
                                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                             Edit

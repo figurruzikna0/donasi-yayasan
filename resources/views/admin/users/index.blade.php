@@ -59,7 +59,11 @@
                                         <div class="flex items-center gap-3">
                                             <div class="avatar">
                                                 <div class="w-9 rounded-full">
-                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=b3e093&color=5c8148&bold=true" alt="">
+                                                    @if($user->avatar)
+                                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="object-cover">
+                                                    @else
+                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=b3e093&color=5c8148&bold=true" alt="">
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="font-bold text-sm text-emerald-700">{{ $user->name }}</div>

@@ -24,8 +24,15 @@ return new class extends Migration
             // Jumlah uang yang didonasikan (pakai bigInteger biar muat nominal besar)
             $table->unsignedBigInteger('amount');
             
-            // Status donasi: pending (belum bayar), paid (sudah bayar), failed (gagal)
+            // Status donasi: pending (belum bayar), paid/success (sudah bayar), failed (gagal)
             $table->string('status')->default('pending');
+            
+            // Kolom untuk integrasi Midtrans
+            $table->string('order_id', 100)->unique()->nullable();
+            $table->string('snap_token')->nullable();
+            
+            // Bukti bayar (untuk transfer manual)
+            $table->string('payment_proof')->nullable();
             
             $table->timestamps();
         });

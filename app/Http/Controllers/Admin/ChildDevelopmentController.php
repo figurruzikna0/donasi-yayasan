@@ -72,6 +72,12 @@ class ChildDevelopmentController extends Controller
             ->with('success', 'Laporan perkembangan berhasil ditambahkan & notifikasi WA terkirim ke orang tua asuh!');
     }
 
+    public function show(ChildDevelopment $childDevelopment)
+    {
+        $childDevelopment->load(['fosterChild', 'sponsorship', 'user']);
+        return view('admin.child-developments.show', compact('childDevelopment'));
+    }
+
     public function edit(ChildDevelopment $childDevelopment)
     {
         $children = FosterChild::whereHas('sponsorships', function ($q) {

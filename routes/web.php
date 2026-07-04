@@ -30,7 +30,8 @@ use App\Models\ProfilYayasan;
 // --- RUTE BERITA PUBLIK ---
 Route::get('/berita/{slug}', function ($slug) {
     $news = \App\Models\News::where('slug', $slug)->published()->firstOrFail();
-    return view('news.show', compact('news'));
+    $profil = \App\Models\ProfilYayasan::first();
+    return view('news.show', compact('news', 'profil'));
 })->name('news.show');
 
 // --- RUTE HALAMAN DEPAN ---
@@ -58,6 +59,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Invoice
     Route::get('/donations/{id}/invoice', [InvoiceController::class, 'donation'])->name('invoice.donation');
     Route::get('/sponsorships/{id}/invoice', [InvoiceController::class, 'sponsorship'])->name('invoice.sponsorship');
+    Route::get('/donations/{id}/invoice/pdf', [InvoiceController::class, 'donationPdf'])->name('invoice.donation.pdf');
+    Route::get('/sponsorships/{id}/invoice/pdf', [InvoiceController::class, 'sponsorshipPdf'])->name('invoice.sponsorship.pdf');
 });
 
 // --- RUTE CALLBACK MIDTRANS (dipanggil server Midtrans, bukan user) ---
@@ -69,6 +72,10 @@ Route::post('/midtrans/callback', [DonationController::class, 'callback'])
 Route::get('/dashboard', [DonorController::class, 'dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/dashboard/rekap', [DonorController::class, 'rekap'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.rekap');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -120,6 +127,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
+    Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');
 
     // Kelola Data User
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

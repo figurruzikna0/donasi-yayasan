@@ -65,11 +65,11 @@
             window.snap.pay('{{ $snapToken }}', {
                 onSuccess: function (result) {
                     alert('Donasi berhasil! Terima kasih atas kebaikan Anda.');
-                    window.location.href = '/';
+                    window.location.href = '{{ route("invoice.donation", $donation->id) }}';
                 },
                 onPending: function (result) {
                     alert('Menunggu pembayaran Anda. Silakan selesaikan sesuai instruksi.');
-                    window.location.href = '/';
+                    window.location.href = '{{ route("invoice.donation", $donation->id) }}';
                 },
                 onError: function (result) {
                     alert('Pembayaran gagal. Silakan coba lagi.');

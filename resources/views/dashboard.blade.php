@@ -4,13 +4,29 @@
         {{-- Header --}}
         <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-black">🌿 Selamat Datang, {{ $user->name }}</h1>
-                        <p class="text-emerald-100 text-sm mt-1">{{ $profil->nama_yayasan ?? 'Baitul Yatim' }} — Dashboard Donatur</p>
+                <div class="flex items-start justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="avatar">
+                            <div class="w-16 h-16 rounded-full ring ring-white/30 ring-offset-2 ring-offset-emerald-700">
+                                @if($user->avatar)
+                                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=b3e093&color=5c8148&bold=true&size=64" alt="">
+                                @endif
+                            </div>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-black">🌿 Selamat Datang, {{ $user->name }}</h1>
+                            <p class="text-emerald-100 text-sm mt-1">{{ $profil->nama_yayasan ?? 'Baitul Yatim' }} — Dashboard Donatur</p>
+                            <div class="flex flex-wrap gap-3 mt-2 text-xs text-emerald-200">
+                                @if($user->phone)<span>📞 {{ $user->phone }}</span>@endif
+                                @if($user->email)<span>✉️ {{ $user->email }}</span>@endif
+                                @if($user->address)<span class="max-w-xs truncate">📍 {{ $user->address }}</span>@endif
+                            </div>
+                        </div>
                     </div>
                     @if($profil?->logo)
-                        <img src="{{ asset('storage/' . $profil->logo) }}" class="h-14 w-14 rounded-xl object-cover border-2 border-white/20" alt="Logo">
+                        <img src="{{ asset('storage/' . $profil->logo) }}" class="h-14 w-14 rounded-xl object-cover border-2 border-white/20 hidden sm:block" alt="Logo">
                     @endif
                 </div>
 
@@ -27,6 +43,12 @@
                         <div class="stat-title text-emerald-200">Transaksi Donasi</div>
                         <div class="stat-value text-white">{{ $donations->count() }}</div>
                     </div>
+                    <div class="stat">
+                        <div class="stat-title text-emerald-200">Rincian Transaksi</div>
+                        <div class="stat-value text-white text-lg">
+                            <a href="{{ route('dashboard.rekap') }}" class="btn btn-sm bg-white text-emerald-700 border-0 hover:bg-emerald-100 font-bold">📋 Lihat Rekap</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -34,7 +56,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
             {{-- Quick Actions --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <a href="#kampanye-donasi" class="card bg-base-100 shadow-md border border-emerald-200 hover:shadow-lg transition-all">
                     <div class="card-body flex-row items-center gap-4 p-5">
                         <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">💰</div>
@@ -50,6 +72,15 @@
                         <div>
                             <h3 class="font-bold text-emerald-700">Jadi Orang Tua Asuh</h3>
                             <p class="text-sm text-emerald-500">Sponsorship anak asuh yatim</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ route('profile.edit') }}" class="card bg-base-100 shadow-md border border-emerald-200 hover:shadow-lg transition-all">
+                    <div class="card-body flex-row items-center gap-4 p-5">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
+                        <div>
+                            <h3 class="font-bold text-emerald-700">Edit Profil</h3>
+                            <p class="text-sm text-emerald-500">Ubah data diri & password</p>
                         </div>
                     </div>
                 </a>
@@ -253,51 +284,6 @@
                         </div>
                     @endif
 
-                    {{-- My Donation History --}}
-                    <h3 class="font-bold text-emerald-600 text-sm uppercase tracking-wider mb-3">Riwayat Donasi Saya</h3>
-                    @if($donations->isNotEmpty())
-                        <div class="overflow-x-auto">
-                            <table class="table table-zebra w-full">
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Kampanye</th>
-                                        <th>Nominal</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($donations as $d)
-                                        <tr>
-                                            <td class="text-xs">{{ $d->created_at->format('d M Y H:i') }}</td>
-                                            <td class="text-sm font-semibold text-emerald-700">{{ $d->campaign?->title ?? '-' }}</td>
-                                            <td class="font-bold text-emerald-600">Rp {{ number_format($d->amount, 0, ',', '.') }}</td>
-                                            <td>
-                                                @php
-                                                    $bClass = $d->status == 'success' ? 'badge-success' : ($d->status == 'pending' ? 'badge-warning' : 'badge-error');
-                                                    $bText = $d->status == 'success' ? 'Sukses' : ($d->status == 'pending' ? 'Tertunda' : 'Gagal');
-                                                @endphp
-                                                <span class="badge {{ $bClass }} badge-sm">{{ $bText }}</span>
-                                            </td>
-                                            <td>
-                                                @if($d->status === 'success')
-                                                    <a href="{{ route('invoice.donation', $d->id) }}" target="_blank" class="btn btn-ghost btn-xs text-emerald-600 hover:bg-emerald-50">
-                                                        📄 Invoice
-                                                    </a>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-8 bg-emerald-50 rounded-lg border border-emerald-100">
-                            <p class="font-semibold text-emerald-700 mb-1">Belum ada riwayat donasi</p>
-                            <p class="text-sm text-emerald-500">Yuk, mulai donasi pertamamu dari program di atas!</p>
-                        </div>
-                    @endif
                 </div>
             </div>
 
@@ -319,144 +305,72 @@
                             <div class="stat-value text-emerald-700">{{ $tersediaFoster }}</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-title">Sedang Diasuh</div>
+                            <div class="stat-title">Anda Asuh</div>
                             <div class="stat-value text-emerald-700">{{ $diasuhFoster }}</div>
                         </div>
                     </div>
 
                     {{-- Available children --}}
                     @if($fosterChildren->isNotEmpty())
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                            @foreach($fosterChildren as $child)
-                                <div class="card bg-base-100 border border-emerald-100 shadow-sm">
-                                    <div class="card-body p-4">
-                                        <div class="flex items-center gap-3 mb-3">
-                                            <div class="avatar">
-                                                <div class="w-14 rounded-full ring ring-emerald-100">
-                                                    @if($child->photo)
-                                                        <img src="{{ asset('storage/' . $child->photo) }}" alt="{{ $child->name }}">
+                        @php
+                            $chunks = $fosterChildren->chunk(3);
+                        @endphp
+                        <div class="relative mb-4" x-data="{ slide: 0, total: {{ $chunks->count() }} }">
+                            <div class="overflow-hidden">
+                                @foreach($chunks as $i => $chunk)
+                                    <div x-show="slide === {{ $i }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-8" x-transition:enter-end="opacity-100 translate-x-0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        @foreach($chunk as $child)
+                                            <div class="card bg-base-100 border border-emerald-100 shadow-sm">
+                                                <div class="card-body p-4">
+                                                    <div class="flex items-center gap-3 mb-3">
+                                                        <div class="avatar">
+                                                            <div class="w-14 rounded-full ring ring-emerald-100">
+                                                                @if($child->photo)
+                                                                    <img src="{{ asset('storage/' . $child->photo) }}" alt="{{ $child->name }}">
+                                                                @else
+                                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($child->name) }}&background=b3e093&color=5c8148&bold=true" alt="">
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h3 class="font-bold text-emerald-700">{{ $child->name }}</h3>
+                                                            <div class="flex gap-1 mt-1">
+                                                                <span class="badge badge-ghost badge-xs">{{ $child->age }} Thn</span>
+                                                                @if($child->jenis_kelamin)
+                                                                    <span class="badge badge-ghost badge-xs">{{ $child->jenis_kelamin }}</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if($child->description)
+                                                        <p class="text-xs text-base-content/60 mb-3">{{ Str::limit($child->description, 100) }}</p>
+                                                    @endif
+                                                    @if($child->status == 'Tersedia')
+                                                        <a href="{{ route('sponsor.form', $child->id) }}" class="btn btn-success btn-sm text-white font-bold w-full">🤝 Asuh Sekarang</a>
                                                     @else
-                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($child->name) }}&background=b3e093&color=5c8148&bold=true" alt="">
+                                                        <span class="btn btn-success btn-sm text-white font-bold w-full opacity-70">✓ Anak Asuh Anda</span>
                                                     @endif
                                                 </div>
                                             </div>
-                                            <div>
-                                                <h3 class="font-bold text-emerald-700">{{ $child->name }}</h3>
-                                                <div class="flex gap-1 mt-1">
-                                                    <span class="badge badge-ghost badge-xs">{{ $child->age }} Thn</span>
-                                                    @if($child->jenis_kelamin)
-                                                        <span class="badge badge-ghost badge-xs">{{ $child->jenis_kelamin }}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @if($child->description)
-                                            <p class="text-xs text-base-content/60 mb-3">{{ Str::limit($child->description, 100) }}</p>
-                                        @endif
-                                        @if($child->status == 'Tersedia')
-                                            <a href="{{ route('sponsor.form', $child->id) }}" class="btn btn-success btn-sm text-white font-bold w-full">🤝 Asuh Sekarang</a>
-                                        @else
-                                            <span class="btn btn-disabled btn-sm w-full">✓ Sudah Diasuh</span>
-                                        @endif
+                                        @endforeach
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
+
+                            <div class="flex items-center justify-center gap-4 mt-5">
+                                <button @click="slide = slide > 0 ? slide - 1 : total - 1" class="btn btn-circle btn-sm btn-success text-white">‹</button>
+                                <template x-for="i in total" :key="i">
+                                    <button @click="slide = i - 1" class="w-2.5 h-2.5 rounded-full transition-all duration-200" :class="slide === i - 1 ? 'bg-emerald-600 scale-125' : 'bg-emerald-200 hover:bg-emerald-400'" :aria-label="'Halaman ' + i"></button>
+                                </template>
+                                <button @click="slide = slide < total - 1 ? slide + 1 : 0" class="btn btn-circle btn-sm btn-success text-white">›</button>
+                            </div>
                         </div>
-                        @if($fosterChildren->hasPages())
-                            <div class="mt-4">{{ $fosterChildren->links() }}</div>
-                        @endif
                     @else
                         <div class="text-center py-8 bg-emerald-50 rounded-lg border border-emerald-100 mb-6">
                             <p class="font-semibold text-emerald-700">Belum ada data anak asuh</p>
                         </div>
                     @endif
 
-                    {{-- My Sponsorship History --}}
-                    <h3 class="font-bold text-emerald-600 text-sm uppercase tracking-wider mb-3">Sponsorship Saya</h3>
-                    @if($sponsorships->isNotEmpty())
-                        <div class="overflow-x-auto">
-                            <table class="table table-zebra w-full">
-                                <thead>
-                                    <tr>
-                                        <th>Anak Asuh</th>
-                                        <th>Paket</th>
-                                        <th>Nominal</th>
-                                        <th>Periode</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($sponsorships as $s)
-                                        @php
-                                            $isExpired = $s->expires_at && $s->expires_at->isPast();
-                                            $sClass = $s->status == 'success' && !$isExpired ? 'badge-success' : ($s->status == 'pending' ? 'badge-warning' : ($isExpired || $s->status == 'expired' ? 'badge-ghost' : 'badge-error'));
-                                            $sText = $s->status == 'success' && !$isExpired ? 'Aktif' : ($s->status == 'pending' ? 'Pending' : ($isExpired ? 'Kadaluarsa' : 'Gagal'));
-                                        @endphp
-                                        <tr>
-                                            <td class="text-sm font-semibold text-emerald-700">{{ $s->fosterChild?->name ?? '-' }}</td>
-                                            <td><span class="badge badge-warning badge-sm">{{ $s->package ?? '-' }}</span></td>
-                                            <td class="font-bold text-emerald-600">Rp {{ number_format($s->amount, 0, ',', '.') }}</td>
-                                            <td class="text-xs">
-                                                {{ $s->starts_at ? $s->starts_at->format('d/m/Y') : '-' }}
-                                                @if($s->expires_at) – {{ $s->expires_at->format('d/m/Y') }} @endif
-                                            </td>
-                                            <td><span class="badge {{ $sClass }} badge-sm">{{ $sText }}</span></td>
-                                            <td>
-                                                @if($s->status === 'success')
-                                                    <a href="{{ route('invoice.sponsorship', $s->id) }}" target="_blank" class="btn btn-ghost btn-xs text-emerald-600 hover:bg-emerald-50">
-                                                        📄 Invoice
-                                                    </a>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-8 bg-emerald-50 rounded-lg border border-emerald-100">
-                            <p class="font-semibold text-emerald-700 mb-1">Belum ada sponsorship</p>
-                            <p class="text-sm text-emerald-500">Pilih anak asuh di atas untuk menjadi Orang Tua Asuh.</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            {{-- ════════════════════ LAPORAN PERKEMBANGAN ANAK ════════════════════ --}}
-            <div class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>📈 Laporan Perkembangan Anak</span>
-                    </h2>
-
-                    @if($childDevelopments->isNotEmpty())
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            @foreach($childDevelopments as $dev)
-                                <div class="border border-emerald-100 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow">
-                                    @if($dev->foto)
-                                        <img src="{{ asset('storage/' . $dev->foto) }}" alt="{{ $dev->judul }}" class="w-full h-48 object-cover">
-                                    @endif
-                                    <div class="p-4">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="badge badge-success badge-sm">{{ $dev->fosterChild?->name ?? '-' }}</span>
-                                            <span class="text-xs text-emerald-400">{{ $dev->tanggal ? $dev->tanggal->format('d M Y') : '-' }}</span>
-                                        </div>
-                                        <h3 class="font-bold text-emerald-700 text-sm mb-1">{{ $dev->judul }}</h3>
-                                        <p class="text-xs text-gray-500 leading-relaxed">{{ $dev->deskripsi }}</p>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        @if($childDevelopments->hasPages())
-                            <div class="mt-5">{{ $childDevelopments->links() }}</div>
-                        @endif
-                    @else
-                        <div class="text-center py-8 bg-emerald-50 rounded-lg border border-emerald-100">
-                            <p class="font-semibold text-emerald-700 mb-1">Belum ada laporan perkembangan</p>
-                            <p class="text-sm text-emerald-500">Admin akan mengirimkan laporan perkembangan anak asuh Anda secara berkala.</p>
-                        </div>
-                    @endif
                 </div>
             </div>
 

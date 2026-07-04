@@ -23,6 +23,7 @@ return new class extends Migration
         $table->text('visi')->nullable();
         $table->text('misi')->nullable();
         $table->string('logo')->nullable();
+        $table->text('legalitas')->nullable();
         $table->string('foto_legalitas')->nullable();
         $table->string('foto_struktur')->nullable();
         

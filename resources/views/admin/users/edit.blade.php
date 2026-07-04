@@ -31,6 +31,23 @@
                         @csrf
                         @method('PUT')
 
+                        <div class="flex items-center gap-4 mb-5 pb-4 border-b border-emerald-100">
+                            <div class="avatar">
+                                <div class="w-16 h-16 rounded-full ring ring-emerald-200 ring-offset-2">
+                                    @if($user->avatar)
+                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="object-cover">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=b3e093&color=5c8148&bold=true&size=64" alt="">
+                                    @endif
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-emerald-700">{{ $user->name }}</p>
+                                <p class="text-sm text-emerald-500">{{ $user->email }}</p>
+                                <p class="text-xs text-emerald-400">Bergabung {{ $user->created_at->format('d M Y') }}</p>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-semibold text-emerald-700">Nama Lengkap</span></label>

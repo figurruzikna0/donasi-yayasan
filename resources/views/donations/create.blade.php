@@ -1,97 +1,152 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight text-emerald-600">Formulir Donasi</h2>
-    </x-slot>
+    <div class="bg-base-200 min-h-0">
 
-    <div class="py-10 px-4">
-        <div class="max-w-xl mx-auto">
-            <div class="card bg-base-100 shadow-xl border-t-4 border-t-emerald-600">
-                <div class="card-body p-8">
-                    <div class="text-center mb-6">
-                        <p class="text-slate-500 text-sm">Anda akan berdonasi untuk program:</p>
-                        <p class="font-bold text-emerald-600 text-lg">{{ $campaign->title }}</p>
+        <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-black">💰 Formulir Donasi</h1>
+                        <p class="text-emerald-100 text-sm mt-1">Lengkapi data diri untuk melanjutkan donasi</p>
                     </div>
+                    <a href="{{ route('dashboard') }}" class="btn btn-outline border-white text-white hover:bg-white hover:text-emerald-700 btn-sm font-bold">
+                        ← Kembali ke Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
 
-                    @if ($errors->any())
-                        <div class="alert alert-error mb-6">
-                            <ul class="text-sm font-semibold">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            {{-- Campaign Info --}}
+            <div class="card bg-emerald-50 border border-emerald-200 shadow-sm mb-6">
+                <div class="card-body p-5 flex flex-row items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-200 rounded-xl flex items-center justify-center text-2xl shrink-0">🎯</div>
+                    <div>
+                        <p class="text-xs text-emerald-500 uppercase tracking-wider font-bold">Program Donasi</p>
+                        <h3 class="font-bold text-emerald-700 text-lg">{{ $campaign->title }}</h3>
+                    </div>
+                    <div class="ml-auto text-right">
+                        <p class="text-xs text-emerald-500">Target</p>
+                        <p class="font-bold text-emerald-700">Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            @if ($errors->any())
+                <div class="alert alert-error mb-6 shadow-md border-0">
+                    <ul class="text-sm font-semibold">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- Form --}}
+            <div class="card bg-base-100 shadow-md border border-emerald-200">
+                <div class="card-body p-6 sm:p-8">
 
                     <form action="{{ route('donations.store', $campaign->id) }}" method="POST" id="donation-form">
                         @csrf
 
-                        <div class="mb-5">
-                            <label class="label label-text font-semibold text-emerald-600">Nama Lengkap <span class="text-red-500">*</span></label>
-                            <input type="text" name="donor_name" required placeholder="Contoh: Budi Santoso"
-                                   class="input input-bordered w-full" value="{{ old('donor_name') }}">
+                        {{-- Nama --}}
+                        <div class="form-control w-full mb-5">
+                            <label class="label">
+                                <span class="label-text font-bold text-emerald-700">Nama Lengkap <span class="text-red-500">*</span></span>
+                            </label>
+                            <div class="join w-full">
+                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">👤</span>
+                                <input type="text" name="donor_name" required placeholder="Contoh: Budi Santoso"
+                                       class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('donor_name') }}">
+                            </div>
                         </div>
 
-                        <div class="mb-5">
-                            <label class="label label-text font-semibold text-emerald-600">Alamat Email <span class="text-red-500">*</span></label>
-                            <input type="email" name="donor_email" required placeholder="email@anda.com"
-                                   class="input input-bordered w-full" value="{{ old('donor_email') }}">
+                        {{-- Email --}}
+                        <div class="form-control w-full mb-5">
+                            <label class="label">
+                                <span class="label-text font-bold text-emerald-700">Alamat Email <span class="text-red-500">*</span></span>
+                            </label>
+                            <div class="join w-full">
+                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">✉️</span>
+                                <input type="email" name="donor_email" required placeholder="email@anda.com"
+                                       class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('donor_email') }}">
+                            </div>
                         </div>
 
-                        <div class="mb-5">
-                            <label class="label label-text font-semibold text-emerald-600">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
-                            <input type="text" name="donor_phone" required placeholder="081234567890"
-                                   class="input input-bordered w-full" value="{{ old('donor_phone') }}">
-                            <label class="label"><span class="label-text-alt text-emerald-500">Digunakan untuk notifikasi donasi</span></label>
+                        {{-- Phone --}}
+                        <div class="form-control w-full mb-5">
+                            <label class="label">
+                                <span class="label-text font-bold text-emerald-700">No. WhatsApp Aktif <span class="text-red-500">*</span></span>
+                            </label>
+                            <div class="join w-full">
+                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">📞</span>
+                                <input type="text" name="donor_phone" required placeholder="081234567890"
+                                       class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('donor_phone') }}">
+                            </div>
+                            <label class="label"><span class="label-text-alt text-emerald-500">Digunakan untuk notifikasi donasi via WhatsApp</span></label>
                         </div>
 
-                        <div class="mb-5">
-                            <label class="label label-text font-semibold text-emerald-600">Nominal Donasi (Rp) <span class="text-red-500">*</span></label>
+                        {{-- Nominal --}}
+                        <div class="form-control w-full mb-5">
+                            <label class="label">
+                                <span class="label-text font-bold text-emerald-700">Nominal Donasi <span class="text-red-500">*</span></span>
+                            </label>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                                 @php $nominals = [10000, 20000, 50000, 100000]; @endphp
                                 @foreach($nominals as $nom)
                                     <button type="button"
-                                            class="btn btn-outline btn-success btn-sm nominal-btn"
+                                            class="btn btn-outline border-emerald-300 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 btn-sm nominal-btn font-bold"
                                             data-nominal="{{ $nom }}"
                                             onclick="pilihNominal(this, {{ $nom }})">
-                                        Rp {{ number_format($nom, 0, ',', '.') }}
+                                        Rp{{ number_format($nom, 0, ',', '.') }}
                                     </button>
                                 @endforeach
                             </div>
                             <div class="join w-full">
-                                <span class="join-item btn btn-ghost bg-base-200 font-bold text-emerald-600 px-4">Rp</span>
+                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 font-bold px-4">Rp</span>
                                 <input type="number" name="amount" id="amount-input" min="1000" required
-                                       placeholder="Atau isi nominal lainnya..."
-                                       class="input input-bordered w-full join-item font-bold text-emerald-600"
+                                       placeholder="Isi nominal lainnya"
+                                       class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500 font-bold text-emerald-700"
                                        oninput="resetNominalPills()">
                             </div>
                         </div>
 
-                        <div class="mb-6">
-                            <label class="label label-text font-semibold text-emerald-600">Metode Pembayaran <span class="text-red-500">*</span></label>
-                            <select name="payment_method" class="select select-bordered w-full" required>
-                                <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>-- Pilih Metode --</option>
-                                <option value="BCA VA" {{ old('payment_method') == 'BCA VA' ? 'selected' : '' }}>Virtual Account BCA</option>
-                                <option value="Mandiri Bill Payment" {{ old('payment_method') == 'Mandiri Bill Payment' ? 'selected' : '' }}>Mandiri Bill Payment</option>
-                                <option value="BNI VA" {{ old('payment_method') == 'BNI VA' ? 'selected' : '' }}>Virtual Account BNI</option>
-                                <option value="BRI VA" {{ old('payment_method') == 'BRI VA' ? 'selected' : '' }}>Virtual Account BRI</option>
-                                <option value="CIMB NIAGA VA" {{ old('payment_method') == 'CIMB NIAGA VA' ? 'selected' : '' }}>Virtual Account CIMB Niaga</option>
-                                <option value="Permata VA" {{ old('payment_method') == 'Permata VA' ? 'selected' : '' }}>Virtual Account Permata</option>
-                                <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>Virtual Account BSI</option>
-                                <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>GoPay</option>
-                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>QRIS</option>
-                                <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>ShopeePay</option>
+                        {{-- Payment Method --}}
+                        <div class="form-control w-full mb-6">
+                            <label class="label">
+                                <span class="label-text font-bold text-emerald-700">Metode Pembayaran <span class="text-red-500">*</span></span>
+                            </label>
+                            <select name="payment_method" class="select select-bordered w-full border-emerald-200 focus:border-emerald-500" required>
+                                <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>-- Pilih Metode Pembayaran --</option>
+                                <option value="BCA VA" {{ old('payment_method') == 'BCA VA' ? 'selected' : '' }}>🏦 Virtual Account BCA</option>
+                                <option value="Mandiri Bill Payment" {{ old('payment_method') == 'Mandiri Bill Payment' ? 'selected' : '' }}>🏦 Mandiri Bill Payment</option>
+                                <option value="BNI VA" {{ old('payment_method') == 'BNI VA' ? 'selected' : '' }}>🏦 Virtual Account BNI</option>
+                                <option value="BRI VA" {{ old('payment_method') == 'BRI VA' ? 'selected' : '' }}>🏦 Virtual Account BRI</option>
+                                <option value="CIMB NIAGA VA" {{ old('payment_method') == 'CIMB NIAGA VA' ? 'selected' : '' }}>🏦 Virtual Account CIMB Niaga</option>
+                                <option value="Permata VA" {{ old('payment_method') == 'Permata VA' ? 'selected' : '' }}>🏦 Virtual Account Permata</option>
+                                <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>🏦 Virtual Account BSI</option>
+                                <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>📱 GoPay</option>
+                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS</option>
+                                <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>📱 ShopeePay</option>
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-success text-white font-bold w-full shadow-lg">
-                            Lanjut ke Pembayaran
+                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base">
+                            🔐 Lanjut ke Pembayaran
                         </button>
 
                         <div class="mt-6 text-center">
-                            <a href="{{ route('dashboard') }}" class="link link-hover text-slate-400 font-medium text-sm">Kembali ke Dashboard</a>
+                            <a href="{{ route('dashboard') }}" class="text-slate-400 hover:text-emerald-600 font-medium text-sm transition-colors">
+                                ← Kembali ke Dashboard
+                            </a>
                         </div>
                     </form>
                 </div>
+            </div>
+
+            {{-- Trust Badge --}}
+            <div class="text-center mt-6 text-xs text-slate-400">
+                <p>🔒 Pembayaran diproses secara aman melalui <span class="font-semibold text-emerald-600">Midtrans</span></p>
             </div>
         </div>
     </div>
@@ -101,11 +156,11 @@
 
         function pilihNominal(btn, nominal) {
             document.querySelectorAll('.nominal-btn').forEach(b => {
-                b.classList.remove('btn-success', 'text-white');
-                b.classList.add('btn-outline');
+                b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                b.classList.add('btn-outline', 'border-emerald-300', 'text-emerald-600', 'hover:bg-emerald-600', 'hover:text-white', 'hover:border-emerald-600');
             });
-            btn.classList.remove('btn-outline');
-            btn.classList.add('btn-success', 'text-white');
+            btn.classList.remove('btn-outline', 'border-emerald-300', 'text-emerald-600', 'hover:bg-emerald-600', 'hover:text-white', 'hover:border-emerald-600');
+            btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
 
             document.getElementById('amount-input').value = nominal;
             activeNominal = nominal;
@@ -117,8 +172,8 @@
 
             if (val !== activeNominal) {
                 document.querySelectorAll('.nominal-btn').forEach(b => {
-                    b.classList.remove('btn-success', 'text-white');
-                    b.classList.add('btn-outline');
+                    b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                    b.classList.add('btn-outline', 'border-emerald-300', 'text-emerald-600', 'hover:bg-emerald-600', 'hover:text-white', 'hover:border-emerald-600');
                 });
                 activeNominal = null;
             }

@@ -50,7 +50,7 @@ class FosterChildController extends Controller
     // 4. Detail
     public function show(FosterChild $fosterChild)
     {
-        return redirect()->route('admin.foster-children.edit', $fosterChild);
+        return view('admin.foster_children.show', compact('fosterChild'));
     }
 
     // 5. Form edit

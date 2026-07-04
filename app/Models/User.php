@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 // 👇👇👇 TAMBAHIN 'role' DI SINI BIAR BISA JADI ADMIN 👇👇👇
-#[Fillable(['name', 'email', 'password', 'role', 'phone', 'address', 'nik'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'address', 'nik', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {

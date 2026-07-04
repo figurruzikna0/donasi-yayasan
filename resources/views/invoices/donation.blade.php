@@ -17,9 +17,9 @@
 <body class="bg-base-200 font-sans antialiased">
     <div class="max-w-3xl mx-auto p-6">
         <div class="no-print flex justify-end mb-4 gap-2">
-            <button onclick="window.print()" class="btn btn-success text-white font-bold">
-                🖨️ Cetak / Simpan PDF
-            </button>
+            <a href="{{ route('invoice.donation.pdf', $donation->id) }}" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold border-0">
+                ⬇️ Download PDF
+            </a>
             <a href="{{ url('/dashboard') }}" class="btn btn-outline">
                 ← Kembali
             </a>

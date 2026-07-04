@@ -52,6 +52,12 @@ class CampaignController extends Controller
                          ->with('success', 'Kampanye berhasil ditambahkan!');
     }
 
+    // --- FUNGSI SHOW (Menampilkan detail) ---
+    public function show(Campaign $campaign)
+    {
+        return view('admin.campaigns.show', compact('campaign'));
+    }
+
     // --- FUNGSI EDIT (Menampilkan form edit) ---
     public function edit(Campaign $campaign)
     {
