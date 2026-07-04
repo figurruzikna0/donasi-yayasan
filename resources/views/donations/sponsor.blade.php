@@ -28,18 +28,21 @@
                     <form action="{{ route('sponsor.store', $child->id) }}" method="POST" id="sponsor-form">
                         @csrf
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                             <div>
-                                <label class="label label-text font-semibold text-emerald-600">Nama Lengkap</label>
-                                <input type="text" class="input input-bordered w-full bg-base-200" value="{{ $user->name }}" readonly>
+                                <label class="label label-text font-semibold text-emerald-600">Nama Lengkap <span class="text-red-500">*</span></label>
+                                <input type="text" name="donor_name" required placeholder="Contoh: Budi Santoso"
+                                       class="input input-bordered w-full" value="{{ old('donor_name') }}">
                             </div>
                             <div>
-                                <label class="label label-text font-semibold text-emerald-600">Email</label>
-                                <input type="email" class="input input-bordered w-full bg-base-200" value="{{ $user->email }}" readonly>
+                                <label class="label label-text font-semibold text-emerald-600">Email <span class="text-red-500">*</span></label>
+                                <input type="email" name="donor_email" required placeholder="email@anda.com"
+                                       class="input input-bordered w-full" value="{{ old('donor_email') }}">
                             </div>
                             <div class="md:col-span-2">
-                                <label class="label label-text font-semibold text-emerald-600">Nomor WhatsApp Aktif</label>
-                                <input type="text" class="input input-bordered w-full bg-base-200" value="{{ $user->phone }}" readonly>
+                                <label class="label label-text font-semibold text-emerald-600">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
+                                <input type="text" name="donor_phone" required placeholder="081234567890"
+                                       class="input input-bordered w-full" value="{{ old('donor_phone') }}">
                                 <p class="text-xs text-slate-400 mt-1">
                                     Nomor ini dipakai untuk mengirim notifikasi jatuh tempo perpanjangan sponsorship.
                                 </p>
@@ -47,12 +50,12 @@
                         </div>
 
                         <div class="mb-6">
-                            <label for="paket_komitmen" class="label label-text font-semibold text-emerald-600">Pilih Paket Komitmen Bulanan</label>
+                            <label for="paket_komitmen" class="label label-text font-semibold text-emerald-600">Pilih Paket Komitmen Bulanan <span class="text-red-500">*</span></label>
                             <select name="paket_komitmen" id="paket_komitmen" class="select select-bordered w-full" required onchange="updatePaketDetail()">
-                                <option value="" disabled selected>-- Pilih Paket --</option>
-                                <option value="Bronze">Paket Bronze (Pendidikan Dasar)</option>
-                                <option value="Silver">Paket Silver (Pendidikan & Uang Saku)</option>
-                                <option value="Gold">Paket Gold (Pendidikan, Gizi & Kesehatan)</option>
+                                <option value="" disabled {{ old('paket_komitmen') ? '' : 'selected' }}>-- Pilih Paket --</option>
+                                <option value="Bronze" {{ old('paket_komitmen') == 'Bronze' ? 'selected' : '' }}>Paket Bronze (Pendidikan Dasar)</option>
+                                <option value="Silver" {{ old('paket_komitmen') == 'Silver' ? 'selected' : '' }}>Paket Silver (Pendidikan & Uang Saku)</option>
+                                <option value="Gold"   {{ old('paket_komitmen') == 'Gold'   ? 'selected' : '' }}>Paket Gold (Pendidikan, Gizi & Kesehatan)</option>
                             </select>
                         </div>
 
@@ -61,24 +64,28 @@
 
                         <div class="mb-6">
                             <label class="label label-text font-semibold text-emerald-600">Nominal Komitmen (Rp)</label>
-                            <input type="text" class="input input-bordered w-full font-bold text-lg" id="amount-display" readonly value="Otomatis terisi setelah pilih paket...">
+                            <input type="text" class="input input-bordered w-full font-bold text-lg bg-base-200" id="amount-display" readonly value="Otomatis terisi setelah pilih paket...">
                         </div>
 
                         <div class="mb-6">
                             <label class="label label-text font-semibold text-emerald-600">Rincian Peruntukan Dana</label>
-                            <textarea class="textarea textarea-bordered w-full" id="description-display" readonly>Otomatis terisi berdasarkan paket yang dipilih...</textarea>
+                            <textarea class="textarea textarea-bordered w-full bg-base-200" id="description-display" readonly>Otomatis terisi berdasarkan paket yang dipilih...</textarea>
                         </div>
 
                         <div class="mb-6">
-                            <label for="payment_method" class="label label-text font-semibold text-emerald-600">Metode Pembayaran Transfer</label>
+                            <label for="payment_method" class="label label-text font-semibold text-emerald-600">Metode Pembayaran <span class="text-red-500">*</span></label>
                             <select name="payment_method" id="payment_method" class="select select-bordered w-full" required>
-                                <option value="BCA VA">Virtual Account BCA</option>
-                                <option value="CIMB NIAGA VA">Virtual Account CIMB NIAGA</option>
-                                <option value="Permata VA">Virtual Account PERMATA</option>
-                                <option value="BNI VA">Virtual Account BNI</option>
-                                <option value="BSI VA">Virtual Account BSI</option>
-                                <option value="BRI VA">Virtual Account BRI</option>
-                                <option value="Lainnya">Metode Lainnya</option>
+                                <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>-- Pilih Metode --</option>
+                                <option value="BCA VA" {{ old('payment_method') == 'BCA VA' ? 'selected' : '' }}>Virtual Account BCA</option>
+                                <option value="Mandiri Bill Payment" {{ old('payment_method') == 'Mandiri Bill Payment' ? 'selected' : '' }}>Mandiri Bill Payment</option>
+                                <option value="BNI VA" {{ old('payment_method') == 'BNI VA' ? 'selected' : '' }}>Virtual Account BNI</option>
+                                <option value="BRI VA" {{ old('payment_method') == 'BRI VA' ? 'selected' : '' }}>Virtual Account BRI</option>
+                                <option value="CIMB NIAGA VA" {{ old('payment_method') == 'CIMB NIAGA VA' ? 'selected' : '' }}>Virtual Account CIMB Niaga</option>
+                                <option value="Permata VA" {{ old('payment_method') == 'Permata VA' ? 'selected' : '' }}>Virtual Account Permata</option>
+                                <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>Virtual Account BSI</option>
+                                <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>GoPay</option>
+                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>QRIS</option>
+                                <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>ShopeePay</option>
                             </select>
                         </div>
 
@@ -136,6 +143,11 @@
             }
             document.getElementById('submit-btn').disabled = true;
             document.getElementById('submit-btn').textContent = 'Memproses...';
+        });
+
+        window.addEventListener('DOMContentLoaded', function () {
+            const select = document.getElementById('paket_komitmen');
+            if (select.value) updatePaketDetail();
         });
     </script>
 </x-app-layout>

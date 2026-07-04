@@ -73,25 +73,8 @@
                         {{-- Upload Berkas --}}
                         <span class="font-bold text-emerald-700 uppercase text-xs block mb-4">Upload Berkas &amp; Gambar</span>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            {{-- Logo --}}
-                            <div class="form-control">
-                                <label class="label"><span class="label-text font-bold text-emerald-700 uppercase text-xs">Logo Utama <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
-                                <div class="relative">
-                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" id="logo-label">
-                                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                        <span id="logo-text" class="text-sm text-emerald-600 font-semibold">Pilih file logo...</span>
-                                    </label>
-                                    <input type="file" name="logo" id="logo-input" accept="image/*" class="hidden">
-                                </div>
-                                <p class="text-xs text-emerald-400 mt-1">PNG transparan lebih baik</p>
-                                @if($profil?->logo)
-                                    <img src="{{ asset('storage/' . $profil->logo) }}" class="mt-2 max-h-16 rounded-lg border border-emerald-200">
-                                @endif
-                                @error('logo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            {{-- Legalitas --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {{-- Legalitas --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700 uppercase text-xs">Surat Legalitas <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
                                 <div class="relative">
@@ -154,7 +137,6 @@
                 span.textContent = this.files.length > 0 ? this.files[0].name : span.dataset.default || span.textContent;
             });
         }
-        bindFile('logo-input',     'logo-text');
         bindFile('legal-input',    'legal-text');
         bindFile('struktur-input', 'struktur-text');
     </script>

@@ -53,7 +53,7 @@
                         <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">🏢</div>
                         <div>
                             <h3 class="text-white font-bold text-lg">Informasi Dasar</h3>
-                            <p class="text-white/80 text-sm">Nama, kontak, logo, dan alamat yayasan</p>
+                            <p class="text-white/80 text-sm">Nama, kontak, dan alamat yayasan</p>
                         </div>
                     </div>
                     <div class="card-body">
@@ -75,20 +75,6 @@
                                 <input type="text" name="no_telp" class="input input-bordered w-full" required
                                        value="{{ old('no_telp', $profil?->no_telp) }}" placeholder="08123456789">
                                 @error('no_telp') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="form-control">
-                                <label class="label"><span class="label-text font-bold text-emerald-700">Logo Yayasan <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
-                                <div class="relative">
-                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="logo-input">
-                                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                        <span id="logo-label" class="text-sm text-emerald-600 font-semibold">Pilih file logo…</span>
-                                    </label>
-                                    <input type="file" name="logo" id="logo-input" accept="image/*" class="hidden" onchange="document.getElementById('logo-label').textContent=this.files[0]?.name||'Pilih file logo…'">
-                                </div>
-                                <p class="text-xs text-emerald-400 mt-1">PNG/JPG transparan lebih baik · Maks 1MB</p>
-                                @if($profil?->logo)
-                                    <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="w-12 h-12 rounded-full object-cover border-2 border-emerald-300 mt-2">
-                                @endif
                             </div>
                         </div>
                         <div class="form-control mt-4">
@@ -222,11 +208,20 @@
                                         <p class="text-xs text-emerald-400 italic mt-1 line-clamp-2">"{{ $pendiri->deskripsi }}"</p>
                                     @endif
                                 </div>
-                                <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" onsubmit="return confirm('Hapus data pendiri ini?')">
+                                <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST"
+                                      x-data="{ open: false }" @submit.prevent="open = true">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-ghost btn-sm text-emerald-400 hover:text-red-500" title="Hapus">
+                                    <button type="button" @click="open = true" class="btn btn-ghost btn-sm text-emerald-400 hover:text-red-500" title="Hapus">
                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
+                                    <dialog class="modal" :class="{ 'modal-open': open }">
+                                        <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi Hapus</h3><p class="py-4">Hapus data pendiri ini?</p>
+                                            <div class="modal-action">
+                                                <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                            </div>
+                                        </div>
+                                    </dialog>
                                 </form>
                             </div>
                         @empty

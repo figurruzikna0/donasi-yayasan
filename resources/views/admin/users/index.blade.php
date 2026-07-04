@@ -32,12 +32,13 @@
                 </div>
             @endif
 
-            <div class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-4 flex items-center gap-3">
+            {{-- ══ TABEL DONATUR ══ --}}
+            <div class="card bg-base-100 shadow-md border border-emerald-200 mb-8">
+                <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 p-4 flex items-center gap-3">
                     <div class="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-lg">👥</div>
                     <div>
-                        <p class="text-white font-extrabold text-sm">User Terdaftar</p>
-                        <p class="text-white/75 text-xs">Total: {{ $users->total() }} akun</p>
+                        <p class="text-white font-extrabold text-sm">Donatur Terdaftar</p>
+                        <p class="text-white/75 text-xs">Total: {{ $donaturs->total() }} akun</p>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
@@ -47,13 +48,12 @@
                                 <th>Nama</th>
                                 <th>Email</th>
                                 <th>No. HP</th>
-                                <th>Role</th>
                                 <th>Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($users as $user)
+                            @forelse($donaturs as $user)
                                 <tr>
                                     <td>
                                         <div class="flex items-center gap-3">
@@ -68,13 +68,6 @@
                                     <td class="text-sm">{{ $user->email }}</td>
                                     <td class="text-sm">{{ $user->phone ?? '-' }}</td>
                                     <td>
-                                        @if($user->isAdmin())
-                                            <span class="badge badge-error badge-sm">Admin</span>
-                                        @else
-                                            <span class="badge badge-success badge-sm">Donatur</span>
-                                        @endif
-                                    </td>
-                                    <td>
                                         @if($user->email_verified_at)
                                             <span class="badge badge-success badge-sm">Terverifikasi</span>
                                         @else
@@ -87,34 +80,100 @@
                                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                                 Edit
                                             </a>
-                                            @if(!$user->isAdmin())
-                                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                                      onsubmit="return confirm('Hapus user {{ $user->name }}?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-error">
-                                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                                                        Hapus
-                                                    </button>
-                                                </form>
-                                            @endif
+                                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                                  x-data="{ open: false }" @submit.prevent="open = true">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" @click="open = true" class="btn btn-sm btn-error">
+                                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                    Hapus
+                                                </button>
+                                                <dialog class="modal" :class="{ 'modal-open': open }">
+                                                    <div class="modal-box">
+                                                        <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
+                                                        <p class="py-4">Yakin ingin menghapus user <strong>{{ $user->name }}</strong>?</p>
+                                                        <div class="modal-action">
+                                                            <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                            <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                                        </div>
+                                                    </div>
+                                                </dialog>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-10 text-base-content/60">Belum ada user terdaftar.</td>
+                                    <td colspan="5" class="text-center py-10 text-base-content/60">Belum ada donatur terdaftar.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                @if($users->hasPages())
+                @if($donaturs->hasPages())
                     <div class="p-4 border-t border-emerald-100">
-                        {{ $users->links() }}
+                        {{ $donaturs->links() }}
                     </div>
                 @endif
             </div>
+
+            {{-- ══ TABEL ADMIN ══ --}}
+            <div class="card bg-base-100 shadow-md border border-emerald-200">
+                <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 p-4 flex items-center gap-3">
+                    <div class="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-lg">🔐</div>
+                    <div>
+                        <p class="text-white font-extrabold text-sm">Admin</p>
+                        <p class="text-white/75 text-xs">Total: {{ $admins->count() }} akun</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($admins as $user)
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="avatar">
+                                                <div class="w-9 rounded-full">
+                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=7c3aed&color=ffffff&bold=true" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="font-bold text-sm text-emerald-700">{{ $user->name }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm">{{ $user->email }}</td>
+                                    <td>
+                                        @if($user->email_verified_at)
+                                            <span class="badge badge-success badge-sm">Terverifikasi</span>
+                                        @else
+                                            <span class="badge badge-ghost badge-sm">Belum Verifikasi</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-ghost">
+                                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                            Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-10 text-base-content/60">Belum ada admin.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </x-app-layout>

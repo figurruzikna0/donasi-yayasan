@@ -121,18 +121,36 @@
                                         <td class="text-center">
                                             <div class="flex items-center justify-center gap-2">
                                                 @if($item->status==='pending')
-                                                    <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST" onsubmit="return confirm('Setujui donasi ini?')">
+                                                    <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST"
+                                                          x-data="{ open: false }" @submit.prevent="open = true">
                                                         @csrf @method('PATCH')
-                                                        <button type="submit" class="btn btn-sm btn-success" title="Setujui">
+                                                        <button type="button" @click="open = true" class="btn btn-sm btn-success" title="Setujui">
                                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>
                                                         </button>
+                                                        <dialog class="modal" :class="{ 'modal-open': open }">
+                                                            <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi</h3><p class="py-4">Setujui donasi ini?</p>
+                                                                <div class="modal-action">
+                                                                    <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                                    <button @click="open = false; $el.closest('form').submit()" class="btn btn-success">Setujui</button>
+                                                                </div>
+                                                            </div>
+                                                        </dialog>
                                                     </form>
                                                 @endif
-                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" onsubmit="return confirm('Hapus transaksi ini?')">
+                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST"
+                                                      x-data="{ open: false }" @submit.prevent="open = true">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-error" title="Hapus">
+                                                    <button type="button" @click="open = true" class="btn btn-sm btn-error" title="Hapus">
                                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                     </button>
+                                                    <dialog class="modal" :class="{ 'modal-open': open }">
+                                                        <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi Hapus</h3><p class="py-4">Hapus transaksi ini?</p>
+                                                            <div class="modal-action">
+                                                                <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                                <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                                            </div>
+                                                        </div>
+                                                    </dialog>
                                                 </form>
                                             </div>
                                         </td>
@@ -234,18 +252,36 @@
                                         <td class="text-center">
                                             <div class="flex items-center justify-center gap-2">
                                                 @if($item->status==='pending')
-                                                    <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST" onsubmit="return confirm('Setujui sponsorship ini?')">
+                                                    <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST"
+                                                          x-data="{ open: false }" @submit.prevent="open = true">
                                                         @csrf @method('PATCH')
-                                                        <button type="submit" class="btn btn-sm btn-success" title="Setujui">
+                                                        <button type="button" @click="open = true" class="btn btn-sm btn-success" title="Setujui">
                                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>
                                                         </button>
+                                                        <dialog class="modal" :class="{ 'modal-open': open }">
+                                                            <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi</h3><p class="py-4">Setujui sponsorship ini?</p>
+                                                                <div class="modal-action">
+                                                                    <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                                    <button @click="open = false; $el.closest('form').submit()" class="btn btn-success">Setujui</button>
+                                                                </div>
+                                                            </div>
+                                                        </dialog>
                                                     </form>
                                                 @endif
-                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" onsubmit="return confirm('Hapus sponsorship ini?')">
+                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST"
+                                                      x-data="{ open: false }" @submit.prevent="open = true">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-error" title="Hapus">
+                                                    <button type="button" @click="open = true" class="btn btn-sm btn-error" title="Hapus">
                                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                     </button>
+                                                    <dialog class="modal" :class="{ 'modal-open': open }">
+                                                        <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi Hapus</h3><p class="py-4">Hapus sponsorship ini?</p>
+                                                            <div class="modal-action">
+                                                                <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                                <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                                            </div>
+                                                        </div>
+                                                    </dialog>
                                                 </form>
                                             </div>
                                         </td>

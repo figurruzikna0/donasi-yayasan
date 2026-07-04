@@ -163,13 +163,21 @@
                                         </a>
                                         <form action="{{ route('admin.foster-children.destroy', $child->id) }}"
                                               method="POST"
-                                              onsubmit="return confirm('Yakin ingin menghapus data {{ $child->name }}?');">
+                                              x-data="{ open: false }" @submit.prevent="open = true">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-error">
+                                            <button type="button" @click="open = true" class="btn btn-sm btn-error">
                                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                 Hapus
                                             </button>
+                                            <dialog class="modal" :class="{ 'modal-open': open }">
+                                                <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi Hapus</h3><p class="py-4">Yakin ingin menghapus data <strong>{{ $child->name }}</strong>?</p>
+                                                    <div class="modal-action">
+                                                        <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                        <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                                    </div>
+                                                </div>
+                                            </dialog>
                                         </form>
                                     </div>
                                 </td>

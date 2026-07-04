@@ -12,8 +12,8 @@
 <body class="font-sans antialiased flex items-center justify-center min-h-screen py-10 bg-gradient-to-br from-emerald-50 via-emerald-100 to-emerald-200">
 
     <div class="max-w-md w-full px-4">
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body text-center p-8">
+        <div class="bg-white rounded-2xl shadow-lg">
+            <div class="text-center p-8">
 
                 <div class="w-20 h-20 bg-emerald-200 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,11 +49,11 @@
                 </div>
 
                 <button id="pay-button"
-                        class="btn btn-success text-white font-bold w-full shadow-lg mb-4">
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl w-full shadow-lg mb-4 transition-colors">
                     Pilih Metode Pembayaran
                 </button>
 
-                <a href="/" class="link link-hover text-slate-400 font-medium text-sm">
+                <a href="/" class="text-slate-400 hover:text-slate-600 font-medium text-sm text-center block underline underline-offset-2">
                     ← Kembali ke Beranda
                 </a>
             </div>

@@ -34,7 +34,7 @@
                                 @endforeach
                             </select>
                             @error('foster_child_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            <p class="text-xs text-emerald-500 mt-1">Hanya anak berstatus "Diasuh" yang muncul di daftar ini.</p>
+                            <p class="text-xs text-emerald-500 mt-1">Hanya anak yang memiliki sponsorship aktif yang muncul di daftar ini.</p>
                         </div>
 
                         <div class="form-control mb-5">

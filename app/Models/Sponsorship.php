@@ -30,7 +30,11 @@ class Sponsorship extends Model
         'reminder_sent_at' => 'datetime',
     ];
 
-    // app/Models/Sponsorship.php
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function fosterChild()
     {
         return $this->belongsTo(FosterChild::class, 'foster_child_id');

@@ -63,11 +63,20 @@
 
                                     <td class="text-center">
                                         @if($donation->status == 'pending')
-                                            <form action="{{ route('admin.transactions.approve', $donation->id) }}" method="POST" onsubmit="return confirm('Yakin ACC donasi ini?');">
+                                            <form action="{{ route('admin.transactions.approve', $donation->id) }}" method="POST"
+                                                  x-data="{ open: false }" @submit.prevent="open = true">
                                                 @csrf @method('PATCH')
-                                                <button type="submit" class="btn btn-sm btn-success">
+                                                <button type="button" @click="open = true" class="btn btn-sm btn-success">
                                                     Konfirmasi ACC
                                                 </button>
+                                                <dialog class="modal" :class="{ 'modal-open': open }">
+                                                    <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi</h3><p class="py-4">Yakin ACC donasi ini?</p>
+                                                        <div class="modal-action">
+                                                            <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                            <button @click="open = false; $el.closest('form').submit()" class="btn btn-success">ACC</button>
+                                                        </div>
+                                                    </div>
+                                                </dialog>
                                             </form>
                                         @else
                                             <span class="text-xs text-emerald-500 flex items-center justify-center font-bold">

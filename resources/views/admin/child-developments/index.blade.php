@@ -89,9 +89,9 @@
                                                 Edit
                                             </a>
                                             <form action="{{ route('admin.child-developments.destroy', $item->id) }}" method="POST"
-                                                  onsubmit="return confirm('Hapus laporan \'{{ addslashes($item->judul) }}\'?')">
+                                                  x-data="{ open: false }" @submit.prevent="open = true">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-error">
+                                                <button type="button" @click="open = true" class="btn btn-sm btn-error">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
                                                         <polyline points="3 6 5 6 21 6"/>
                                                         <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -100,6 +100,14 @@
                                                     </svg>
                                                     Hapus
                                                 </button>
+                                                    <dialog class="modal" :class="{ 'modal-open': open }">
+                                                        <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi Hapus</h3><p class="py-4">Hapus laporan '{{ $item->judul }}'?</p>
+                                                            <div class="modal-action">
+                                                                <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                                <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                                            </div>
+                                                        </div>
+                                                    </dialog>
                                             </form>
                                         </div>
                                     </td>

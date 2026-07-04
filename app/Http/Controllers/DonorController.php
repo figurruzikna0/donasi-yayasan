@@ -2,26 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Campaign;
+use App\Models\ChildDevelopment;
 use App\Models\Donation;
+use App\Models\FosterChild;
+use App\Models\News;
+use App\Models\Pendiri;
+use App\Models\ProfilYayasan;
+use App\Models\Sponsorship;
 use Illuminate\Support\Facades\Auth;
-// Ini kita tambahin biar controllernya kenal sama model ProfilYayasan
-use App\Models\ProfilYayasan; 
 
 class DonorController extends Controller
 {
     public function dashboard()
     {
-        // Tarik data donasi khusus untuk user yang lagi login (Asli bawaan temen lu)
+        $user = Auth::user();
+
+        $profil = ProfilYayasan::first();
+        $pendiris = Pendiri::latest()->get();
+        $newsList = News::published()->latest('tanggal_kegiatan')->take(6)->get();
+        $campaigns = Campaign::where('status', 'active')->latest()->get();
+        $fosterChildren = FosterChild::latest()->paginate(6);
+        $totalFoster = FosterChild::count();
+        $tersediaFoster = FosterChild::where('status', 'Tersedia')->count();
+        $diasuhFoster = FosterChild::where('status', 'Diasuh')->count();
+
         $donations = Donation::with('campaign')
-            ->where('user_id', Auth::id())
+            ->where('user_id', $user->id)
             ->latest()
             ->get();
 
-        // Tarik data profil yayasan (Tambahan baru dari kita)
-        $profil = ProfilYayasan::first();
+        $sponsorships = Sponsorship::with('fosterChild')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
-        // Lempar datanya ke tampilan dashboard bawaan Breeze (Kita tambahin 'profil' di dalam compact)
-        return view('dashboard', compact('donations', 'profil'));
+        $totalDonated = Donation::where('user_id', $user->id)
+            ->where('status', 'success')
+            ->sum('amount');
+
+        $activeSponsorships = Sponsorship::where('user_id', $user->id)
+            ->where('status', 'success')
+            ->count();
+
+        $childDevelopments = ChildDevelopment::whereHas('sponsorship', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->with(['fosterChild', 'sponsorship'])
+            ->latest('tanggal')
+            ->paginate(6);
+
+        return view('dashboard', compact(
+            'profil', 'pendiris', 'newsList', 'campaigns', 'fosterChildren',
+            'donations', 'sponsorships', 'totalDonated', 'activeSponsorships', 'user',
+            'totalFoster', 'tersediaFoster', 'diasuhFoster', 'childDevelopments'
+        ));
     }
 }

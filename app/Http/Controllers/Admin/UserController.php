@@ -10,8 +10,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->paginate(20);
-        return view('admin.users.index', compact('users'));
+        $donaturs = User::where('role', 'donatur')->latest()->paginate(20);
+        $admins = User::where('role', 'admin')->latest()->get();
+        return view('admin.users.index', compact('donaturs', 'admins'));
     }
 
     public function edit($id)

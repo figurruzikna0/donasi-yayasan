@@ -15,6 +15,7 @@ class Donation extends Model
         'snap_token',
         'donor_name',
         'donor_email',
+        'donor_phone',
         'user_id',
         'amount',
         'payment_method',

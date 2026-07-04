@@ -24,7 +24,9 @@ class ChildDevelopmentController extends Controller
 
     public function create()
     {
-        $children = FosterChild::where('status', 'Diasuh')->get();
+        $children = FosterChild::whereHas('sponsorships', function ($q) {
+                $q->where('status', 'success');
+            })->get();
         return view('admin.child-developments.create', compact('children'));
     }
 
@@ -72,7 +74,9 @@ class ChildDevelopmentController extends Controller
 
     public function edit(ChildDevelopment $childDevelopment)
     {
-        $children = FosterChild::where('status', 'Diasuh')->get();
+        $children = FosterChild::whereHas('sponsorships', function ($q) {
+                $q->where('status', 'success');
+            })->get();
         return view('admin.child-developments.edit', [
             'development' => $childDevelopment,
             'children'    => $children,

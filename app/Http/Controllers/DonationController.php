@@ -23,8 +23,7 @@ class DonationController extends Controller
 
     public function create(Campaign $campaign)
     {
-        $user = auth()->user();
-        return view('donations.create', compact('campaign', 'user'));
+        return view('donations.create', compact('campaign'));
     }
 
     public function store(Request $request, Campaign $campaign)
@@ -32,7 +31,11 @@ class DonationController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:1000',
+            'donor_name'     => 'required|string|max:255',
+            'donor_email'    => 'required|email|max:255',
+            'donor_phone'    => 'required|string|max:20',
+            'amount'         => 'required|numeric|min:1000',
+            'payment_method' => 'required|string|max:255',
         ]);
 
         $this->initMidtrans();
@@ -40,13 +43,15 @@ class DonationController extends Controller
         $orderId  = 'DONASI-' . uniqid();
 
         $donation = Donation::create([
-            'campaign_id' => $campaign->id,
-            'user_id'     => $user->id,
-            'order_id'    => $orderId,
-            'donor_name'  => $user->name,
-            'donor_email' => $user->email,
-            'amount'      => $validated['amount'],
-            'status'      => 'pending',
+            'campaign_id'    => $campaign->id,
+            'user_id'        => $user->id,
+            'order_id'       => $orderId,
+            'donor_name'     => $validated['donor_name'],
+            'donor_email'    => $validated['donor_email'],
+            'donor_phone'    => $validated['donor_phone'],
+            'amount'         => $validated['amount'],
+            'payment_method' => $validated['payment_method'],
+            'status'         => 'pending',
         ]);
 
         $params = [
@@ -57,6 +62,7 @@ class DonationController extends Controller
             'customer_details' => [
                 'first_name' => $donation->donor_name,
                 'email'      => $donation->donor_email,
+                'phone'      => $donation->donor_phone,
             ],
         ];
 
@@ -69,8 +75,7 @@ class DonationController extends Controller
     public function sponsorForm($id)
     {
         $child = FosterChild::findOrFail($id);
-        $user  = auth()->user();
-        return view('donations.sponsor', compact('child', 'user'));
+        return view('donations.sponsor', compact('child'));
     }
 
     public function sponsorStore(Request $request, $id)
@@ -79,10 +84,13 @@ class DonationController extends Controller
         $user  = auth()->user();
 
         $validated = $request->validate([
-            'amount'          => 'required|numeric|min:1000',
-            'paket_komitmen'  => 'required|string|max:255',
-            'description'     => 'nullable|string',
-            'payment_method'  => 'nullable|string|max:255',
+            'donor_name'     => 'required|string|max:255',
+            'donor_email'    => 'required|email|max:255',
+            'donor_phone'    => 'required|string|max:20',
+            'amount'         => 'required|numeric|min:1000',
+            'paket_komitmen' => 'required|string|max:255',
+            'description'    => 'nullable|string',
+            'payment_method' => 'required|string|max:255',
         ]);
 
         $this->initMidtrans();
@@ -93,13 +101,13 @@ class DonationController extends Controller
             'foster_child_id'     => $child->id,
             'user_id'             => $user->id,
             'order_id'            => $orderId,
-            'donor_name'          => $user->name,
-            'donor_email'         => $user->email,
-            'donor_phone'         => $user->phone,
+            'donor_name'          => $validated['donor_name'],
+            'donor_email'         => $validated['donor_email'],
+            'donor_phone'         => $validated['donor_phone'],
             'amount'              => $validated['amount'],
             'package'             => $validated['paket_komitmen'],
             'package_description' => $validated['description'] ?? null,
-            'payment_method'      => $validated['payment_method'] ?? null,
+            'payment_method'      => $validated['payment_method'],
             'status'              => 'pending',
         ]);
 
@@ -111,6 +119,7 @@ class DonationController extends Controller
             'customer_details' => [
                 'first_name' => $sponsorship->donor_name,
                 'email'      => $sponsorship->donor_email,
+                'phone'      => $sponsorship->donor_phone,
             ],
         ];
 
@@ -183,6 +192,15 @@ class DonationController extends Controller
                     if ($campaign) {
                         $campaign->increment('collected_amount', $donation->amount);
                     }
+
+                    // ✅ Kirim notifikasi WA ke donatur
+                    if ($donation->donor_phone) {
+                        try {
+                            $this->kirimWaDonasi($donation, $campaign);
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error('Gagal kirim WA donasi: ' . $e->getMessage());
+                        }
+                    }
                 } elseif ($status === 'pending') {
                     $donation->update(['status' => 'pending']);
                 } else {
@@ -233,6 +251,36 @@ class DonationController extends Controller
                . "_Baitul Yatim_";
 
         $fonnte->send($sponsorship->donor_phone, $pesan);
+    }
+
+    private function kirimWaDonasi(Donation $donation, ?Campaign $campaign): void
+    {
+        $fonnte = new FonnteService();
+        $nama   = $donation->donor_name;
+        $judul  = $campaign?->title ?? 'Program Donasi';
+        $nominal = 'Rp ' . number_format($donation->amount, 0, ',', '.');
+        $metode  = $donation->payment_method ?? '-';
+        $orderId = $donation->order_id;
+        $tanggal = $donation->created_at
+                     ? \Carbon\Carbon::parse($donation->created_at)->translatedFormat('d F Y H:i')
+                     : now()->translatedFormat('d F Y H:i');
+
+        $pesan = "Assalamu'alaikum, *{$nama}* 🌿\n\n"
+               . "✅ *Donasi Berhasil!*\n\n"
+               . "Alhamdulillah, pembayaran donasi Anda telah kami terima. Semoga menjadi amal jariyah yang tak terputus pahalanya. 🤲\n\n"
+               . "━━━━━━━━━━━━━━━━━\n"
+               . "📋 *Rincian Donasi*\n"
+               . "Program : {$judul}\n"
+               . "Nominal : {$nominal}\n"
+               . "Metode  : {$metode}\n"
+               . "Tanggal : {$tanggal}\n\n"
+               . "🆔 *ID Transaksi*\n"
+               . "{$orderId}\n"
+               . "━━━━━━━━━━━━━━━━━\n\n"
+               . "Terima kasih atas kepercayaan dan kebaikan Anda. Semoga Allah SWT membalas dengan berlipat ganda. Aamiin 🤍\n\n"
+               . "_Baitul Yatim_";
+
+        $fonnte->send($donation->donor_phone, $pesan);
     }
 
     private function extractPaymentMethod($notification): ?string

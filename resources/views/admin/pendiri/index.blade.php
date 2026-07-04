@@ -96,9 +96,18 @@
                                             </p>
                                         </td>
                                         <td class="text-center align-top">
-                                            <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus data pendiri ini?')">
+                                            <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST"
+                                                  x-data="{ open: false }" @submit.prevent="open = true">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-error mt-2">Hapus</button>
+                                                <button type="button" @click="open = true" class="btn btn-sm btn-error mt-2">Hapus</button>
+                                                <dialog class="modal" :class="{ 'modal-open': open }">
+                                                    <div class="modal-box"><h3 class="font-bold text-lg">Konfirmasi Hapus</h3><p class="py-4">Yakin hapus data pendiri ini?</p>
+                                                        <div class="modal-action">
+                                                            <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
+                                                            <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
+                                                        </div>
+                                                    </div>
+                                                </dialog>
                                             </form>
                                         </td>
                                     </tr>

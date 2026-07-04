@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // Controllers — Publik
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
 
 // Controllers — Admin
@@ -17,13 +18,20 @@ use App\Http\Controllers\Admin\ProfilYayasanController;
 use App\Http\Controllers\Admin\SponsorshipController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\RekapController;
 
 // Models
 use App\Models\Campaign;
 use App\Models\Donation;
-use App\Models\FosterChild;
 use App\Models\News;
+use App\Models\FosterChild;
 use App\Models\ProfilYayasan;
+
+// --- RUTE BERITA PUBLIK ---
+Route::get('/berita/{slug}', function ($slug) {
+    $news = \App\Models\News::where('slug', $slug)->published()->firstOrFail();
+    return view('news.show', compact('news'));
+})->name('news.show');
 
 // --- RUTE HALAMAN DEPAN ---
 Route::get('/', function () {
@@ -35,18 +43,21 @@ Route::get('/', function () {
 
     $campaigns = Campaign::where('status', 'active')->latest()->get();
     $profil = ProfilYayasan::first();
-    $fosterChildren = FosterChild::latest()->get();
     $newsList = News::published()->latest('tanggal_kegiatan')->take(9)->get();
 
-    return view('welcome', compact('campaigns', 'profil', 'fosterChildren', 'newsList'));
+    return view('welcome', compact('campaigns', 'profil', 'newsList'));
 });
 
-// --- RUTE DONASI & SPONSOR (wajib login) ---
-Route::middleware(['auth'])->group(function () {
+// --- RUTE DONASI & SPONSOR (wajib login & verifikasi) ---
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donations.create');
     Route::post('/campaign/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
     Route::get('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorForm'])->name('sponsor.form');
     Route::post('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorStore'])->name('sponsor.store');
+
+    // Invoice
+    Route::get('/donations/{id}/invoice', [InvoiceController::class, 'donation'])->name('invoice.donation');
+    Route::get('/sponsorships/{id}/invoice', [InvoiceController::class, 'sponsorship'])->name('invoice.sponsorship');
 });
 
 // --- RUTE CALLBACK MIDTRANS (dipanggil server Midtrans, bukan user) ---
@@ -59,14 +70,14 @@ Route::get('/dashboard', [DonorController::class, 'dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // --- RUTE ADMIN (Terlindungi) ---
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard Admin
     Route::get('/dashboard', function () {
@@ -115,6 +126,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // Rekap Data
+    Route::prefix('rekap')->name('rekap.')->group(function () {
+        Route::get('/donasi', [RekapController::class, 'donasi'])->name('donasi');
+        Route::get('/donasi/export', [RekapController::class, 'donasiExport'])->name('donasi.export');
+        Route::get('/donatur', [RekapController::class, 'donatur'])->name('donatur');
+        Route::get('/donatur/export', [RekapController::class, 'donaturExport'])->name('donatur.export');
+        Route::get('/orang-tua-asuh', [RekapController::class, 'orangTuaAsuh'])->name('orang-tua-asuh');
+        Route::get('/orang-tua-asuh/export', [RekapController::class, 'orangTuaAsuhExport'])->name('orang-tua-asuh.export');
+    });
 });
 
 require __DIR__.'/auth.php';
