@@ -71,61 +71,45 @@
         </div>
     </nav>
 
-    {{-- HERO --}}
-    @if($news->foto_utama)
-    <div class="w-full h-64 sm:h-80 md:h-[450px] overflow-hidden relative">
-        <img src="{{ asset('storage/' . $news->foto_utama) }}" alt="{{ $news->judul }}" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-        <div class="absolute bottom-0 left-0 right-0 px-4 sm:px-8 lg:px-12 pb-8 sm:pb-12 max-w-5xl mx-auto">
-            <div class="flex flex-wrap items-center gap-2 mb-3">
-                @if($news->kategori)
-                    <span class="text-xs font-bold uppercase tracking-wider bg-emerald-500 text-white px-3 py-1 rounded-full">{{ $news->kategori }}</span>
-                @endif
-                @if($news->tanggal_kegiatan)
-                    <span class="text-xs text-white/70">📅 {{ $news->tanggal_kegiatan->format('d M Y') }}</span>
-                @endif
-            </div>
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight max-w-3xl">{{ $news->judul }}</h1>
-        </div>
-    </div>
-    @else
-    <div class="bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 py-16 sm:py-20">
-        <div class="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12">
-            <div class="flex flex-wrap items-center gap-2 mb-3">
-                @if($news->kategori)
-                    <span class="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-3 py-1 rounded-full">{{ $news->kategori }}</span>
-                @endif
-                @if($news->tanggal_kegiatan)
-                    <span class="text-xs text-white/70">📅 {{ $news->tanggal_kegiatan->format('d M Y') }}</span>
-                @endif
-            </div>
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight max-w-3xl">{{ $news->judul }}</h1>
-        </div>
-    </div>
-    @endif
+    <div class="bg-gradient-to-b from-emerald-50 to-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
-    {{-- CONTENT --}}
-    <div class="bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-8 sm:py-12 lg:py-16">
-
-            <nav class="text-sm text-gray-400 mb-8">
+            {{-- Breadcrumb --}}
+            <nav class="text-sm text-gray-400 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-emerald-600 transition-colors">Beranda</a>
-                <span class="mx-2">/</span>
+                <span class="mx-1.5">/</span>
                 <a href="{{ url('/#berita-kegiatan') }}" class="hover:text-emerald-600 transition-colors">Berita</a>
-                <span class="mx-2">/</span>
+                <span class="mx-1.5">/</span>
                 <span class="text-gray-600">{{ Str::limit($news->judul, 40) }}</span>
             </nav>
 
-            <div class="lg:grid lg:grid-cols-3 lg:gap-14">
+            {{-- Hero Image --}}
+            @if($news->foto_utama)
+            <div class="rounded-2xl overflow-hidden shadow-lg mb-8 max-h-80">
+                <img src="{{ asset('storage/' . $news->foto_utama) }}" alt="{{ $news->judul }}" class="w-full h-56 sm:h-72 object-cover">
+            </div>
+            @endif
+
+            {{-- Header Info --}}
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+                @if($news->kategori)
+                    <span class="text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">{{ $news->kategori }}</span>
+                @endif
+                @if($news->tanggal_kegiatan)
+                    <span class="text-xs text-gray-500">📅 {{ $news->tanggal_kegiatan->format('d M Y') }}</span>
+                @endif
+                @if($news->lokasi)
+                    <span class="text-xs text-gray-500">📍 {{ $news->lokasi }}</span>
+                @endif
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-emerald-800 leading-tight mb-8">{{ $news->judul }}</h1>
+
+            {{-- Grid --}}
+            <div class="lg:grid lg:grid-cols-3 lg:gap-12">
+
+                {{-- Main Content --}}
                 <article class="lg:col-span-2">
-                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-100">
-                        @if($news->lokasi)
-                            <span class="flex items-center gap-1.5">📍 {{ $news->lokasi }}</span>
-                        @endif
-                        @if($news->penyelenggara)
-                            <span class="flex items-center gap-1.5">👤 {{ $news->penyelenggara }}</span>
-                        @endif
-                    </div>
 
                     @if($news->ringkasan)
                         <div class="text-base text-emerald-700 font-medium mb-8 p-5 bg-emerald-50 rounded-xl border-l-4 border-emerald-500 leading-relaxed">
@@ -145,54 +129,66 @@
                     </div>
                 </article>
 
+                {{-- Sidebar --}}
                 <aside class="mt-10 lg:mt-0">
                     <div class="sticky top-24 space-y-6">
-                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4">Informasi Kegiatan</h3>
-                            <ul class="space-y-3 text-sm">
+
+                        {{-- Info Kegiatan --}}
+                        <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
+                            <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 py-4">
+                                <h3 class="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Informasi Kegiatan
+                                </h3>
+                            </div>
+                            <div class="p-5 space-y-4">
                                 @if($news->tanggal_kegiatan)
-                                <li class="flex items-start gap-3">
-                                    <span class="text-base flex-shrink-0 w-5 text-center">📅</span>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 text-base">📅</div>
                                     <div>
-                                        <p class="text-xs text-gray-400 font-semibold uppercase">Tanggal</p>
-                                        <p class="text-gray-700">{{ $news->tanggal_kegiatan->format('d F Y') }}</p>
+                                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Tanggal</p>
+                                        <p class="text-sm font-bold text-emerald-700">{{ $news->tanggal_kegiatan->format('d F Y') }}</p>
                                     </div>
-                                </li>
+                                </div>
                                 @endif
                                 @if($news->lokasi)
-                                <li class="flex items-start gap-3">
-                                    <span class="text-base flex-shrink-0 w-5 text-center">📍</span>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 text-base">📍</div>
                                     <div>
-                                        <p class="text-xs text-gray-400 font-semibold uppercase">Lokasi</p>
-                                        <p class="text-gray-700">{{ $news->lokasi }}</p>
+                                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Lokasi</p>
+                                        <p class="text-sm font-bold text-emerald-700">{{ $news->lokasi }}</p>
                                     </div>
-                                </li>
+                                </div>
                                 @endif
                                 @if($news->penyelenggara)
-                                <li class="flex items-start gap-3">
-                                    <span class="text-base flex-shrink-0 w-5 text-center">👤</span>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 text-base">👤</div>
                                     <div>
-                                        <p class="text-xs text-gray-400 font-semibold uppercase">Penyelenggara</p>
-                                        <p class="text-gray-700">{{ $news->penyelenggara }}</p>
+                                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Penyelenggara</p>
+                                        <p class="text-sm font-bold text-emerald-700">{{ $news->penyelenggara }}</p>
                                     </div>
-                                </li>
+                                </div>
                                 @endif
                                 @if($news->kategori)
-                                <li class="flex items-start gap-3">
-                                    <span class="text-base flex-shrink-0 w-5 text-center">🏷️</span>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 text-base">🏷️</div>
                                     <div>
-                                        <p class="text-xs text-gray-400 font-semibold uppercase">Kategori</p>
-                                        <p class="text-gray-700">{{ $news->kategori }}</p>
+                                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Kategori</p>
+                                        <p class="text-sm font-bold text-emerald-700">{{ $news->kategori }}</p>
                                     </div>
-                                </li>
+                                </div>
                                 @endif
-                            </ul>
+                            </div>
                         </div>
 
-                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-5 text-white">
-                            <p class="text-sm font-bold mb-1">💚 Dukung Program Kami</p>
-                            <p class="text-xs text-emerald-100 mb-4">Setiap donasi Anda berarti bagi mereka yang membutuhkan.</p>
-                            <a href="{{ url('/#kampanye') }}" class="inline-block bg-white text-emerald-700 text-xs font-bold px-4 py-2 rounded-lg hover:bg-emerald-50 transition-colors">Donasi Sekarang</a>
+                        {{-- CTA --}}
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-6 text-white shadow-md">
+                            <div class="text-2xl mb-3">💚</div>
+                            <p class="text-sm font-bold mb-1">Dukung Program Kami</p>
+                            <p class="text-xs text-emerald-100 mb-4 leading-relaxed">Setiap donasi Anda berarti bagi mereka yang membutuhkan.</p>
+                            <a href="{{ url('/#kampanye') }}" class="inline-block bg-white text-emerald-700 text-xs font-bold px-5 py-2.5 rounded-lg hover:bg-emerald-50 transition-colors shadow-sm">
+                                Donasi Sekarang →
+                            </a>
                         </div>
                     </div>
                 </aside>

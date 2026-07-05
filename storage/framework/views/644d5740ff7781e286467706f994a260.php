@@ -95,6 +95,9 @@
                                     </td>
                                     <td>
                                         <div class="flex items-center justify-center gap-2">
+                                            <a href="<?php echo e(route('admin.child-developments.show', $item->id)); ?>" class="btn btn-sm btn-ghost text-emerald-600">
+                                                👁 Detail
+                                            </a>
                                             <a href="<?php echo e(route('admin.child-developments.edit', $item->id)); ?>" class="btn btn-sm btn-ghost">
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
                                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>

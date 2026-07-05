@@ -80,7 +80,7 @@
 
     {{-- ════════════════════ HERO ════════════════════ --}}
     <header class="relative hero min-h-[65vh] lg:min-h-[75vh] overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1470&auto=format&fit=crop'); background-size: cover;">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/hero-bg.jpg') }}'); background-size: cover;">
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/80 via-emerald-900/60 to-emerald-900/40"></div>
         </div>
         <div class="hero-content text-center max-w-4xl px-4 py-20 lg:py-28 relative z-10">

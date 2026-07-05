@@ -1,28 +1,32 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight text-emerald-700">
-            Dashboard Admin
-        </h2>
-    </x-slot>
 
     <div class="flex bg-base-200 min-h-0">
 
         {{-- ══ SIDEBAR ══ --}}
         <aside class="w-60 shrink-0 bg-emerald-700 flex flex-col sticky top-0 h-dvh overflow-y-auto">
-            <div class="px-5 py-4 border-b border-white/10">
-                <div class="text-base font-black text-white tracking-tight leading-tight">Baitul<span class="text-emerald-300">Yatim</span></div>
-                <div class="text-[0.68rem] text-white/50 font-semibold mt-0.5 uppercase tracking-widest">Panel Administrasi</div>
+            <div class="px-8 py-9 border-b border-white/10">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
+                    @if($profil && $profil->logo)
+                        <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="h-9 w-9 rounded-lg object-cover ring-2 ring-emerald-400/50">
+                    @else
+                        <div class="h-9 w-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-black text-base">BY</div>
+                    @endif
+                    <div>
+                        <div class="text-base font-black text-white tracking-tight leading-tight">Baitul<span class="text-emerald-300">Yatim</span></div>
+                        <div class="text-[0.65rem] text-white/45 font-semibold uppercase tracking-widest mt-0.5">Panel Administrasi</div>
+                    </div>
+                </a>
             </div>
 
-            <div class="px-2.5 pt-4 pb-1">
-                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Menu Utama</div>
+            <div class="px-4 pt-6 pb-1">
+                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1.5">Menu Utama</div>
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white transition-all duration-150 relative mb-0.5 bg-white/13 before:absolute before:left-0 before:top-[22%] before:bottom-[22%] before:w-[3px] before:bg-emerald-300 before:rounded-r-sm">
                     <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     Dashboard
                 </a>
             </div>
 
-            <div class="px-2.5 pt-2 pb-1">
+            <div class="px-4 pt-3 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Akun</div>
                 <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
                     <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -30,7 +34,7 @@
                 </a>
             </div>
 
-            <div class="px-2.5 pt-4 pb-1">
+            <div class="px-4 pt-5 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Konten</div>
 
                 <a href="{{ route('admin.profil.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
@@ -55,7 +59,7 @@
             </div>
 
             {{-- ✅ Section Program OTA — lengkap dengan 4 menu --}}
-            <div class="px-2.5 pt-4 pb-1">
+            <div class="px-4 pt-5 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Program</div>
 
                 <a href="{{ route('admin.foster-children.index') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
@@ -86,7 +90,7 @@
                 </a>
             </div>
 
-            <div class="px-2.5 pt-4 pb-1">
+            <div class="px-4 pt-5 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Rekap Data</div>
 
                 <a href="{{ route('admin.rekap.donasi') }}" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
@@ -105,7 +109,7 @@
                 </a>
             </div>
 
-            <div class="mt-auto px-2.5 py-3 border-t border-white/10">
+            <div class="mt-auto px-4 py-4 border-t border-white/10">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-bold text-white/50 hover:bg-white/10 hover:text-white transition-all duration-150 cursor-pointer w-full bg-transparent border-none">
@@ -117,38 +121,64 @@
         </aside>
 
         {{-- ══ MAIN CONTENT ══ --}}
-        <main class="flex-1 overflow-x-hidden p-7 min-w-0">
+        <main class="flex-1 overflow-x-hidden min-w-0">
 
             {{-- Topbar --}}
-            <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div class="bg-white border-b border-emerald-100 px-8 py-4 flex items-center justify-between">
                 <div>
-                    <h1 id="greeting-text" class="text-[1.35rem] font-black text-emerald-900 m-0 mb-0.5">Selamat Datang 👋</h1>
-                    <p class="text-sm text-emerald-600 m-0">{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} — Panel Administrasi</p>
+                    <h1 id="greeting-text" class="text-xl font-black text-emerald-800">Selamat Datang 👋</h1>
                 </div>
-                <div id="topbar-date" class="bg-white border-2 border-emerald-300 rounded-lg px-3.5 py-1.5 text-xs font-bold text-emerald-600">—</div>
+                <div class="flex items-center gap-4">
+                    @php $adminUser = Auth::user(); @endphp
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-emerald-50 transition-colors">
+                        @if($adminUser->avatar)
+                            <img src="{{ asset('storage/' . $adminUser->avatar) }}" class="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-200">
+                        @else
+                            <div class="w-9 h-9 rounded-full bg-emerald-200 text-emerald-700 font-extrabold text-sm flex items-center justify-center ring-2 ring-emerald-200">
+                                {{ strtoupper(substr($adminUser->name, 0, 1)) }}
+                            </div>
+                        @endif
+                        <span class="text-sm font-bold text-emerald-700 hidden sm:inline">{{ $adminUser->name }}</span>
+                    </a>
+                    <div class="w-px h-7 bg-emerald-200"></div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-emerald-500 hover:text-red-500 hover:bg-red-50 transition-colors" title="Keluar">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span class="hidden sm:inline">Keluar</span>
+                        </button>
+                    </form>
+                    <div id="topbar-date" class="text-sm font-bold text-emerald-500 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2 hidden sm:block">—</div>
+                </div>
             </div>
 
+            <div class="p-8">
+
             {{-- Stat Cards --}}
-            <div class="stats shadow w-full mb-6">
-                <div class="stat">
-                    <div class="stat-figure text-2xl">💰</div>
-                    <div class="stat-title">Total Dana Terkumpul</div>
-                    <div class="stat-value text-emerald-700">Rp {{ number_format($totalFunds ?? 0, 0, ',', '.') }}</div>
-                    <div class="stat-desc">Dari donasi yang berhasil</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">💰</div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Total Dana Terkumpul</p>
+                        <p class="text-2xl font-black text-emerald-700">Rp {{ number_format($totalFunds ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-[11px] text-emerald-400 mt-0.5">Dari donasi yang berhasil</p>
+                    </div>
                 </div>
-
-                <div class="stat">
-                    <div class="stat-figure text-2xl">📣</div>
-                    <div class="stat-title">Kampanye Aktif</div>
-                    <div class="stat-value text-emerald-700">{{ $activeCampaigns ?? 0 }}</div>
-                    <div class="stat-desc">Sedang berjalan saat ini</div>
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">📣</div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Kampanye Aktif</p>
+                        <p class="text-2xl font-black text-emerald-700">{{ $activeCampaigns ?? 0 }}</p>
+                        <p class="text-[11px] text-emerald-400 mt-0.5">Sedang berjalan saat ini</p>
+                    </div>
                 </div>
-
-                <div class="stat">
-                    <div class="stat-figure text-2xl">👦</div>
-                    <div class="stat-title">Total Anak Asuh</div>
-                    <div class="stat-value text-emerald-700">{{ $fosterChildren ?? 0 }}</div>
-                    <div class="stat-desc">Terdaftar dalam sistem</div>
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">👦</div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Total Anak Asuh</p>
+                        <p class="text-2xl font-black text-emerald-700">{{ $fosterChildren ?? 0 }}</p>
+                        <p class="text-[11px] text-emerald-400 mt-0.5">Terdaftar dalam sistem</p>
+                    </div>
                 </div>
             </div>
 
@@ -303,6 +333,7 @@
 
             </div>
 
+        </div>
         </main>
     </div>
 

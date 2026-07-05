@@ -1,3 +1,5 @@
+<?php $navUser = Auth::user(); ?>
+<?php if(!$navUser || $navUser->role !== 'admin'): ?>
 <nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200">
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4rem]">
         <div class="flex-1 flex items-center gap-4">
@@ -94,4 +96,5 @@
         </ul>
     </div>
 </nav>
+<?php endif; ?>
 <?php /**PATH C:\laragon\www\donasi-yayasan\resources\views/layouts/navigation.blade.php ENDPATH**/ ?>

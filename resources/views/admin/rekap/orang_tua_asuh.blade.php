@@ -13,62 +13,82 @@
             <h1 class="text-2xl font-black text-emerald-700 mb-1">Data Seluruh Sponsorship</h1>
             <p class="text-sm text-emerald-500 mb-6">Rekap lengkap data orang tua asuh (sponsorship).</p>
 
-            <div class="stats shadow w-full mb-6">
-                <div class="stat">
-                    <div class="stat-figure text-2xl">🤝</div>
-                    <div class="stat-title">Total Sponsorship</div>
-                    <div class="stat-value text-emerald-700">{{ $totalCount }}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">🤝</div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Total Sponsorship</p>
+                        <p class="text-2xl font-black text-emerald-700">{{ $totalCount }}</p>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-figure text-2xl">✅</div>
-                    <div class="stat-title">Aktif</div>
-                    <div class="stat-value text-emerald-700">{{ $activeCount }}</div>
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">✅</div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Aktif</p>
+                        <p class="text-2xl font-black text-emerald-700">{{ $activeCount }}</p>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-figure text-2xl">💰</div>
-                    <div class="stat-title">Total Dana Sponsorship</div>
-                    <div class="stat-value text-emerald-700">Rp {{ number_format($totalAmount, 0, ',', '.') }}</div>
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">💰</div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Total Dana</p>
+                        <p class="text-2xl font-black text-emerald-700">Rp {{ number_format($totalAmount, 0, ',', '.') }}</p>
+                    </div>
                 </div>
             </div>
 
             <div class="card bg-base-100 shadow-md border border-emerald-200">
-                    <div class="p-4 border-b border-emerald-100 bg-emerald-50 flex flex-wrap gap-2 items-center justify-between">
-                        <form method="GET" class="flex flex-wrap items-center gap-2">
-                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered input-sm">
-                            <span class="text-xs text-emerald-500">s/d</span>
-                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="input input-bordered input-sm">
-                            <input type="text" name="search" placeholder="Cari donor/email/order/anak..." class="input input-bordered input-sm"
+                <div class="p-4 border-b border-emerald-100 bg-emerald-50">
+                    <form method="GET" class="flex flex-wrap items-end gap-x-3 gap-y-2">
+                        <div>
+                            <label class="text-[11px] font-semibold text-emerald-600 block mb-0.5">Dari Tanggal</label>
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered input-sm w-40">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-semibold text-emerald-600 block mb-0.5">Sampai</label>
+                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="input input-bordered input-sm w-40">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-semibold text-emerald-600 block mb-0.5">Cari</label>
+                            <input type="text" name="search" placeholder="Cari donor/email/order/anak..." class="input input-bordered input-sm w-40"
                                    value="{{ request('search') }}">
-                            <select name="status" class="select select-bordered select-sm">
-                                <option value="">Semua Status</option>
-                                <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu Bayar</option>
-                                <option value="kadaluarsa" {{ request('status') == 'kadaluarsa' ? 'selected' : '' }}>Kadaluarsa</option>
-                                <option value="gagal" {{ request('status') == 'gagal' ? 'selected' : '' }}>Gagal</option>
-                            </select>
-                            <button type="submit" class="btn btn-success btn-sm text-white">Filter</button>
-                            <a href="{{ route('admin.rekap.orang-tua-asuh') }}" class="btn btn-ghost btn-sm">Reset</a>
-                        </form>
-                        <a href="{{ route('admin.rekap.orang-tua-asuh.export') }}?{{ request()->getQueryString() }}" class="btn btn-outline btn-sm btn-info">
-                            Export CSV
-                        </a>
-                    </div>
+                        </div>
+                        <button type="submit" class="btn btn-success text-white btn-sm min-w-[4rem]">Filter</button>
+                        <a href="{{ route('admin.rekap.orang-tua-asuh') }}" class="btn btn-ghost btn-sm">Reset</a>
+                        <a href="{{ route('admin.rekap.orang-tua-asuh.export') }}?{{ request()->getQueryString() }}" class="btn btn-outline btn-sm btn-info">Export CSV</a>
+                    </form>
+                </div>
+
+                <div class="px-4 py-3 border-b border-emerald-100 bg-white flex flex-wrap items-center gap-1.5">
+                    <span class="text-[11px] font-semibold text-emerald-600 mr-1">Status:</span>
+                    @php $curStatus = request('status'); @endphp
+                    <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => ''])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ !$curStatus ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100' }}">Semua</a>
+                    <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'aktif'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'aktif' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100' }}">Aktif</a>
+                    <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'pending'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100' }}">Menunggu</a>
+                    <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'kadaluarsa'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'kadaluarsa' ? 'bg-gray-500 text-white shadow-sm' : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100' }}">Kadaluarsa</a>
+                    <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'gagal'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'gagal' ? 'bg-red-500 text-white shadow-sm' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100' }}">Gagal</a>
+                </div>
 
                 <div class="overflow-x-auto">
                     <table class="table table-zebra w-full">
                         <thead>
                             <tr>
-                                <th>Penyandang Dana &amp; Anak Asuh</th>
-                                <th>Paket &amp; Nominal</th>
-                                <th>Periode</th>
-                                <th class="text-center">Status</th>
+                                <th class="text-emerald-700">Penyandang Dana &amp; Anak Asuh</th>
+                                <th class="text-emerald-700">Paket &amp; Nominal</th>
+                                <th class="text-emerald-700">Periode</th>
+                                <th class="text-center text-emerald-700">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($sponsorships as $s)
                                 @php
                                     $isExpiredPeriod = $s->expires_at && $s->expires_at->isPast();
-                                    $remainingDays   = $s->expires_at ? now()->diffInDays($s->expires_at) : null;
+                                    $remainingDays   = $s->expires_at ? (int) now()->diffInDays($s->expires_at) : null;
 
                                     $statusKey = match(true) {
                                         $s->status === 'pending'                => 'pending',
@@ -102,7 +122,7 @@
                                     </td>
                                     <td>
                                         @if($s->starts_at && $s->expires_at)
-                                            <div class="text-sm font-bold text-emerald-700">{{ $s->starts_at->format('d M Y') }} – {{ $s->expires_at->format('d M Y') }}</div>
+                                            <div class="text-sm font-bold text-emerald-700 whitespace-nowrap">{{ $s->starts_at->format('d M Y') }} – {{ $s->expires_at->format('d M Y') }}</div>
                                             <div class="text-xs mt-1">
                                                 @if($statusKey === 'aktif')
                                                     <span class="text-emerald-500">{{ $remainingDays }} hari lagi</span>

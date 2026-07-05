@@ -19,11 +19,14 @@
             @include('layouts.navigation')
 
             @isset($header)
+                @php $headerUser = Auth::user(); @endphp
+                @if(!$headerUser || $headerUser->role !== 'admin')
                 <header class="bg-base-100 shadow-sm">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
+                @endif
             @endisset
 
             <main>
