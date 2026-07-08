@@ -33,13 +33,7 @@
             </div>
 
             @if ($errors->any())
-                <div class="alert alert-error mb-6 shadow-md border-0">
-                    <ul class="text-sm font-semibold">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                <x-alert type="error" :errors="$errors->all()" />
             @endif
 
             {{-- Form --}}
@@ -126,7 +120,8 @@
                                 <option value="Permata VA" {{ old('payment_method') == 'Permata VA' ? 'selected' : '' }}>🏦 Virtual Account Permata</option>
                                 <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>🏦 Virtual Account BSI</option>
                                 <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>📱 GoPay</option>
-                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS</option>
+                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS (Midtrans)</option>
+                                <option value="QRIS Yayasan" {{ old('payment_method') == 'QRIS Yayasan' ? 'selected' : '' }}>📱 QRIS Yayasan (Manual)</option>
                                 <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>📱 ShopeePay</option>
                             </select>
                         </div>

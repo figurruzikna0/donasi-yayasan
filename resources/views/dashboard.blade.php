@@ -1,354 +1,273 @@
 <x-app-layout>
-    <div class="bg-base-200 min-h-0">
+    <div class="bg-base-200 min-h-screen">
 
         {{-- Header --}}
-        <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-gradient-to-br from-primary via-primary to-primary/90 text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute -top-20 -right-20 w-80 h-80 bg-white/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
                 <div class="flex items-start justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-4">
                         <div class="avatar">
-                            <div class="w-16 h-16 rounded-full ring ring-white/30 ring-offset-2 ring-offset-emerald-700">
+                            <div class="w-16 h-16 rounded-full ring ring-white/30 ring-offset-2 ring-offset-primary">
                                 @if($user->avatar)
-                                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
+                                    <img src="{{ asset('storage/' . $user->avatar) . '?v=' . now()->timestamp }}" alt="{{ $user->name }}">
                                 @else
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=b3e093&color=5c8148&bold=true&size=64" alt="">
+                                    <div class="w-full h-full bg-white/20 text-white font-black text-2xl flex items-center justify-center uppercase rounded-full">{{ substr($user->name, 0, 1) }}</div>
                                 @endif
                             </div>
                         </div>
                         <div>
-                            <h1 class="text-2xl sm:text-3xl font-black">🌿 Selamat Datang, {{ $user->name }}</h1>
-                            <p class="text-emerald-100 text-sm mt-1">{{ $profil->nama_yayasan ?? 'Baitul Yatim' }} — Dashboard Donatur</p>
-                            <div class="flex flex-wrap gap-3 mt-2 text-xs text-emerald-200">
-                                @if($user->phone)<span>📞 {{ $user->phone }}</span>@endif
-                                @if($user->email)<span>✉️ {{ $user->email }}</span>@endif
-                                @if($user->address)<span class="max-w-xs truncate">📍 {{ $user->address }}</span>@endif
+                            <h1 class="text-xl sm:text-2xl font-bold">Selamat Datang</h1>
+                            <p class="text-primary-content/60 text-xs sm:text-sm mt-0.5">{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} — Dashboard Donatur</p>
+                            <div class="flex flex-wrap gap-3 mt-2 text-xs text-primary-content/50">
+                                @if($user->phone)
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                    {{ $user->phone }}
+                                </span>
+                                @endif
+                                @if($user->email)
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                    {{ $user->email }}
+                                </span>
+                                @endif
+                                @if($user->address)
+                                <span class="flex items-center gap-1 max-w-xs truncate">
+                                    <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    {{ $user->address }}
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
                     @if($profil?->logo)
-                        <img src="{{ asset('storage/' . $profil->logo) }}" class="h-14 w-14 rounded-xl object-cover border-2 border-white/20 hidden sm:block" alt="Logo">
+                        <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" class="h-14 w-14 rounded-xl object-cover border-2 border-white/20 hidden sm:block" alt="Logo">
                     @endif
                 </div>
 
-                <div class="stats bg-white/10 text-white shadow-none mt-6 flex-wrap">
-                    <div class="stat">
-                        <div class="stat-title text-emerald-200">Total Donasi Saya</div>
-                        <div class="stat-value text-white">Rp {{ number_format($totalDonated, 0, ',', '.') }}</div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                        <div class="text-primary-content/50 text-[0.6rem] font-bold uppercase tracking-wider">Total Donasi</div>
+                        <div class="text-lg sm:text-xl font-black text-white mt-1">Rp {{ number_format($totalDonated, 0, ',', '.') }}</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-title text-emerald-200">Sponsorship Aktif</div>
-                        <div class="stat-value text-white">{{ $activeSponsorships }}</div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                        <div class="text-primary-content/50 text-[0.6rem] font-bold uppercase tracking-wider">Sponsorship Aktif</div>
+                        <div class="text-lg sm:text-xl font-black text-white mt-1">{{ $activeSponsorships }}</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-title text-emerald-200">Transaksi Donasi</div>
-                        <div class="stat-value text-white">{{ $donations->count() }}</div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                        <div class="text-primary-content/50 text-[0.6rem] font-bold uppercase tracking-wider">Transaksi Donasi</div>
+                        <div class="text-lg sm:text-xl font-black text-white mt-1">{{ $donations->count() }}</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-title text-emerald-200">Rincian Transaksi</div>
-                        <div class="stat-value text-white text-lg">
-                            <a href="{{ route('dashboard.rekap') }}" class="btn btn-sm bg-white text-emerald-700 border-0 hover:bg-emerald-100 font-bold">📋 Lihat Rekap</a>
-                        </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex flex-col justify-center">
+                        <a href="{{ route('dashboard.rekap') }}" class="btn btn-xs bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm rounded-lg font-bold w-full">Lihat Rekap →</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 space-y-6 pb-8">
 
             {{-- Quick Actions --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <a href="#kampanye-donasi" class="card bg-base-100 shadow-md border border-emerald-200 hover:shadow-lg transition-all">
-                    <div class="card-body flex-row items-center gap-4 p-5">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">💰</div>
-                        <div>
-                            <h3 class="font-bold text-emerald-700">Donasi Sekarang</h3>
-                            <p class="text-sm text-emerald-500">Salurkan donasi ke program pilihan</p>
-                        </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <a href="#kampanye-donasi" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
+                    <div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">💰</div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-sm text-base-content">Donasi Sekarang</h3>
+                        <p class="text-xs text-base-content/40">Salurkan ke program pilihan</p>
                     </div>
                 </a>
-                <a href="#program-ota" class="card bg-base-100 shadow-md border border-emerald-200 hover:shadow-lg transition-all">
-                    <div class="card-body flex-row items-center gap-4 p-5">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">🤝</div>
-                        <div>
-                            <h3 class="font-bold text-emerald-700">Jadi Orang Tua Asuh</h3>
-                            <p class="text-sm text-emerald-500">Sponsorship anak asuh yatim</p>
-                        </div>
+                <a href="#program-ota" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
+                    <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">🤝</div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-sm text-base-content">Jadi Orang Tua Asuh</h3>
+                        <p class="text-xs text-base-content/40">Sponsorship anak asuh</p>
                     </div>
                 </a>
-                <a href="{{ route('profile.edit') }}" class="card bg-base-100 shadow-md border border-emerald-200 hover:shadow-lg transition-all">
-                    <div class="card-body flex-row items-center gap-4 p-5">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
-                        <div>
-                            <h3 class="font-bold text-emerald-700">Edit Profil</h3>
-                            <p class="text-sm text-emerald-500">Ubah data diri & password</p>
-                        </div>
+                <a href="#berita-kegiatan" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
+                    <div class="w-11 h-11 rounded-xl bg-sky-100/50 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">📰</div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-sm text-base-content">Berita & Kegiatan</h3>
+                        <p class="text-xs text-base-content/40">Liputan terkini yayasan</p>
+                    </div>
+                </a>
+                <a href="{{ route('profile.edit') }}" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
+                    <div class="w-11 h-11 rounded-xl bg-amber-400/10 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">⚙️</div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-sm text-base-content">Edit Profil</h3>
+                        <p class="text-xs text-base-content/40">Ubah data diri & password</p>
                     </div>
                 </a>
             </div>
 
-            {{-- ════════════════ 1. PROFIL YAYASAN ════════════════ --}}
-            <div id="profil-yayasan" class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>🏛️ Profil Yayasan</span>
-                    </h2>
+            {{-- Link Yayasan --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <a href="{{ route('profil') }}" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">🏛️</div>
+                    <div>
+                        <p class="text-sm font-bold text-base-content">Profil Yayasan</p>
+                        <p class="text-xs text-base-content/40">Sejarah, visi & misi</p>
+                    </div>
+                </a>
+                <a href="{{ route('pengurus') }}" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">👥</div>
+                    <div>
+                        <p class="text-sm font-bold text-base-content">Pengurus Yayasan</p>
+                        <p class="text-xs text-base-content/40">Struktur manajemen</p>
+                    </div>
+                </a>
+                <a href="{{ route('legalitas') }}" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-4 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-400/10 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">📜</div>
+                    <div>
+                        <p class="text-sm font-bold text-base-content">Legalitas & Struktur</p>
+                        <p class="text-xs text-base-content/40">Dokumen & bagan organisasi</p>
+                    </div>
+                </a>
+            </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 space-y-4">
-                            @if($profil)
-                                <div>
-                                    <h3 class="font-bold text-emerald-700 text-lg">{{ $profil->nama_yayasan }}</h3>
-                                    <p class="text-sm text-emerald-500 mt-1">{{ $profil->alamat }}</p>
-                                </div>
-                                <div class="flex flex-wrap gap-4 text-sm">
-                                    @if($profil->no_telp)<span class="badge badge-ghost">📞 {{ $profil->no_telp }}</span>@endif
-                                    @if($profil->email)<span class="badge badge-ghost">✉️ {{ $profil->email }}</span>@endif
-                                </div>
-                                @if($profil->sejarah_yayasan)
-                                    <div>
-                                        <h4 class="font-bold text-emerald-600 text-sm uppercase tracking-wider mb-1">Sejarah</h4>
-                                        <p class="text-sm text-base-content/70">{{ Str::limit($profil->sejarah_yayasan, 300) }}</p>
-                                    </div>
-                                @endif
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    @if($profil->visi)
-                                        <div class="bg-emerald-50 rounded-lg p-4 border border-emerald-100">
-                                            <h4 class="font-bold text-emerald-700 text-sm mb-1">Visi</h4>
-                                            <p class="text-sm text-base-content/70">{{ $profil->visi }}</p>
-                                        </div>
-                                    @endif
-                                    @if($profil->misi)
-                                        <div class="bg-emerald-50 rounded-lg p-4 border border-emerald-100">
-                                            <h4 class="font-bold text-emerald-700 text-sm mb-1">Misi</h4>
-                                            <p class="text-sm text-base-content/70">{{ $profil->misi }}</p>
-                                        </div>
-                                    @endif
-                                </div>
-                            @else
-                                <p class="text-base-content/60 text-sm">Data profil yayasan belum tersedia.</p>
-                            @endif
-                        </div>
-                        @if($profil?->logo)
-                            <div class="flex items-center justify-center">
-                                <img src="{{ asset('storage/' . $profil->logo) }}" class="max-h-40 rounded-xl shadow" alt="Logo Yayasan">
-                            </div>
-                        @endif
+            {{-- ══ BERITA KEGIATAN ══ --}}
+            <div id="berita-kegiatan" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-base-200 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-sky-100/50 flex items-center justify-center text-base">📰</div>
+                    <div>
+                        <h2 class="font-bold text-base-content">Berita & Kegiatan</h2>
+                        <p class="text-xs text-base-content/40">Liputan dan kegiatan terbaru yayasan</p>
                     </div>
                 </div>
-            </div>
-
-            {{-- ════════════════ 2. BERITA KEGIATAN ════════════════ --}}
-            <div id="berita-kegiatan" class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>📰 Berita &amp; Kegiatan</span>
-                    </h2>
-
+                <div class="p-6">
                     @if($newsList->isNotEmpty())
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($newsList as $news)
-                                <a href="{{ route('news.show', $news->slug) }}" class="card bg-base-100 border border-emerald-100 shadow-sm hover:shadow-lg transition-all group">
+                                <a href="{{ route('news.show', $news->slug) }}" class="bg-white rounded-xl border border-base-200 shadow-sm hover:shadow-md transition-all group overflow-hidden">
                                     @if($news->foto_utama)
                                         <figure class="h-40 overflow-hidden">
                                             <img src="{{ asset('storage/' . $news->foto_utama) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $news->judul }}">
                                         </figure>
                                     @endif
-                                    <div class="card-body p-4">
+                                    <div class="p-4">
                                         <div class="flex items-center justify-between mb-2">
-                                            @if($news->kategori)<span class="badge badge-success badge-sm">{{ $news->kategori }}</span>@endif
-                                            @if($news->tanggal_kegiatan)<span class="text-xs text-emerald-400">{{ $news->tanggal_kegiatan->format('d M Y') }}</span>@endif
+                                            @if($news->kategori)<span class="inline-flex items-center gap-1 text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-primary/5 text-primary border border-primary/20">{{ $news->kategori }}</span>@endif
+                                            @if($news->tanggal_kegiatan)<span class="text-xs text-base-content/40">{{ $news->tanggal_kegiatan->format('d M Y') }}</span>@endif
                                         </div>
-                                        <h3 class="font-bold text-sm text-emerald-700 group-hover:text-emerald-500 transition-colors">{{ $news->judul }}</h3>
-                                        @if($news->ringkasan)<p class="text-xs text-base-content/60 mt-1">{{ Str::limit($news->ringkasan, 100) }}</p>@endif
-                                        @if($news->lokasi)<p class="text-xs text-emerald-400 mt-2">📍 {{ $news->lokasi }}</p>@endif
+                                        <h3 class="font-bold text-sm text-base-content group-hover:text-primary transition-colors">{{ $news->judul }}</h3>
+                                        @if($news->ringkasan)<p class="text-xs text-base-content/50 mt-1 line-clamp-2">{{ Str::limit($news->ringkasan, 100) }}</p>@endif
+                                        @if($news->lokasi)<p class="text-xs text-base-content/30 mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> {{ $news->lokasi }}</p>@endif
                                     </div>
                                 </a>
                             @endforeach
                         </div>
                     @else
-                        <p class="text-base-content/60 text-sm text-center py-6">Belum ada berita kegiatan.</p>
+                        <p class="text-base-content/40 text-sm text-center py-8">Belum ada berita kegiatan.</p>
                     @endif
                 </div>
             </div>
 
-            {{-- ════════════════ 3. LEGALITAS & STRUKTUR ════════════════ --}}
-            <div id="legalitas-struktur" class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>📜 Legalitas &amp; Struktur Organisasi</span>
-                    </h2>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        @if($profil)
-                            <div class="space-y-3">
-                                <h3 class="font-bold text-emerald-600 text-sm uppercase tracking-wider">Dokumen Legalitas</h3>
-                                @if($profil->legalitas)
-                                    <p class="text-sm text-base-content/70">{{ $profil->legalitas }}</p>
-                                @endif
-                                @if($profil->foto_legalitas)
-                                    <a href="{{ asset('storage/' . $profil->foto_legalitas) }}" target="_blank" class="block">
-                                        <img src="{{ asset('storage/' . $profil->foto_legalitas) }}" class="max-h-48 rounded-lg border border-emerald-200 shadow-sm" alt="Dokumen Legalitas">
-                                    </a>
-                                @else
-                                    <p class="text-sm text-base-content/60 italic">Dokumen legalitas belum diupload.</p>
-                                @endif
-                            </div>
-                            <div class="space-y-3">
-                                <h3 class="font-bold text-emerald-600 text-sm uppercase tracking-wider">Struktur Organisasi</h3>
-                                @if($profil->foto_struktur)
-                                    <a href="{{ asset('storage/' . $profil->foto_struktur) }}" target="_blank" class="block">
-                                        <img src="{{ asset('storage/' . $profil->foto_struktur) }}" class="max-h-48 rounded-lg border border-emerald-200 shadow-sm" alt="Struktur Organisasi">
-                                    </a>
-                                @else
-                                    <p class="text-sm text-base-content/60 italic">Bagan struktur belum diupload.</p>
-                                @endif
-                            </div>
-                        @endif
+            {{-- ══ KAMPANYE DONASI ══ --}}
+            <div id="kampanye-donasi" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-base-200 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-base">💰</div>
+                    <div>
+                        <h2 class="font-bold text-base-content">Kampanye Donasi</h2>
+                        <p class="text-xs text-base-content/40">Program donasi yang sedang berjalan</p>
                     </div>
                 </div>
-            </div>
-
-            {{-- ════════════════ 4. PENGURUS YAYASAN ════════════════ --}}
-            <div id="pengurus" class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>👥 Pengurus Yayasan</span>
-                    </h2>
-
-                    @if($pendiris->isNotEmpty())
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            @foreach($pendiris as $p)
-                                <div class="card bg-base-100 border border-emerald-100 shadow-sm">
-                                    <div class="card-body items-center text-center p-5">
-                                        <div class="avatar">
-                                            <div class="w-20 rounded-full ring ring-emerald-200 ring-offset-2">
-                                                @if($p->foto)
-                                                    <img src="{{ asset('storage/' . $p->foto) }}" alt="{{ $p->nama }}">
-                                                @else
-                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($p->nama) }}&background=b3e093&color=5c8148&bold=true" alt="">
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <h3 class="font-bold text-emerald-700 mt-3">{{ $p->nama }}</h3>
-                                        <span class="badge badge-success badge-sm">{{ $p->jabatan }}</span>
-                                        @if($p->deskripsi)
-                                            <p class="text-xs text-base-content/60 mt-2">{{ Str::limit($p->deskripsi, 100) }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-base-content/60 text-sm text-center py-6">Data pengurus belum tersedia.</p>
-                    @endif
-                </div>
-            </div>
-
-            {{-- ════════════════ 5. KAMPANYE DONASI & TRANSAKSI ════════════════ --}}
-            <div id="kampanye-donasi" class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>💰 Kampanye Donasi &amp; Transaksi Saya</span>
-                    </h2>
-
-                    {{-- Active Campaigns --}}
+                <div class="p-6">
                     @if($campaigns->isNotEmpty())
-                        <h3 class="font-bold text-emerald-600 text-sm uppercase tracking-wider mb-3">Program Donasi Aktif</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($campaigns as $camp)
-                                <div class="card bg-base-100 border border-emerald-100 shadow-sm">
+                                <div class="bg-white rounded-xl border border-base-200 shadow-sm overflow-hidden hover:shadow-md transition-all">
                                     @if($camp->image)
                                         <figure class="h-36 overflow-hidden">
                                             <img src="{{ asset('storage/' . $camp->image) }}" class="w-full h-full object-cover" alt="{{ $camp->title }}">
                                         </figure>
                                     @endif
-                                    <div class="card-body p-4">
-                                        <h3 class="font-bold text-sm text-emerald-700">{{ $camp->title }}</h3>
-                                        <p class="text-xs text-base-content/60 mt-1">{{ Str::limit($camp->description, 80) }}</p>
+                                    <div class="p-4">
+                                        <h3 class="font-bold text-sm text-base-content">{{ $camp->title }}</h3>
+                                        <p class="text-xs text-base-content/50 mt-1 line-clamp-2">{{ Str::limit($camp->description, 80) }}</p>
                                         <div class="mt-3">
-                                            <div class="flex justify-between text-xs text-emerald-500 mb-1">
+                                            <div class="flex justify-between text-xs text-base-content/40 mb-1.5">
                                                 <span>Terkumpul</span>
-                                                <span class="font-bold">Rp {{ number_format($camp->collected_amount, 0, ',', '.') }} / Rp {{ number_format($camp->target_amount, 0, ',', '.') }}</span>
+                                                <span class="font-bold text-primary">Rp {{ number_format($camp->collected_amount, 0, ',', '.') }} / Rp {{ number_format($camp->target_amount, 0, ',', '.') }}</span>
                                             </div>
-                                            <progress class="progress progress-success w-full" value="{{ $camp->collected_amount }}" max="{{ $camp->target_amount }}"></progress>
+                                            <div class="w-full h-2 bg-base-200 rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary rounded-full transition-all" style="width: {{ $camp->target_amount > 0 ? min(($camp->collected_amount / $camp->target_amount) * 100, 100) : 0 }}%"></div>
+                                            </div>
                                         </div>
-                                        <a href="{{ route('donations.create', $camp->id) }}" class="btn btn-success btn-sm text-white font-bold mt-3 w-full">Donasi Sekarang</a>
+                                        <a href="{{ route('donations.create', $camp->id) }}" class="btn btn-sm bg-primary hover:bg-primary/90 text-white border-0 rounded-lg font-bold mt-3 w-full">Donasi Sekarang</a>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-6 mb-4 bg-emerald-50 rounded-lg border border-emerald-100">
-                            <p class="font-semibold text-emerald-700">Belum ada program donasi aktif</p>
-                            <p class="text-sm text-emerald-500 mt-1">Nantikan program donasi terbaru dari yayasan.</p>
+                        <div class="text-center py-8 bg-base-200/50 rounded-xl border border-base-200">
+                            <p class="font-semibold text-base-content/60">Belum ada program donasi aktif</p>
+                            <p class="text-xs text-base-content/40 mt-1">Nantikan program donasi terbaru dari yayasan.</p>
                         </div>
                     @endif
-
                 </div>
             </div>
 
-            {{-- ════════════════ 6. ANAK ASUH & SPONSOR ════════════════ --}}
-            <div id="program-ota" class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-emerald-700 border-b border-emerald-100 pb-3 mb-4">
-                        <span>🤝 Program Orang Tua Asuh</span>
-                    </h2>
-
-                    {{-- Stats --}}
-                    <div class="stats shadow mb-6 w-full">
-                        <div class="stat">
-                            <div class="stat-title">Total Anak Asuh</div>
-                            <div class="stat-value text-emerald-700">{{ $totalFoster }}</div>
+            {{-- ══ PROGRAM ORANG TUA ASUH ══ --}}
+            <div id="program-ota" class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-base-200 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-brand-500/10 flex items-center justify-center text-base">🤝</div>
+                    <div>
+                        <h2 class="font-bold text-base-content">Program Orang Tua Asuh</h2>
+                        <p class="text-xs text-base-content/40">Jadilah orang tua asuh untuk anak yatim</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <div class="bg-base-200/50 rounded-xl p-4 text-center">
+                            <div class="text-[0.6rem] font-bold uppercase tracking-wider text-base-content/40">Total</div>
+                            <div class="text-xl font-black text-primary mt-1">{{ $totalFoster }}</div>
                         </div>
-                        <div class="stat">
-                            <div class="stat-title">Tersedia</div>
-                            <div class="stat-value text-emerald-700">{{ $tersediaFoster }}</div>
+                        <div class="bg-base-200/50 rounded-xl p-4 text-center">
+                            <div class="text-[0.6rem] font-bold uppercase tracking-wider text-base-content/40">Tersedia</div>
+                            <div class="text-xl font-black text-brand-600 mt-1">{{ $tersediaFoster }}</div>
                         </div>
-                        <div class="stat">
-                            <div class="stat-title">Anda Asuh</div>
-                            <div class="stat-value text-emerald-700">{{ $diasuhFoster }}</div>
+                        <div class="bg-base-200/50 rounded-xl p-4 text-center">
+                            <div class="text-[0.6rem] font-bold uppercase tracking-wider text-base-content/40">Anda Asuh</div>
+                            <div class="text-xl font-black text-amber-600 mt-1">{{ $diasuhFoster }}</div>
                         </div>
                     </div>
 
-                    {{-- Available children --}}
                     @if($fosterChildren->isNotEmpty())
                         @php
                             $chunks = $fosterChildren->chunk(3);
                         @endphp
-                        <div class="relative mb-4" x-data="{ slide: 0, total: {{ $chunks->count() }} }">
+                        <div class="relative" x-data="{ slide: 0, total: {{ $chunks->count() }} }">
                             <div class="overflow-hidden">
                                 @foreach($chunks as $i => $chunk)
                                     <div x-show="slide === {{ $i }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-8" x-transition:enter-end="opacity-100 translate-x-0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                         @foreach($chunk as $child)
-                                            <div class="card bg-base-100 border border-emerald-100 shadow-sm">
-                                                <div class="card-body p-4">
+                                            <div class="bg-white rounded-xl border border-base-200 shadow-sm overflow-hidden">
+                                                <div class="p-4">
                                                     <div class="flex items-center gap-3 mb-3">
-                                                        <div class="avatar">
-                                                            <div class="w-14 rounded-full ring ring-emerald-100">
-                                                                @if($child->photo)
-                                                                    <img src="{{ asset('storage/' . $child->photo) }}" alt="{{ $child->name }}">
-                                                                @else
-                                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($child->name) }}&background=b3e093&color=5c8148&bold=true" alt="">
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <h3 class="font-bold text-emerald-700">{{ $child->name }}</h3>
-                                                            <div class="flex gap-1 mt-1">
-                                                                <span class="badge badge-ghost badge-xs">{{ $child->age }} Thn</span>
+                                                        <div class="w-12 h-12 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center flex-shrink-0 text-sm uppercase ring-2 ring-base-200">{{ substr($child->name, 0, 1) }}</div>
+                                                        <div class="min-w-0">
+                                                            <h3 class="font-bold text-sm text-base-content truncate">{{ $child->name }}</h3>
+                                                            <div class="flex gap-1 mt-0.5 flex-wrap">
+                                                                <span class="inline-flex items-center text-[0.55rem] font-semibold px-1.5 py-0.5 rounded-full bg-base-200 text-base-content/50">{{ $child->age }} Thn</span>
                                                                 @if($child->jenis_kelamin)
-                                                                    <span class="badge badge-ghost badge-xs">{{ $child->jenis_kelamin }}</span>
+                                                                    <span class="inline-flex items-center text-[0.55rem] font-semibold px-1.5 py-0.5 rounded-full bg-base-200 text-base-content/50">{{ $child->jenis_kelamin }}</span>
                                                                 @endif
                                                             </div>
                                                         </div>
                                                     </div>
                                                     @if($child->description)
-                                                        <p class="text-xs text-base-content/60 mb-3">{{ Str::limit($child->description, 100) }}</p>
+                                                        <p class="text-xs text-base-content/50 mb-3 line-clamp-2">{{ Str::limit($child->description, 100) }}</p>
                                                     @endif
                                                     @if($child->status == 'Tersedia')
-                                                        <a href="{{ route('sponsor.form', $child->id) }}" class="btn btn-success btn-sm text-white font-bold w-full">🤝 Asuh Sekarang</a>
+                                                        <a href="{{ route('sponsor.form', $child->id) }}" class="btn btn-sm bg-primary hover:bg-primary/90 text-white border-0 rounded-lg font-bold w-full">Asuh Sekarang</a>
                                                     @else
-                                                        <span class="btn btn-success btn-sm text-white font-bold w-full opacity-70">✓ Anak Asuh Anda</span>
+                                                        <span class="btn btn-sm bg-brand-500/10 text-brand-700 border-brand-200 rounded-lg font-bold w-full cursor-default flex items-center justify-center gap-1">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            Anak Asuh Anda
+                                                        </span>
                                                     @endif
                                                 </div>
                                             </div>
@@ -357,20 +276,21 @@
                                 @endforeach
                             </div>
 
-                            <div class="flex items-center justify-center gap-4 mt-5">
-                                <button @click="slide = slide > 0 ? slide - 1 : total - 1" class="btn btn-circle btn-sm btn-success text-white">‹</button>
+                            @if($chunks->count() > 1)
+                            <div class="flex items-center justify-center gap-3 mt-5">
+                                <button @click="slide = slide > 0 ? slide - 1 : total - 1" class="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors text-sm font-bold">‹</button>
                                 <template x-for="i in total" :key="i">
-                                    <button @click="slide = i - 1" class="w-2.5 h-2.5 rounded-full transition-all duration-200" :class="slide === i - 1 ? 'bg-emerald-600 scale-125' : 'bg-emerald-200 hover:bg-emerald-400'" :aria-label="'Halaman ' + i"></button>
+                                    <button @click="slide = i - 1" class="w-2 h-2 rounded-full transition-all duration-200" :class="slide === i - 1 ? 'bg-primary scale-125' : 'bg-base-300 hover:bg-primary/40'" :aria-label="'Halaman ' + i"></button>
                                 </template>
-                                <button @click="slide = slide < total - 1 ? slide + 1 : 0" class="btn btn-circle btn-sm btn-success text-white">›</button>
+                                <button @click="slide = slide < total - 1 ? slide + 1 : 0" class="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors text-sm font-bold">›</button>
                             </div>
+                            @endif
                         </div>
                     @else
-                        <div class="text-center py-8 bg-emerald-50 rounded-lg border border-emerald-100 mb-6">
-                            <p class="font-semibold text-emerald-700">Belum ada data anak asuh</p>
+                        <div class="text-center py-8 bg-base-200/50 rounded-xl border border-base-200">
+                            <p class="font-semibold text-base-content/60">Belum ada data anak asuh</p>
                         </div>
                     @endif
-
                 </div>
             </div>
 

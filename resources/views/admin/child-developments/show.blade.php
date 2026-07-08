@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
             Detail Laporan Perkembangan
@@ -87,4 +87,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

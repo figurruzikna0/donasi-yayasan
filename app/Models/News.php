@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class News extends Model
 {
+    use HasFactory;
     protected $table = 'news';
 
     protected $fillable = [
@@ -25,6 +28,15 @@ class News extends Model
     protected $casts = [
         'tanggal_kegiatan' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleted(function (News $news) {
+            if ($news->foto_utama) {
+                Storage::disk('public')->delete($news->foto_utama);
+            }
+        });
+    }
 
     // Auto-generate slug unik dari judul
     public static function generateSlug(string $judul): string

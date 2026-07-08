@@ -1,20 +1,9 @@
-<x-app-layout>
-    <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 py-10">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="card bg-base-100 shadow-lg border border-emerald-200">
-
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="white" class="w-5 h-5"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-lg">Pengaturan Profil Yayasan</h3>
-                        <p class="text-white/80 text-sm">Perbarui informasi, visi misi, dan berkas resmi yayasan</p>
-                    </div>
-                </div>
-
-                <div class="card-body p-8">
+<x-admin-layout>
+    <x-admin-form-card
+        icon='<svg viewBox="0 0 24 24" fill="white" class="w-5 h-5"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>'
+        title="Edit Data Profil"
+        subtitle="Perbarui informasi, visi misi, dan berkas resmi yayasan"
+    >
                     <form action="{{ route('admin.profil.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf @method('PUT')
 
@@ -124,11 +113,7 @@
                         </div>
 
                     </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
+    </x-admin-form-card>
 
     <script>
         function bindFile(inputId, textId) {
@@ -140,4 +125,4 @@
         bindFile('legal-input',    'legal-text');
         bindFile('struktur-input', 'struktur-text');
     </script>
-</x-app-layout>
+</x-admin-layout>

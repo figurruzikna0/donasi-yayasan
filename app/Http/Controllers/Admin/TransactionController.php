@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DonationSuccessMail;
+use App\Mail\SponsorshipSuccessMail;
 use App\Models\Donation;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Transaction;
 
@@ -70,6 +73,15 @@ class TransactionController extends Controller
                 $this->kirimWaSponsor($sponsorship);
             }
 
+            // Kirim notifikasi email ke donatur
+            if ($sponsorship->donor_email) {
+                try {
+                    Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
+                }
+            }
+
             return redirect()->back()->with('success', 'Sponsorship berhasil disetujui!');
         }
 
@@ -82,6 +94,15 @@ class TransactionController extends Controller
 
         $donation->update(['status' => 'success']);
         $donation->campaign?->increment('collected_amount', $donation->amount);
+
+        // Kirim notifikasi email ke donatur
+        if ($donation->donor_email) {
+            try {
+                Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->back()->with('success', 'Transaksi berhasil disetujui!');
     }
@@ -137,6 +158,15 @@ class TransactionController extends Controller
                     'expires_at' => $sponsorship->expires_at ?? now()->addMonth(),
                 ]);
                 $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
+
+                if ($sponsorship->donor_email) {
+                    try {
+                        Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
+                    }
+                }
+
                 return redirect()->back()->with('success', 'Sync: Sponsorship sukses (settlement).');
             } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
                 $sponsorship->update(['status' => 'failed']);
@@ -155,6 +185,15 @@ class TransactionController extends Controller
         if (in_array($midtransStatus, ['settlement', 'capture'])) {
             $donation->update(['status' => 'success']);
             $donation->campaign?->increment('collected_amount', $donation->amount);
+
+            if ($donation->donor_email) {
+                try {
+                    Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
+                }
+            }
+
             return redirect()->back()->with('success', 'Sync: Donasi sukses (settlement).');
         } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
             $donation->update(['status' => 'failed']);

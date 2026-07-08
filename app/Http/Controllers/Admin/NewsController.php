@@ -4,25 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\News;
+use App\Traits\HandlesFileUpload;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
-    // Daftar semua berita
+    use HandlesFileUpload;
+
     public function index()
     {
         $newsList = News::latest()->paginate(10);
         return view('admin.news.index', compact('newsList'));
     }
 
-    // Form tambah
     public function create()
     {
         return view('admin.news.create');
     }
 
-    // Simpan berita baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,8 +39,7 @@ class NewsController extends Controller
         $validated['slug'] = News::generateSlug($validated['judul']);
 
         if ($request->hasFile('foto_utama')) {
-            $validated['foto_utama'] = $request->file('foto_utama')
-                ->store('news', 'public');
+            $validated['foto_utama'] = $this->uploadFile($request->file('foto_utama'), 'news');
         }
 
         News::create($validated);
@@ -50,19 +48,16 @@ class NewsController extends Controller
             ->with('success', 'Berita kegiatan berhasil ditambahkan!');
     }
 
-    // Detail berita
     public function show(News $news)
     {
         return view('admin.news.show', compact('news'));
     }
 
-    // Form edit
     public function edit(News $news)
     {
         return view('admin.news.edit', compact('news'));
     }
 
-    // Update berita
     public function update(Request $request, News $news)
     {
         $validated = $request->validate([
@@ -82,11 +77,11 @@ class NewsController extends Controller
         }
 
         if ($request->hasFile('foto_utama')) {
-            if ($news->foto_utama) {
-                Storage::disk('public')->delete($news->foto_utama);
-            }
-            $validated['foto_utama'] = $request->file('foto_utama')
-                ->store('news', 'public');
+            $validated['foto_utama'] = $this->uploadFile(
+                $request->file('foto_utama'),
+                'news',
+                $news->foto_utama
+            );
         }
 
         $news->update($validated);
@@ -95,12 +90,8 @@ class NewsController extends Controller
             ->with('success', 'Berita kegiatan berhasil diperbarui!');
     }
 
-    // Hapus berita
     public function destroy(News $news)
     {
-        if ($news->foto_utama) {
-            Storage::disk('public')->delete($news->foto_utama);
-        }
         $news->delete();
 
         return redirect()->route('admin.news.index')

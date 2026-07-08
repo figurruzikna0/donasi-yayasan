@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Sponsorship extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'foster_child_id',
         'user_id',
@@ -19,6 +21,7 @@ class Sponsorship extends Model
         'package',
         'package_description',
         'payment_method',
+        'payment_proof',
         'starts_at',
         'expires_at',
         'reminder_sent_at',

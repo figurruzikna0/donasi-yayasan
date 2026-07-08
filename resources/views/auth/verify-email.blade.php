@@ -6,9 +6,7 @@
             </div>
 
             @if (session('status') == 'verification-link-sent')
-                <div class="alert alert-success mb-4 text-sm">
-                    {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-                </div>
+                <x-alert type="success" message="{{ __('A new verification link has been sent to the email address you provided during registration.') }}" title="Email Terkirim" />
             @endif
 
             <div class="mt-4 flex items-center justify-between">

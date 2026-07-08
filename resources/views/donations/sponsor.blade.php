@@ -1,14 +1,14 @@
 <x-app-layout>
     <div class="bg-base-200 min-h-0">
 
-        <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 text-white">
+        <div class="bg-gradient-to-r from-primary via-primary to-secondary text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-black">🤝 Formulir Orang Tua Asuh</h1>
-                        <p class="text-emerald-100 text-sm mt-1">Jadilah orang tua asuh untuk anak yatim</p>
+                        <p class="text-primary-content/70 text-sm mt-1">Jadilah orang tua asuh untuk anak yatim</p>
                     </div>
-                    <a href="{{ route('dashboard') }}" class="btn btn-outline border-white text-white hover:bg-white hover:text-emerald-700 btn-sm font-bold">
+                    <a href="{{ route('dashboard') }}" class="btn btn-outline border-white text-white hover:bg-white hover:text-primary btn-sm font-bold">
                         ← Kembali ke Dashboard
                     </a>
                 </div>
@@ -18,10 +18,10 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             {{-- Anak Info --}}
-            <div class="card bg-emerald-50 border border-emerald-200 shadow-sm mb-6">
+            <div class="card bg-primary/10 border border-base-300 shadow-sm mb-6">
                 <div class="card-body p-5 flex flex-row items-center gap-4">
                     <div class="avatar">
-                        <div class="w-16 rounded-full ring ring-emerald-200">
+                        <div class="w-16 rounded-full ring ring-base-300">
                             @if($child->photo)
                                 <img src="{{ asset('storage/' . $child->photo) }}" alt="{{ $child->name }}">
                             @else
@@ -30,31 +30,24 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xs text-emerald-500 uppercase tracking-wider font-bold">Anak Asuh</p>
-                        <h3 class="font-bold text-emerald-700 text-lg">{{ $child->name }}</h3>
-                        <p class="text-sm text-emerald-500">{{ $child->age }} Tahun{{ $child->jenis_kelamin ? ' · ' . $child->jenis_kelamin : '' }}</p>
+                        <p class="text-xs text-primary uppercase tracking-wider font-bold">Anak Asuh</p>
+                        <h3 class="font-bold text-primary text-lg">{{ $child->name }}</h3>
+                        <p class="text-sm text-base-content/60">{{ $child->age }} Tahun{{ $child->jenis_kelamin ? ' · ' . $child->jenis_kelamin : '' }}</p>
                     </div>
                     @if($child->description)
                         <div class="ml-auto max-w-xs hidden sm:block">
-                            <p class="text-xs text-emerald-600 italic">"{{ Str::limit($child->description, 80) }}"</p>
+                            <p class="text-xs text-base-content/50 italic">"{{ Str::limit($child->description, 80) }}"</p>
                         </div>
                     @endif
                 </div>
             </div>
 
             @if($errors->any())
-                <div class="alert alert-error mb-6 shadow-md border-0">
-                    <p class="text-sm font-bold mb-1">Harap perbaiki kesalahan berikut:</p>
-                    <ul class="list-disc list-inside text-sm">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                <x-alert type="error" :errors="$errors->all()" />
             @endif
 
             {{-- Form --}}
-            <div class="card bg-base-100 shadow-md border border-emerald-200">
+            <div class="card bg-base-100 shadow-md border border-base-300">
                 <div class="card-body p-6 sm:p-8">
 
                     <form action="{{ route('sponsor.store', $child->id) }}" method="POST" id="sponsor-form">
@@ -64,22 +57,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                             <div class="form-control w-full">
                                 <label class="label">
-                                    <span class="label-text font-bold text-emerald-700">Nama Lengkap <span class="text-red-500">*</span></span>
+                                    <span class="label-text font-bold text-primary">Nama Lengkap <span class="text-red-500">*</span></span>
                                 </label>
                                 <div class="join w-full">
-                                    <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">👤</span>
+                                    <span class="join-item btn btn-ghost bg-base-200 text-base-content/60 px-4 text-lg">👤</span>
                                     <input type="text" name="donor_name" required placeholder="Contoh: Budi Santoso"
-                                           class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('donor_name') }}">
+                                           class="input input-bordered w-full join-item border-base-300 focus:border-primary" value="{{ old('donor_name') }}">
                                 </div>
                             </div>
                             <div class="form-control w-full">
                                 <label class="label">
-                                    <span class="label-text font-bold text-emerald-700">Email <span class="text-red-500">*</span></span>
+                                    <span class="label-text font-bold text-primary">Email <span class="text-red-500">*</span></span>
                                 </label>
                                 <div class="join w-full">
-                                    <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">✉️</span>
+                                    <span class="join-item btn btn-ghost bg-base-200 text-base-content/60 px-4 text-lg">✉️</span>
                                     <input type="email" name="donor_email" required placeholder="email@anda.com"
-                                           class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('donor_email') }}">
+                                           class="input input-bordered w-full join-item border-base-300 focus:border-primary" value="{{ old('donor_email') }}">
                                 </div>
                             </div>
                         </div>
@@ -87,42 +80,42 @@
                         {{-- Phone --}}
                         <div class="form-control w-full mb-5">
                             <label class="label">
-                                <span class="label-text font-bold text-emerald-700">No. WhatsApp Aktif <span class="text-red-500">*</span></span>
+                                <span class="label-text font-bold text-primary">No. WhatsApp Aktif <span class="text-red-500">*</span></span>
                             </label>
                             <div class="join w-full">
-                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">📞</span>
+                                <span class="join-item btn btn-ghost bg-base-200 text-base-content/60 px-4 text-lg">📞</span>
                                 <input type="text" name="donor_phone" required placeholder="081234567890"
-                                       class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('donor_phone') }}">
+                                       class="input input-bordered w-full join-item border-base-300 focus:border-primary" value="{{ old('donor_phone') }}">
                             </div>
-                            <label class="label"><span class="label-text-alt text-emerald-500">Nomor ini dipakai untuk mengirim notifikasi jatuh tempo perpanjangan sponsorship</span></label>
+                            <label class="label"><span class="label-text-alt text-base-content/50">Nomor ini dipakai untuk mengirim notifikasi jatuh tempo perpanjangan sponsorship</span></label>
                         </div>
 
                         {{-- Paket --}}
                         <div class="form-control w-full mb-6">
                             <label class="label">
-                                <span class="label-text font-bold text-emerald-700">Pilih Paket Komitmen Bulanan <span class="text-red-500">*</span></span>
+                                <span class="label-text font-bold text-primary">Pilih Paket Komitmen Bulanan <span class="text-red-500">*</span></span>
                             </label>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                                 @php
                                     $pakets = [
-                                        'Bronze' => ['label' => 'Bronze', 'sub' => 'Pendidikan Dasar', 'nominal' => 1500000, 'icon' => '🥉', 'color' => 'amber'],
-                                        'Silver' => ['label' => 'Silver', 'sub' => 'Pendidikan & Uang Saku', 'nominal' => 1750000, 'icon' => '🥈', 'color' => 'slate'],
-                                        'Gold' => ['label' => 'Gold', 'sub' => 'Pendidikan, Gizi & Kesehatan', 'nominal' => 2500000, 'icon' => '🥇', 'color' => 'yellow'],
+                                        'Bronze' => ['label' => 'Bronze', 'sub' => 'Buku & Alat Tulis', 'nominal' => 100000, 'icon' => '🥉', 'color' => 'amber'],
+                                        'Silver' => ['label' => 'Silver', 'sub' => 'Pendidikan & Uang Saku', 'nominal' => 250000, 'icon' => '🥈', 'color' => 'slate'],
+                                        'Gold' => ['label' => 'Gold', 'sub' => 'Pendidikan, Buku & Alat Tulis', 'nominal' => 500000, 'icon' => '🥇', 'color' => 'yellow'],
                                     ];
                                 @endphp
                                 @foreach($pakets as $key => $p)
                                     <button type="button"
-                                            class="paket-btn border-2 border-emerald-200 rounded-xl p-4 text-center hover:border-emerald-500 hover:bg-emerald-50 transition-all cursor-pointer @if(old('paket_komitmen') == $key) border-emerald-600 bg-emerald-50 @endif"
+                                            class="paket-btn border-2 border-base-300 rounded-xl p-4 text-center hover:border-primary hover:bg-primary/5 transition-all cursor-pointer @if(old('paket_komitmen') == $key) border-primary bg-primary/10 @endif"
                                             data-paket="{{ $key }}"
                                             onclick="pilihPaket(this, '{{ $key }}')">
                                         <div class="text-3xl mb-2">{{ $p['icon'] }}</div>
-                                        <div class="font-bold text-emerald-700">{{ $p['label'] }}</div>
-                                        <div class="text-xs text-slate-500 mt-1">{{ $p['sub'] }}</div>
-                                        <div class="font-bold text-emerald-600 mt-2">Rp{{ number_format($p['nominal'], 0, ',', '.') }}</div>
+                                        <div class="font-bold text-primary">{{ $p['label'] }}</div>
+                                        <div class="text-xs text-base-content/50 mt-1">{{ $p['sub'] }}</div>
+                                        <div class="font-bold text-primary mt-2">Rp{{ number_format($p['nominal'], 0, ',', '.') }}</div>
                                     </button>
                                 @endforeach
                             </div>
-                            <select name="paket_komitmen" id="paket_komitmen" class="select select-bordered w-full border-emerald-200 focus:border-emerald-500 hidden" required onchange="updatePaketDetail()">
+                            <select name="paket_komitmen" id="paket_komitmen" class="select select-bordered w-full border-base-300 focus:border-primary hidden" required onchange="updatePaketDetail()">
                                 <option value="" disabled {{ old('paket_komitmen') ? '' : 'selected' }}>-- Pilih Paket --</option>
                                 <option value="Bronze" {{ old('paket_komitmen') == 'Bronze' ? 'selected' : '' }}>Paket Bronze</option>
                                 <option value="Silver" {{ old('paket_komitmen') == 'Silver' ? 'selected' : '' }}>Paket Silver</option>
@@ -133,13 +126,13 @@
                             <input type="hidden" name="description" id="description-hidden">
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                                    <p class="text-xs text-emerald-500 font-bold uppercase tracking-wider mb-1">Nominal Komitmen</p>
-                                    <p class="text-xl font-black text-emerald-700" id="amount-display">—</p>
+                                <div class="bg-base-200 rounded-xl p-4 border border-base-300">
+                                    <p class="text-xs text-base-content/50 font-bold uppercase tracking-wider mb-1">Nominal Komitmen</p>
+                                    <p class="text-xl font-black text-primary" id="amount-display">—</p>
                                 </div>
-                                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                                    <p class="text-xs text-emerald-500 font-bold uppercase tracking-wider mb-1">Peruntukan Dana</p>
-                                    <p class="text-sm text-emerald-700" id="description-display">Pilih paket terlebih dahulu</p>
+                                <div class="bg-base-200 rounded-xl p-4 border border-base-300">
+                                    <p class="text-xs text-base-content/50 font-bold uppercase tracking-wider mb-1">Peruntukan Dana</p>
+                                    <p class="text-sm text-base-content/70" id="description-display">Pilih paket terlebih dahulu</p>
                                 </div>
                             </div>
                         </div>
@@ -147,9 +140,9 @@
                         {{-- Payment Method --}}
                         <div class="form-control w-full mb-6">
                             <label class="label">
-                                <span class="label-text font-bold text-emerald-700">Metode Pembayaran <span class="text-red-500">*</span></span>
+                                <span class="label-text font-bold text-primary">Metode Pembayaran <span class="text-red-500">*</span></span>
                             </label>
-                            <select name="payment_method" id="payment_method" class="select select-bordered w-full border-emerald-200 focus:border-emerald-500" required>
+                            <select name="payment_method" id="payment_method" class="select select-bordered w-full border-base-300 focus:border-primary" required>
                                 <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>-- Pilih Metode Pembayaran --</option>
                                 <option value="BCA VA" {{ old('payment_method') == 'BCA VA' ? 'selected' : '' }}>🏦 Virtual Account BCA</option>
                                 <option value="Mandiri Bill Payment" {{ old('payment_method') == 'Mandiri Bill Payment' ? 'selected' : '' }}>🏦 Mandiri Bill Payment</option>
@@ -159,7 +152,8 @@
                                 <option value="Permata VA" {{ old('payment_method') == 'Permata VA' ? 'selected' : '' }}>🏦 Virtual Account Permata</option>
                                 <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>🏦 Virtual Account BSI</option>
                                 <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>📱 GoPay</option>
-                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS</option>
+                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS (Midtrans)</option>
+                                <option value="QRIS Yayasan" {{ old('payment_method') == 'QRIS Yayasan' ? 'selected' : '' }}>📱 QRIS Yayasan (Manual)</option>
                                 <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>📱 ShopeePay</option>
                             </select>
                         </div>
@@ -169,7 +163,7 @@
                             <p>📌 Komitmen ini berlaku untuk periode <strong>1 bulan</strong> sejak pembayaran berhasil. Kami akan mengirimkan pengingat via WhatsApp sebelum jatuh tempo.</p>
                         </div>
 
-                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base" id="submit-btn">
+                        <button type="submit" class="btn btn-primary text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base" id="submit-btn">
                             🔐 Konfirmasi & Lanjutkan Pembayaran
                         </button>
                     </form>
@@ -177,26 +171,26 @@
             </div>
 
             {{-- Trust Badge --}}
-            <div class="text-center mt-6 text-xs text-slate-400">
-                <p>🔒 Pembayaran diproses secara aman melalui <span class="font-semibold text-emerald-600">Midtrans</span></p>
+            <div class="text-center mt-6 text-xs text-base-content/40">
+                <p>🔒 Pembayaran diproses secara aman melalui <span class="font-semibold text-primary">Midtrans</span></p>
             </div>
         </div>
     </div>
 
     <script>
         const dataPaket = {
-            'Bronze': { nominal: 1500000, keterangan: 'Biaya SPP pendidikan dasar dan buku pelajaran bulanan.' },
-            'Silver': { nominal: 1750000, keterangan: 'Biaya SPP pendidikan, buku pelajaran, dan alokasi uang saku harian.' },
-            'Gold':   { nominal: 2500000, keterangan: 'Pembiayaan penuh (Pendidikan, uang saku, suplemen gizi, dan jaminan kesehatan bulanan).' }
+            'Bronze': { nominal: 100000, keterangan: 'Paket buku pelajaran dan alat tulis sekolah bulanan.' },
+            'Silver': { nominal: 250000, keterangan: 'Biaya SPP pendidikan dan uang saku harian.' },
+            'Gold':   { nominal: 500000, keterangan: 'Pembiayaan penuh: SPP pendidikan, uang saku, buku pelajaran, dan alat tulis sekolah.' }
         };
 
         function pilihPaket(btn, key) {
             document.querySelectorAll('.paket-btn').forEach(b => {
-                b.classList.remove('border-emerald-600', 'bg-emerald-50');
-                b.classList.add('border-emerald-200');
+                b.classList.remove('border-primary', 'bg-primary/10');
+                b.classList.add('border-base-300');
             });
-            btn.classList.remove('border-emerald-200');
-            btn.classList.add('border-emerald-600', 'bg-emerald-50');
+            btn.classList.remove('border-base-300');
+            btn.classList.add('border-primary', 'bg-primary/10');
 
             document.getElementById('paket_komitmen').value = key;
             updatePaketDetail();
@@ -241,8 +235,8 @@
                 updatePaketDetail();
                 const btn = document.querySelector(`.paket-btn[data-paket="${select.value}"]`);
                 if (btn) {
-                    btn.classList.remove('border-emerald-200');
-                    btn.classList.add('border-emerald-600', 'bg-emerald-50');
+                    btn.classList.remove('border-base-300');
+                    btn.classList.add('border-primary', 'bg-primary/10');
                 }
             }
         });

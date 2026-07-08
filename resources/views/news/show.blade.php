@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="baitul">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,67 +9,7 @@
 <body class="font-sans antialiased">
 
     {{-- NAVBAR --}}
-    <nav id="navbar" class="navbar bg-base-100/90 backdrop-blur-lg sticky top-0 z-50 shadow-sm transition-all duration-300">
-        <div class="navbar-start">
-            <a href="/" class="flex items-center gap-3">
-                @if($profil && $profil->logo)
-                    <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="h-9 w-9 rounded-full object-cover border border-emerald-200 shadow-sm">
-                @else
-                    <span class="text-2xl">🌿</span>
-                @endif
-                <span class="text-xl font-extrabold tracking-wide text-emerald-700">
-                    {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}
-                </span>
-            </a>
-        </div>
-
-        <div class="navbar-center hidden lg:flex">
-            <ul class="menu menu-horizontal gap-1">
-                <li><a href="{{ url('/') }}" class="font-bold text-emerald-700">Beranda</a></li>
-                <li class="dropdown dropdown-hover">
-                    <a tabindex="0" class="font-bold text-emerald-700">
-                        Tentang Kami
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                    </a>
-                    <ul tabindex="0" class="dropdown-content menu p-2 shadow-xl bg-base-100 rounded-xl min-w-[200px] z-[100] border border-emerald-200">
-                        <li><a href="{{ url('/#tentang-kami') }}" class="font-bold text-emerald-700">📖 Profil Yayasan</a></li>
-                        <li><a href="{{ url('/#pendiri') }}" class="font-bold text-emerald-700">👤 Pengurus</a></li>
-                        <li><a href="{{ url('/#legalitas') }}" class="font-bold text-emerald-700">📑 Legalitas & Struktur</a></li>
-                    </ul>
-                </li>
-                <li><a href="{{ url('/#kampanye') }}" class="font-bold text-emerald-700">❤️ Program Donasi</a></li>
-                <li><a href="{{ url('/#program-ota') }}" class="font-bold text-emerald-700">🤝 Orang Tua Asuh</a></li>
-                <li><a href="{{ url('/#berita-kegiatan') }}" class="font-bold text-emerald-700">📰 Berita</a></li>
-            </ul>
-        </div>
-
-        <div class="navbar-end gap-2">
-            <a href="{{ route('register') }}" class="btn btn-outline btn-success btn-sm font-bold hidden sm:inline-flex">Daftar</a>
-            <a href="{{ route('login') }}" class="btn btn-success btn-sm font-bold text-white hidden sm:inline-flex">Masuk</a>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="btn btn-ghost btn-square lg:hidden">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <path d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
-        </div>
-
-        <div id="mobile-menu" class="hidden absolute top-full left-0 right-0 bg-base-100 border-t border-emerald-100 shadow-lg lg:hidden">
-            <ul class="menu menu-md p-4">
-                <li><a href="{{ url('/') }}" class="font-bold text-emerald-800">🏠 Beranda</a></li>
-                <li class="menu-title text-xs"><span>Tentang</span></li>
-                <li><a href="{{ url('/#tentang-kami') }}" class="text-emerald-700">📖 Profil Yayasan</a></li>
-                <li><a href="{{ url('/#pendiri') }}" class="text-emerald-700">👤 Pengurus</a></li>
-                <li><a href="{{ url('/#legalitas') }}" class="text-emerald-700">📑 Legalitas & Struktur</a></li>
-                <li class="menu-title text-xs"><span>Program</span></li>
-                <li><a href="{{ url('/#kampanye') }}" class="text-emerald-700">❤️ Program Donasi</a></li>
-                <li><a href="{{ url('/#program-ota') }}" class="text-emerald-700">🤝 Orang Tua Asuh</a></li>
-                <li><a href="{{ url('/#berita-kegiatan') }}" class="text-emerald-700">📰 Berita</a></li>
-                <li class="menu-divider"></li>
-                <li><a href="{{ route('register') }}" class="font-bold text-emerald-700">📝 Daftar Donatur</a></li>
-                <li><a href="{{ route('login') }}" class="font-bold text-emerald-700">🔑 Masuk</a></li>
-            </ul>
-        </div>
-    </nav>
+    @include('partials.public-navbar', ['useRouteLinks' => false, 'scrollEffect' => true])
 
     <div class="bg-gradient-to-b from-emerald-50 to-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">

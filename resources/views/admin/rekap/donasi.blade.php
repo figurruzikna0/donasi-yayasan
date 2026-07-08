@@ -1,114 +1,149 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight text-emerald-600">Rekap Data Donasi</h2>
-    </x-slot>
+<x-admin-layout>
+    <div class="bg-base-200 min-h-screen">
 
-    <div class="bg-base-200 p-8">
-        <div class="max-w-7xl mx-auto">
-            <nav class="text-sm text-emerald-500 mb-1">
-                <a href="{{ route('admin.dashboard') }}" class="link link-hover text-emerald-600">Dashboard</a>
-                <span class="mx-1">/</span>
-                <span class="text-emerald-600">Rekap Donasi</span>
-            </nav>
-            <h1 class="text-2xl font-black text-emerald-700 mb-1">Data Seluruh Donasi</h1>
-            <p class="text-sm text-emerald-500 mb-6">Rekap lengkap transaksi donasi kampanye.</p>
-
-            <div class="stats shadow w-full mb-6">
-                <div class="stat">
-                    <div class="stat-figure text-2xl">💰</div>
-                    <div class="stat-title">Total Dana Terkumpul</div>
-                    <div class="stat-value text-emerald-700">Rp {{ number_format($totalAmount, 0, ',', '.') }}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-figure text-2xl">📋</div>
-                    <div class="stat-title">Total Transaksi</div>
-                    <div class="stat-value text-emerald-700">{{ $totalCount }}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-figure text-2xl">✅</div>
-                    <div class="stat-title">Sukses</div>
-                    <div class="stat-value text-emerald-700">{{ $successCount }}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-figure text-2xl">⏳</div>
-                    <div class="stat-title">Pending</div>
-                    <div class="stat-value text-emerald-700">{{ $pendingCount }}</div>
-                </div>
-            </div>
-
-            <div class="card bg-base-100 shadow-md border border-emerald-200">
-                <div class="card-body p-0">
-                    <div class="p-4 border-b border-emerald-100 flex flex-wrap items-center justify-between gap-3">
-                        <form method="GET" class="flex flex-wrap items-center gap-2">
-                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered input-sm">
-                            <span class="text-xs text-emerald-500">s/d</span>
-                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="input input-bordered input-sm">
-                            <input type="text" name="search" placeholder="Cari nama/email/order..." class="input input-bordered input-sm"
-                                   value="{{ request('search') }}">
-                            <select name="status" class="select select-bordered select-sm">
-                                <option value="">Semua Status</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Sukses</option>
-                                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Gagal</option>
-                            </select>
-                            <button type="submit" class="btn btn-success btn-sm text-white">Filter</button>
-                            <a href="{{ route('admin.rekap.donasi') }}" class="btn btn-ghost btn-sm">Reset</a>
-                        </form>
-                        <a href="{{ route('admin.rekap.donasi.export') }}?{{ request()->getQueryString() }}" class="btn btn-outline btn-sm btn-info">
-                            Export CSV
-                        </a>
+        {{-- Page header --}}
+        <div class="px-8 pt-8 pb-0">
+            <div class="flex items-end justify-between gap-3 mb-2 flex-wrap">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-2">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </span>
+                        <div>
+                            <h1 class="text-2xl font-black text-base-content">Data Seluruh Donasi</h1>
+                            <p class="text-sm text-base-content/50">Rekap lengkap transaksi donasi kampanye.</p>
+                        </div>
                     </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="table table-zebra w-full">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Donatur</th>
-                                    <th>Email</th>
-                                    <th>Kampanye</th>
-                                    <th>Nominal</th>
-                                    <th>Metode</th>
-                                    <th>Status</th>
-                                    <th>Tanggal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($donations as $d)
-                                <tr>
-                                    <td class="font-mono text-xs">{{ $d->order_id ?? '-' }}</td>
-                                    <td>
-                                        <div class="flex items-center gap-2">
-                                            <div class="avatar">
-                                                <div class="w-7 rounded-full">
-                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($d->donor_name) }}&background=b3e093&color=5c8148" alt="">
-                                                </div>
-                                            </div>
-                                            <span class="text-sm font-semibold">{{ $d->donor_name }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-sm">{{ $d->donor_email }}</td>
-                                    <td class="text-sm">{{ $d->campaign?->title ?? '-' }}</td>
-                                    <td class="font-bold text-emerald-700">Rp {{ number_format($d->amount, 0, ',', '.') }}</td>
-                                    <td class="text-sm">{{ $d->payment_method ?? '-' }}</td>
-                                    <td>
-                                        @php $c = $d->status == 'success' ? 'badge-success' : ($d->status == 'pending' ? 'badge-warning' : 'badge-error') @endphp
-                                        <span class="badge {{ $c }} badge-sm">{{ $d->status }}</span>
-                                    </td>
-                                    <td class="text-xs">{{ $d->created_at ? $d->created_at->format('d/m/Y H:i') : '-' }}</td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="8" class="text-center py-10 text-base-content/60">Belum ada data donasi.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    @if($donations->hasPages())
-                        <div class="p-4 border-t border-emerald-100">{{ $donations->links() }}</div>
-                    @endif
                 </div>
             </div>
         </div>
+
+        <div class="p-8 pt-6 space-y-6">
+
+            {{-- Summary Cards --}}
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-sm:grid-cols-1">
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-2xl">💰</div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Total Dana Terkumpul</div>
+                        <div class="text-lg font-black text-base-content mt-0.5">Rp {{ number_format($totalAmount, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-2xl">📋</div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Total Transaksi</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $totalCount }}</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0 text-2xl">✅</div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sukses</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $successCount }}</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-2xl">⏳</div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Pending</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $pendingCount }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Table Card --}}
+            <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                <div class="px-6 py-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-3">
+                    <form method="GET" class="flex flex-wrap items-center gap-2">
+                        <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered input-sm">
+                        <span class="text-xs text-base-content/50">s/d</span>
+                        <input type="date" name="end_date" value="{{ request('end_date') }}" class="input input-bordered input-sm">
+                        <input type="text" name="search" placeholder="Cari nama/email/order..." class="input input-bordered input-sm" value="{{ request('search') }}">
+                        <button type="submit" class="btn bg-primary hover:bg-primary/90 text-white border-0 btn-sm font-bold rounded-lg">Filter</button>
+                        <a href="{{ route('admin.rekap.donasi') }}" class="btn btn-ghost btn-sm font-bold">Reset</a>
+                    </form>
+                    <div class="flex gap-2">
+                        <a href="{{ route('admin.rekap.donasi.export') }}?{{ request()->getQueryString() }}" class="btn btn-sm bg-primary/10 hover:bg-primary/20 text-primary border-0 font-bold rounded-lg">
+                            Export CSV
+                        </a>
+                        <a href="{{ route('admin.rekap.donasi.export-pdf') }}?{{ request()->getQueryString() }}" class="btn btn-sm bg-error/10 hover:bg-error/20 text-error border-0 font-bold rounded-lg">
+                            Export PDF
+                        </a>
+                    </div>
+                </div>
+
+                <div class="px-6 py-3 border-b border-base-200 bg-base-100/50 flex flex-wrap items-center gap-1.5">
+                    <span class="text-[11px] font-semibold text-base-content/50 mr-1">Status:</span>
+                    @php $curStatus = request('status'); @endphp
+                    <a href="{{ route('admin.rekap.donasi', array_merge(request()->except(['status', 'page']), ['status' => ''])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ !$curStatus ? 'bg-primary text-white shadow-sm' : 'bg-base-200 text-base-content/60 hover:bg-base-300' }}">Semua</a>
+                    <a href="{{ route('admin.rekap.donasi', array_merge(request()->except(['status', 'page']), ['status' => 'success'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'success' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100' }}">Sukses</a>
+                    <a href="{{ route('admin.rekap.donasi', array_merge(request()->except(['status', 'page']), ['status' => 'pending'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100' }}">Pending</a>
+                    <a href="{{ route('admin.rekap.donasi', array_merge(request()->except(['status', 'page']), ['status' => 'failed'])) }}"
+                       class="px-3 py-1 text-xs font-bold rounded-full transition-all {{ $curStatus === 'failed' ? 'bg-red-500 text-white shadow-sm' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100' }}">Gagal</a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="bg-base-200/50">
+                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Order ID</th>
+                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Donatur</th>
+                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Kampanye</th>
+                                <th class="text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Nominal</th>
+                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Metode</th>
+                                <th class="text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Status</th>
+                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($donations as $d)
+                            <tr class="hover:bg-base-200/30 transition-colors">
+                                <td class="font-mono text-xs text-base-content/60">{{ $d->order_id ?? '-' }}</td>
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center uppercase">{{ substr($d->donor_name, 0, 1) }}</div>
+                                        <span class="text-sm font-semibold text-base-content">{{ $d->donor_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-sm text-base-content/60">{{ $d->campaign?->title ?? '-' }}</td>
+                                <td class="text-right font-bold text-primary">Rp {{ number_format($d->amount, 0, ',', '.') }}</td>
+                                <td class="text-sm text-base-content/60">{{ $d->payment_method ?? '-' }}</td>
+                                <td class="text-center">
+                                    @if($d->status == 'success')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Sukses
+                                        </span>
+                                    @elseif($d->status == 'pending')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            Pending
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-600">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                            Gagal
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="text-xs text-base-content/60 whitespace-nowrap">{{ $d->created_at ? $d->created_at->format('d/m/Y H:i') : '-' }}</td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="7"><div class="py-16 text-center"><p class="font-extrabold text-base-content">Belum ada data donasi</p></div></td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                @if($donations->hasPages())
+                    <div class="p-4 border-t border-base-200">{{ $donations->links() }}</div>
+                @endif
+            </div>
+
+        </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

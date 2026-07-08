@@ -3,8 +3,14 @@
 <nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200">
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4rem]">
         <div class="flex-1 flex items-center gap-4">
-            <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="shrink-0">
-                <x-application-logo class="block h-9 w-auto fill-current text-base-content" />
+            <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="shrink-0 flex items-center gap-2">
+                @php $logoNav = $profil; @endphp
+                @if($logoNav?->logo)
+                    <img src="{{ asset('storage/' . $logoNav->logo) . '?v=' . now()->timestamp }}" class="h-8 w-8 rounded-lg object-cover border border-base-300" alt="Logo">
+                @else
+                    <span class="text-xl">🌿</span>
+                @endif
+                <span class="text-sm font-bold text-primary hidden sm:inline">{{ $logoNav?->nama_yayasan ?? 'Baitul Yatim' }}</span>
             </a>
             <div class="hidden sm:flex gap-1">
                 <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">

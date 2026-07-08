@@ -1,27 +1,15 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
             {{ __('Tambah Data Anak Asuh') }}
         </h2>
     </x-slot>
 
-    <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="card bg-base-100 shadow-lg border border-emerald-200">
-
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C8.5 2 5 4.5 5 9c0 3.5 2 6.5 5.5 8L12 22l1.5-5C17 15.5 19 12.5 19 9c0-4.5-3.5-7-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-lg">Data Anak Asuh Baru</h3>
-                        <p class="text-white/80 text-sm">Lengkapi informasi di bawah dengan teliti</p>
-                    </div>
-                </div>
-
-                <div class="card-body p-8">
+    <x-admin-form-card
+        icon='<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.5 2 5 4.5 5 9c0 3.5 2 6.5 5.5 8L12 22l1.5-5C17 15.5 19 12.5 19 9c0-4.5-3.5-7-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>'
+        title="Tambah Anak Asuh Baru"
+        subtitle="Lengkapi informasi di bawah dengan teliti"
+    >
                     <form action="{{ route('admin.foster-children.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
@@ -110,11 +98,7 @@
                         </div>
 
                     </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
+    </x-admin-form-card>
 
     <style>
         .file-input-wrapper { position: relative; }
@@ -145,4 +129,4 @@
             }
         });
     </script>
-</x-app-layout>
+</x-admin-layout>

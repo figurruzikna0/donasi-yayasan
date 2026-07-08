@@ -8,7 +8,6 @@ use App\Models\Donation;
 use App\Models\FosterChild;
 use App\Models\News;
 use App\Models\Pendiri;
-use App\Models\ProfilYayasan;
 use App\Models\Sponsorship;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +17,6 @@ class DonorController extends Controller
     {
         $user = Auth::user();
 
-        $profil = ProfilYayasan::first();
         $pendiris = Pendiri::latest()->get();
         $newsList = News::published()->latest('tanggal_kegiatan')->take(6)->get();
         $campaigns = Campaign::where('status', 'active')->latest()->get();
@@ -56,7 +54,7 @@ class DonorController extends Controller
             ->count();
 
         return view('dashboard', compact(
-            'profil', 'pendiris', 'newsList', 'campaigns', 'fosterChildren',
+            'pendiris', 'newsList', 'campaigns', 'fosterChildren',
             'donations', 'sponsorships', 'totalDonated', 'activeSponsorships', 'user',
             'totalFoster', 'tersediaFoster', 'diasuhFoster'
         ));

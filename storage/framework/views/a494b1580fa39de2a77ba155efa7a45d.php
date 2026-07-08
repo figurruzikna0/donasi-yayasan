@@ -1,211 +1,69 @@
-<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
-<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('app-layout'); ?>
+<?php if (isset($component)) { $__componentOriginal91fdd17964e43374ae18c674f95cdaa3 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal91fdd17964e43374ae18c674f95cdaa3 = $attributes; } ?>
+<?php $component = App\View\Components\AdminLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('admin-layout'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php $attributes = $attributes->except(\App\View\Components\AdminLayout::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
 
-    <div class="flex bg-base-200 min-h-0">
-
-        
-        <aside class="w-60 shrink-0 bg-emerald-700 flex flex-col sticky top-0 h-dvh overflow-y-auto">
-            <div class="px-8 py-9 border-b border-white/10">
-                <a href="<?php echo e(route('admin.dashboard')); ?>" class="flex items-center gap-3">
-                    <?php if($profil && $profil->logo): ?>
-                        <img src="<?php echo e(asset('storage/' . $profil->logo)); ?>" alt="Logo" class="h-9 w-9 rounded-lg object-cover ring-2 ring-emerald-400/50">
-                    <?php else: ?>
-                        <div class="h-9 w-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-black text-base">BY</div>
-                    <?php endif; ?>
-                    <div>
-                        <div class="text-base font-black text-white tracking-tight leading-tight">Baitul<span class="text-emerald-300">Yatim</span></div>
-                        <div class="text-[0.65rem] text-white/45 font-semibold uppercase tracking-widest mt-0.5">Panel Administrasi</div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="px-4 pt-6 pb-1">
-                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1.5">Menu Utama</div>
-                <a href="<?php echo e(route('admin.dashboard')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white transition-all duration-150 relative mb-0.5 bg-white/13 before:absolute before:left-0 before:top-[22%] before:bottom-[22%] before:w-[3px] before:bg-emerald-300 before:rounded-r-sm">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                    Dashboard
-                </a>
-            </div>
-
-            <div class="px-4 pt-3 pb-1">
-                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Akun</div>
-                <a href="<?php echo e(route('profile.edit')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    Edit Profil
-                </a>
-            </div>
-
-            <div class="px-4 pt-5 pb-1">
-                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Konten</div>
-
-                <a href="<?php echo e(route('admin.profil.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    Profil Yayasan
-                </a>
-
-                <a href="<?php echo e(route('admin.news.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"/></svg>
-                    Berita Kegiatan
-                </a>
-
-                <a href="<?php echo e(route('admin.campaigns.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V9a2 2 0 00-2-2m2 4v4a2 2 0 104 0v-1m-4-3H9m2 0h4m6 1a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Kelola Kampanye
-                </a>
-
-                <a href="<?php echo e(route('admin.users.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    Kelola User
-                </a>
-            </div>
+    <div class="p-8 space-y-6">
 
             
-            <div class="px-4 pt-5 pb-1">
-                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Program</div>
-
-                <a href="<?php echo e(route('admin.foster-children.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    Data Anak Asuh
-                </a>
-
-                <a href="<?php echo e(route('admin.sponsorships.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    Orang Tua Asuh
-                </a>
-
-                <a href="<?php echo e(route('admin.child-developments.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                    Isi Perkembangan Anak
-                </a>
-
-                <a href="<?php echo e(route('admin.transactions.index')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Riwayat Transaksi
-                    <?php
-                        $pendingCount = \App\Models\Donation::where('status','pending')->count()
-                                      + \App\Models\Sponsorship::where('status','pending')->count();
-                    ?>
-                    <?php if($pendingCount > 0): ?>
-                        <span class="ml-auto bg-emerald-300 text-emerald-700 text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full"><?php echo e($pendingCount); ?></span>
-                    <?php endif; ?>
-                </a>
-            </div>
-
-            <div class="px-4 pt-5 pb-1">
-                <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Rekap Data</div>
-
-                <a href="<?php echo e(route('admin.rekap.donasi')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                    Data Donasi
-                </a>
-
-                <a href="<?php echo e(route('admin.rekap.donatur')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    Data Donatur
-                </a>
-
-                <a href="<?php echo e(route('admin.rekap.orang-tua-asuh')); ?>" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
-                    <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    Data Orang Tua Asuh
-                </a>
-            </div>
-
-            <div class="mt-auto px-4 py-4 border-t border-white/10">
-                <form method="POST" action="<?php echo e(route('logout')); ?>">
-                    <?php echo csrf_field(); ?>
-                    <button type="submit" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-bold text-white/50 hover:bg-white/10 hover:text-white transition-all duration-150 cursor-pointer w-full bg-transparent border-none">
-                        <svg class="w-[15px] h-[15px] opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        Keluar
-                    </button>
-                </form>
-            </div>
-        </aside>
-
-        
-        <main class="flex-1 overflow-x-hidden min-w-0">
-
-            
-            <div class="bg-white border-b border-emerald-100 px-8 py-4 flex items-center justify-between">
-                <div>
-                    <h1 id="greeting-text" class="text-xl font-black text-emerald-800">Selamat Datang 👋</h1>
-                </div>
-                <div class="flex items-center gap-4">
-                    <?php $adminUser = Auth::user(); ?>
-                    <a href="<?php echo e(route('profile.edit')); ?>" class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-emerald-50 transition-colors">
-                        <?php if($adminUser->avatar): ?>
-                            <img src="<?php echo e(asset('storage/' . $adminUser->avatar)); ?>" class="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-200">
-                        <?php else: ?>
-                            <div class="w-9 h-9 rounded-full bg-emerald-200 text-emerald-700 font-extrabold text-sm flex items-center justify-center ring-2 ring-emerald-200">
-                                <?php echo e(strtoupper(substr($adminUser->name, 0, 1))); ?>
-
-                            </div>
-                        <?php endif; ?>
-                        <span class="text-sm font-bold text-emerald-700 hidden sm:inline"><?php echo e($adminUser->name); ?></span>
-                    </a>
-                    <div class="w-px h-7 bg-emerald-200"></div>
-                    <form method="POST" action="<?php echo e(route('logout')); ?>">
-                        <?php echo csrf_field(); ?>
-                        <button type="submit" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-emerald-500 hover:text-red-500 hover:bg-red-50 transition-colors" title="Keluar">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                            <span class="hidden sm:inline">Keluar</span>
-                        </button>
-                    </form>
-                    <div id="topbar-date" class="text-sm font-bold text-emerald-500 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2 hidden sm:block">—</div>
-                </div>
-            </div>
-
-            <div class="p-8">
-
-            
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">💰</div>
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Total Dana Terkumpul</p>
-                        <p class="text-2xl font-black text-emerald-700">Rp <?php echo e(number_format($totalFunds ?? 0, 0, ',', '.')); ?></p>
-                        <p class="text-[11px] text-emerald-400 mt-0.5">Dari donasi yang berhasil</p>
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-xl flex-shrink-0">💰</div>
+                    <div class="min-w-0">
+                        <p class="text-[0.6rem] font-bold uppercase tracking-widest text-base-content/40">Total Dana Terkumpul</p>
+                        <p class="text-lg font-black text-primary truncate">Rp <?php echo e(number_format($totalFunds ?? 0, 0, ',', '.')); ?></p>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">📣</div>
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Kampanye Aktif</p>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl flex-shrink-0">📣</div>
+                    <div class="min-w-0">
+                        <p class="text-[0.6rem] font-bold uppercase tracking-widest text-base-content/40">Kampanye Aktif</p>
                         <p class="text-2xl font-black text-emerald-700"><?php echo e($activeCampaigns ?? 0); ?></p>
-                        <p class="text-[11px] text-emerald-400 mt-0.5">Sedang berjalan saat ini</p>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">👦</div>
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Total Anak Asuh</p>
-                        <p class="text-2xl font-black text-emerald-700"><?php echo e($fosterChildren ?? 0); ?></p>
-                        <p class="text-[11px] text-emerald-400 mt-0.5">Terdaftar dalam sistem</p>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-xl flex-shrink-0">👦</div>
+                    <div class="min-w-0">
+                        <p class="text-[0.6rem] font-bold uppercase tracking-widest text-base-content/40">Total Anak Asuh</p>
+                        <p class="text-2xl font-black text-amber-700"><?php echo e($fosterChildren ?? 0); ?></p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center text-xl flex-shrink-0">📥</div>
+                    <div class="min-w-0">
+                        <p class="text-[0.6rem] font-bold uppercase tracking-widest text-base-content/40">Donasi Hari Ini</p>
+                        <p class="text-lg font-black text-sky-700 truncate">Rp <?php echo e(number_format($todayDonasi ?? 0, 0, ',', '.')); ?></p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-xl flex-shrink-0">🤝</div>
+                    <div class="min-w-0">
+                        <p class="text-[0.6rem] font-bold uppercase tracking-widest text-base-content/40">Sponsor Baru (Bln Ini)</p>
+                        <p class="text-2xl font-black text-purple-700"><?php echo e($monthSponsor ?? 0); ?></p>
                     </div>
                 </div>
             </div>
 
             
-            <div class="grid grid-cols-[2fr_1fr] gap-4 mb-6 max-lg:grid-cols-1">
+            <div class="grid grid-cols-[2fr_1fr] gap-4 max-lg:grid-cols-1">
 
                 
-                <div class="card bg-base-100 shadow-md border">
-                    <div class="card-body p-5">
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                    <div class="p-5">
                         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                             <div>
-                                <div class="font-extrabold text-emerald-900">📈 Cashflow Donasi</div>
-                                <div class="text-xs text-emerald-500 font-semibold mt-0.5">Total dana masuk per bulan (Rp)</div>
+                                <div class="font-extrabold text-base-content">📈 Cashflow Donasi</div>
+                                <div class="text-xs text-base-content/40 font-semibold mt-0.5">Total dana masuk per bulan (Rp)</div>
                             </div>
                             <div class="flex gap-1">
-                                <button class="btn btn-success btn-xs cashflow-btn" onclick="setCashflowPeriod('6', this)">6 Bln</button>
-                                <button class="btn btn-ghost btn-xs cashflow-btn" onclick="setCashflowPeriod('12', this)">12 Bln</button>
+                                <button class="btn btn-xs bg-primary/10 text-primary border-0 hover:bg-primary/20 font-bold cashflow-btn" onclick="setCashflowPeriod('6', this)">6 Bln</button>
+                                <button class="btn btn-xs btn-ghost text-base-content/40 cashflow-btn" onclick="setCashflowPeriod('12', this)">12 Bln</button>
                             </div>
                         </div>
                         <canvas id="cashflowChart" height="200"></canvas>
@@ -213,12 +71,12 @@
                 </div>
 
                 
-                <div class="card bg-base-100 shadow-md border">
-                    <div class="card-body p-5">
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                    <div class="p-5">
                         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                             <div>
-                                <div class="font-extrabold text-emerald-900">👦 Status Anak Asuh</div>
-                                <div class="text-xs text-emerald-500 font-semibold mt-0.5">Distribusi status saat ini</div>
+                                <div class="font-extrabold text-base-content">👦 Status Anak Asuh</div>
+                                <div class="text-xs text-base-content/40 font-semibold mt-0.5">Distribusi status saat ini</div>
                             </div>
                         </div>
                         <canvas id="childDonut" height="170"></canvas>
@@ -229,15 +87,52 @@
             </div>
 
             
+            <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="font-extrabold text-base-content">🏆 Kampanye Terpopuler</div>
+                        <a href="<?php echo e(route('admin.campaigns.index')); ?>" class="link link-hover text-xs font-bold text-primary ml-auto flex items-center gap-1 hover:gap-1.5 transition-all">
+                            Kelola Kampanye
+                            <span class="text-xs">→</span>
+                        </a>
+                    </div>
+
+                    <div class="space-y-3">
+                        <?php $__empty_1 = true; $__currentLoopData = $topCampaigns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $camp): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <?php $progress = $camp->target_amount > 0 ? min(100, round($camp->collected_amount / $camp->target_amount * 100)) : 0; ?>
+                        <div class="bg-base-200/40 rounded-lg px-4 py-3">
+                            <div class="flex items-center justify-between mb-1">
+                                <div class="text-sm font-bold text-base-content truncate flex-1"><?php echo e($camp->title); ?></div>
+                                <span class="text-xs font-black text-primary ml-2"><?php echo e($progress); ?>%</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-base-300 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all" style="width: <?php echo e($progress); ?>%"></div>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-[0.6rem] text-base-content/40">Rp <?php echo e(number_format($camp->collected_amount, 0, ',', '.')); ?> / Rp <?php echo e(number_format($camp->target_amount, 0, ',', '.')); ?></span>
+                                <?php if($progress >= 100): ?>
+                                <span class="text-[0.55rem] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Tercapai ✅</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <div class="text-center text-base-content/40 py-6 text-sm">Belum ada kampanye aktif</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            
             <div class="grid grid-cols-2 gap-4 max-lg:grid-cols-1">
 
                 
-                <div class="card bg-base-100 shadow-md border">
-                    <div class="card-body p-5">
-                        <div class="flex items-center gap-2 mb-3">
-                            <div class="font-extrabold text-emerald-900">🧾 Transaksi Terbaru</div>
-                            <a href="<?php echo e(route('admin.transactions.index')); ?>" class="link link-hover text-xs font-bold text-emerald-600 ml-auto">
-                                Lihat Semua →
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="font-extrabold text-base-content">🧾 Transaksi Terbaru</div>
+                            <a href="<?php echo e(route('admin.transactions.index')); ?>" class="link link-hover text-xs font-bold text-primary ml-auto flex items-center gap-1 hover:gap-1.5 transition-all">
+                                Lihat Semua
+                                <span class="text-xs">→</span>
                             </a>
                         </div>
 
@@ -246,52 +141,34 @@
                                 ->latest()->take(4)->get();
                         ?>
 
-                        <table class="table table-zebra">
-                            <thead>
-                                <tr>
-                                    <th>Donatur</th>
-                                    <th>Kampanye</th>
-                                    <th>Jumlah</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $__empty_1 = true; $__currentLoopData = $recentDonations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $txn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr>
-                                    <td>
-                                        <div class="flex items-center gap-3">
-                                            <div class="avatar">
-                                                <div class="w-8 rounded-full">
-                                                    <img src="https://ui-avatars.com/api/?name=<?php echo e(urlencode($txn->donor_name)); ?>&background=b3e093&color=5c8148&rounded=true&bold=true" alt="">
-                                                </div>
-                                            </div>
-                                            <div class="font-bold text-sm"><?php echo e($txn->donor_name); ?></div>
-                                        </div>
-                                    </td>
-                                    <td class="text-sm text-base-content/70"><?php echo e($txn->campaign->title ?? '-'); ?></td>
-                                    <td class="font-bold text-emerald-700">Rp <?php echo e(number_format($txn->amount, 0, ',', '.')); ?></td>
-                                    <td>
-                                        <?php
-                                            $badgeClass = $txn->status === 'success' ? 'badge-success' : ($txn->status === 'pending' ? 'badge-warning' : 'badge-error');
-                                            $badgeText = $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Gagal');
-                                        ?>
-                                        <span class="badge <?php echo e($badgeClass); ?>"><?php echo e($badgeText); ?></span>
-                                    </td>
-                                </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                <tr>
-                                    <td colspan="4" class="text-center text-base-content/60 py-8">Belum ada transaksi</td>
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                        <div class="divide-y divide-base-200/60">
+                            <?php $__empty_1 = true; $__currentLoopData = $recentDonations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $txn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <div class="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center flex-shrink-0 uppercase"><?php echo e(substr($txn->donor_name, 0, 1)); ?></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-sm text-base-content truncate"><?php echo e($txn->donor_name); ?></div>
+                                    <div class="text-xs text-base-content/40 truncate"><?php echo e($txn->campaign->title ?? '-'); ?></div>
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <div class="font-bold text-primary text-sm">Rp <?php echo e(number_format($txn->amount, 0, ',', '.')); ?></div>
+                                    <?php
+                                        $badgeClass = $txn->status === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ($txn->status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+                                        $badgeText = $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Gagal');
+                                    ?>
+                                    <span class="inline-block text-[0.6rem] font-bold px-2 py-0.5 rounded-full border <?php echo e($badgeClass); ?> mt-0.5"><?php echo e($badgeText); ?></span>
+                                </div>
+                            </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                            <div class="text-center text-base-content/40 py-8 text-sm">Belum ada transaksi</div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
 
                 
-                <div class="card bg-base-100 shadow-md border">
-                    <div class="card-body p-5">
-                        <div class="font-extrabold text-emerald-900 mb-3">📊 Rincian Anak Asuh</div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                    <div class="p-5">
+                        <div class="font-extrabold text-base-content mb-4">📊 Rincian Anak Asuh</div>
 
                         <?php
                             $totalAnak    = \App\Models\FosterChild::count();
@@ -300,44 +177,61 @@
                             $lainnya      = $totalAnak - $tersedia - $diasuh;
                         ?>
 
-                        <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
-                            <span class="w-2.5 h-2.5 rounded-full shrink-0 bg-emerald-600"></span>
-                            <span class="font-bold text-emerald-900 flex-1">Tersedia / Menunggu OTA</span>
-                            <span class="font-black text-emerald-700"><?php echo e($tersedia); ?></span>
-                            <span class="text-xs text-emerald-500 ml-1">(<?php echo e($totalAnak > 0 ? round($tersedia/$totalAnak*100) : 0); ?>%)</span>
-                        </div>
-                        <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
-                            <span class="w-2.5 h-2.5 rounded-full shrink-0 bg-emerald-700"></span>
-                            <span class="font-bold text-emerald-900 flex-1">Sedang Diasuh</span>
-                            <span class="font-black text-emerald-700"><?php echo e($diasuh); ?></span>
-                            <span class="text-xs text-emerald-500 ml-1">(<?php echo e($totalAnak > 0 ? round($diasuh/$totalAnak*100) : 0); ?>%)</span>
-                        </div>
-                        <?php if($lainnya > 0): ?>
-                        <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
-                            <span class="w-2.5 h-2.5 rounded-full shrink-0 bg-emerald-400"></span>
-                            <span class="font-bold text-emerald-900 flex-1">Status Lainnya</span>
-                            <span class="font-black text-emerald-700"><?php echo e($lainnya); ?></span>
-                            <span class="text-xs text-emerald-500 ml-1">(<?php echo e($totalAnak > 0 ? round($lainnya/$totalAnak*100) : 0); ?>%)</span>
-                        </div>
-                        <?php endif; ?>
-
-                        <div class="mt-4 pt-3.5 border-t border-emerald-100">
-                            <div class="text-[0.7rem] font-bold text-emerald-500 uppercase tracking-wider mb-1.5">
-                                Sponsorship Pending
+                        <div class="space-y-3">
+                            <div class="bg-base-200/50 rounded-lg px-4 py-3">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+                                        <span class="font-bold text-base-content">Tersedia</span>
+                                    </div>
+                                    <span class="font-black text-brand-600"><?php echo e($tersedia); ?></span>
+                                </div>
+                                <div class="w-full h-2 bg-base-300 rounded-full overflow-hidden">
+                                    <div class="h-full bg-brand-500 rounded-full transition-all" style="width: <?php echo e($totalAnak > 0 ? ($tersedia/$totalAnak)*100 : 0); ?>%"></div>
+                                </div>
+                                <div class="text-[0.6rem] text-base-content/30 mt-1"><?php echo e($totalAnak > 0 ? round($tersedia/$totalAnak*100) : 0); ?>% dari total</div>
                             </div>
-                            <?php
-                                $pendingSpons = \App\Models\Sponsorship::where('status','pending')->count();
-                            ?>
-                            <div class="text-[1.3rem] font-black text-emerald-700">
-                                <?php echo e($pendingSpons); ?>
 
-                                <span class="text-xs font-bold text-emerald-500 ml-1">transaksi</span>
+                            <div class="bg-base-200/50 rounded-lg px-4 py-3">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+                                        <span class="font-bold text-base-content">Sedang Diasuh</span>
+                                    </div>
+                                    <span class="font-black text-primary"><?php echo e($diasuh); ?></span>
+                                </div>
+                                <div class="w-full h-2 bg-base-300 rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full transition-all" style="width: <?php echo e($totalAnak > 0 ? ($diasuh/$totalAnak)*100 : 0); ?>%"></div>
+                                </div>
+                                <div class="text-[0.6rem] text-base-content/30 mt-1"><?php echo e($totalAnak > 0 ? round($diasuh/$totalAnak*100) : 0); ?>% dari total</div>
                             </div>
-                            <?php if($pendingSpons > 0): ?>
-                                <a href="<?php echo e(route('admin.transactions.index')); ?>" class="btn btn-success btn-sm mt-2">
-                                    Proses Sekarang →
-                                </a>
+
+                            <?php if($lainnya > 0): ?>
+                            <div class="bg-base-200/50 rounded-lg px-4 py-3">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-brand-300"></span>
+                                        <span class="font-bold text-base-content">Status Lainnya</span>
+                                    </div>
+                                    <span class="font-black text-brand-500"><?php echo e($lainnya); ?></span>
+                                </div>
+                                <div class="w-full h-2 bg-base-300 rounded-full overflow-hidden">
+                                    <div class="h-full bg-brand-300 rounded-full transition-all" style="width: <?php echo e($totalAnak > 0 ? ($lainnya/$totalAnak)*100 : 0); ?>%"></div>
+                                </div>
+                            </div>
                             <?php endif; ?>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-base-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-[0.65rem] font-bold text-base-content/40 uppercase tracking-wider">Transaksi Pending</div>
+                                    <div class="text-xl font-black text-base-content mt-0.5"><?php echo e($pendingCount ?? 0); ?> <span class="text-xs font-bold text-base-content/30">transaksi</span></div>
+                                </div>
+                                <?php if($pendingCount > 0): ?>
+                                    <a href="<?php echo e(route('admin.transactions.index')); ?>" class="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 font-bold rounded-lg shadow-sm">Proses Sekarang →</a>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -345,9 +239,6 @@
             </div>
 
         </div>
-        </main>
-    </div>
-
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
@@ -356,11 +247,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const h = new Date().getHours();
         const g = h < 5 ? 'Selamat Malam' : h < 12 ? 'Selamat Pagi' : h < 15 ? 'Selamat Siang' : h < 18 ? 'Selamat Sore' : 'Selamat Malam';
-        document.getElementById('greeting-text').textContent = g + ' 👋';
-
-        const now = new Date();
-        const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
-        document.getElementById('topbar-date').textContent = now.toLocaleDateString('id-ID', opts);
+        document.getElementById('page-title-text').textContent = g + ' 👋';
     });
 
     // ── Cashflow data dari backend (PHP → JS) ──
@@ -392,8 +279,8 @@
         const ctx = document.getElementById('cashflowChart').getContext('2d');
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 280);
-        gradient.addColorStop(0, 'rgba(92,129,72,0.22)');
-        gradient.addColorStop(1, 'rgba(92,129,72,0)');
+        gradient.addColorStop(0, 'rgba(45,125,98,0.18)');
+        gradient.addColorStop(1, 'rgba(45,125,98,0)');
 
         cashflowChart = new Chart(ctx, {
             type: 'line',
@@ -402,12 +289,12 @@
                 datasets: [{
                     label: 'Dana Masuk (Rp)',
                     data,
-                    borderColor: '#5c8148',
+                    borderColor: '#2d7d62',
                     borderWidth: 2.5,
                     backgroundColor: gradient,
                     fill: true,
                     tension: 0.42,
-                    pointBackgroundColor: '#5c8148',
+                    pointBackgroundColor: '#2d7d62',
                     pointRadius: 4,
                     pointHoverRadius: 6,
                 }]
@@ -424,13 +311,13 @@
                 },
                 scales: {
                     x: {
-                        grid: { color: '#edf7e2' },
-                        ticks: { color: '#a1c181', font: { size: 11, weight: '600' } }
+                        grid: { color: '#f0f4f2' },
+                        ticks: { color: '#2d7d62', font: { size: 11, weight: '600' } }
                     },
                     y: {
-                        grid: { color: '#edf7e2' },
+                        grid: { color: '#f0f4f2' },
                         ticks: {
-                            color: '#a1c181',
+                            color: '#2d7d62',
                             font: { size: 11 },
                             callback: v => 'Rp ' + (v >= 1e6 ? (v/1e6).toFixed(1)+'jt' : v >= 1e3 ? (v/1e3).toFixed(0)+'rb' : v)
                         }
@@ -442,11 +329,11 @@
 
     function setCashflowPeriod(p, btn) {
         document.querySelectorAll('.cashflow-btn').forEach(b => {
-            b.classList.remove('btn-success');
-            b.classList.add('btn-ghost');
+            b.classList.remove('bg-primary/10', 'text-primary');
+            b.classList.add('btn-ghost', 'text-base-content/40');
         });
-        btn.classList.remove('btn-ghost');
-        btn.classList.add('btn-success');
+        btn.classList.remove('btn-ghost', 'text-base-content/40');
+        btn.classList.add('bg-primary/10', 'text-primary');
         buildCashflow(parseInt(p));
     }
 
@@ -470,7 +357,7 @@
                 labels: ['Tersedia', 'Diasuh', 'Lainnya'],
                 datasets: [{
                     data: [tersedia, diasuh, lainnya > 0 ? lainnya : 0],
-                    backgroundColor: ['#76a45b', '#5c8148', '#a1c181'],
+                    backgroundColor: ['#89b5a1', '#2d7d62', '#b8d5c8'],
                     borderWidth: 2,
                     borderColor: '#fff',
                     hoverOffset: 6,
@@ -492,20 +379,20 @@
 
         // Legend
         const items = [
-            { label: 'Tersedia', count: tersedia, color: '#76a45b' },
-            { label: 'Diasuh',   count: diasuh,   color: '#5c8148' },
+            { label: 'Tersedia', count: tersedia, color: '#89b5a1' },
+            { label: 'Diasuh',   count: diasuh,   color: '#2d7d62' },
         ];
-        if (lainnya > 0) items.push({ label: 'Lainnya', count: lainnya, color: '#a1c181' });
+        if (lainnya > 0) items.push({ label: 'Lainnya', count: lainnya, color: '#b8d5c8' });
 
         const legend = document.getElementById('donut-legend');
         items.forEach(item => {
             const pct = total > 0 ? Math.round(item.count / total * 100) : 0;
             legend.innerHTML += `
-                <div class="flex items-center gap-2.5 py-2 border-b border-emerald-100 text-sm">
+                <div class="flex items-center gap-2.5 py-2 border-b border-base-200 text-sm">
                     <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${item.color};"></span>
-                    <span class="font-bold text-emerald-900 flex-1">${item.label}</span>
-                    <span class="font-black text-emerald-700">${item.count}</span>
-                    <span class="text-xs text-emerald-500 ml-1">(${pct}%)</span>
+                    <span class="font-bold text-base-content flex-1">${item.label}</span>
+                    <span class="font-black text-base-content">${item.count}</span>
+                    <span class="text-xs text-base-content/40 ml-1">(${pct}%)</span>
                 </div>`;
         });
     })();
@@ -515,12 +402,12 @@
     </script>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
-<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php if (isset($__attributesOriginal91fdd17964e43374ae18c674f95cdaa3)): ?>
+<?php $attributes = $__attributesOriginal91fdd17964e43374ae18c674f95cdaa3; ?>
+<?php unset($__attributesOriginal91fdd17964e43374ae18c674f95cdaa3); ?>
 <?php endif; ?>
-<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php if (isset($__componentOriginal91fdd17964e43374ae18c674f95cdaa3)): ?>
+<?php $component = $__componentOriginal91fdd17964e43374ae18c674f95cdaa3; ?>
+<?php unset($__componentOriginal91fdd17964e43374ae18c674f95cdaa3); ?>
 <?php endif; ?>
 <?php /**PATH C:\laragon\www\donasi-yayasan\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

@@ -4,25 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\FosterChild;
+use App\Traits\HandlesFileUpload;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class FosterChildController extends Controller
 {
-    // 1. Daftar anak asuh
+    use HandlesFileUpload;
+
     public function index()
     {
         $children = FosterChild::latest()->get();
         return view('admin.foster_children.index', compact('children'));
     }
 
-    // 2. Form tambah
     public function create()
     {
         return view('admin.foster_children.create');
     }
 
-    // 3. Simpan data baru
     public function store(Request $request)
     {
         $request->validate([
@@ -37,7 +36,7 @@ class FosterChildController extends Controller
         $data = $request->only(['name', 'age', 'jenis_kelamin', 'description', 'status']);
 
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('foster_children', 'public');
+            $data['photo'] = $this->uploadFile($request->file('photo'), 'foster_children');
         }
 
         FosterChild::create($data);
@@ -47,19 +46,16 @@ class FosterChildController extends Controller
             ->with('success', 'Data Anak Asuh berhasil ditambahkan!');
     }
 
-    // 4. Detail
     public function show(FosterChild $fosterChild)
     {
         return view('admin.foster_children.show', compact('fosterChild'));
     }
 
-    // 5. Form edit
     public function edit(FosterChild $fosterChild)
     {
         return view('admin.foster_children.edit', compact('fosterChild'));
     }
 
-    // 6. Simpan perubahan
     public function update(Request $request, FosterChild $fosterChild)
     {
         $request->validate([
@@ -74,10 +70,11 @@ class FosterChildController extends Controller
         $data = $request->only(['name', 'age', 'jenis_kelamin', 'description', 'status']);
 
         if ($request->hasFile('photo')) {
-            if ($fosterChild->photo) {
-                Storage::disk('public')->delete($fosterChild->photo);
-            }
-            $data['photo'] = $request->file('photo')->store('foster_children', 'public');
+            $data['photo'] = $this->uploadFile(
+                $request->file('photo'),
+                'foster_children',
+                $fosterChild->photo
+            );
         }
 
         $fosterChild->update($data);
@@ -87,13 +84,8 @@ class FosterChildController extends Controller
             ->with('success', 'Data Anak Asuh berhasil diperbarui!');
     }
 
-    // 7. Hapus data
     public function destroy(FosterChild $fosterChild)
     {
-        if ($fosterChild->photo) {
-            Storage::disk('public')->delete($fosterChild->photo);
-        }
-
         $fosterChild->delete();
 
         return redirect()

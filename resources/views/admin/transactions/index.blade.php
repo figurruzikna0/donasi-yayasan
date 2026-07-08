@@ -1,356 +1,357 @@
-<x-app-layout>
-    <div class="bg-base-200 min-h-0">
+<x-admin-layout>
+    <div class="bg-base-200 min-h-screen">
 
-        <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-black">💳 Manajemen Transaksi</h1>
-                        <p class="text-emerald-100 text-sm mt-1">Kelola semua transaksi donasi kampanye & sponsorship orang tua asuh</p>
+        {{-- Page header --}}
+        <div class="px-8 pt-8 pb-0">
+            <div class="flex items-end justify-between gap-3 mb-2 flex-wrap">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-2">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        </span>
+                        <div>
+                            <h1 class="text-2xl font-black text-base-content">Riwayat Transaksi</h1>
+                            <p class="text-sm text-base-content/50">Ringkasan donasi kampanye & sponsorship orang tua asuh.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {{-- Content --}}
+        <div class="p-8 pt-6 space-y-6">
 
-            {{-- Toast --}}
             @if(session('success'))
-                <div class="alert alert-success mb-6 shadow-md border-0">
-                    <span>{{ session('success') }}</span>
-                </div>
+                <x-alert type="success" message="{{ session('success') }}" />
             @endif
             @if(session('error'))
-                <div class="alert alert-error mb-6 shadow-md border-0">
-                    <span>{{ session('error') }}</span>
-                </div>
+                <x-alert type="error" message="{{ session('error') }}" />
             @endif
             @if(session('info'))
-                <div class="alert alert-info mb-6 shadow-md border-0">
-                    <span>{{ session('info') }}</span>
-                </div>
+                <x-alert type="info" message="{{ session('info') }}" />
             @endif
 
-            {{-- Tab --}}
-            <div class="tabs tabs-boxed bg-emerald-50 border border-emerald-200 p-1 gap-0 flex-wrap mb-6" id="tabNav">
-                <button class="tab tab-active text-emerald-700 font-bold text-sm px-5 py-3" data-tab="donasi" onclick="switchTab('donasi')">
-                    💰 Donasi Kampanye
-                    <span class="badge badge-sm ml-2">{{ $donations->count() }}</span>
-                    @if($donations->where('status','pending')->count() > 0)
-                        <span class="badge badge-warning badge-sm ml-1">{{ $donations->where('status','pending')->count() }} pending</span>
-                    @endif
-                </button>
-                <button class="tab text-emerald-600 font-bold text-sm px-5 py-3 hover:bg-emerald-100 transition-colors" data-tab="sponsor" onclick="switchTab('sponsor')">
-                    🤝 Orang Tua Asuh
-                    <span class="badge badge-sm ml-2">{{ $sponsorships->count() }}</span>
-                    @if($sponsorships->where('status','pending')->count() > 0)
-                        <span class="badge badge-warning badge-sm ml-1">{{ $sponsorships->where('status','pending')->count() }} pending</span>
-                    @endif
-                </button>
-            </div>
-
-            {{-- ══ TAB DONASI ══ --}}
-            <div id="panel-donasi" class="tab-content">
-                <div class="card bg-base-100 shadow-md border border-emerald-200">
-                    <div class="p-4 border-b border-emerald-100 bg-emerald-50 flex flex-wrap gap-3 items-center justify-between rounded-t-lg">
-                        <input type="text" id="searchDonasi" class="input input-bordered input-sm w-full max-w-xs border-emerald-200" placeholder="🔍 Cari nama, email, order ID…">
-                        <div class="flex gap-1" id="filterDonasi">
-                            <button class="btn btn-xs btn-success text-white font-bold filter-btn-donasi" data-status="all">Semua</button>
-                            <button class="btn btn-xs btn-outline btn-success filter-btn-donasi" data-status="success">Sukses</button>
-                            <button class="btn btn-xs btn-outline btn-warning filter-btn-donasi" data-status="pending">Tertunda</button>
-                            <button class="btn btn-xs btn-outline btn-error filter-btn-donasi" data-status="gagal">Gagal</button>
-                        </div>
+            {{-- Stat Cards --}}
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-sm:grid-cols-1">
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="table w-full">
-                            <thead>
-                                <tr class="bg-emerald-50/50">
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600">Donatur</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600">Kampanye</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-right">Nominal</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-center">Status</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-right">Tanggal</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bodyDonasi">
-                                @forelse($donations as $item)
-                                    @php $sk = match($item->status) { 'success'=>'success','pending'=>'pending',default=>'gagal' }; @endphp
-                                    <tr class="data-row-donasi hover:bg-emerald-50/50 transition-colors"
-                                        data-search="{{ strtolower($item->donor_name.' '.$item->donor_email.' '.$item->order_id) }}"
-                                        data-status="{{ $sk }}">
-                                        <td>
-                                            <div class="font-semibold text-emerald-700 text-sm">{{ $item->donor_name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $item->donor_email }}</div>
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-ghost badge-sm">{{ $item->target }}</span>
-                                        </td>
-                                        <td class="text-right">
-                                            <div class="font-bold text-emerald-600 whitespace-nowrap">Rp {{ number_format($item->amount, 0, ',', '.') }}</div>
-                                            <div class="text-xs text-gray-400 font-mono">{{ $item->order_id }}</div>
-                                            @if($item->payment_method)
-                                                <div class="text-xs text-gray-400">{{ $item->payment_method }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if($item->status=='success')
-                                                <span class="badge badge-success badge-sm">Sukses</span>
-                                            @elseif($item->status=='pending')
-                                                <span class="badge badge-warning badge-sm">Tertunda</span>
-                                            @else
-                                                <span class="badge badge-error badge-sm">Gagal</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-right whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-emerald-700">{{ $item->created_at?->format('d/m/Y') ?? '-' }}</div>
-                                            <div class="text-xs text-gray-400">{{ $item->created_at?->format('H:i') }} WIB</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                @if($item->status==='pending')
-                                                    <form action="{{ route('admin.transactions.sync', $item->order_id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-warning font-bold" title="Sync status dari Midtrans">🔄 Sync</button>
-                                                    </form>
-                                                @endif
-                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST"
-                                                      x-data="{ open: false }" @submit.prevent="open = true">
-                                                    @csrf @method('DELETE')
-                                                    <button type="button" @click="open = true" class="btn btn-sm btn-ghost text-error" title="Hapus">🗑</button>
-                                                    <dialog class="modal" :class="{ 'modal-open': open }">
-                                                        <div class="modal-box">
-                                                            <h3 class="font-bold text-lg">Hapus Transaksi</h3>
-                                                            <p class="py-4">Yakin ingin menghapus transaksi <strong>{{ $item->order_id }}</strong>?</p>
-                                                            <div class="modal-action">
-                                                                <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
-                                                                <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
-                                                            </div>
-                                                        </div>
-                                                    </dialog>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="6"><div class="py-16 text-center text-sm text-gray-400">Belum ada data donasi.</div></td></tr>
-                                @endforelse
-                                <tr id="noResultDonasi" class="hidden"><td colspan="6"><div class="py-16 text-center text-sm text-gray-400">Tidak ditemukan.</div></td></tr>
-                            </tbody>
-                        </table>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Total Donasi</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donations->count() }}</div>
                     </div>
-
-                    <div class="p-4 border-t border-emerald-100 bg-emerald-50 flex flex-wrap items-center justify-between gap-3 rounded-b-lg">
-                        <div class="text-sm text-gray-500" id="infoDonasi">—</div>
-                        <div class="flex items-center gap-2">
-                            <button id="prevDonasi" class="btn btn-sm btn-outline border-emerald-300 text-emerald-600" disabled>←</button>
-                            <div id="pagesDonasi" class="flex items-center gap-1"></div>
-                            <button id="nextDonasi" class="btn btn-sm btn-outline border-emerald-300 text-emerald-600" disabled>→</button>
-                        </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sponsorship</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $sponsorships->count() }}</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sukses</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donations->where('status','success')->count() + $sponsorships->where('status','success')->count() }}</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Tertunda</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donations->where('status','pending')->count() + $sponsorships->where('status','pending')->count() }}</div>
                     </div>
                 </div>
             </div>
 
-            {{-- ══ TAB SPONSOR ══ --}}
-            <div id="panel-sponsor" class="tab-content hidden">
-                <div class="card bg-base-100 shadow-md border border-emerald-200">
-                    <div class="p-4 border-b border-emerald-100 bg-emerald-50 flex flex-wrap gap-3 items-center justify-between rounded-t-lg">
-                        <input type="text" id="searchSponsor" class="input input-bordered input-sm w-full max-w-xs border-emerald-200" placeholder="🔍 Cari nama, email, order ID…">
-                        <div class="flex gap-1" id="filterSponsor">
-                            <button class="btn btn-xs btn-success text-white font-bold filter-btn-sponsor" data-status="all">Semua</button>
-                            <button class="btn btn-xs btn-outline btn-success filter-btn-sponsor" data-status="success">Sukses</button>
-                            <button class="btn btn-xs btn-outline btn-warning filter-btn-sponsor" data-status="pending">Tertunda</button>
-                            <button class="btn btn-xs btn-outline btn-error filter-btn-sponsor" data-status="gagal">Gagal</button>
-                        </div>
-                    </div>
+            {{-- Tabs + Table --}}
+            <div x-data="{ tab: 'donasi' }" class="space-y-4">
 
-                    <div class="overflow-x-auto">
-                        <table class="table w-full">
-                            <thead>
-                                <tr class="bg-emerald-50/50">
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600">Donatur</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600">Anak Asuh</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600">Paket</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-right">Nominal</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-center">Status</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-right">Tanggal</th>
-                                    <th class="text-xs uppercase tracking-wider text-emerald-600 text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bodySponsor">
-                                @forelse($sponsorships as $item)
-                                    @php $sk = match($item->status) { 'success'=>'success','pending'=>'pending',default=>'gagal' }; @endphp
-                                    <tr class="data-row-sponsor hover:bg-emerald-50/50 transition-colors"
-                                        data-search="{{ strtolower($item->donor_name.' '.$item->donor_email.' '.$item->order_id.' '.$item->target) }}"
-                                        data-status="{{ $sk }}">
-                                        <td>
-                                            <div class="font-semibold text-emerald-700 text-sm">{{ $item->donor_name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $item->donor_email }}</div>
-                                            @isset($item->donor_phone)
-                                                <div class="text-xs text-gray-400">📱 {{ $item->donor_phone }}</div>
-                                            @endisset
-                                        </td>
-                                        <td><span class="badge badge-ghost badge-sm">{{ $item->target }}</span></td>
-                                        <td><span class="badge badge-warning badge-sm">{{ $item->package ?? '-' }}</span></td>
-                                        <td class="text-right">
-                                            <div class="font-bold text-emerald-600 whitespace-nowrap">Rp {{ number_format($item->amount, 0, ',', '.') }}</div>
-                                            <div class="text-xs text-gray-400 font-mono">{{ $item->order_id }}</div>
-                                            @if($item->payment_method)
-                                                <div class="text-xs text-gray-400">{{ $item->payment_method }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if($item->status=='success')
-                                                <span class="badge badge-success badge-sm">Sukses</span>
-                                            @elseif($item->status=='pending')
-                                                <span class="badge badge-warning badge-sm">Tertunda</span>
-                                            @else
-                                                <span class="badge badge-error badge-sm">Gagal</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-right whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-emerald-700">{{ $item->created_at?->format('d/m/Y') ?? '-' }}</div>
-                                            <div class="text-xs text-gray-400">{{ $item->created_at?->format('H:i') }} WIB</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                @if($item->status==='pending')
-                                                    <form action="{{ route('admin.transactions.sync', $item->order_id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-warning font-bold" title="Sync status dari Midtrans">🔄 Sync</button>
-                                                    </form>
-                                                @endif
-                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST"
-                                                      x-data="{ open: false }" @submit.prevent="open = true">
-                                                    @csrf @method('DELETE')
-                                                    <button type="button" @click="open = true" class="btn btn-sm btn-ghost text-error" title="Hapus">🗑</button>
-                                                    <dialog class="modal" :class="{ 'modal-open': open }">
-                                                        <div class="modal-box">
-                                                            <h3 class="font-bold text-lg">Hapus Transaksi</h3>
-                                                            <p class="py-4">Yakin ingin menghapus transaksi <strong>{{ $item->order_id }}</strong>?</p>
-                                                            <div class="modal-action">
-                                                                <button type="button" @click="open = false" class="btn btn-ghost">Batal</button>
-                                                                <button @click="open = false; $el.closest('form').submit()" class="btn btn-error">Hapus</button>
-                                                            </div>
-                                                        </div>
-                                                    </dialog>
-                                                </form>
-                                            </div>
-                                        </td>
+                {{-- Tab Navigation --}}
+                <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-base-300 w-fit">
+                    <button @click="tab = 'donasi'"
+                            :class="tab === 'donasi' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-base-content/50 hover:text-base-content hover:bg-base-200'"
+                            class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Donasi Kampanye
+                        <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'donasi' ? 'bg-white/20' : 'bg-base-300'">{{ $donations->count() }}</span>
+                    </button>
+                    <button @click="tab = 'sponsor'"
+                            :class="tab === 'sponsor' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-base-content/50 hover:text-base-content hover:bg-base-200'"
+                            class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        Orang Tua Asuh
+                        <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'sponsor' ? 'bg-white/20' : 'bg-base-300'">{{ $sponsorships->count() }}</span>
+                    </button>
+                </div>
+
+                {{-- Panel Donasi --}}
+                <div x-show="tab === 'donasi'" x-transition:enter.duration.200ms>
+                    <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="table w-full">
+                                <thead>
+                                    <tr class="bg-base-200/50">
+                                        <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Donatur</th>
+                                        <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Kampanye</th>
+                                        <th class="text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Nominal</th>
+                                        <th class="text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Status</th>
+                                        <th class="text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Tanggal</th>
+                                        <th class="text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Aksi</th>
                                     </tr>
-                                @empty
-                                    <tr><td colspan="7"><div class="py-16 text-center text-sm text-gray-400">Belum ada data sponsorship.</div></td></tr>
-                                @endforelse
-                                <tr id="noResultSponsor" class="hidden"><td colspan="7"><div class="py-16 text-center text-sm text-gray-400">Tidak ditemukan.</div></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="p-4 border-t border-emerald-100 bg-emerald-50 flex flex-wrap items-center justify-between gap-3 rounded-b-lg">
-                        <div class="text-sm text-gray-500" id="infoSponsor">—</div>
-                        <div class="flex items-center gap-2">
-                            <button id="prevSponsor" class="btn btn-sm btn-outline border-emerald-300 text-emerald-600" disabled>←</button>
-                            <div id="pagesSponsor" class="flex items-center gap-1"></div>
-                            <button id="nextSponsor" class="btn btn-sm btn-outline border-emerald-300 text-emerald-600" disabled>→</button>
+                                </thead>
+                                <tbody class="divide-y divide-base-200/60">
+                                    @forelse($donations as $item)
+                                        <tr class="hover:bg-base-200/30 transition-colors group">
+                                            <td>
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-9 h-9 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0 uppercase">{{ substr($item->donor_name, 0, 1) }}</div>
+                                                    <div class="min-w-0">
+                                                        <div class="font-semibold text-sm text-base-content truncate max-w-[160px]">{{ $item->donor_name }}</div>
+                                                        <div class="text-xs text-base-content/40 truncate max-w-[160px]">{{ $item->donor_email }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-base-100 border border-base-200 text-base-content/60">
+                                                    <svg class="w-3 h-3 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                                    {{ $item->target }}
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="font-bold text-primary text-sm">Rp {{ number_format($item->amount, 0, ',', '.') }}</div>
+                                                <div class="flex items-center justify-end gap-1 mt-1">
+                                                    <div class="text-[0.6rem] text-base-content/30 font-mono bg-base-200/70 px-1.5 py-0.5 rounded">{{ $item->order_id }}</div>
+                                                </div>
+                                                @if($item->payment_method)
+                                                    @php
+                                                        $pmt = $item->payment_method;
+                                                        $pmClass = match(true) {
+                                                            str_contains($pmt, 'BRI') => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                            str_contains($pmt, 'BCA') => 'bg-red-50 text-red-700 border-red-200',
+                                                            str_contains($pmt, 'Mandiri') => 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                                                            str_contains($pmt, 'BNI') => 'bg-orange-50 text-orange-700 border-orange-200',
+                                                            default => 'bg-base-200/70 text-base-content/50 border-base-300'
+                                                        };
+                                                    @endphp
+                                                    <div class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border {{ $pmClass }} mt-1">
+                                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                                        {{ $pmt }}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($item->status=='success')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        Sukses
+                                                    </span>
+                                                @elseif($item->status=='pending')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                        Tertunda
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-600">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                        Gagal
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-right whitespace-nowrap">
+                                                <div class="text-sm font-semibold text-base-content">{{ $item->created_at?->format('d M Y') ?? '-' }}</div>
+                                                <div class="text-xs text-base-content/40 flex items-center justify-end gap-1 mt-0.5">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    {{ $item->created_at?->format('H:i') }} WIB
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                    @if($item->status==='pending')
+                                                        <form action="{{ route('admin.transactions.sync', $item->order_id) }}" method="POST" class="inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200 rounded-lg font-bold flex items-center gap-1" title="Sync Midtrans">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                                                Sync
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
+                                                        @csrf @method('DELETE')
+                                                        <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold" title="Hapus">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                        </button>
+                                                        <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="py-16 text-center">
+                                                    <div class="w-16 h-16 bg-base-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                        <svg class="w-8 h-8 text-base-content/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    </div>
+                                                    <p class="font-extrabold text-base-content">Belum ada donasi kampanye</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+
+                {{-- Panel Sponsor --}}
+                <div x-show="tab === 'sponsor'" x-transition:enter.duration.200ms>
+                    <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="table w-full">
+                                <thead>
+                                    <tr class="bg-base-200/50">
+                                        <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Donatur</th>
+                                        <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Anak Asuh</th>
+                                        <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Paket</th>
+                                        <th class="text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Nominal</th>
+                                        <th class="text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Status</th>
+                                        <th class="text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Tanggal</th>
+                                        <th class="text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-base-200/60">
+                                    @forelse($sponsorships as $item)
+                                        <tr class="hover:bg-base-200/30 transition-colors group">
+                                            <td>
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-9 h-9 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0 uppercase">{{ substr($item->donor_name, 0, 1) }}</div>
+                                                    <div class="min-w-0">
+                                                        <div class="font-semibold text-sm text-base-content truncate max-w-[160px]">{{ $item->donor_name }}</div>
+                                                        <div class="text-xs text-base-content/40 truncate max-w-[160px]">{{ $item->donor_email }}</div>
+                                                        @isset($item->donor_phone)
+                                                            <div class="text-xs text-base-content/30 truncate max-w-[160px]">{{ $item->donor_phone }}</div>
+                                                        @endisset
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-base-100 border border-base-200 text-base-content/60">
+                                                    <svg class="w-3 h-3 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                                    {{ $item->target }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if($item->package)
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold
+                                                        @switch($item->package)
+                                                            @case('Bronze') bg-amber-50 text-amber-700 border border-amber-200 @break
+                                                            @case('Silver') bg-slate-100 text-slate-700 border border-slate-300 @break
+                                                            @case('Gold') bg-yellow-50 text-yellow-700 border border-yellow-300 @break
+                                                            @default bg-base-200 text-base-content/60 border border-base-300
+                                                        @endswitch
+                                                    ">
+                                                        {{ $item->package }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-base-content/30 text-xs">-</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="font-bold text-primary text-sm">Rp {{ number_format($item->amount, 0, ',', '.') }}</div>
+                                                <div class="flex items-center justify-end gap-1 mt-1">
+                                                    <div class="text-[0.6rem] text-base-content/30 font-mono bg-base-200/70 px-1.5 py-0.5 rounded">{{ $item->order_id }}</div>
+                                                </div>
+                                                @if($item->payment_method)
+                                                    @php
+                                                        $pmt = $item->payment_method;
+                                                        $pmClass = match(true) {
+                                                            str_contains($pmt, 'BRI') => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                            str_contains($pmt, 'BCA') => 'bg-red-50 text-red-700 border-red-200',
+                                                            str_contains($pmt, 'Mandiri') => 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                                                            str_contains($pmt, 'BNI') => 'bg-orange-50 text-orange-700 border-orange-200',
+                                                            default => 'bg-base-200/70 text-base-content/50 border-base-300'
+                                                        };
+                                                    @endphp
+                                                    <div class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border {{ $pmClass }} mt-1">
+                                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                                        {{ $pmt }}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($item->status=='success')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        Sukses
+                                                    </span>
+                                                @elseif($item->status=='pending')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                        Tertunda
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-600">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                        Gagal
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-right whitespace-nowrap">
+                                                <div class="text-sm font-semibold text-base-content">{{ $item->created_at?->format('d M Y') ?? '-' }}</div>
+                                                <div class="text-xs text-base-content/40 flex items-center justify-end gap-1 mt-0.5">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    {{ $item->created_at?->format('H:i') }} WIB
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                    @if($item->status==='pending')
+                                                        <form action="{{ route('admin.transactions.sync', $item->order_id) }}" method="POST" class="inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200 rounded-lg font-bold flex items-center gap-1" title="Sync Midtrans">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                                                Sync
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
+                                                        @csrf @method('DELETE')
+                                                        <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold" title="Hapus">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                        </button>
+                                                        <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="py-16 text-center">
+                                                    <div class="w-16 h-16 bg-base-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                        <svg class="w-8 h-8 text-base-content/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                                    </div>
+                                                    <p class="font-extrabold text-base-content">Belum ada sponsorship</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
     </div>
-
-    <script>
-    function switchTab(tab) {
-        document.querySelectorAll('#tabNav .tab').forEach(el => {
-            el.classList.remove('tab-active');
-            el.classList.add('text-emerald-600');
-        });
-        const btn = document.querySelector('#tabNav [data-tab="' + tab + '"]');
-        btn.classList.add('tab-active');
-        btn.classList.remove('text-emerald-600');
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        document.getElementById('panel-' + tab).classList.remove('hidden');
-    }
-
-    function makePaginator(opts) {
-        const { rowSelector, searchId, filterId, suffix, noResultId, infoId, prevId, nextId, pagesId } = opts;
-        const PER_PAGE = 8;
-        let currentPage = 1;
-        const allRows = Array.from(document.querySelectorAll(rowSelector));
-        const noResult = document.getElementById(noResultId);
-        const info = document.getElementById(infoId);
-        const prevBtn = document.getElementById(prevId);
-        const nextBtn = document.getElementById(nextId);
-        const pagesWrap = document.getElementById(pagesId);
-
-        function getStatus() {
-            const active = document.querySelector(`#${filterId} .filter-btn-${suffix}.btn-success.text-white`);
-            return active ? active.dataset.status : 'all';
-        }
-
-        function filterRows() {
-            const q = document.getElementById(searchId).value.toLowerCase().trim();
-            const stat = getStatus();
-            return allRows.filter(r =>
-                r.dataset.search.includes(q) && (stat === 'all' || r.dataset.status === stat)
-            );
-        }
-
-        function render(filtered) {
-            const total = filtered.length;
-            allRows.forEach(r => r.classList.add('hidden'));
-            if (total === 0) {
-                noResult.classList.remove('hidden');
-                info.textContent = '0 hasil';
-                prevBtn.disabled = nextBtn.disabled = true;
-                pagesWrap.innerHTML = '';
-                return;
-            }
-            noResult.classList.add('hidden');
-            const totalPages = Math.ceil(total / PER_PAGE);
-            currentPage = Math.min(Math.max(currentPage, 1), totalPages);
-            const start = (currentPage - 1) * PER_PAGE;
-            const end = Math.min(start + PER_PAGE, total);
-            for (let i = start; i < end; i++) filtered[i].classList.remove('hidden');
-            info.textContent = `${start+1}–${end} dari ${total}`;
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages;
-            pagesWrap.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const b = document.createElement('button');
-                b.textContent = i;
-                b.className = 'btn btn-xs' + (i === currentPage ? ' btn-success text-white' : ' btn-ghost');
-                b.addEventListener('click', () => { currentPage = i; render(filtered); });
-                pagesWrap.appendChild(b);
-            }
-        }
-
-        function doFilter() { currentPage = 1; render(filterRows()); }
-
-        document.getElementById(searchId).addEventListener('input', doFilter);
-        prevBtn.addEventListener('click', () => { currentPage--; render(filterRows()); });
-        nextBtn.addEventListener('click', () => { currentPage++; render(filterRows()); });
-
-        document.querySelectorAll(`.filter-btn-${suffix}`).forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll(`.filter-btn-${suffix}`).forEach(b => {
-                    b.classList.remove('btn-success', 'text-white');
-                    b.classList.add('btn-outline');
-                });
-                this.classList.remove('btn-outline');
-                this.classList.add('btn-success', 'text-white');
-                doFilter();
-            });
-        });
-
-        render(filterRows());
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        makePaginator({ rowSelector: '.data-row-donasi', searchId: 'searchDonasi', filterId: 'filterDonasi', suffix: 'donasi', noResultId: 'noResultDonasi', infoId: 'infoDonasi', prevId: 'prevDonasi', nextId: 'nextDonasi', pagesId: 'pagesDonasi' });
-        makePaginator({ rowSelector: '.data-row-sponsor', searchId: 'searchSponsor', filterId: 'filterSponsor', suffix: 'sponsor', noResultId: 'noResultSponsor', infoId: 'infoSponsor', prevId: 'prevSponsor', nextId: 'nextSponsor', pagesId: 'pagesSponsor' });
-    });
-    </script>
-</x-app-layout>
+</x-admin-layout>

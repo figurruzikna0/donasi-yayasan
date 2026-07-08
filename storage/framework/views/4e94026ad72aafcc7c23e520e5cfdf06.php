@@ -3,27 +3,14 @@
 <nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200">
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4rem]">
         <div class="flex-1 flex items-center gap-4">
-            <a href="<?php echo e(Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard')); ?>" class="shrink-0">
-                <?php if (isset($component)) { $__componentOriginal8892e718f3d0d7a916180885c6f012e7 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal8892e718f3d0d7a916180885c6f012e7 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.application-logo','data' => ['class' => 'block h-9 w-auto fill-current text-base-content']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('application-logo'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => 'block h-9 w-auto fill-current text-base-content']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal8892e718f3d0d7a916180885c6f012e7)): ?>
-<?php $attributes = $__attributesOriginal8892e718f3d0d7a916180885c6f012e7; ?>
-<?php unset($__attributesOriginal8892e718f3d0d7a916180885c6f012e7); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal8892e718f3d0d7a916180885c6f012e7)): ?>
-<?php $component = $__componentOriginal8892e718f3d0d7a916180885c6f012e7; ?>
-<?php unset($__componentOriginal8892e718f3d0d7a916180885c6f012e7); ?>
-<?php endif; ?>
+            <a href="<?php echo e(Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard')); ?>" class="shrink-0 flex items-center gap-2">
+                <?php $logoNav = $profil; ?>
+                <?php if($logoNav?->logo): ?>
+                    <img src="<?php echo e(asset('storage/' . $logoNav->logo) . '?v=' . now()->timestamp); ?>" class="h-8 w-8 rounded-lg object-cover border border-base-300" alt="Logo">
+                <?php else: ?>
+                    <span class="text-xl">🌿</span>
+                <?php endif; ?>
+                <span class="text-sm font-bold text-primary hidden sm:inline"><?php echo e($logoNav?->nama_yayasan ?? 'Baitul Yatim'); ?></span>
             </a>
             <div class="hidden sm:flex gap-1">
                 <?php if (isset($component)) { $__componentOriginalc295f12dca9d42f28a259237a5724830 = $component; } ?>

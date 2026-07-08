@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="baitul">
 <head>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <meta charset="UTF-8">
@@ -10,73 +10,7 @@
 <body class="font-sans antialiased">
 
     {{-- ════════════════════ NAVBAR ════════════════════ --}}
-    <nav id="navbar" class="navbar bg-base-100/90 backdrop-blur-lg sticky top-0 z-50 shadow-sm transition-all duration-300">
-        <div class="navbar-start">
-            <a href="/" class="flex items-center gap-3">
-                @if($profil && $profil->logo)
-                    <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="h-9 w-9 rounded-full object-cover border border-emerald-200 shadow-sm">
-                @else
-                    <span class="text-2xl">🌿</span>
-                @endif
-                <span class="text-xl font-extrabold tracking-wide text-emerald-700">
-                    {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}
-                </span>
-            </a>
-        </div>
-
-        <div class="navbar-center hidden lg:flex">
-            <ul class="menu menu-horizontal gap-1">
-                <li><a href="#" class="font-bold text-emerald-700">Beranda</a></li>
-                <li class="dropdown dropdown-hover">
-                    <a tabindex="0" class="font-bold text-emerald-700">
-                        Tentang Kami
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                    </a>
-                    <ul tabindex="0" class="dropdown-content menu p-2 shadow-xl bg-base-100 rounded-xl min-w-[200px] z-[100] border border-emerald-200">
-                        <li><a href="#tentang-kami" class="font-bold text-emerald-700">📖 Profil Yayasan</a></li>
-                        <li><a href="#pendiri" class="font-bold text-emerald-700">👤 Pengurus</a></li>
-                        <li><a href="#legalitas" class="font-bold text-emerald-700">📑 Legalitas & Struktur</a></li>
-                    </ul>
-                </li>
-                <li><a href="#kampanye" class="font-bold text-emerald-700">❤️ Program Donasi</a></li>
-                <li><a href="#program-ota" class="font-bold text-emerald-700">🤝 Orang Tua Asuh</a></li>
-                <li><a href="#berita-kegiatan" class="font-bold text-emerald-700">📰 Berita</a></li>
-            </ul>
-        </div>
-
-        <div class="navbar-end gap-2">
-            <a href="{{ route('register') }}" class="btn btn-outline btn-success btn-sm font-bold hidden sm:inline-flex">Daftar</a>
-            <a href="{{ route('login') }}" class="btn btn-success btn-sm font-bold text-white hidden sm:inline-flex">Masuk</a>
-            <button onclick="toggleMobileMenu()" class="btn btn-ghost btn-square lg:hidden">
-                <svg id="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <path d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
-        </div>
-
-        <div id="mobile-menu" class="hidden absolute top-full left-0 right-0 bg-base-100 border-t border-emerald-100 shadow-lg lg:hidden">
-            <ul class="menu menu-md p-4">
-                <li><a href="#" class="font-bold text-emerald-800">🏠 Beranda</a></li>
-                <li class="menu-title text-xs"><span>Tentang</span></li>
-                <li><a href="#tentang-kami" class="text-emerald-700">📖 Profil Yayasan</a></li>
-                <li><a href="#pendiri" class="text-emerald-700">👤 Pengurus</a></li>
-                <li><a href="#legalitas" class="text-emerald-700">📑 Legalitas & Struktur</a></li>
-                <li class="menu-title text-xs"><span>Program</span></li>
-                <li><a href="#kampanye" class="text-emerald-700">❤️ Program Donasi</a></li>
-                <li><a href="#program-ota" class="text-emerald-700">🤝 Orang Tua Asuh</a></li>
-                <li><a href="#berita-kegiatan" class="text-emerald-700">📰 Berita</a></li>
-                <li class="menu-divider"></li>
-                <li><a href="{{ route('register') }}" class="font-bold text-emerald-700">📝 Daftar Donatur</a></li>
-                <li><a href="{{ route('login') }}" class="font-bold text-emerald-700">🔑 Masuk</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <script>
-        function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        }
-    </script>
+    @include('partials.public-navbar', ['isHome' => true, 'scrollEffect' => true])
 
     {{-- ════════════════════ HERO ════════════════════ --}}
     <header class="relative hero min-h-[65vh] lg:min-h-[75vh] overflow-hidden">
@@ -101,187 +35,6 @@
             </div>
         </div>
     </header>
-
-    {{-- ════════════════════ TENTANG KAMI ════════════════════ --}}
-    <section id="tentang-kami" class="relative py-20 lg:py-28 px-4 overflow-hidden">
-        {{-- Background decorative --}}
-        <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-emerald-50/60 pointer-events-none"></div>
-        <div class="absolute top-0 left-0 w-72 h-72 bg-emerald-100/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
-
-        <div class="max-w-7xl mx-auto relative">
-            <div data-aos="fade-up" class="text-center max-w-3xl mx-auto mb-14">
-                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Mengenal Kami</span>
-                <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Tentang {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}</h2>
-                <p class="text-emerald-700/70 mt-3 max-w-2xl mx-auto">Mendedikasikan diri untuk memberikan pengasuhan, pendidikan, dan masa depan yang lebih cerah bagi anak-anak yatim.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-                {{-- LEFT: Sejarah + Visi Misi (3/5) --}}
-                <div class="lg:col-span-3 flex flex-col gap-6">
-                    {{-- Sejarah --}}
-                    <div data-aos="fade-up" class="relative bg-white rounded-2xl shadow-md border border-emerald-100 p-8 hover:shadow-lg transition-shadow">
-                        <div class="absolute top-0 left-8 w-12 h-1 bg-emerald-500 rounded-full"></div>
-                        <div class="flex items-center gap-3 mb-5">
-                            <div class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center text-xl border border-emerald-100 flex-shrink-0">📖</div>
-                            <div>
-                                <h3 class="text-lg font-bold text-emerald-900">Sejarah & Rekam Jejak</h3>
-                                <p class="text-xs text-emerald-500">Perjalanan panjang penuh kebermanfaatan</p>
-                            </div>
-                        </div>
-                        <div class="border-l-2 border-emerald-100 pl-5">
-                            <p class="text-gray-600 leading-relaxed whitespace-pre-line">
-                                {{ $profil?->sejarah_yayasan ?? 'Informasi sejarah belum diisi oleh administrator backend.' }}
-                            </p>
-                        </div>
-                    </div>
-
-                    {{-- Visi & Misi side by side --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div data-aos="fade-up" data-aos-delay="100" class="relative bg-white rounded-2xl shadow-md border border-emerald-100 p-6 hover:shadow-lg transition-shadow group">
-                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-2xl pointer-events-none"></div>
-                            <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-lg mb-4 border border-emerald-100 group-hover:bg-emerald-100 transition-colors">🎯</div>
-                            <h4 class="text-base font-bold text-emerald-900 mb-3">Visi</h4>
-                            <p class="text-sm text-gray-600 leading-relaxed">{{ $profil?->visi ?? 'Menjadi lembaga pengasuhan anak yatim dan sosial yang amanah, transparan, serta profesional.' }}</p>
-                        </div>
-                        <div data-aos="fade-up" data-aos-delay="150" class="relative bg-white rounded-2xl shadow-md border border-emerald-100 p-6 hover:shadow-lg transition-shadow group">
-                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-2xl pointer-events-none"></div>
-                            <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-lg mb-4 border border-emerald-100 group-hover:bg-emerald-100 transition-colors">🚀</div>
-                            <h4 class="text-base font-bold text-emerald-900 mb-3">Misi</h4>
-                            <ul class="text-sm text-gray-600 leading-relaxed space-y-1.5 list-disc list-inside marker:text-emerald-500">
-                                @php
-                                    $misiList = $profil?->misi ? explode("\n", $profil->misi) : ['Memberikan pendidikan & fasilitas terbaik.', 'Mengelola amanah dengan transparansi.'];
-                                @endphp
-                                @foreach($misiList as $m)
-                                    <li>{{ ltrim($m, '• ') }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- RIGHT: Kontak + Legalitas (2/5) --}}
-                <div data-aos="fade-left" class="lg:col-span-2 flex flex-col gap-6">
-                    {{-- Kontak --}}
-                    <div class="bg-white rounded-2xl shadow-md border border-emerald-100 p-6 hover:shadow-lg transition-shadow">
-                        <h3 class="text-base font-bold text-emerald-900 mb-5 flex items-center gap-2">
-                            <span class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center text-sm border border-emerald-100">📍</span>
-                            Hubungi Kami
-                        </h3>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 text-sm border border-emerald-100">📍</div>
-                                <div>
-                                    <p class="text-[11px] text-emerald-600 font-bold uppercase tracking-wider">Alamat</p>
-                                    <p class="text-sm text-gray-700 mt-0.5 leading-relaxed">{{ $profil?->alamat ?? 'Alamat belum diatur' }}</p>
-                                </div>
-                            </div>
-                            <div class="border-t border-emerald-50"></div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 text-sm border border-emerald-100">📞</div>
-                                <div>
-                                    <p class="text-[11px] text-emerald-600 font-bold uppercase tracking-wider">Telepon / WA</p>
-                                    <p class="text-sm text-gray-700 mt-0.5 font-semibold">{{ $profil?->no_telp ?? '-' }}</p>
-                                </div>
-                            </div>
-                            <div class="border-t border-emerald-50"></div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 text-sm border border-emerald-100">✉️</div>
-                                <div>
-                                    <p class="text-[11px] text-emerald-600 font-bold uppercase tracking-wider">Email</p>
-                                    <p class="text-sm text-gray-700 mt-0.5">{{ $profil?->email ?? '-' }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Legalitas --}}
-                    <div class="bg-white rounded-2xl shadow-md border border-emerald-100 p-6 hover:shadow-lg transition-shadow">
-                        <h3 class="text-base font-bold text-emerald-900 mb-3 flex items-center gap-2">
-                            <span class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center text-sm border border-emerald-100">🏛️</span>
-                            Legalitas
-                        </h3>
-                        <p class="text-sm text-gray-600 leading-relaxed">Informasi legalitas yayasan dapat dilihat pada bagian <a href="#legalitas" class="text-emerald-600 font-semibold underline underline-offset-2 hover:text-emerald-700">dokumen resmi</a>.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ════════════════════ PENGURUS ════════════════════ --}}
-    @php $daftarPendiri = \App\Models\Pendiri::latest()->get(); @endphp
-    <section id="pendiri" class="py-20 lg:py-28 px-4 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
-                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Struktur Manajemen</span>
-                <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Pengurus Yayasan</h2>
-                <p class="text-gray-500 mt-2 text-sm">Amanah dan berdedikasi tinggi demi kemaslahatan para mustahik.</p>
-            </div>
-
-            @if($daftarPendiri->isNotEmpty())
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
-                    @foreach($daftarPendiri as $person)
-                        <div data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}" class="card bg-base-100 shadow-md border border-emerald-100 rounded-2xl p-6 text-center flex flex-col items-center hover:shadow-lg transition-shadow">
-                            <div class="avatar">
-                                <div class="w-20 rounded-full ring ring-emerald-100 ring-offset-2 mb-4">
-                                    @if($person->foto)
-                                        <img src="{{ asset('storage/' . $person->foto) }}" alt="{{ $person->nama }}">
-                                    @else
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($person->nama) }}&background=b3e093&color=5c8148&bold=true" alt="">
-                                    @endif
-                                </div>
-                            </div>
-                            <h3 class="text-base font-bold text-emerald-900">{{ $person->nama }}</h3>
-                            <span class="badge badge-success badge-sm mt-1 mb-3">{{ $person->jabatan }}</span>
-                            @if($person->deskripsi)
-                                <p class="text-xs text-gray-500 italic leading-relaxed border-t border-emerald-50 pt-3">"{{ $person->deskripsi }}"</p>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-12 text-sm text-gray-400 border border-dashed rounded-xl max-w-md mx-auto">
-                    Daftar pengurus yayasan belum dimasukkan oleh admin.
-                </div>
-            @endif
-        </div>
-    </section>
-
-    {{-- ════════════════════ LEGALITAS & STRUKTUR ════════════════════ --}}
-    <section id="legalitas" class="py-20 lg:py-28 px-4 bg-emerald-50">
-        <div class="max-w-7xl mx-auto">
-            <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
-                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Transparansi</span>
-                <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Legalitas & Struktur Organisasi</h2>
-                <p class="text-gray-500 mt-2 text-sm">Dokumen resmi legalitas hukum dan struktur kepengurusan yayasan.</p>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div data-aos="fade-right" class="card bg-base-100 shadow-md border border-emerald-100 rounded-2xl p-6">
-                    <h3 class="text-base font-bold text-emerald-900 mb-4 flex items-center gap-2">📑 Dokumen Legalitas</h3>
-                    @if($profil)
-                        @if($profil->legalitas)<p class="text-sm text-gray-600 mb-4">{{ $profil->legalitas }}</p>@endif
-                        @if($profil->foto_legalitas)
-                            <a href="{{ asset('storage/' . $profil->foto_legalitas) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $profil->foto_legalitas) }}" class="w-full h-auto max-h-[350px] object-contain rounded-lg border border-emerald-100 shadow-sm" alt="Dokumen Legalitas">
-                            </a>
-                        @else
-                            <div class="py-14 text-center text-sm text-gray-400 border border-dashed rounded-xl">Dokumen legalitas belum diupload.</div>
-                        @endif
-                    @endif
-                </div>
-                <div data-aos="fade-left" class="card bg-base-100 shadow-md border border-emerald-100 rounded-2xl p-6">
-                    <h3 class="text-base font-bold text-emerald-900 mb-4 flex items-center gap-2">📊 Struktur Organisasi</h3>
-                    @if($profil?->foto_struktur)
-                        <a href="{{ asset('storage/' . $profil->foto_struktur) }}" target="_blank">
-                            <img src="{{ asset('storage/' . $profil->foto_struktur) }}" class="w-full h-auto max-h-[350px] object-contain rounded-lg border border-emerald-100 shadow-sm" alt="Struktur Organisasi">
-                        </a>
-                    @else
-                        <div class="py-14 text-center text-sm text-gray-400 border border-dashed rounded-xl">Bagan struktur belum diupload.</div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </section>
 
     {{-- ════════════════════ PROGRAM DONASI ════════════════════ --}}
     <section id="kampanye" class="py-20 lg:py-28 px-4 bg-white">
@@ -326,6 +79,34 @@
                     Saat ini belum ada program donasi aktif yang dirilis.
                 </div>
             @endif
+        </div>
+    </section>
+
+    {{-- ════════════════════ STATS DONASI ════════════════════ --}}
+    <section class="py-16 lg:py-20 px-4 bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
+        <div class="max-w-7xl mx-auto" data-aos="fade-up">
+            <div class="text-center mb-14">
+                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">📊 Bukti Transparansi</span>
+                <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight mb-2">Pergerakan Donasi <span class="text-emerald-500">Real-Time</span></h2>
+                <p class="text-sm text-gray-500 max-w-xl mx-auto">Setiap rupiah yang disalurkan tercatat dan dapat dipertanggungjawabkan.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-0">
+                <div class="relative bg-white rounded-2xl lg:rounded-none shadow-md lg:shadow-none lg:bg-transparent p-6 lg:p-0 lg:px-8 xl:px-12 flex flex-col lg:flex-row lg:items-baseline lg:justify-center gap-1 text-center lg:text-left">
+                    <div class="hidden lg:block absolute right-0 top-1/4 bottom-1/4 w-px bg-gradient-to-b from-transparent via-emerald-300 to-transparent"></div>
+                    <p class="text-4xl md:text-5xl font-black text-emerald-700">{{ number_format($totalCampaigns, 0, ',', '.') }}</p>
+                    <p class="text-sm font-semibold text-emerald-500 uppercase tracking-wider">Campaign</p>
+                </div>
+                <div class="relative bg-white rounded-2xl lg:rounded-none shadow-md lg:shadow-none lg:bg-transparent p-6 lg:p-0 lg:px-8 xl:px-12 flex flex-col lg:flex-row lg:items-baseline lg:justify-center gap-1 text-center lg:text-left">
+                    <div class="hidden lg:block absolute right-0 top-1/4 bottom-1/4 w-px bg-gradient-to-b from-transparent via-emerald-300 to-transparent"></div>
+                    <p class="text-4xl md:text-5xl font-black text-emerald-700">Rp {{ number_format($totalDonasi, 0, ',', '.') }}</p>
+                    <p class="text-sm font-semibold text-emerald-500 uppercase tracking-wider">Donasi Terkumpul</p>
+                </div>
+                <div class="relative bg-white rounded-2xl lg:rounded-none shadow-md lg:shadow-none lg:bg-transparent p-6 lg:p-0 lg:px-8 xl:px-12 flex flex-col lg:flex-row lg:items-baseline lg:justify-center gap-1 text-center lg:text-left">
+                    <p class="text-4xl md:text-5xl font-black text-emerald-700">{{ number_format($totalTransaksi, 0, ',', '.') }}</p>
+                    <p class="text-sm font-semibold text-emerald-500 uppercase tracking-wider">Transaksi Campaign</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -403,67 +184,9 @@
     </section>
     @endif
 
-    {{-- ════════════════════ FOOTER ════════════════════ --}}
-    <footer class="bg-emerald-900">
-        <div class="max-w-7xl mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center gap-2.5 mb-3">
-                        @if($profil && $profil->logo)
-                            <img src="{{ asset('storage/' . $profil->logo) }}" class="w-9 h-9 rounded-lg object-cover flex-shrink-0" alt="Logo">
-                        @else
-                            <span class="w-9 h-9 rounded-lg bg-emerald-800 flex items-center justify-center text-base flex-shrink-0">🌿</span>
-                        @endif
-                        <div>
-                            <p class="text-sm font-bold text-emerald-100">{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}</p>
-                            <p class="text-[11px] text-emerald-400">Lembaga Sosial Amanah</p>
-                        </div>
-                    </div>
-                    <p class="text-xs text-emerald-400 leading-relaxed">{{ $profil?->alamat ?? 'Alamat belum diatur' }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-emerald-300 font-semibold uppercase tracking-wider mb-3">Kontak</p>
-                    <ul class="space-y-2">
-                        <li><a href="tel:{{ $profil?->no_telp }}" class="text-sm text-emerald-400 hover:text-emerald-200 transition-colors">📞 {{ $profil?->no_telp ?? '-' }}</a></li>
-                        <li><a href="mailto:{{ $profil?->email }}" class="text-sm text-emerald-400 hover:text-emerald-200 transition-colors">✉️ {{ $profil?->email ?? '-' }}</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <p class="text-xs text-emerald-300 font-semibold uppercase tracking-wider mb-3">Menu</p>
-                    <ul class="space-y-1.5">
-                        <li><a href="#tentang-kami" class="text-sm text-emerald-400 hover:text-emerald-200 transition-colors">Tentang Kami</a></li>
-                        <li><a href="#kampanye" class="text-sm text-emerald-400 hover:text-emerald-200 transition-colors">Program Donasi</a></li>
-                        <li><a href="#program-ota" class="text-sm text-emerald-400 hover:text-emerald-200 transition-colors">Orang Tua Asuh</a></li>
-                        <li><a href="#berita-kegiatan" class="text-sm text-emerald-400 hover:text-emerald-200 transition-colors">Berita</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <p class="text-xs text-emerald-300 font-semibold uppercase tracking-wider mb-3">Program</p>
-                    <ul class="space-y-1.5">
-                        <li class="text-sm text-emerald-400">Santunan Bulanan</li>
-                        <li class="text-sm text-emerald-400">Beasiswa Yatim</li>
-                        <li class="text-sm text-emerald-400">Orang Tua Asuh</li>
-                        <li class="text-sm text-emerald-400">Renovasi Rumah</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-10 pt-5 border-t border-emerald-800 text-center">
-                <p class="text-xs text-emerald-500">&copy; {{ date('Y') }} {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}. Dikelola dengan penuh amanah & transparansi.</p>
-            </div>
-        </div>
-    </footer>
+    @include('partials.footer')
 
     {{-- ════════════════════ SCRIPTS ════════════════════ --}}
-    <script>
-        window.addEventListener('scroll', function () {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 15) {
-                nav.classList.add('shadow-md', 'border-b', 'border-emerald-100');
-            } else {
-                nav.classList.remove('shadow-md', 'border-b', 'border-emerald-100');
-            }
-        });
-    </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 700, once: true, offset: 40 });</script>
 

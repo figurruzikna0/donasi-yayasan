@@ -1,52 +1,88 @@
-<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
-<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('app-layout'); ?>
+<?php if (isset($component)) { $__componentOriginal91fdd17964e43374ae18c674f95cdaa3 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal91fdd17964e43374ae18c674f95cdaa3 = $attributes; } ?>
+<?php $component = App\View\Components\AdminLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('admin-layout'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php $attributes = $attributes->except(\App\View\Components\AdminLayout::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
-    <div class="bg-base-200 p-7">
+    <div class="bg-base-200 min-h-screen">
 
         
-        <div class="flex items-end justify-between gap-3 mb-6 flex-wrap">
-            <div>
-                <nav class="text-sm text-emerald-500 mb-1">
-                    <a href="<?php echo e(route('admin.dashboard')); ?>" class="link link-hover text-emerald-600">Dashboard</a>
-                    <span class="mx-1">/</span>
-                    <span class="text-emerald-600">Profil Yayasan</span>
-                </nav>
-                <h1 class="text-2xl font-black text-emerald-700">Profil & Berkas Yayasan</h1>
-                <p class="text-sm text-emerald-500 mt-1">Kelola informasi dasar, visi misi, dokumen resmi, dan data pendiri.</p>
+        <div class="px-8 pt-8 pb-0">
+            <div class="flex items-end justify-between gap-3 mb-2 flex-wrap">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-2">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </span>
+                        <div>
+                            <h1 class="text-2xl font-black text-base-content">Profil & Berkas Yayasan</h1>
+                            <p class="text-sm text-base-content/50">Kelola informasi dasar, visi misi, dokumen resmi, dan data pendiri.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <div class="p-8 pt-6 space-y-6">
+
         
         <?php if(session('success')): ?>
-            <div class="alert alert-success mb-5">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                <?php echo e(session('success')); ?>
-
-            </div>
+            <?php if (isset($component)) { $__componentOriginal5194778a3a7b899dcee5619d0610f5cf = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal5194778a3a7b899dcee5619d0610f5cf = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.alert','data' => ['type' => 'success','message' => ''.e(session('success')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'success','message' => ''.e(session('success')).'']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal5194778a3a7b899dcee5619d0610f5cf)): ?>
+<?php $attributes = $__attributesOriginal5194778a3a7b899dcee5619d0610f5cf; ?>
+<?php unset($__attributesOriginal5194778a3a7b899dcee5619d0610f5cf); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal5194778a3a7b899dcee5619d0610f5cf)): ?>
+<?php $component = $__componentOriginal5194778a3a7b899dcee5619d0610f5cf; ?>
+<?php unset($__componentOriginal5194778a3a7b899dcee5619d0610f5cf); ?>
+<?php endif; ?>
         <?php endif; ?>
         <?php if(session('error')): ?>
-            <div class="alert alert-error mb-5">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                <?php echo e(session('error')); ?>
-
-            </div>
+            <?php if (isset($component)) { $__componentOriginal5194778a3a7b899dcee5619d0610f5cf = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal5194778a3a7b899dcee5619d0610f5cf = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.alert','data' => ['type' => 'error','message' => ''.e(session('error')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'error','message' => ''.e(session('error')).'']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal5194778a3a7b899dcee5619d0610f5cf)): ?>
+<?php $attributes = $__attributesOriginal5194778a3a7b899dcee5619d0610f5cf; ?>
+<?php unset($__attributesOriginal5194778a3a7b899dcee5619d0610f5cf); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal5194778a3a7b899dcee5619d0610f5cf)): ?>
+<?php $component = $__componentOriginal5194778a3a7b899dcee5619d0610f5cf; ?>
+<?php unset($__componentOriginal5194778a3a7b899dcee5619d0610f5cf); ?>
+<?php endif; ?>
         <?php endif; ?>
 
         
-        <div class="tabs tabs-box bg-base-100 border border-emerald-200 mb-5 w-fit">
-            <button class="tab tab-active font-bold text-emerald-700" id="tab-profil" onclick="switchProfilTab('profil')">
+        <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-base-300 w-fit">
+            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 bg-primary text-white shadow-sm" id="tab-profil" onclick="switchProfilTab('profil')">
                 Profil Yayasan
             </button>
-            <button class="tab font-bold text-emerald-600" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
+            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 text-base-content/50 hover:text-base-content hover:bg-base-200" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
                 Pendiri & Pengurus
-                <span class="badge badge-sm ml-1"><?php echo e($pendiris->count()); ?></span>
+                <span class="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-base-300"><?php echo e($pendiris->count()); ?></span>
             </button>
         </div>
 
@@ -57,12 +93,12 @@
                 <?php echo method_field('PUT'); ?>
 
                 
-                <div class="card bg-base-100 shadow-md border border-emerald-200 mb-5">
-                    <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">🏢</div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">🏢</div>
                         <div>
-                            <h3 class="text-white font-bold text-lg">Informasi Dasar</h3>
-                            <p class="text-white/80 text-sm">Nama, kontak, dan alamat yayasan</p>
+                            <p class="font-extrabold text-sm text-base-content">Informasi Dasar</p>
+                            <p class="text-xs text-base-content/50">Nama, kontak, logo, dan alamat yayasan</p>
                         </div>
                     </div>
                     <div class="card-body">
@@ -106,6 +142,30 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                             </div>
+                            <div class="form-control">
+                                <label class="label"><span class="label-text font-bold text-emerald-700">Logo Yayasan</span></label>
+                                <div class="relative">
+                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="logo-input">
+                                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        <span id="logo-label" class="text-sm text-emerald-600 font-semibold">Pilih foto logo…</span>
+                                    </label>
+                                    <input type="file" name="logo" id="logo-input" accept="image/*" class="hidden" onchange="document.getElementById('logo-label').textContent=this.files[0]?.name||'Pilih foto logo…'">
+                                </div>
+                                <p class="text-xs text-emerald-400 mt-1">JPG/PNG · Maks 2MB</p>
+                                <?php if($profil?->logo): ?>
+                                    <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50 inline-block">
+                                        <img src="<?php echo e(asset('storage/' . $profil->logo) . '?v=' . now()->timestamp); ?>" class="max-h-16 rounded-lg" alt="Logo saat ini">
+                                    </div>
+                                <?php endif; ?>
+                                <?php $__errorArgs = ['logo'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
                         </div>
                         <div class="form-control mt-4">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Alamat Lengkap</span></label>
@@ -123,12 +183,12 @@ unset($__errorArgs, $__bag); ?>
                 </div>
 
                 
-                <div class="card bg-base-100 shadow-md border border-emerald-200 mb-5">
-                    <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">📖</div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">📖</div>
                         <div>
-                            <h3 class="text-white font-bold text-lg">Sejarah, Visi & Misi</h3>
-                            <p class="text-white/80 text-sm">Narasi dan arah gerak yayasan</p>
+                            <p class="font-extrabold text-sm text-base-content">Sejarah, Visi & Misi</p>
+                            <p class="text-xs text-base-content/50">Narasi dan arah gerak yayasan</p>
                         </div>
                     </div>
                     <div class="card-body">
@@ -174,12 +234,50 @@ unset($__errorArgs, $__bag); ?>
                 </div>
 
                 
-                <div class="card bg-base-100 shadow-md border border-emerald-200 mb-5">
-                    <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">📂</div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">📱</div>
                         <div>
-                            <h3 class="text-white font-bold text-lg">Berkas Resmi & Transparansi</h3>
-                            <p class="text-white/80 text-sm">Dokumen legalitas dan bagan struktur organisasi</p>
+                            <p class="font-extrabold text-sm text-base-content">QRIS Pembayaran</p>
+                            <p class="text-xs text-base-content/50">Upload QRIS yayasan untuk pembayaran donasi langsung</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-bold text-emerald-700">Foto QRIS <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
+                            <div class="relative">
+                                <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="qris-input">
+                                    <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    <span id="qris-label" class="text-sm text-emerald-600 font-semibold">Pilih foto QRIS…</span>
+                                </label>
+                                <input type="file" name="foto_qris" id="qris-input" accept="image/*" class="hidden" onchange="document.getElementById('qris-label').textContent=this.files[0]?.name||'Pilih foto QRIS…'">
+                            </div>
+                            <p class="text-xs text-emerald-400 mt-1">JPG / PNG · Maks 2MB</p>
+                            <?php if($profil?->foto_qris): ?>
+                                <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50 inline-block">
+                                    <p class="text-xs text-emerald-400 font-semibold text-center mb-1">QRIS saat ini</p>
+                                    <img src="<?php echo e(asset('storage/' . $profil->foto_qris) . '?v=' . now()->timestamp); ?>" class="max-h-32 mx-auto rounded-lg" alt="QRIS">
+                                </div>
+                            <?php endif; ?>
+                            <?php $__errorArgs = ['foto_qris'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">📂</div>
+                        <div>
+                            <p class="font-extrabold text-sm text-base-content">Berkas Resmi & Transparansi</p>
+                            <p class="text-xs text-base-content/50">Dokumen legalitas dan bagan struktur organisasi</p>
                         </div>
                     </div>
                     <div class="card-body">
@@ -197,7 +295,7 @@ unset($__errorArgs, $__bag); ?>
                                 <?php if($profil?->foto_legalitas): ?>
                                     <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50">
                                         <p class="text-xs text-emerald-400 font-semibold text-center mb-1">Berkas saat ini</p>
-                                        <img src="<?php echo e(asset('storage/' . $profil->foto_legalitas)); ?>" class="max-h-36 mx-auto rounded-lg" alt="Legalitas">
+                                        <img src="<?php echo e(asset('storage/' . $profil->foto_legalitas) . '?v=' . now()->timestamp); ?>" class="max-h-36 mx-auto rounded-lg" alt="Legalitas">
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -215,7 +313,7 @@ unset($__errorArgs, $__bag); ?>
                                 <?php if($profil?->foto_struktur): ?>
                                     <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50">
                                         <p class="text-xs text-emerald-400 font-semibold text-center mb-1">Berkas saat ini</p>
-                                        <img src="<?php echo e(asset('storage/' . $profil->foto_struktur)); ?>" class="max-h-36 mx-auto rounded-lg" alt="Struktur">
+                                        <img src="<?php echo e(asset('storage/' . $profil->foto_struktur) . '?v=' . now()->timestamp); ?>" class="max-h-36 mx-auto rounded-lg" alt="Struktur">
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -223,12 +321,12 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 mb-10">
-                    <a href="<?php echo e(route('admin.profil.index')); ?>" class="btn btn-outline">
+                <div class="flex items-center justify-end gap-3">
+                    <a href="<?php echo e(route('admin.profil.index')); ?>" class="btn btn-ghost font-bold">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                         Batal
                     </a>
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn bg-primary hover:bg-primary/90 text-white border-0 font-bold rounded-lg">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                         Simpan Perubahan Profil
                     </button>
@@ -240,68 +338,78 @@ unset($__errorArgs, $__bag); ?>
         <div id="panel-pendiri" class="tab-panel hidden">
 
             
-            <div class="card bg-base-100 shadow-md border border-emerald-200 mb-5">
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">👥</div>
+            <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">👥</div>
                     <div>
-                        <h3 class="text-white font-bold text-lg">Daftar Pendiri Saat Ini</h3>
-                        <p class="text-white/80 text-sm"><?php echo e($pendiris->count()); ?> orang terdaftar dan tampil di halaman publik</p>
+                        <p class="font-extrabold text-sm text-base-content">Daftar Pendiri Saat Ini</p>
+                        <p class="text-xs text-base-content/50"><?php echo e($pendiris->count()); ?> orang terdaftar dan tampil di halaman publik</p>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                         <?php $__empty_1 = true; $__currentLoopData = $pendiris; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pendiri): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                            <div class="group bg-white rounded-xl shadow-sm border border-emerald-100 overflow-hidden hover:shadow-lg hover:border-emerald-300 transition-all duration-200">
-                                <div class="bg-gradient-to-r from-emerald-50 to-white px-5 pt-5 pb-0">
+                            <div class="group bg-white rounded-xl shadow-sm border border-base-200 overflow-hidden hover:shadow-md transition-all duration-200">
+                                <div class="px-5 pt-5 pb-0">
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-center gap-4">
                                             <?php if($pendiri->foto): ?>
-                                                <img src="<?php echo e(asset('storage/' . $pendiri->foto)); ?>" class="w-14 h-14 rounded-xl object-cover shadow-sm ring-2 ring-emerald-200" alt="<?php echo e($pendiri->nama); ?>">
+                                                <img src="<?php echo e(asset('storage/' . $pendiri->foto) . '?v=' . now()->timestamp); ?>" class="w-14 h-14 rounded-xl object-cover shadow-sm ring-2 ring-base-300" alt="<?php echo e($pendiri->nama); ?>">
                                             <?php else: ?>
-                                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-extrabold text-lg flex items-center justify-center shadow-sm"><?php echo e(strtoupper(substr($pendiri->nama, 0, 1))); ?></div>
+                                                <div class="w-14 h-14 rounded-xl bg-primary text-white font-extrabold text-lg flex items-center justify-center shadow-sm"><?php echo e(strtoupper(substr($pendiri->nama, 0, 1))); ?></div>
                                             <?php endif; ?>
                                             <div>
-                                                <p class="font-bold text-emerald-800 text-sm"><?php echo e($pendiri->nama); ?></p>
-                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full mt-1"><?php echo e($pendiri->jabatan); ?></span>
+                                                <p class="font-bold text-sm text-base-content"><?php echo e($pendiri->nama); ?></p>
+                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full mt-1"><?php echo e($pendiri->jabatan); ?></span>
                                             </div>
                                         </div>
                                         <form action="<?php echo e(route('admin.pendiri.destroy', $pendiri->id)); ?>" method="POST"
                                               x-data="{ open: false }" @submit.prevent="open = true">
                                             <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                            <button type="button" @click="open = true" class="btn btn-ghost btn-sm btn-circle text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            <button type="button" @click="open = true" class="btn btn-ghost btn-sm btn-circle text-base-content/20 hover:text-error hover:bg-error/5 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                             </button>
-                                            <dialog class="modal" :class="{ 'modal-open': open }">
-                                                <div class="modal-box">
-                                                    <h3 class="font-bold text-lg text-emerald-800">Konfirmasi Hapus</h3>
-                                                    <p class="py-4 text-gray-600">Hapus data pendiri <strong class="text-emerald-700"><?php echo e($pendiri->nama); ?></strong>?</p>
-                                                    <div class="modal-action">
-                                                        <button type="button" @click="open = false" class="btn btn-outline btn-sm">Batal</button>
-                                                        <button @click="open = false; $el.closest('form').submit()" class="btn btn-error btn-sm">Ya, Hapus</button>
-                                                    </div>
-                                                </div>
-                                            </dialog>
+                                            <?php if (isset($component)) { $__componentOriginal1978ea6189800d3ead8e1d285a55da54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1978ea6189800d3ead8e1d285a55da54 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.confirm-delete-modal','data' => ['entityName' => ''.e($pendiri->nama).'','entityType' => 'pengurus']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('confirm-delete-modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['entity-name' => ''.e($pendiri->nama).'','entity-type' => 'pengurus']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1978ea6189800d3ead8e1d285a55da54)): ?>
+<?php $attributes = $__attributesOriginal1978ea6189800d3ead8e1d285a55da54; ?>
+<?php unset($__attributesOriginal1978ea6189800d3ead8e1d285a55da54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1978ea6189800d3ead8e1d285a55da54)): ?>
+<?php $component = $__componentOriginal1978ea6189800d3ead8e1d285a55da54; ?>
+<?php unset($__componentOriginal1978ea6189800d3ead8e1d285a55da54); ?>
+<?php endif; ?>
                                         </form>
                                     </div>
                                 </div>
                                 <div class="px-5 pb-5 pt-3">
                                     <?php if($pendiri->deskripsi): ?>
-                                        <div class="bg-emerald-50/70 rounded-lg p-3 border border-emerald-100">
-                                            <svg class="w-3 h-3 text-emerald-400 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11H10v10H0z"/></svg>
-                                            <p class="text-xs text-gray-600 italic leading-relaxed">"<?php echo e($pendiri->deskripsi); ?>"</p>
+                                        <div class="bg-base-200/50 rounded-lg p-3 border border-base-200">
+                                            <svg class="w-3 h-3 text-base-content/30 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11H10v10H0z"/></svg>
+                                            <p class="text-xs text-base-content/60 italic leading-relaxed">"<?php echo e($pendiri->deskripsi); ?>"</p>
                                         </div>
                                     <?php else: ?>
-                                        <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                                            <p class="text-xs text-gray-400 italic">Tidak ada kata sambutan</p>
+                                        <div class="bg-base-200/50 rounded-lg p-3 border border-base-200">
+                                            <p class="text-xs text-base-content/40 italic">Tidak ada kata sambutan</p>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                            <div class="col-span-full text-center py-12 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50">
+                            <div class="col-span-full text-center py-12 border-2 border-dashed border-base-300 rounded-xl bg-base-100">
                                 <div class="text-4xl mb-3">👥</div>
-                                <p class="font-bold text-emerald-700">Belum Ada Data Pendiri</p>
-                                <p class="text-sm text-emerald-500 mt-1">Tambahkan pendiri pertama lewat form di bawah.</p>
+                                <p class="font-bold text-base-content">Belum Ada Data Pendiri</p>
+                                <p class="text-sm text-base-content/50 mt-1">Tambahkan pendiri pertama lewat form di bawah.</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -312,15 +420,15 @@ unset($__errorArgs, $__bag); ?>
             <form action="<?php echo e(route('admin.pendiri.store')); ?>" method="POST" enctype="multipart/form-data">
                 <?php echo csrf_field(); ?>
 
-                <div class="card bg-base-100 shadow-md border border-emerald-200 mb-10">
-                    <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">➕</div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden mb-10">
+                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">➕</div>
                         <div>
-                            <h3 class="text-white font-bold text-lg">Tambah Pendiri Baru</h3>
-                            <p class="text-white/80 text-sm">Lengkapi data berikut untuk menambahkan pendiri atau pengurus baru</p>
+                            <p class="font-extrabold text-sm text-base-content">Tambah Pendiri Baru</p>
+                            <p class="text-xs text-base-content/50">Lengkapi data berikut untuk menambahkan pendiri atau pengurus baru</p>
                         </div>
                     </div>
-                    <div class="card-body space-y-5">
+                    <div class="p-6 space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Nama Lengkap</span></label>
@@ -415,12 +523,12 @@ unset($__errorArgs, $__bag); ?>
     </script>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
-<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php if (isset($__attributesOriginal91fdd17964e43374ae18c674f95cdaa3)): ?>
+<?php $attributes = $__attributesOriginal91fdd17964e43374ae18c674f95cdaa3; ?>
+<?php unset($__attributesOriginal91fdd17964e43374ae18c674f95cdaa3); ?>
 <?php endif; ?>
-<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php if (isset($__componentOriginal91fdd17964e43374ae18c674f95cdaa3)): ?>
+<?php $component = $__componentOriginal91fdd17964e43374ae18c674f95cdaa3; ?>
+<?php unset($__componentOriginal91fdd17964e43374ae18c674f95cdaa3); ?>
 <?php endif; ?>
 <?php /**PATH C:\laragon\www\donasi-yayasan\resources\views/admin/profil/index.blade.php ENDPATH**/ ?>

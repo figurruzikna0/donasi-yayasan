@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class FosterChild extends Model
 {
@@ -17,6 +18,15 @@ class FosterChild extends Model
         'status',
         'jenis_kelamin', // ★ TAMBAHAN
     ];
+
+    protected static function booted(): void
+    {
+        static::deleted(function (FosterChild $fosterChild) {
+            if ($fosterChild->photo) {
+                Storage::disk('public')->delete($fosterChild->photo);
+            }
+        });
+    }
 
     public function sponsorships()
     {

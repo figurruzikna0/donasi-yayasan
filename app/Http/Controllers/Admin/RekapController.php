@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Donation;
 use App\Models\Sponsorship;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class RekapController extends Controller
@@ -278,5 +279,86 @@ class RekapController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function donasiExportPdf(Request $request)
+    {
+        $query = Donation::with(['campaign', 'user'])->latest();
+        $query = $this->applyDateFilter($query, $request);
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('donor_name', 'like', "%{$search}%")
+                  ->orWhere('donor_email', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%");
+            });
+        }
+        if ($status = $request->get('status')) {
+            $query->where('status', $status);
+        }
+
+        $donations = $query->get();
+        $totalAmount = $donations->where('status', 'success')->sum('amount');
+
+        $pdf = Pdf::loadView('admin.rekap.donasi_pdf', compact('donations', 'totalAmount'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download('rekap-donasi-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    public function donaturExportPdf(Request $request)
+    {
+        $query = User::where('role', 'donatur')->withCount(['donations', 'sponsorships'])->latest();
+        $query = $this->applyDateFilter($query, $request);
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%");
+            });
+        }
+
+        $donaturs = $query->get();
+        $totalDonasiAll = Donation::where('status', 'success')->sum('amount');
+        $totalSponsorshipAll = Sponsorship::where('status', 'success')->count();
+
+        $pdf = Pdf::loadView('admin.rekap.donatur_pdf', compact('donaturs', 'totalDonasiAll', 'totalSponsorshipAll'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download('rekap-donatur-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    public function orangTuaAsuhExportPdf(Request $request)
+    {
+        $query = Sponsorship::with(['fosterChild', 'user'])->latest();
+        $query = $this->applyDateFilter($query, $request);
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('donor_name', 'like', "%{$search}%")
+                  ->orWhere('donor_email', 'like', "%{$search}%")
+                  ->orWhere('donor_phone', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%");
+            });
+        }
+        if ($statusFilter = $request->get('status')) {
+            $now = now();
+            $query->where(function ($q) use ($statusFilter, $now) {
+                match ($statusFilter) {
+                    'aktif' => $q->where('status', 'success')->where(function ($q2) use ($now) { $q2->whereNull('expires_at')->orWhere('expires_at', '>=', $now); }),
+                    'pending' => $q->where('status', 'pending'),
+                    'kadaluarsa' => $q->where(function ($q2) use ($now) { $q2->where('status', 'success')->where('expires_at', '<', $now)->orWhere('status', 'expired'); }),
+                    'gagal' => $q->where('status', 'failed'),
+                    default => null,
+                };
+            });
+        }
+
+        $sponsorships = $query->get();
+        $totalAmount = $sponsorships->where('status', 'success')->sum('amount');
+
+        $pdf = Pdf::loadView('admin.rekap.orang_tua_asuh_pdf', compact('sponsorships', 'totalAmount'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download('rekap-orang-tua-asuh-' . now()->format('Y-m-d') . '.pdf');
     }
 }

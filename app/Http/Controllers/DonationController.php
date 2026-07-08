@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DonationSuccessMail;
+use App\Mail\SponsorshipSuccessMail;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
+use App\Traits\HandlesFileUpload;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\FosterChild;
+use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Snap;
 
 class DonationController extends Controller
 {
+    use HandlesFileUpload;
     private function initMidtrans()
     {
         Config::$serverKey    = config('midtrans.server_key');
@@ -38,8 +43,6 @@ class DonationController extends Controller
             'payment_method' => 'required|string|max:255',
         ]);
 
-        $this->initMidtrans();
-
         $orderId  = 'DONASI-' . uniqid();
 
         $donation = Donation::create([
@@ -53,6 +56,12 @@ class DonationController extends Controller
             'payment_method' => $validated['payment_method'],
             'status'         => 'pending',
         ]);
+
+        if ($validated['payment_method'] === 'QRIS Yayasan') {
+            return view('donations.qris_payment', compact('donation', 'campaign'));
+        }
+
+        $this->initMidtrans();
 
         $params = [
             'transaction_details' => [
@@ -87,13 +96,11 @@ class DonationController extends Controller
             'donor_name'     => 'required|string|max:255',
             'donor_email'    => 'required|email|max:255',
             'donor_phone'    => 'required|string|max:20',
-            'amount'         => 'required|numeric|min:1000',
+            'amount'         => 'required|numeric|min:100000|max:500000',
             'paket_komitmen' => 'required|string|max:255',
             'description'    => 'nullable|string',
             'payment_method' => 'required|string|max:255',
         ]);
-
-        $this->initMidtrans();
 
         $orderId = 'SPONSOR-' . uniqid();
 
@@ -111,6 +118,12 @@ class DonationController extends Controller
             'status'              => 'pending',
         ]);
 
+        if ($validated['payment_method'] === 'QRIS Yayasan') {
+            return view('donations.qris_payment', compact('sponsorship', 'child'));
+        }
+
+        $this->initMidtrans();
+
         $params = [
             'transaction_details' => [
                 'order_id'     => $orderId,
@@ -127,6 +140,32 @@ class DonationController extends Controller
         $sponsorship->update(['snap_token' => $snapToken]);
 
         return view('donations.sponsor_payment', compact('sponsorship', 'child', 'snapToken'));
+    }
+
+    public function uploadQris(Request $request)
+    {
+        $validated = $request->validate([
+            'order_id'       => 'required|string',
+            'payment_proof'  => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $type = str_starts_with($validated['order_id'], 'SPONSOR-') ? 'sponsorship' : 'donation';
+
+        if ($type === 'sponsorship') {
+            $sponsorship = Sponsorship::where('order_id', $validated['order_id'])->firstOrFail();
+            $sponsorship->update([
+                'payment_proof' => $this->uploadFile($request->file('payment_proof'), 'payment-proofs'),
+            ]);
+            return redirect()->route('invoice.sponsorship', $sponsorship->id)
+                ->with('success', 'Bukti pembayaran berhasil diupload. Menunggu konfirmasi admin.');
+        }
+
+        $donation = Donation::where('order_id', $validated['order_id'])->firstOrFail();
+        $donation->update([
+            'payment_proof' => $this->uploadFile($request->file('payment_proof'), 'payment-proofs'),
+        ]);
+        return redirect()->route('invoice.donation', $donation->id)
+            ->with('success', 'Bukti pembayaran berhasil diupload. Menunggu konfirmasi admin.');
     }
 
     public function callback(Request $request)
@@ -170,6 +209,15 @@ class DonationController extends Controller
                         }
                     }
 
+                    // ✅ Kirim notifikasi email ke donatur
+                    if ($sponsorship->donor_email) {
+                        try {
+                            Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
+                        }
+                    }
+
                 } elseif ($status === 'pending') {
                     $sponsorship->update(['status' => 'pending']);
                 } else {
@@ -199,6 +247,15 @@ class DonationController extends Controller
                             $this->kirimWaDonasi($donation, $campaign);
                         } catch (\Throwable $e) {
                             \Illuminate\Support\Facades\Log::error('Gagal kirim WA donasi: ' . $e->getMessage());
+                        }
+                    }
+
+                    // ✅ Kirim notifikasi email ke donatur
+                    if ($donation->donor_email) {
+                        try {
+                            Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
                         }
                     }
                 } elseif ($status === 'pending') {

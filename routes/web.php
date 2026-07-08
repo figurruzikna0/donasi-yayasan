@@ -18,20 +18,21 @@ use App\Http\Controllers\Admin\ProfilYayasanController;
 use App\Http\Controllers\Admin\SponsorshipController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RekapController;
 
 // Models
 use App\Models\Campaign;
 use App\Models\Donation;
-use App\Models\News;
 use App\Models\FosterChild;
+use App\Models\News;
+use App\Models\Sponsorship;
 use App\Models\ProfilYayasan;
 
 // --- RUTE BERITA PUBLIK ---
 Route::get('/berita/{slug}', function ($slug) {
     $news = \App\Models\News::where('slug', $slug)->published()->firstOrFail();
-    $profil = \App\Models\ProfilYayasan::first();
-    return view('news.show', compact('news', 'profil'));
+    return view('news.show', compact('news'));
 })->name('news.show');
 
 // --- RUTE HALAMAN DEPAN ---
@@ -43,11 +44,28 @@ Route::get('/', function () {
     }
 
     $campaigns = Campaign::where('status', 'active')->latest()->get();
-    $profil = ProfilYayasan::first();
     $newsList = News::published()->latest('tanggal_kegiatan')->take(9)->get();
 
-    return view('welcome', compact('campaigns', 'profil', 'newsList'));
+    $totalCampaigns  = Campaign::count();
+    $totalDonasi     = Donation::where('status', 'success')->sum('amount');
+    $totalTransaksi  = Donation::where('status', 'success')->count();
+
+    return view('welcome', compact('campaigns', 'newsList', 'totalCampaigns', 'totalDonasi', 'totalTransaksi'));
 });
+
+// --- RUTE HALAMAN PROFIL, PENGURUS, LEGALITAS ---
+Route::get('/profil', function () {
+    return view('profil');
+})->name('profil');
+
+Route::get('/pengurus', function () {
+    $daftarPendiri = \App\Models\Pendiri::latest()->get();
+    return view('pengurus', compact('daftarPendiri'));
+})->name('pengurus');
+
+Route::get('/legalitas', function () {
+    return view('legalitas');
+})->name('legalitas');
 
 // --- RUTE DONASI & SPONSOR (wajib login & verifikasi) ---
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -61,6 +79,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/sponsorships/{id}/invoice', [InvoiceController::class, 'sponsorship'])->name('invoice.sponsorship');
     Route::get('/donations/{id}/invoice/pdf', [InvoiceController::class, 'donationPdf'])->name('invoice.donation.pdf');
     Route::get('/sponsorships/{id}/invoice/pdf', [InvoiceController::class, 'sponsorshipPdf'])->name('invoice.sponsorship.pdf');
+    Route::get('/child-developments/{id}/pdf', [InvoiceController::class, 'childDevelopmentPdf'])->name('invoice.child-development.pdf');
 });
 
 // --- RUTE CALLBACK MIDTRANS (dipanggil server Midtrans, bukan user) ---
@@ -81,20 +100,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/pembayaran/qris/upload', [DonationController::class, 'uploadQris'])->name('qris.upload');
 });
 
 // --- RUTE ADMIN (Terlindungi) ---
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard Admin
-    Route::get('/dashboard', function () {
-        $totalFunds = Donation::where('status', 'success')->sum('amount');
-        $activeCampaigns = Campaign::where('status', 'active')->count();
-        $fosterChildren = FosterChild::count();
-        $profil = ProfilYayasan::first();
-
-        return view('admin.dashboard', compact('totalFunds', 'activeCampaigns', 'fosterChildren', 'profil'));
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profil & Pendiri Yayasan
     Route::get('/profil', [ProfilYayasanController::class, 'index'])->name('profil.index');
@@ -139,10 +153,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::prefix('rekap')->name('rekap.')->group(function () {
         Route::get('/donasi', [RekapController::class, 'donasi'])->name('donasi');
         Route::get('/donasi/export', [RekapController::class, 'donasiExport'])->name('donasi.export');
+        Route::get('/donasi/export-pdf', [RekapController::class, 'donasiExportPdf'])->name('donasi.export-pdf');
         Route::get('/donatur', [RekapController::class, 'donatur'])->name('donatur');
         Route::get('/donatur/export', [RekapController::class, 'donaturExport'])->name('donatur.export');
+        Route::get('/donatur/export-pdf', [RekapController::class, 'donaturExportPdf'])->name('donatur.export-pdf');
         Route::get('/orang-tua-asuh', [RekapController::class, 'orangTuaAsuh'])->name('orang-tua-asuh');
         Route::get('/orang-tua-asuh/export', [RekapController::class, 'orangTuaAsuhExport'])->name('orang-tua-asuh.export');
+        Route::get('/orang-tua-asuh/export-pdf', [RekapController::class, 'orangTuaAsuhExportPdf'])->name('orang-tua-asuh.export-pdf');
     });
 });
 

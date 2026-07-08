@@ -1,34 +1,18 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
             {{ __('Tambah Kampanye Donasi Baru') }}
         </h2>
     </x-slot>
 
-    <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="card bg-base-100 shadow-lg border border-emerald-200">
-
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-lg">Kampanye Donasi Baru</h3>
-                        <p class="text-white/80 text-sm">Isi detail di bawah untuk meluncurkan program kebaikan baru</p>
-                    </div>
-                </div>
-
-                <div class="card-body p-8">
+    <x-admin-form-card
+        icon='<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>'
+        title="Kampanye Donasi Baru"
+        subtitle="Isi detail di bawah untuk meluncurkan program kebaikan baru"
+    >
 
                     @if(session('success'))
-                        <div class="alert alert-success mb-5">
-                            <svg fill="none" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                            {{ session('success') }}
-                        </div>
+                        <x-alert type="success" message="{{ session('success') }}" />
                     @endif
 
                     <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
@@ -108,10 +92,7 @@
                         </div>
 
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    </x-admin-form-card>
 
     <style>
         .file-input-wrapper { position: relative; }
@@ -139,4 +120,4 @@
         });
     </script>
 
-</x-app-layout>
+</x-admin-layout>

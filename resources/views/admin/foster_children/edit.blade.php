@@ -1,33 +1,18 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
             Edit Data Anak Asuh
         </h2>
     </x-slot>
 
-    <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 py-10">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="card bg-base-100 shadow-lg border border-emerald-200">
-
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg">👦</div>
-                    <div>
-                        <h3 class="text-white font-bold text-lg">Edit Data Anak Asuh</h3>
-                        <p class="text-white/80 text-sm">Perbarui informasi profil {{ $fosterChild->name }}</p>
-                    </div>
-                </div>
-
-                <div class="card-body p-8">
+    <x-admin-form-card
+        icon="👦"
+        title="Edit Data Anak Asuh"
+        subtitle="Perbarui informasi profil anak asuh"
+    >
 
                     @if($errors->any())
-                        <div class="alert alert-error mb-5">
-                            <p class="text-sm font-bold mb-1">Harap perbaiki kesalahan berikut:</p>
-                            <ul class="list-disc list-inside text-sm">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        <x-alert type="error" :errors="$errors->all()" />
                     @endif
 
                     <form action="{{ route('admin.foster-children.update', $fosterChild->id) }}"
@@ -150,10 +135,7 @@
                         </div>
 
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    </x-admin-form-card>
 
     <style>
         .file-input-wrapper { position: relative; }
@@ -203,4 +185,4 @@
             }
         });
     </script>
-</x-app-layout>
+</x-admin-layout>

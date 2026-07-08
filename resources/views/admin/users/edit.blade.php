@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
             Edit Data User
@@ -18,13 +18,7 @@
 
                 <div class="card-body">
                     @if($errors->any())
-                        <div class="alert alert-error mb-4">
-                            <ul class="text-sm">
-                                @foreach($errors->all() as $error)
-                                    <li>• {{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        <x-alert type="error" :errors="$errors->all()" />
                     @endif
 
                     <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
@@ -89,4 +83,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

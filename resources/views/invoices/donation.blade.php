@@ -35,7 +35,7 @@
                     </div>
                     <div class="text-right">
                         @if($profil?->logo)
-                            <img src="{{ asset('storage/' . $profil->logo) }}" class="h-12 w-12 rounded-full object-cover border border-emerald-200 ml-auto mb-2" alt="Logo">
+                            <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" class="h-12 w-12 rounded-full object-cover border border-emerald-200 ml-auto mb-2" alt="Logo">
                         @endif
                         <p class="font-bold text-emerald-700 text-sm">{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }}</p>
                         <p class="text-xs text-emerald-400">{{ $profil?->alamat ?? '-' }}</p>

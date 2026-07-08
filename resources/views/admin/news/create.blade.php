@@ -2,7 +2,7 @@
     $news       = null;
     $formAction = route('admin.news.store');
     $formMethod = 'POST';
-    $pageTitle  = 'Tambah Berita Kegiatan';
+    $pageTitle  = 'Buat Berita Baru / Artikel';
     $headerSub  = 'Tulis narasi, press release, atau laporan kegiatan baru';
 @endphp
 

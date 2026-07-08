@@ -42,13 +42,26 @@
             </div>
 
             <?php if($errors->any()): ?>
-                <div class="alert alert-error mb-6 shadow-md border-0">
-                    <ul class="text-sm font-semibold">
-                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <li><?php echo e($error); ?></li>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </ul>
-                </div>
+                <?php if (isset($component)) { $__componentOriginal5194778a3a7b899dcee5619d0610f5cf = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal5194778a3a7b899dcee5619d0610f5cf = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.alert','data' => ['type' => 'error','errors' => $errors->all()]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'error','errors' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->all())]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal5194778a3a7b899dcee5619d0610f5cf)): ?>
+<?php $attributes = $__attributesOriginal5194778a3a7b899dcee5619d0610f5cf; ?>
+<?php unset($__attributesOriginal5194778a3a7b899dcee5619d0610f5cf); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal5194778a3a7b899dcee5619d0610f5cf)): ?>
+<?php $component = $__componentOriginal5194778a3a7b899dcee5619d0610f5cf; ?>
+<?php unset($__componentOriginal5194778a3a7b899dcee5619d0610f5cf); ?>
+<?php endif; ?>
             <?php endif; ?>
 
             
@@ -136,7 +149,8 @@
                                 <option value="Permata VA" <?php echo e(old('payment_method') == 'Permata VA' ? 'selected' : ''); ?>>🏦 Virtual Account Permata</option>
                                 <option value="BSI VA" <?php echo e(old('payment_method') == 'BSI VA' ? 'selected' : ''); ?>>🏦 Virtual Account BSI</option>
                                 <option value="GoPay" <?php echo e(old('payment_method') == 'GoPay' ? 'selected' : ''); ?>>📱 GoPay</option>
-                                <option value="QRIS" <?php echo e(old('payment_method') == 'QRIS' ? 'selected' : ''); ?>>📱 QRIS</option>
+                                <option value="QRIS" <?php echo e(old('payment_method') == 'QRIS' ? 'selected' : ''); ?>>📱 QRIS (Midtrans)</option>
+                                <option value="QRIS Yayasan" <?php echo e(old('payment_method') == 'QRIS Yayasan' ? 'selected' : ''); ?>>📱 QRIS Yayasan (Manual)</option>
                                 <option value="ShopeePay" <?php echo e(old('payment_method') == 'ShopeePay' ? 'selected' : ''); ?>>📱 ShopeePay</option>
                             </select>
                         </div>

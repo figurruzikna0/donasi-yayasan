@@ -16,8 +16,10 @@ return new class extends Migration
             $table->timestamp('reminder_sent_at')->nullable()->after('expires_at');
         });
 
-        // Tambah 'expired' ke enum status
-        DB::statement("ALTER TABLE sponsorships MODIFY status ENUM('pending', 'success', 'failed', 'expired') DEFAULT 'pending'");
+        // Tambah 'expired' ke enum status (MySQL only; SQLite tidak support ALTER MODIFY ENUM)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE sponsorships MODIFY status ENUM('pending', 'success', 'failed', 'expired') DEFAULT 'pending'");
+        }
     }
 
     public function down(): void
@@ -26,6 +28,8 @@ return new class extends Migration
             $table->dropColumn(['donor_phone', 'starts_at', 'expires_at', 'reminder_sent_at']);
         });
 
-        DB::statement("ALTER TABLE sponsorships MODIFY status ENUM('pending', 'success', 'failed') DEFAULT 'pending'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE sponsorships MODIFY status ENUM('pending', 'success', 'failed') DEFAULT 'pending'");
+        }
     }
 };

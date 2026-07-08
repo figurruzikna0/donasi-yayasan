@@ -1,37 +1,18 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
             {{ __('Edit Kampanye') }}
         </h2>
     </x-slot>
 
-    <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="card bg-base-100 shadow-lg border border-emerald-200">
-
-                <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-white" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-lg">Edit Kampanye</h3>
-                        <p class="text-white/80 text-sm">{{ $campaign->title }}</p>
-                    </div>
-                </div>
-
-                <div class="card-body p-8">
+    <x-admin-form-card
+        icon='<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>'
+        title="Edit Kampanye"
+        subtitle="Perbarui detail kampanye donasi"
+    >
 
                     @if($errors->any())
-                        <div class="alert alert-error mb-5">
-                            <ul class="list-disc list-inside text-sm">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        <x-alert type="error" :errors="$errors->all()" />
                     @endif
 
                     <form action="{{ route('admin.campaigns.update', $campaign->id) }}" method="POST"
@@ -131,10 +112,7 @@
                         </div>
 
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    </x-admin-form-card>
 
     <style>
         .file-input-wrapper { position: relative; }
@@ -162,4 +140,4 @@
         });
     </script>
 
-</x-app-layout>
+</x-admin-layout>
