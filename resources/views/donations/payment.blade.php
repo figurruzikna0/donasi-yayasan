@@ -6,7 +6,7 @@
     <title>Selesaikan Pembayaran Donasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript"
-            src="https://app.sandbox.midtrans.com/snap/snap.js"
+            src="https://{{ config('midtrans.is_production') ? 'app.midtrans.com' : 'app.sandbox.midtrans.com' }}/snap/snap.js"
             data-client-key="{{ config('midtrans.client_key') }}"></script>
 </head>
 <body class="font-sans antialiased flex items-center justify-center min-h-screen py-10 bg-gradient-to-br from-emerald-50 via-emerald-100 to-emerald-200">

@@ -17,14 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Admin Yayasan',
-            'email' => 'admindonasi@yayasan.com',
-            'password' => Hash::make('baitulyatim123'), // Passwordnya: baitulyatim123
-            'role' => 'admin',
-        ]);
+        if (env('ADMIN_EMAIL') && env('ADMIN_PASSWORD')) {
+            User::factory()->create([
+                'name' => env('ADMIN_NAME', 'Admin Yayasan'),
+                'email' => env('ADMIN_EMAIL'),
+                'password' => Hash::make(env('ADMIN_PASSWORD')),
+                'role' => 'admin',
+            ]);
+        }
     
     }
 }

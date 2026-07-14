@@ -15,6 +15,27 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900">
 
+            {{-- ══ GLOBAL TOAST NOTIFICATIONS ══ --}}
+            <div class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+                <div class="pointer-events-auto space-y-2">
+                    @if(session('success'))
+                        <x-alert type="success" message="{{ session('success') }}" />
+                    @endif
+                    @if(session('error'))
+                        <x-alert type="error" message="{{ session('error') }}" />
+                    @endif
+                    @if(session('warning'))
+                        <x-alert type="warning" message="{{ session('warning') }}" />
+                    @endif
+                    @if(session('info'))
+                        <x-alert type="info" message="{{ session('info') }}" />
+                    @endif
+                    @if(session('status'))
+                        <x-alert type="success" message="{{ session('status') }}" title="Informasi" />
+                    @endif
+                </div>
+            </div>
+
             {{-- Decorative ornaments --}}
             <div class="absolute inset-0 pointer-events-none overflow-hidden">
                 <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>

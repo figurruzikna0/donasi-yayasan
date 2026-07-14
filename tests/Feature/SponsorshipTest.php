@@ -109,13 +109,13 @@ class SponsorshipTest extends TestCase
             'amount' => 200000,
             'paket_komitmen' => 'Reguler',
             'description' => 'Semoga berkah',
-            'payment_method' => 'QRIS Yayasan',
+            'payment_method' => 'QRIS',
         ];
 
         $response = $this->actingAs($this->donatur)
             ->post("/foster-children/{$this->child->id}/sponsor", $data);
 
-        $response->assertOk();
+        $response->assertRedirect();
 
         $this->assertDatabaseHas('sponsorships', [
             'foster_child_id' => $this->child->id,

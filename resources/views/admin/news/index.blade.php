@@ -24,11 +24,6 @@
 
         <div class="p-8 pt-6 space-y-6">
 
-            {{-- Alert --}}
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
-
             {{-- Summary Cards --}}
             <div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">

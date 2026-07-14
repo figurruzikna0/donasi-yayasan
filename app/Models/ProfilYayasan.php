@@ -20,6 +20,5 @@ class ProfilYayasan extends Model
         'legalitas',
         'foto_legalitas',
         'foto_struktur',
-        'foto_qris'
     ];
 }

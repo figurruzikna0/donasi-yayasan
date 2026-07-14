@@ -68,7 +68,7 @@ Route::get('/legalitas', function () {
 })->name('legalitas');
 
 // --- RUTE DONASI & SPONSOR (wajib login & verifikasi) ---
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'throttle:10,1'])->group(function () {
     Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donations.create');
     Route::post('/campaign/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
     Route::get('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorForm'])->name('sponsor.form');
@@ -101,7 +101,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::post('/pembayaran/qris/upload', [DonationController::class, 'uploadQris'])->name('qris.upload');
 });
 
 // --- RUTE ADMIN (Terlindungi) ---

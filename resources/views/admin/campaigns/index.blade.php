@@ -55,10 +55,6 @@
                 </div>
             </div>
 
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
-
             {{-- Table Card --}}
             <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
                 <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">

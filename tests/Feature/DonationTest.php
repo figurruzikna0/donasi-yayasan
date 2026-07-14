@@ -44,13 +44,13 @@ class DonationTest extends TestCase
             'donor_email' => 'test@example.com',
             'donor_phone' => '081234567890',
             'amount' => 50000,
-            'payment_method' => 'QRIS Yayasan',
+            'payment_method' => 'QRIS',
         ];
 
         $response = $this->actingAs($this->donatur)
             ->post("/campaign/{$this->campaign->id}/donate", $data);
 
-        $response->assertOk();
+        $response->assertRedirect();
 
         $this->assertDatabaseHas('donations', [
             'campaign_id' => $this->campaign->id,
@@ -121,7 +121,7 @@ class DonationTest extends TestCase
             'donor_email' => 'test@test.com',
             'donor_phone' => '081234567890',
             'amount' => 500,
-            'payment_method' => 'QRIS Yayasan',
+            'payment_method' => 'QRIS',
         ];
 
         $response = $this->actingAs($this->donatur)

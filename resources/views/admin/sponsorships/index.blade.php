@@ -20,14 +20,6 @@
 
         <div class="p-8 pt-6 space-y-6">
 
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
-
-            @if(session('error'))
-                <x-alert type="error" message="{{ session('error') }}" />
-            @endif
-
             {{-- Table Card --}}
             <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
                 <div class="px-6 py-4 border-b border-base-200 flex flex-wrap gap-3 items-center justify-between">

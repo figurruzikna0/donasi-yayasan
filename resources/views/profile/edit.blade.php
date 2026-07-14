@@ -28,13 +28,6 @@
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 space-y-5 pb-8">
 
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
-            @if(session('error'))
-                <x-alert type="error" message="{{ session('error') }}" />
-            @endif
-
             {{-- ══ DATA DIRI ══ --}}
             <div class="bg-white/80 backdrop-blur-sm rounded-xl border border-base-300 shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-base-200 flex items-center gap-3">

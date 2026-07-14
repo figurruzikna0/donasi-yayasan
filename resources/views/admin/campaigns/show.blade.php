@@ -8,6 +8,15 @@
     <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
+            @if(!$campaign)
+                <div class="card bg-base-100 shadow-lg border border-red-200">
+                    <div class="card-body text-center py-12">
+                        <p class="text-red-500 font-bold text-lg">Kampanye tidak ditemukan</p>
+                        <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline border-emerald-300 text-emerald-600 font-bold mt-4">← Kembali</a>
+                    </div>
+                </div>
+            @else
+
             <div class="card bg-base-100 shadow-lg border border-emerald-200">
 
                 <div class="bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-400 p-5 flex items-center gap-3">
@@ -80,6 +89,7 @@
 
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </x-admin-layout>

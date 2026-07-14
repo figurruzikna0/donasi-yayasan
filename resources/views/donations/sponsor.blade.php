@@ -153,7 +153,6 @@
                                 <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>🏦 Virtual Account BSI</option>
                                 <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>📱 GoPay</option>
                                 <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS (Midtrans)</option>
-                                <option value="QRIS Yayasan" {{ old('payment_method') == 'QRIS Yayasan' ? 'selected' : '' }}>📱 QRIS Yayasan (Manual)</option>
                                 <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>📱 ShopeePay</option>
                             </select>
                         </div>

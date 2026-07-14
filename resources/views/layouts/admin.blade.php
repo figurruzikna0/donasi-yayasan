@@ -9,9 +9,30 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased">
-    <div class="flex bg-base-200 min-h-screen">
-        @php $adminUser = Auth::user(); @endphp
+    <body class="font-sans antialiased">
+        <div class="flex bg-base-200 min-h-screen">
+            @php $adminUser = Auth::user(); @endphp
+
+            {{-- ══ GLOBAL TOAST NOTIFICATIONS ══ --}}
+            <div class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+                <div class="pointer-events-auto space-y-2">
+                    @if(session('success'))
+                        <x-alert type="success" message="{{ session('success') }}" />
+                    @endif
+                    @if(session('error'))
+                        <x-alert type="error" message="{{ session('error') }}" />
+                    @endif
+                    @if(session('warning'))
+                        <x-alert type="warning" message="{{ session('warning') }}" />
+                    @endif
+                    @if(session('info'))
+                        <x-alert type="info" message="{{ session('info') }}" />
+                    @endif
+                    @if(session('status'))
+                        <x-alert type="success" message="{{ session('status') }}" title="Informasi" />
+                    @endif
+                </div>
+            </div>
 
         {{-- ══ SIDEBAR BACKDROP (mobile only) ══ --}}
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden transition-opacity duration-300" onclick="closeSidebar()"></div>

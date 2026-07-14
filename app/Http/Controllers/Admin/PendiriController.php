@@ -11,7 +11,7 @@ class PendiriController extends Controller
 {
     public function index()
     {
-        $pendiris = Pendiri::latest()->get();
+        $pendiris = Pendiri::latest()->paginate(10);
         return view('admin.pendiri.index', compact('pendiris'));
     }
 

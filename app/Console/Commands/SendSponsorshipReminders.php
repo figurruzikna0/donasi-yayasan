@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 
 class SendSponsorshipReminders extends Command
 {
-    protected $signature = 'sponsorships:check-due';
+    protected $signature = 'sponsorships:send-email-reminders';
     protected $description = 'Send email reminders for sponsorships about to expire';
 
     public function handle()

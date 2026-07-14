@@ -23,7 +23,6 @@ class ProfilYayasanFactory extends Factory
             'logo' => null,
             'foto_legalitas' => null,
             'foto_struktur' => null,
-            'foto_qris' => null,
         ];
     }
 }

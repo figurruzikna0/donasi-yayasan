@@ -11,10 +11,6 @@
         subtitle="Isi detail di bawah untuk meluncurkan program kebaikan baru"
     >
 
-                    @if(session('success'))
-                        <x-alert type="success" message="{{ session('success') }}" />
-                    @endif
-
                     <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 

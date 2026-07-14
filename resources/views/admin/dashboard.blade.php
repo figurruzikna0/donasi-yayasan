@@ -127,11 +127,6 @@
                             </a>
                         </div>
 
-                        @php
-                            $recentDonations = \App\Models\Donation::with('campaign')
-                                ->latest()->take(4)->get();
-                        @endphp
-
                         <div class="divide-y divide-base-200/60">
                             @forelse($recentDonations as $txn)
                             <div class="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
@@ -160,13 +155,6 @@
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
                     <div class="p-5">
                         <div class="font-extrabold text-base-content mb-4">📊 Rincian Anak Asuh</div>
-
-                        @php
-                            $totalAnak    = \App\Models\FosterChild::count();
-                            $tersedia     = \App\Models\FosterChild::where('status','Tersedia')->count();
-                            $diasuh       = \App\Models\FosterChild::where('status','Diasuh')->count();
-                            $lainnya      = $totalAnak - $tersedia - $diasuh;
-                        @endphp
 
                         <div class="space-y-3">
                             <div class="bg-base-200/50 rounded-lg px-4 py-3">
@@ -242,20 +230,6 @@
     });
 
     // ── Cashflow data dari backend (PHP → JS) ──
-    @php
-        $cashflow12 = [];
-        $labels12   = [];
-        for ($i = 11; $i >= 0; $i--) {
-            $date  = now()->subMonths($i);
-            $total = \App\Models\Donation::where('status','success')
-                ->whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->sum('amount');
-            $cashflow12[] = (int) $total;
-            $labels12[]   = $date->locale('id')->isoFormat('MMM YY');
-        }
-    @endphp
-
     const allLabels   = @json($labels12);
     const allData     = @json($cashflow12);
 
@@ -329,16 +303,10 @@
     }
 
     // ── Donut chart: status anak asuh ──
-    @php
-        $tersediaJs = \App\Models\FosterChild::where('status','Tersedia')->count();
-        $diasuhJs   = \App\Models\FosterChild::where('status','Diasuh')->count();
-        $lainnyaJs  = \App\Models\FosterChild::count() - $tersediaJs - $diasuhJs;
-    @endphp
-
     (function () {
-        const tersedia = {{ $tersediaJs }};
-        const diasuh   = {{ $diasuhJs }};
-        const lainnya  = {{ $lainnyaJs }};
+        const tersedia = {{ $tersedia }};
+        const diasuh   = {{ $diasuh }};
+        const lainnya  = {{ $lainnya }};
         const total    = tersedia + diasuh + lainnya;
 
         const ctx = document.getElementById('childDonut').getContext('2d');

@@ -32,7 +32,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Total Anak Asuh</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $children->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $allChildren->count() }}</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Laki-laki</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $children->where('jenis_kelamin', 'Laki-laki')->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $allChildren->where('jenis_kelamin', 'Laki-laki')->count() }}</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Perempuan</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $children->where('jenis_kelamin', 'Perempuan')->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $allChildren->where('jenis_kelamin', 'Perempuan')->count() }}</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -59,15 +59,10 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sedang Diasuh</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $children->where('status', '!=', 'Tersedia')->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $allChildren->where('status', '!=', 'Tersedia')->count() }}</div>
                     </div>
                 </div>
             </div>
-
-            {{-- Flash --}}
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
 
             {{-- Table Card --}}
             <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
@@ -186,6 +181,7 @@
                         </tbody>
                     </table>
                 </div>
+                {{ $children->links() }}
             </div>
 
         </div>

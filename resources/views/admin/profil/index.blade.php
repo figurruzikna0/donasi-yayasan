@@ -20,14 +20,6 @@
 
         <div class="p-8 pt-6 space-y-6">
 
-        {{-- Flash --}}
-        @if(session('success'))
-            <x-alert type="success" message="{{ session('success') }}" />
-        @endif
-        @if(session('error'))
-            <x-alert type="error" message="{{ session('error') }}" />
-        @endif
-
         {{-- ══ TAB SWITCHER ══ --}}
         <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-base-300 w-fit">
             <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 bg-primary text-white shadow-sm" id="tab-profil" onclick="switchProfilTab('profil')">
@@ -35,7 +27,7 @@
             </button>
             <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 text-base-content/50 hover:text-base-content hover:bg-base-200" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
                 Pendiri & Pengurus
-                <span class="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-base-300">{{ $pendiris->count() }}</span>
+                    <span class="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-base-300">{{ $pendiris->total() }}</span>
             </button>
         </div>
 
@@ -128,37 +120,6 @@
                                 <textarea name="misi" rows="4" class="textarea textarea-bordered w-full" required placeholder="• Memberikan pendidikan terbaik&#10;• Mengelola amanah dengan transparan">{{ old('misi', $profil?->misi) }}</textarea>
                                 @error('misi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- CARD 3.5: QRIS Pembayaran --}}
-                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">📱</div>
-                        <div>
-                            <p class="font-extrabold text-sm text-base-content">QRIS Pembayaran</p>
-                            <p class="text-xs text-base-content/50">Upload QRIS yayasan untuk pembayaran donasi langsung</p>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-control">
-                            <label class="label"><span class="label-text font-bold text-emerald-700">Foto QRIS <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
-                            <div class="relative">
-                                <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="qris-input">
-                                    <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    <span id="qris-label" class="text-sm text-emerald-600 font-semibold">Pilih foto QRIS…</span>
-                                </label>
-                                <input type="file" name="foto_qris" id="qris-input" accept="image/*" class="hidden" onchange="document.getElementById('qris-label').textContent=this.files[0]?.name||'Pilih foto QRIS…'">
-                            </div>
-                            <p class="text-xs text-emerald-400 mt-1">JPG / PNG · Maks 2MB</p>
-                            @if($profil?->foto_qris)
-                                <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50 inline-block">
-                                    <p class="text-xs text-emerald-400 font-semibold text-center mb-1">QRIS saat ini</p>
-                                    <img src="{{ asset('storage/' . $profil->foto_qris) . '?v=' . now()->timestamp }}" class="max-h-32 mx-auto rounded-lg" alt="QRIS">
-                                </div>
-                            @endif
-                            @error('foto_qris') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
                 </div>
@@ -288,6 +249,7 @@
                             </div>
                         @endforelse
                     </div>
+                    {{ $pendiris->links() }}
                 </div>
             </div>
 

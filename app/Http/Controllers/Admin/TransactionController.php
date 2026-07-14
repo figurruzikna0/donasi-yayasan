@@ -17,8 +17,15 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $donations = Donation::with('campaign')->latest()->get()->map(function ($item) {
-            return (object) [
+        $donationCount = Donation::count();
+        $sponsorshipCount = Sponsorship::count();
+        $donationSuccessCount = Donation::where('status', 'success')->count();
+        $donationPendingCount = Donation::where('status', 'pending')->count();
+        $sponsorshipSuccessCount = Sponsorship::where('status', 'success')->count();
+        $sponsorshipPendingCount = Sponsorship::where('status', 'pending')->count();
+
+        $donations = Donation::with('campaign')->latest()->paginate(10)
+            ->through(fn($item) => (object) [
                 'order_id'       => $item->order_id,
                 'donor_name'     => $item->donor_name,
                 'donor_email'    => $item->donor_email,
@@ -27,11 +34,10 @@ class TransactionController extends Controller
                 'payment_method' => $item->payment_method,
                 'status'         => $item->status,
                 'created_at'     => $item->created_at,
-            ];
-        });
+            ]);
 
-        $sponsorships = Sponsorship::with('fosterChild')->latest()->get()->map(function ($item) {
-            return (object) [
+        $sponsorships = Sponsorship::with('fosterChild')->latest()->paginate(10, ['*'], 'sponsorships_page')
+            ->through(fn($item) => (object) [
                 'order_id'       => $item->order_id,
                 'donor_name'     => $item->donor_name,
                 'donor_email'    => $item->donor_email,
@@ -42,10 +48,14 @@ class TransactionController extends Controller
                 'payment_method' => $item->payment_method,
                 'status'         => $item->status,
                 'created_at'     => $item->created_at,
-            ];
-        });
+            ]);
 
-        return view('admin.transactions.index', compact('donations', 'sponsorships'));
+        return view('admin.transactions.index', compact(
+            'donations', 'sponsorships',
+            'donationCount', 'sponsorshipCount',
+            'donationSuccessCount', 'donationPendingCount',
+            'sponsorshipSuccessCount', 'sponsorshipPendingCount',
+        ));
     }
 
     public function approve($id)
@@ -68,12 +78,10 @@ class TransactionController extends Controller
 
             $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
-            // Kirim notifikasi WA ke donatur
             if ($sponsorship->donor_phone) {
                 $this->kirimWaSponsor($sponsorship);
             }
 
-            // Kirim notifikasi email ke donatur
             if ($sponsorship->donor_email) {
                 try {
                     Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
@@ -95,7 +103,6 @@ class TransactionController extends Controller
         $donation->update(['status' => 'success']);
         $donation->campaign?->increment('collected_amount', $donation->amount);
 
-        // Kirim notifikasi email ke donatur
         if ($donation->donor_email) {
             try {
                 Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
@@ -203,7 +210,6 @@ class TransactionController extends Controller
         }
     }
 
-    // ── Private: kirim WA notifikasi sponsorship ──
     private function kirimWaSponsor(Sponsorship $sponsorship): void
     {
         $child   = $sponsorship->fosterChild;

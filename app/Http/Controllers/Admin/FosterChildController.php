@@ -13,8 +13,9 @@ class FosterChildController extends Controller
 
     public function index()
     {
-        $children = FosterChild::latest()->get();
-        return view('admin.foster_children.index', compact('children'));
+        $children = FosterChild::latest()->paginate(10);
+        $allChildren = FosterChild::all();
+        return view('admin.foster_children.index', compact('children', 'allChildren'));
     }
 
     public function create()

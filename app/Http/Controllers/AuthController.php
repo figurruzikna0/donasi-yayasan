@@ -34,7 +34,7 @@ class AuthController extends Controller
             }
 
             // Kalau dia Donatur, lempar ke Beranda/Dashboard Donatur
-            return redirect()->intended('/donatur/dashboard'); 
+            return redirect()->intended(route('dashboard')); 
         }
 
         // Kalau email/password salah, tendang balik ke form login

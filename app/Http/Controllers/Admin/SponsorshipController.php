@@ -12,7 +12,7 @@ class SponsorshipController extends Controller
 {
     public function index()
     {
-        $sponsorships = Sponsorship::with('fosterChild')->latest()->get();
+        $sponsorships = Sponsorship::with('fosterChild')->latest()->paginate(50);
 
         return view('admin.sponsorships.index', compact('sponsorships'));
     }

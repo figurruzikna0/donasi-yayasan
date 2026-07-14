@@ -20,10 +20,6 @@
 
         <div class="p-8 pt-6 space-y-6">
 
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
-
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {{-- Add form card --}}
@@ -136,6 +132,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        {{ $pendiris->links() }}
                     </div>
                 </div>
 

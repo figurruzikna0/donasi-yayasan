@@ -21,16 +21,6 @@
         {{-- Content --}}
         <div class="p-8 pt-6 space-y-6">
 
-            @if(session('success'))
-                <x-alert type="success" message="{{ session('success') }}" />
-            @endif
-            @if(session('error'))
-                <x-alert type="error" message="{{ session('error') }}" />
-            @endif
-            @if(session('info'))
-                <x-alert type="info" message="{{ session('info') }}" />
-            @endif
-
             {{-- Stat Cards --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-sm:grid-cols-1">
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -39,7 +29,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Total Donasi</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donations->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donationCount }}</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -48,7 +38,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sponsorship</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $sponsorships->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $sponsorshipCount }}</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -57,7 +47,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sukses</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donations->where('status','success')->count() + $sponsorships->where('status','success')->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donationSuccessCount + $sponsorshipSuccessCount }}</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -66,7 +56,7 @@
                     </div>
                     <div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Tertunda</div>
-                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donations->where('status','pending')->count() + $sponsorships->where('status','pending')->count() }}</div>
+                        <div class="text-2xl font-black text-base-content mt-0.5">{{ $donationPendingCount + $sponsorshipPendingCount }}</div>
                     </div>
                 </div>
             </div>
@@ -81,14 +71,14 @@
                             class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Donasi Kampanye
-                        <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'donasi' ? 'bg-white/20' : 'bg-base-300'">{{ $donations->count() }}</span>
+                        <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'donasi' ? 'bg-white/20' : 'bg-base-300'">{{ $donationCount }}</span>
                     </button>
                     <button @click="tab = 'sponsor'"
                             :class="tab === 'sponsor' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-base-content/50 hover:text-base-content hover:bg-base-200'"
                             class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         Orang Tua Asuh
-                        <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'sponsor' ? 'bg-white/20' : 'bg-base-300'">{{ $sponsorships->count() }}</span>
+                        <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'sponsor' ? 'bg-white/20' : 'bg-base-300'">{{ $sponsorshipCount }}</span>
                     </button>
                 </div>
 
@@ -208,6 +198,9 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="px-4 py-3 border-t border-base-200 bg-base-50">
+                        {{ $donations->links() }}
                     </div>
                 </div>
 
@@ -347,6 +340,9 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="px-4 py-3 border-t border-base-200 bg-base-50">
+                        {{ $sponsorships->links() }}
                     </div>
                 </div>
 

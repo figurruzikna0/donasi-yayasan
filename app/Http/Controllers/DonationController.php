@@ -6,7 +6,6 @@ use App\Mail\DonationSuccessMail;
 use App\Mail\SponsorshipSuccessMail;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
-use App\Traits\HandlesFileUpload;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Donation;
@@ -17,7 +16,6 @@ use Midtrans\Snap;
 
 class DonationController extends Controller
 {
-    use HandlesFileUpload;
     private function initMidtrans()
     {
         Config::$serverKey    = config('midtrans.server_key');
@@ -57,10 +55,6 @@ class DonationController extends Controller
             'status'         => 'pending',
         ]);
 
-        if ($validated['payment_method'] === 'QRIS Yayasan') {
-            return view('donations.qris_payment', compact('donation', 'campaign'));
-        }
-
         $this->initMidtrans();
 
         $params = [
@@ -75,7 +69,14 @@ class DonationController extends Controller
             ],
         ];
 
-        $snapToken = Snap::getSnapToken($params);
+        try {
+            $snapToken = Snap::getSnapToken($params);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Midtrans Snap error (donasi): ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Maaf, gerbang pembayaran sedang sibuk. Silakan pilih metode lain atau coba beberapa saat lagi.')
+                ->withInput();
+        }
         $donation->update(['snap_token' => $snapToken]);
 
         return view('donations.payment', compact('donation', 'campaign', 'snapToken'));
@@ -118,10 +119,6 @@ class DonationController extends Controller
             'status'              => 'pending',
         ]);
 
-        if ($validated['payment_method'] === 'QRIS Yayasan') {
-            return view('donations.qris_payment', compact('sponsorship', 'child'));
-        }
-
         $this->initMidtrans();
 
         $params = [
@@ -136,36 +133,17 @@ class DonationController extends Controller
             ],
         ];
 
-        $snapToken = Snap::getSnapToken($params);
+        try {
+            $snapToken = Snap::getSnapToken($params);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Midtrans Snap error (sponsor): ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Maaf, gerbang pembayaran sedang sibuk. Silakan pilih metode lain atau coba beberapa saat lagi.')
+                ->withInput();
+        }
         $sponsorship->update(['snap_token' => $snapToken]);
 
         return view('donations.sponsor_payment', compact('sponsorship', 'child', 'snapToken'));
-    }
-
-    public function uploadQris(Request $request)
-    {
-        $validated = $request->validate([
-            'order_id'       => 'required|string',
-            'payment_proof'  => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        $type = str_starts_with($validated['order_id'], 'SPONSOR-') ? 'sponsorship' : 'donation';
-
-        if ($type === 'sponsorship') {
-            $sponsorship = Sponsorship::where('order_id', $validated['order_id'])->firstOrFail();
-            $sponsorship->update([
-                'payment_proof' => $this->uploadFile($request->file('payment_proof'), 'payment-proofs'),
-            ]);
-            return redirect()->route('invoice.sponsorship', $sponsorship->id)
-                ->with('success', 'Bukti pembayaran berhasil diupload. Menunggu konfirmasi admin.');
-        }
-
-        $donation = Donation::where('order_id', $validated['order_id'])->firstOrFail();
-        $donation->update([
-            'payment_proof' => $this->uploadFile($request->file('payment_proof'), 'payment-proofs'),
-        ]);
-        return redirect()->route('invoice.donation', $donation->id)
-            ->with('success', 'Bukti pembayaran berhasil diupload. Menunggu konfirmasi admin.');
     }
 
     public function callback(Request $request)

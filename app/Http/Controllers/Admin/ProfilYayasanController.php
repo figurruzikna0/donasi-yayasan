@@ -14,7 +14,7 @@ class ProfilYayasanController extends Controller
 
     public function index()
     {
-        $pendiris = Pendiri::latest()->get();
+        $pendiris = Pendiri::latest()->paginate(10);
 
         return view('admin.profil.index', compact('pendiris'));
     }
@@ -38,7 +38,6 @@ class ProfilYayasanController extends Controller
             'legalitas'       => 'nullable|string',
             'foto_legalitas'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'foto_struktur'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'foto_qris'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'pendiri_nama' => 'nullable|string|max:255',
             'pendiri_jabatan' => 'required_with:pendiri_nama|string|max:255',
             'pendiri_deskripsi' => 'nullable|string',
@@ -47,7 +46,7 @@ class ProfilYayasanController extends Controller
 
         $profil = ProfilYayasan::first();
 
-        $data = $request->except(['logo', 'foto_legalitas', 'foto_struktur', 'foto_qris']);
+        $data = $request->except(['logo', 'foto_legalitas', 'foto_struktur']);
 
         if ($request->hasFile('logo')) {
             $data['logo'] = $this->uploadFile(
@@ -70,14 +69,6 @@ class ProfilYayasanController extends Controller
                 $request->file('foto_struktur'),
                 'struktur',
                 $profil?->foto_struktur
-            );
-        }
-
-        if ($request->hasFile('foto_qris')) {
-            $data['foto_qris'] = $this->uploadFile(
-                $request->file('foto_qris'),
-                'qris',
-                $profil?->foto_qris
             );
         }
 

@@ -17,6 +17,15 @@
 
         <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+            @if(!$campaign)
+                <div class="card bg-base-100 shadow-lg border border-red-200">
+                    <div class="card-body text-center py-12">
+                        <p class="text-red-500 font-bold text-lg">Program donasi tidak ditemukan</p>
+                        <a href="{{ route('dashboard') }}" class="btn btn-outline border-emerald-300 text-emerald-600 font-bold mt-4">← Kembali ke Dashboard</a>
+                    </div>
+                </div>
+            @else
+
             {{-- Campaign Info --}}
             <div class="card bg-emerald-50 border border-emerald-200 shadow-sm mb-6">
                 <div class="card-body p-5 flex flex-row items-center gap-4">
@@ -121,7 +130,6 @@
                                 <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>🏦 Virtual Account BSI</option>
                                 <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>📱 GoPay</option>
                                 <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS (Midtrans)</option>
-                                <option value="QRIS Yayasan" {{ old('payment_method') == 'QRIS Yayasan' ? 'selected' : '' }}>📱 QRIS Yayasan (Manual)</option>
                                 <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>📱 ShopeePay</option>
                             </select>
                         </div>
@@ -143,6 +151,7 @@
             <div class="text-center mt-6 text-xs text-slate-400">
                 <p>🔒 Pembayaran diproses secara aman melalui <span class="font-semibold text-emerald-600">Midtrans</span></p>
             </div>
+            @endif
         </div>
     </div>
 
