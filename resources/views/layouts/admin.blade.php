@@ -14,8 +14,8 @@
             @php $adminUser = Auth::user(); @endphp
 
             {{-- ══ GLOBAL TOAST NOTIFICATIONS ══ --}}
-            <div class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
-                <div class="pointer-events-auto space-y-2">
+            <div class="fixed top-2 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 max-w-lg w-full px-4 pointer-events-none">
+                <div class="pointer-events-auto space-y-3">
                     @if(session('success'))
                         <x-alert type="success" message="{{ session('success') }}" />
                     @endif

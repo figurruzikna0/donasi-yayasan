@@ -137,6 +137,125 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'Data transaksi berhasil dihapus dari sistem!');
     }
 
+    public function syncAll()
+    {
+        $results = ['success' => 0, 'failed' => 0, 'pending' => 0, 'errors' => 0];
+
+        $orderIds = Donation::where('status', 'pending')
+            ->whereNotNull('snap_token')
+            ->pluck('order_id')
+            ->concat(
+                Sponsorship::where('status', 'pending')
+                    ->whereNotNull('snap_token')
+                    ->pluck('order_id')
+            );
+
+        if ($orderIds->isEmpty()) {
+            return redirect()->back()->with('info', 'Tidak ada transaksi pending yang perlu disinkronkan.');
+        }
+
+        Config::$serverKey    = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized  = true;
+        Config::$is3ds        = true;
+
+        foreach ($orderIds as $orderId) {
+            try {
+                $status = Transaction::status($orderId);
+            } catch (\Throwable $e) {
+                $results['errors']++;
+                continue;
+            }
+
+            $midtransStatus = $status->transaction_status ?? '';
+
+            if (str_starts_with($orderId, 'SPONSOR-')) {
+                $sponsorship = Sponsorship::where('order_id', $orderId)->first();
+                if (!$sponsorship) continue;
+
+                if (in_array($midtransStatus, ['settlement', 'capture'])) {
+                    $sponsorship->update([
+                        'status'     => 'success',
+                        'starts_at'  => $sponsorship->starts_at ?? now(),
+                        'expires_at' => $sponsorship->expires_at ?? now()->addMonth(),
+                    ]);
+                    $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
+
+                    if ($sponsorship->donor_email) {
+                        try {
+                            Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
+                        }
+                    }
+
+                    $results['success']++;
+                } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
+                    $sponsorship->update(['status' => 'failed']);
+                    $results['failed']++;
+                } else {
+                    $results['pending']++;
+                }
+            } else {
+                $donation = Donation::where('order_id', $orderId)->first();
+                if (!$donation) continue;
+
+                if (in_array($midtransStatus, ['settlement', 'capture'])) {
+                    $donation->update(['status' => 'success']);
+                    $donation->campaign?->increment('collected_amount', $donation->amount);
+
+                    if ($donation->donor_email) {
+                        try {
+                            Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
+                        }
+                    }
+
+                    $results['success']++;
+                } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
+                    $donation->update(['status' => 'failed']);
+                    $results['failed']++;
+                } else {
+                    $results['pending']++;
+                }
+            }
+        }
+
+        $msg = '';
+        if ($results['success'] > 0) {
+            $msg .= "{$results['success']} transaksi berhasil dikonfirmasi. ";
+        }
+        if ($results['failed'] > 0) {
+            $msg .= "{$results['failed']} transaksi gagal. ";
+        }
+        if ($results['pending'] > 0) {
+            $msg .= "{$results['pending']} transaksi masih menunggu pembayaran. ";
+        }
+        if ($results['errors'] > 0) {
+            $msg .= "{$results['errors']} transaksi gagal dihubungi ke Midtrans. ";
+        }
+
+        $msg = trim($msg) ?: 'Tidak ada perubahan status.';
+
+        $redirect = redirect()->back();
+
+        if ($results['success'] > 0) {
+            $redirect->with('success', $msg);
+        }
+        if ($results['failed'] > 0) {
+            $redirect->with('warning', $msg);
+        }
+        if ($results['pending'] > 0 && $results['success'] === 0) {
+            $redirect->with('info', $msg);
+        }
+        if ($results['errors'] > 0 && $results['success'] === 0 && $results['failed'] === 0) {
+            $redirect->with('error', $msg);
+        }
+
+        return $redirect;
+    }
+
     public function sync($id)
     {
         Config::$serverKey    = config('midtrans.server_key');

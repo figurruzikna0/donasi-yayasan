@@ -1,6 +1,34 @@
-@props(['type' => 'success', 'message' => '', 'title' => '', 'errors' => null])
+<?php $attributes ??= new \Illuminate\View\ComponentAttributeBag;
 
-@php
+$__newAttributes = [];
+$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['type' => 'success', 'message' => '', 'title' => '', 'errors' => null]));
+
+foreach ($attributes->all() as $__key => $__value) {
+    if (in_array($__key, $__propNames)) {
+        $$__key = $$__key ?? $__value;
+    } else {
+        $__newAttributes[$__key] = $__value;
+    }
+}
+
+$attributes = new \Illuminate\View\ComponentAttributeBag($__newAttributes);
+
+unset($__propNames);
+unset($__newAttributes);
+
+foreach (array_filter((['type' => 'success', 'message' => '', 'title' => '', 'errors' => null]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
+    $$__key = $$__key ?? $__value;
+}
+
+$__defined_vars = get_defined_vars();
+
+foreach ($attributes->all() as $__key => $__value) {
+    if (array_key_exists($__key, $__defined_vars)) unset($$__key);
+}
+
+unset($__defined_vars, $__key, $__value); ?>
+
+<?php
     $config = match($type) {
         'success' => [
             'bg' => 'bg-white dark:bg-slate-800',
@@ -54,7 +82,7 @@
     };
 
     $hasErrors = $errors && count($errors) > 0;
-@endphp
+?>
 
 <div x-data="{ show: true }"
      x-show="show"
@@ -64,33 +92,35 @@
      x-transition:leave="transition ease-in duration-300"
      x-transition:leave-start="opacity-100 translate-y-0 scale-100"
      x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-     @if(!$hasErrors) x-init="setTimeout(() => show = false, 5000)" @endif
-     class="relative w-full max-w-md {{ $config['bg'] }} {{ $config['border'] }} border {{ $config['shadow'] }} shadow-lg rounded-xl overflow-hidden">
+     <?php if(!$hasErrors): ?> x-init="setTimeout(() => show = false, 5000)" <?php endif; ?>
+     class="relative w-full max-w-md <?php echo e($config['bg']); ?> <?php echo e($config['border']); ?> border <?php echo e($config['shadow']); ?> shadow-lg rounded-xl overflow-hidden">
 
-    {{-- Accent bar kiri --}}
-    <div class="absolute left-0 top-0 bottom-0 w-1 {{ $config['accent'] }}"></div>
+    
+    <div class="absolute left-0 top-0 bottom-0 w-1 <?php echo e($config['accent']); ?>"></div>
 
     <div class="relative pl-5 pr-4 py-4">
         <div class="flex items-start gap-3.5">
-            <div class="w-10 h-10 rounded-xl {{ $config['iconBg'] }} flex items-center justify-center flex-shrink-0 {{ $config['icon'] }}">
-                {!! $config['svg'] !!}
+            <div class="w-10 h-10 rounded-xl <?php echo e($config['iconBg']); ?> flex items-center justify-center flex-shrink-0 <?php echo e($config['icon']); ?>">
+                <?php echo $config['svg']; ?>
+
             </div>
             <div class="flex-1 min-w-0 pt-0.5">
                 <div class="flex items-center gap-2">
-                    <p class="font-bold text-sm {{ $config['textTitle'] }}">{{ $hasErrors ? ($title ?: 'Harap perbaiki kesalahan berikut') : $config['title'] }}</p>
+                    <p class="font-bold text-sm <?php echo e($config['textTitle']); ?>"><?php echo e($hasErrors ? ($title ?: 'Harap perbaiki kesalahan berikut') : $config['title']); ?></p>
                 </div>
-                @if($hasErrors)
+                <?php if($hasErrors): ?>
                     <ul class="mt-2 space-y-1.5">
-                        @foreach($errors as $error)
-                            <li class="text-xs {{ $config['textMsg'] }} flex items-start gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full {{ $config['accent'] }} mt-1 flex-shrink-0"></span>
-                                {{ $error }}
+                        <?php $__currentLoopData = $errors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li class="text-xs <?php echo e($config['textMsg']); ?> flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full <?php echo e($config['accent']); ?> mt-1 flex-shrink-0"></span>
+                                <?php echo e($error); ?>
+
                             </li>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
-                @else
-                    <p class="text-xs {{ $config['textMsg'] }} mt-0.5 leading-relaxed">{{ $message }}</p>
-                @endif
+                <?php else: ?>
+                    <p class="text-xs <?php echo e($config['textMsg']); ?> mt-0.5 leading-relaxed"><?php echo e($message); ?></p>
+                <?php endif; ?>
             </div>
             <button @click="show = false" class="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-all duration-200 -mr-1">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -98,13 +128,14 @@
         </div>
     </div>
 
-    {{-- Progress bar bottom --}}
-    @if(!$hasErrors)
+    
+    <?php if(!$hasErrors): ?>
         <div class="absolute bottom-0 left-1 right-0 h-0.5 bg-slate-100 dark:bg-slate-700">
-            <div class="h-full rounded-full {{ $config['accent'] }} transition-all duration-[5000ms] ease-linear"
+            <div class="h-full rounded-full <?php echo e($config['accent']); ?> transition-all duration-[5000ms] ease-linear"
                  style="width: 100%"
                  x-init="$el.style.width = '0%'">
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 </div>
+<?php /**PATH C:\laragon\www\donasi-yayasan\resources\views/components/alert.blade.php ENDPATH**/ ?>

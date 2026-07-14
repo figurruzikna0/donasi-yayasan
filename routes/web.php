@@ -138,6 +138,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // Kelola Transaksi Donasi Kampanye
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::post('/transactions/sync-all', [TransactionController::class, 'syncAll'])->name('transactions.sync-all');
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
     Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');
