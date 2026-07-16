@@ -8,90 +8,92 @@ Berikut adalah diagram ERD **lengkap dengan atribut** (kolom) pada setiap tabel.
 Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong.
 
 ```
-┌═══════════════════════════════════════════┐
-║            foster_children                ║
-║═══════════════════════════════════════════║
-║  PK  id                bigint             ║
-║      name              varchar(255)       ║
-║      age               integer            ║
-║      jenis_kelamin     enum(L/P)          ║
-║      description       text (nullable)    ║
-║      photo             varchar (nullable) ║
-║      status            enum(Tersedia/     ║
-║                          Diasuh)          ║
-║      created_at        timestamp          ║
-║      updated_at        timestamp          ║
-╚═══════════════════════════════════════════╝
+┌═══════════════════════════════════════════════════════════┐
+║                    foster_children                        ║
+║═══════════════════════════════════════════════════════════║
+║  PK  id                bigint                             ║
+║      name              varchar(255)                       ║
+║      age               integer                            ║
+║      jenis_kelamin     enum('Laki-laki','Perempuan')      ║
+║      description       text (nullable)                    ║
+║      photo             varchar(255) (nullable)             ║
+║      status            enum('Tersedia','Diasuh')          ║
+║      created_at        timestamp                          ║
+║      updated_at        timestamp                          ║
+╚═══════════════════════════════════════════════════════════╝
          │
          │ 1
          │
          │  (foster_child_id)
          ▼
-┌══════════════════════════════════════════════════════════════════════╗
-║                         sponsorships                                ║
-║══════════════════════════════════════════════════════════════════════║
-║  PK  id                    bigint                                   ║
-║  FK  foster_child_id       bigint        ────→ foster_children.id   ║
-║  FK  user_id               bigint(null)  ────→ users.id             ║
-║      order_id              varchar(255) unique                      ║
-║      snap_token            varchar(255) nullable                    ║
-║      donor_name            varchar(255)                             ║
-║      donor_email           varchar(255)                             ║
-║      donor_phone           varchar(20)                              ║
-║      amount                decimal(15,2)                            ║
-║      package               varchar(255) nullable                    ║
-║      package_description   text nullable                            ║
-║      payment_method        varchar(255) nullable                    ║
-║      payment_proof         varchar(255) nullable (tdk dipakai)      ║
-║      status                enum(pending/success/failed/expired)     ║
-║      starts_at             date nullable                            ║
-║      expires_at            date nullable                            ║
-║      reminder_sent_at      timestamp nullable                       ║
-║      created_at            timestamp                                ║
-║      updated_at            timestamp                                ║
-╚══════════════════════════════════════════════════════════════════════╝
+┌══════════════════════════════════════════════════════════════════════════════╗
+║                                 sponsorships                                ║
+║══════════════════════════════════════════════════════════════════════════════║
+║  PK  id                    bigint                                           ║
+║  FK  foster_child_id       bigint        ────→ foster_children.id           ║
+║  FK  user_id               bigint(null)  ────→ users.id                     ║
+║      order_id              varchar(255) unique                              ║
+║      snap_token            varchar(255) nullable                            ║
+║      donor_name            varchar(255)                                     ║
+║      donor_email           varchar(255)                                     ║
+║      donor_phone           varchar(20)                                      ║
+║      amount                decimal(15,2)                                    ║
+║      package               varchar(255) nullable                            ║
+║      package_description   text nullable                                    ║
+║      payment_method        varchar(255) nullable                            ║
+║      payment_proof         varchar(255) nullable (tdk dipakai)              ║
+║      status                enum(pending/success/failed/expired)             ║
+║      starts_at             date nullable                                    ║
+║      expires_at            date nullable                                    ║
+║      reminder_sent_at      timestamp nullable                               ║
+║      created_at            timestamp                                        ║
+║      updated_at            timestamp                                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
          │                                              │
          │ 1                                            │ 1
          │                                              │
          │ (sponsorship_id)                             │ (user_id)
          ▼                                              ▼
-┌═══════════════════════════════════════════┐    ┌═══════════════════════════════════════════════╗
-║          child_developments               ║    ║                    users                      ║
-║═══════════════════════════════════════════║    ║═══════════════════════════════════════════════║
-║  PK  id                bigint             ║    ║  PK  id              bigint                   ║
-║  FK  sponsorship_id    bigint             ║    ║      name            varchar(255)             ║
-║  FK  foster_child_id   bigint             ║    ║      email           varchar(255) unique      ║
-║  FK  user_id           bigint (nullable)  ║    ║      password        varchar(255)             ║
-║      tanggal           date               ║    ║      role            enum(admin/donatur)      ║
-║      judul             varchar(255)       ║    ║      phone           varchar(20) nullable     ║
-║      deskripsi         text               ║    ║      address         text nullable            ║
-║      foto              varchar (nullable) ║    ║      nik             varchar(20) nullable     ║
-║      created_at        timestamp          ║    ║      avatar          varchar(255) nullable   ║
-║      updated_at        timestamp          ║    ║      created_at      timestamp                ║
-╚═══════════════════════════════════════════╝    ║      updated_at      timestamp                ║
-         │                                      ╚═══════════════════════════════════════════════╝
-         │                                                    │
-         │  (foster_child_id)                                 │ role = admin
-         │                                                    ├────────────────────────────┐
-         ▼                                                    ▼                            ▼
-┌═══════════════════════════════════════════┐    ┌══════════════════════════╗    ┌══════════════════════════════╗
-║  (sama dgn foster_children di atas —      ║    ║     profil_yayasan       ║    ║           news                ║
-║   relasi sudah digambar sebelumnya)       ║    ║══════════════════════════║    ║══════════════════════════════║
-╚═══════════════════════════════════════════╝    ║ PK id   bigint           ║    ║ PK id       bigint           ║
-                                                  ║   nama_yayasan varchar   ║    ║   judul     varchar(255)     ║
-                                                  ║   logo        varchar   ║    ║   slug      varchar(255)     ║
-                                                  ║   alamat      text      ║    ║   kategori  varchar(null)    ║
-                                                  ║   no_telp     varchar   ║    ║   tgl_keg    date (nullable)  ║
-                                                  ║   email       varchar   ║    ║   lokasi     varchar(null)    ║
-                                                  ║   sejarah     text      ║    ║   ringkasan  text (nullable)  ║
-                                                  ║   visi        text      ║    ║   konten     text             ║
-                                                  ║   misi        text      ║    ║   foto_utama varchar(null)    ║
-                                                  ║   legalitas   text(null)║    ║   status     enum(draft/     ║
-                                                  ║   foto_legal  varchar   ║    ║                published)    ║
-                                                  ║   foto_struktur varchar ║    ║   created_at timestamp        ║
-                                                  ║   created_at  timestamp ║    ║   updated_at timestamp        ║
-                                                  ╚══════════════════════════╝    ╚══════════════════════════════╝
-
+┌══════════════════════════════════════════════┐  ┌══════════════════════════════════════════════════════╗
+║              child_developments              ║  ║                        users                        ║
+║══════════════════════════════════════════════║  ║══════════════════════════════════════════════════════║
+║  PK  id                bigint                ║  ║  PK  id              bigint                         ║
+║  FK  sponsorship_id    bigint                ║  ║      name            varchar(255)                   ║
+║  FK  foster_child_id   bigint                ║  ║      email           varchar(255) unique            ║
+║  FK  user_id           bigint (nullable)     ║  ║      password        varchar(255)                   ║
+║      tanggal           date                  ║  ║      role            enum('admin','donatur')        ║
+║      judul             varchar(255)          ║  ║      phone           varchar(20) nullable           ║
+║      deskripsi         text                  ║  ║      address         text nullable                  ║
+║      foto              varchar(255) nullable ║  ║      nik             varchar(20) nullable           ║
+║      created_at        timestamp             ║  ║      avatar          varchar(255) nullable          ║
+║      updated_at        timestamp             ║  ║      created_at      timestamp                      ║
+╚══════════════════════════════════════════════╝  ║      updated_at      timestamp                      ║
+          │                                       ╚══════════════════════════════════════════════════════╝
+          │                                                 │
+          │ 1                                               │ role = admin
+          │                                                 ├──────────────────────────────┐
+          │ (foster_child_id)                               │                              │
+          ▼                                                 │ 1                            │ 1
+          │ (repeated for clarity)                          │                              │
+          │                                                 ▼                              ▼
+          │                                    ┌══════════════════════════════════╗  ┌═══════════════════════════════════════╗
+          │                                    ║         profil_yayasan          ║  ║               news                    ║
+          │                                    ║══════════════════════════════════║  ║═══════════════════════════════════════║
+          │                                    ║ PK id      bigint               ║  ║ PK id         bigint                  ║
+          │                                    ║   nama_yayasan  varchar(255)    ║  ║   judul       varchar(255)            ║
+          ▼                                    ║   logo          varchar(255)    ║  ║   slug        varchar(255) unique     ║
+┌══════════════════════════════════════════┐  ║   alamat        text             ║  ║   kategori    varchar(255) nullable   ║
+║     foster_children (sama seperti di     ║  ║   no_telp       varchar(20)      ║  ║   tgl_kegiatan date nullable          ║
+║      atas, digambar ulang untuk          ║  ║   email         varchar(255)     ║  ║   lokasi      varchar(255) nullable   ║
+║      menunjukkan relasi ke child_dev.)   ║  ║   sejarah       text             ║  ║   ringkasan   text nullable           ║
+║══════════════════════════════════════════║  ║   visi          text             ║  ║   konten      text                    ║
+║  PK  id                bigint            ║  ║   misi          text             ║  ║   foto_utama  varchar(255) nullable   ║
+║  ... (lengkap lihat box paling atas)     ║  ║   legalitas     text nullable    ║  ║   status      enum(draft,published)   ║
+╚══════════════════════════════════════════╝  ║   foto_legalitas varchar(255)   ║  ║   created_at  timestamp               ║
+                                               ║   foto_struktur varchar(255)   ║  ║   updated_at  timestamp               ║
+                                               ║   created_at    timestamp       ║  ╚═══════════════════════════════════════╝
+                                               ║   updated_at    timestamp       ║
+                                               ╚══════════════════════════════════╝
 ```
 
 ### Ringkasan Relasi (Kardinalitas)
