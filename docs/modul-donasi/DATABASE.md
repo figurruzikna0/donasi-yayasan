@@ -1,53 +1,106 @@
 # Modul Donasi — Arsitektur Basis Data (ERD & LRS)
 
-## Entity Relationship Diagram (ERD) — Konseptual
+## Entity Relationship Diagram (ERD) — Detail Atribut
 
-### Identifikasi Entitas
+### Entitas & Atribut
 
-| No | Entitas | Keterangan |
-|----|---------|------------|
-| 1 | **Campaign** | Program penggalangan dana |
-| 2 | **Donasi** | Transaksi donasi campaign via Midtrans |
-| 3 | **Users** | User role donatur (melakukan donasi) + admin (mengelola campaign, profil, berita) |
-| 4 | **Profil Yayasan** | Informasi profil yayasan — dikelola oleh admin (single row) |
-| 5 | **Berita** | Berita kegiatan yayasan — ditulis oleh admin |
-
-### Relasi Antar Entitas (Kardinalitas)
+Berikut adalah diagram ERD **lengkap dengan atribut** (kolom) pada setiap tabel.
+Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong.
 
 ```
-    ┌──────────────────────────────────────────────────────────────────┐
-    │                                                                  │
-    │  ┌──────────┐    1          M  ┌──────────┐                     │
-    │  │ Campaign │──────────────────│  Donasi  │                     │
-    │  └──────────┘  menerima        └────┬─────┘                     │
-    │                                     │                           │
-    │                                     │ M                         │
-    │                                     │                           │
-    │                              ┌──────┴──────┐                    │
-    │                              │Users (Don.) │                    │
-    │                              └─────────────┘                    │
-    │                                                                  │
-    │  ┌──────────────────────┐         1          ┌──────────────┐   │
-    │  │   Profil Yayasan     │────────────────────│Users (Admin) │   │
-    │  │(single row, dikelola │   mengelola        └──────┬───────┘   │
-    │  │     oleh admin)      │                           │           │
-    │  └──────────────────────┘                           │ 1         │
-    │                                                      │           │
-    │                                                      │ M         │
-    │                                              ┌──────┴──────┐    │
-    │                                              │Berita / News│    │
-    │                                              │  (ditulis)  │    │
-    │                                              └─────────────┘    │
-    └──────────────────────────────────────────────────────────────────┘
+┌═══════════════════════════════════════════════════════╗
+║                      campaigns                        ║
+║═══════════════════════════════════════════════════════║
+║  PK  id                  bigint                       ║
+║      title               varchar(255)                 ║
+║      slug                varchar(255) unique          ║
+║      description         text                         ║
+║      target_amount       decimal(15,2)                ║
+║      collected_amount    decimal(15,2) default 0      ║
+║      image               varchar(255) nullable        ║
+║      status              enum(active/completed)       ║
+║      created_at          timestamp                    ║
+║      updated_at          timestamp                    ║
+╚═══════════════════════════════════════════════════════╝
+         │
+         │ 1
+         │
+         │  (campaign_id)
+         ▼
+┌════════════════════════════════════════════════════════════════════════╗
+║                              donations                                ║
+║════════════════════════════════════════════════════════════════════════║
+║  PK  id                    bigint                                     ║
+║  FK  campaign_id           bigint      ────→ campaigns.id             ║
+║  FK  user_id               bigint(null)───→ users.id                  ║
+║      order_id              varchar(255) unique                        ║
+║      snap_token            varchar(255) nullable                      ║
+║      donor_name            varchar(255)                               ║
+║      donor_email           varchar(255)                               ║
+║      donor_phone           varchar(20)                                ║
+║      amount                decimal(15,2)                              ║
+║      payment_method        varchar(255) nullable                      ║
+║      payment_proof         varchar(255) nullable (tdk dipakai)        ║
+║      status                enum(pending/success/failed)               ║
+║      created_at            timestamp                                  ║
+║      updated_at            timestamp                                  ║
+╚════════════════════════════════════════════════════════════════════════╝
+         │
+         │ M
+         │
+         │  (user_id)
+         ▼
+┌════════════════════════════════════════════════════════════════════════╗
+║                              users                                    ║
+║════════════════════════════════════════════════════════════════════════║
+║  PK  id              bigint                                           ║
+║      name            varchar(255)                                     ║
+║      email           varchar(255) unique                              ║
+║      password        varchar(255)                                     ║
+║      role            enum(admin/donatur)                              ║
+║      phone           varchar(20) nullable                             ║
+║      address         text nullable                                    ║
+║      nik             varchar(20) nullable                             ║
+║      avatar          varchar(255) nullable                            ║
+║      created_at      timestamp                                        ║
+║      updated_at      timestamp                                        ║
+╚════════════════════════════════════════════════════════════════════════╝
+         │
+         │ role = admin
+         ├──────────────────────────────────┐
+         │                                  │
+         │ 1                                │ 1
+         │                                  │
+         ▼                                  ▼
+┌══════════════════════════════════════╗  ┌═══════════════════════════════════════╗
+║           profil_yayasan             ║  ║              news                     ║
+║══════════════════════════════════════║  ║═══════════════════════════════════════║
+║ PK id     bigint                     ║  ║ PK id         bigint                  ║
+║   nama_yayasan  varchar(255)         ║  ║   judul       varchar(255)            ║
+║   logo          varchar(255) nullable║  ║   slug        varchar(255) unique     ║
+║   alamat        text                 ║  ║   kategori    varchar(255) nullable   ║
+║   no_telp       varchar(20)          ║  ║   tgl_kegiatan date nullable          ║
+║   email         varchar(255)         ║  ║   lokasi      varchar(255) nullable   ║
+║   sejarah       text                 ║  ║   ringkasan   text nullable           ║
+║   visi          text                 ║  ║   konten      text                    ║
+║   misi          text                 ║  ║   foto_utama  varchar(255) nullable   ║
+║   legalitas     text nullable        ║  ║   status      enum(draft/published)   ║
+║   foto_legalitas varchar(255) null   ║  ║   created_at  timestamp               ║
+║   foto_struktur varchar(255) null    ║  ║   updated_at  timestamp               ║
+║   created_at    timestamp            ║  ╚═══════════════════════════════════════╝
+║   updated_at    timestamp            ║
+╚══════════════════════════════════════╝
 ```
 
-| Entitas Asal | Nama Relasi | Entitas Tujuan | Kardinalitas |
-|-------------|-------------|----------------|--------------|
-| Campaign | Menerima | Donasi | 1 to M |
-| Users (Donatur) | Melakukan | Donasi | 1 to M |
-| Users (Admin) | Mengelola | Campaign | 1 to M |
-| Users (Admin) | Mengelola | Profil Yayasan | 1 to 1 |
-| Users (Admin) | Menulis | Berita | 1 to M |
+### Ringkasan Relasi (Kardinalitas)
+
+| Entitas Asal | Key | Relasi | Entitas Tujuan | Key Lawan | Kardinalitas |
+|-------------|-----|--------|----------------|-----------|--------------|
+| campaigns | id | menerima → | donations | campaign_id | 1 to M |
+| donations | user_id | dilakukan oleh → | users (donatur) | id | M to 1 |
+| users (admin) | id | mengelola → | campaigns | — (via panel) | 1 to M |
+| users (admin) | id | mengelola → | profil_yayasan | — (single row) | 1 to 1 |
+| users (admin) | id | menulis → | news | — (tanpa FK) | 1 to M |
 
 ### Aturan Bisnis Terkait Data
 

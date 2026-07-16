@@ -1,58 +1,110 @@
 # Modul Orang Tua Asuh (OTA) — Arsitektur Basis Data (ERD & LRS)
 
-## Entity Relationship Diagram (ERD) — Konseptual
+## Entity Relationship Diagram (ERD) — Detail Atribut
 
-### Identifikasi Entitas
+### Entitas & Atribut
 
-| No | Entitas | Keterangan |
-|----|---------|------------|
-| 1 | **Anak Asuh** | Data anak asuh binaan yayasan |
-| 2 | **Sponsorship** | Transaksi orang tua asuh (OTA) via Midtrans |
-| 3 | **Perkembangan Anak** | Laporan perkembangan anak asuh |
-| 4 | **Users** | User role donatur (melakukan sponsorship) + admin (mengelola seluruh data) |
-| 5 | **Profil Yayasan** | Informasi profil yayasan — dikelola oleh admin (single row) |
-| 6 | **Berita** | Berita kegiatan yayasan — ditulis oleh admin |
-
-### Relasi Antar Entitas (Kardinalitas)
+Berikut adalah diagram ERD **lengkap dengan atribut** (kolom) pada setiap tabel.  
+Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong.
 
 ```
-    ┌────────────────────────────────────────────────────────────────────────────┐
-    │                                                                            │
-    │  ┌──────────────┐    1          M  ┌──────────────┐                       │
-    │  │  Anak Asuh   │──────────────────│ Sponsorship  │                       │
-    │  └──────┬───────┘  dipilih         └──────┬───────┘                       │
-    │         │                                  │                               │
-    │         │ 1                                │ 1                             │
-    │         │                                  │                               │
-    │         │ M                                │ M                             │
-    │         ▼                                  ▼                               │
-    │  ┌──────────────────┐             ┌──────────────────┐                    │
-    │  │ Perkembangan Anak│             │  Users (Donatur) │                    │
-    │  └──────────────────┘             └──────────────────┘                    │
-    │         │                                                                    │
-    │         │ M                             ┌──────────────────────┐           │
-    │         │                               │                      │           │
-    │  ┌──────┴───────┐       1         1     │   Profil Yayasan     │           │
-    │  │ Users (Admin) │──────────────────────│(single row, dikelola │           │
-    │  └──────┬───────┘  mengelola            │     oleh admin)      │           │
-    │         │                               └──────────────────────┘           │
-    │         │ 1                                                                 │
-    │         │                                                                   │
-    │         │ M                       ┌──────────────────┐                     │
-    │         └────────────────────────│  Berita / News    │                     │
-    │             menulis              └──────────────────┘                     │
-    └────────────────────────────────────────────────────────────────────────────┘
+┌═══════════════════════════════════════════┐
+║            foster_children                ║
+║═══════════════════════════════════════════║
+║  PK  id                bigint             ║
+║      name              varchar(255)       ║
+║      age               integer            ║
+║      jenis_kelamin     enum(L/P)          ║
+║      description       text (nullable)    ║
+║      photo             varchar (nullable) ║
+║      status            enum(Tersedia/     ║
+║                          Diasuh)          ║
+║      created_at        timestamp          ║
+║      updated_at        timestamp          ║
+╚═══════════════════════════════════════════╝
+         │
+         │ 1
+         │
+         │  (foster_child_id)
+         ▼
+┌══════════════════════════════════════════════════════════════════════╗
+║                         sponsorships                                ║
+║══════════════════════════════════════════════════════════════════════║
+║  PK  id                    bigint                                   ║
+║  FK  foster_child_id       bigint        ────→ foster_children.id   ║
+║  FK  user_id               bigint(null)  ────→ users.id             ║
+║      order_id              varchar(255) unique                      ║
+║      snap_token            varchar(255) nullable                    ║
+║      donor_name            varchar(255)                             ║
+║      donor_email           varchar(255)                             ║
+║      donor_phone           varchar(20)                              ║
+║      amount                decimal(15,2)                            ║
+║      package               varchar(255) nullable                    ║
+║      package_description   text nullable                            ║
+║      payment_method        varchar(255) nullable                    ║
+║      payment_proof         varchar(255) nullable (tdk dipakai)      ║
+║      status                enum(pending/success/failed/expired)     ║
+║      starts_at             date nullable                            ║
+║      expires_at            date nullable                            ║
+║      reminder_sent_at      timestamp nullable                       ║
+║      created_at            timestamp                                ║
+║      updated_at            timestamp                                ║
+╚══════════════════════════════════════════════════════════════════════╝
+         │                                              │
+         │ 1                                            │ 1
+         │                                              │
+         │ (sponsorship_id)                             │ (user_id)
+         ▼                                              ▼
+┌═══════════════════════════════════════════┐    ┌═══════════════════════════════════════════════╗
+║          child_developments               ║    ║                    users                      ║
+║═══════════════════════════════════════════║    ║═══════════════════════════════════════════════║
+║  PK  id                bigint             ║    ║  PK  id              bigint                   ║
+║  FK  sponsorship_id    bigint             ║    ║      name            varchar(255)             ║
+║  FK  foster_child_id   bigint             ║    ║      email           varchar(255) unique      ║
+║  FK  user_id           bigint (nullable)  ║    ║      password        varchar(255)             ║
+║      tanggal           date               ║    ║      role            enum(admin/donatur)      ║
+║      judul             varchar(255)       ║    ║      phone           varchar(20) nullable     ║
+║      deskripsi         text               ║    ║      address         text nullable            ║
+║      foto              varchar (nullable) ║    ║      nik             varchar(20) nullable     ║
+║      created_at        timestamp          ║    ║      avatar          varchar(255) nullable   ║
+║      updated_at        timestamp          ║    ║      created_at      timestamp                ║
+╚═══════════════════════════════════════════╝    ║      updated_at      timestamp                ║
+         │                                      ╚═══════════════════════════════════════════════╝
+         │                                                    │
+         │  (foster_child_id)                                 │ role = admin
+         │                                                    ├────────────────────────────┐
+         ▼                                                    ▼                            ▼
+┌═══════════════════════════════════════════┐    ┌══════════════════════════╗    ┌══════════════════════════════╗
+║  (sama dgn foster_children di atas —      ║    ║     profil_yayasan       ║    ║           news                ║
+║   relasi sudah digambar sebelumnya)       ║    ║══════════════════════════║    ║══════════════════════════════║
+╚═══════════════════════════════════════════╝    ║ PK id   bigint           ║    ║ PK id       bigint           ║
+                                                  ║   nama_yayasan varchar   ║    ║   judul     varchar(255)     ║
+                                                  ║   logo        varchar   ║    ║   slug      varchar(255)     ║
+                                                  ║   alamat      text      ║    ║   kategori  varchar(null)    ║
+                                                  ║   no_telp     varchar   ║    ║   tgl_keg    date (nullable)  ║
+                                                  ║   email       varchar   ║    ║   lokasi     varchar(null)    ║
+                                                  ║   sejarah     text      ║    ║   ringkasan  text (nullable)  ║
+                                                  ║   visi        text      ║    ║   konten     text             ║
+                                                  ║   misi        text      ║    ║   foto_utama varchar(null)    ║
+                                                  ║   legalitas   text(null)║    ║   status     enum(draft/     ║
+                                                  ║   foto_legal  varchar   ║    ║                published)    ║
+                                                  ║   foto_struktur varchar ║    ║   created_at timestamp        ║
+                                                  ║   created_at  timestamp ║    ║   updated_at timestamp        ║
+                                                  ╚══════════════════════════╝    ╚══════════════════════════════╝
+
 ```
 
-| Entitas Asal | Nama Relasi | Entitas Tujuan | Kardinalitas |
-|-------------|-------------|----------------|--------------|
-| Anak Asuh | Dipilih | Sponsorship | 1 to M |
-| Users (Donatur) | Melakukan | Sponsorship | 1 to M |
-| Sponsorship | Memiliki | Perkembangan Anak | 1 to M |
-| Anak Asuh | Memiliki | Perkembangan Anak | 1 to M |
-| Users (Admin) | Membuat | Perkembangan Anak | 1 to M |
-| Users (Admin) | Mengelola | Profil Yayasan | 1 to 1 |
-| Users (Admin) | Menulis | Berita | 1 to M |
+### Ringkasan Relasi (Kardinalitas)
+
+| Entitas Asal | Key | Relasi | Entitas Tujuan | Key Lawan | Kardinalitas |
+|-------------|-----|--------|----------------|-----------|--------------|
+| foster_children | id | dipilih → | sponsorships | foster_child_id | 1 to M |
+| sponsorships | user_id | dilakukan oleh → | users (donatur) | id | M to 1 |
+| sponsorships | id | memiliki → | child_developments | sponsorship_id | 1 to M |
+| foster_children | id | memiliki → | child_developments | foster_child_id | 1 to M |
+| users (admin) | id | mengisi → | child_developments | user_id | 1 to M |
+| users (admin) | id | mengelola → | profil_yayasan | — (single row) | 1 to 1 |
+| users (admin) | id | menulis → | news | — (tanpa FK) | 1 to M |
 
 ### Aturan Bisnis Terkait Data
 
