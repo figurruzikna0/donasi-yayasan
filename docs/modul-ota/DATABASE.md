@@ -100,6 +100,7 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 
 | Entitas Asal | Key | Relasi | Entitas Tujuan | Key Lawan | Kardinalitas |
 |-------------|-----|--------|----------------|-----------|--------------|
+| users (admin) | id | mengelola → | foster_children | — (via panel) | 1 to M |
 | foster_children | id | dipilih → | sponsorships | foster_child_id | 1 to M |
 | sponsorships | user_id | dilakukan oleh → | users (donatur) | id | M to 1 |
 | sponsorships | id | memiliki → | child_developments | sponsorship_id | 1 to M |
@@ -110,14 +111,15 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 
 ### Aturan Bisnis Terkait Data
 
-1. Satu anak asuh bisa **disponsori berkali-kali** oleh OTA berbeda sepanjang masa.
-2. Saat sponsorship sukses, `foster_children.status` berubah menjadi **"Diasuh"**.
-3. Saat sponsorship expired via cronjob, `foster_children.status` kembali **"Tersedia"**.
-4. Perkembangan anak terikat ke **satu sponsorship** dan **satu anak asuh**.
-5. Donatur OTA **tidak wajib login** — `user_id` boleh null (guest).
-6. Satu sponsorship memiliki **masa berlaku** (`starts_at` / `expires_at`) — otomatis diisi saat sukses.
-7. `status` sponsorship: `pending` → `success` / `failed` / `expired`.
-8. Cronjob H-7 & H-3 membaca `expires_at` untuk kirim notifikasi perpanjangan.
+1. Admin dapat **mengelola banyak anak asuh** — create, read, update, delete data anak.
+2. Satu anak asuh bisa **disponsori berkali-kali** sepanjang masa oleh OTA berbeda, namun **hanya 1 sponsorship aktif** dalam satu waktu. Jika anak masih dalam masa berlaku (`status = Diasuh`), anak tidak bisa dipilih untuk sponsorship baru sampai masa berlaku habis dan tidak diperpanjang.
+3. Saat sponsorship sukses, `foster_children.status` berubah menjadi **"Diasuh"**.
+4. Saat sponsorship expired via cronjob, `foster_children.status` kembali **"Tersedia"**.
+5. Perkembangan anak terikat ke **satu sponsorship** dan **satu anak asuh**.
+6. Donatur OTA **tidak wajib login** — `user_id` boleh null (guest).
+7. Satu sponsorship memiliki **masa berlaku** (`starts_at` / `expires_at`) — otomatis diisi saat sukses.
+8. `status` sponsorship: `pending` → `success` / `failed` / `expired`.
+9. Cronjob H-7 & H-3 membaca `expires_at` untuk kirim notifikasi perpanjangan.
 
 ---
 
@@ -169,10 +171,11 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 │  │    role              │  ┌─────────────────────────────────────┐             │
 │  │    phone             │  │  Hubungan Admin ke entitas lain:    │             │
 │  │    address           │  ├─────────────────────────────────────┤             │
-│  │    nik               │  │ Admin ──1:1──> profil_yayasan      │             │
-│  │    avatar            │  │ Admin ──1:M──> news                 │             │
-│  └──────────────────────┘  │ Admin ──1:M──> child_developments   │             │
-│                            │ Donatur─1:M──> sponsorships         │             │
+ │  │    nik               │  │ Admin ──1:1──> profil_yayasan      │             │
+ │  │    avatar            │  │ Admin ──1:M──> news                 │             │
+ │  └──────────────────────┘  │ Admin ──1:M──> foster_children      │             │
+ │                            │ Admin ──1:M──> child_developments   │             │
+ │                            │ Donatur─1:M──> sponsorships         │             │
 │  ┌──────────────────────┐  └─────────────────────────────────────┘             │
 │  │    profil_yayasan     │                                                       │
 │  │──────────────────────│                                                       │
