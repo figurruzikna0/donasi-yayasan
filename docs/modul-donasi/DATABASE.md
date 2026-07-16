@@ -185,57 +185,57 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 
 Tabel: `campaigns`
 
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|------------|
-| id | bigint, PK, auto-increment | |
-| title | varchar(255) | Judul campaign |
-| slug | varchar(255), unique | Slug URL |
-| description | text | Deskripsi campaign |
-| target_amount | decimal(15,2) | Target donasi |
-| collected_amount | decimal(15,2), default 0 | Dana terkumpul |
-| image | varchar(255), nullable | Gambar campaign |
-| status | enum('active','completed'), default 'active' | Status campaign |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | title | VARCHAR | 255 | Judul campaign |
+| 3 | slug | VARCHAR | 255 | Slug URL (unique) |
+| 4 | description | TEXT | 100 | Deskripsi campaign |
+| 5 | target_amount | DECIMAL | 15 | Target donasi |
+| 6 | collected_amount | DECIMAL | 15 | Dana terkumpul (default 0) |
+| 7 | image | VARCHAR | 255 | Gambar campaign (nullable) |
+| 8 | status | ENUM | 10 | 'active' / 'completed', default 'active' |
+| 9 | created_at | TIMESTAMP | 19 | |
+| 10 | updated_at | TIMESTAMP | 19 | |
 
 ### 2. Donasi
 
 Tabel: `donations`
 
-| Kolom | Tipe Data | Keterangan | Foreign Key |
-|-------|-----------|------------|-------------|
-| id | bigint, PK, auto-increment | |
-| campaign_id | bigint | Campaign tujuan | FK → campaigns(id) ON DELETE CASCADE |
-| user_id | bigint, nullable | Donatur (null jika guest) | FK → users(id) ON DELETE SET NULL |
-| order_id | varchar(255), unique | ID transaksi (prefix `DONASI-`) |
-| snap_token | varchar(255), nullable | Token Snap Midtrans |
-| donor_name | varchar(255) | Nama donatur |
-| donor_email | varchar(255) | Email donatur |
-| donor_phone | varchar(20) | No. HP donatur |
-| amount | decimal(15,2) | Nominal donasi |
-| payment_method | varchar(255), nullable | Metode bayar dari Midtrans |
-| payment_proof | varchar(255), nullable | Tidak dipakai (Midtrans full) |
-| status | enum('pending','success','failed'), default 'pending' | Status transaksi |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan | Foreign Key |
+|----|-------|-----------|------|------------|-------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment | |
+| 2 | campaign_id | BIGINT | 20 | Campaign tujuan | FK → campaigns(id) ON DELETE CASCADE |
+| 3 | user_id | BIGINT | 20 | Donatur (null jika guest) | FK → users(id) ON DELETE SET NULL |
+| 4 | order_id | VARCHAR | 255 | ID transaksi (prefix `DONASI-`) | unique |
+| 5 | snap_token | VARCHAR | 255 | Token Snap Midtrans (nullable) | |
+| 6 | donor_name | VARCHAR | 255 | Nama donatur | |
+| 7 | donor_email | VARCHAR | 255 | Email donatur | |
+| 8 | donor_phone | VARCHAR | 20 | No. HP donatur | |
+| 9 | amount | DECIMAL | 15 | Nominal donasi | |
+| 10 | payment_method | VARCHAR | 50 | Metode bayar dari Midtrans (nullable) | |
+| 11 | payment_proof | VARCHAR | 255 | Tidak dipakai (Midtrans full, nullable) | |
+| 12 | status | ENUM | 10 | 'pending' / 'success' / 'failed', default 'pending' | |
+| 13 | created_at | TIMESTAMP | 19 | | |
+| 14 | updated_at | TIMESTAMP | 19 | | |
 
 ### 3. Users (Donatur & Admin)
 
 Tabel: `users`
 
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|------------|
-| id | bigint, PK, auto-increment | |
-| name | varchar(255) | Nama lengkap |
-| email | varchar(255), unique | Email login |
-| password | varchar(255) | Hash password |
-| role | enum('admin','donatur') | Jenis user |
-| phone | varchar(20), nullable | No. HP |
-| address | text, nullable | Alamat |
-| nik | varchar(20), nullable | NIK |
-| avatar | varchar(255), nullable | Foto profil |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Hash password |
+| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
+| 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 10 | created_at | TIMESTAMP | 19 | |
+| 11 | updated_at | TIMESTAMP | 19 | |
 
 > **Catatan role:** User dengan role `admin` mengelola seluruh konten — campaign, profil yayasan, berita, serta validasi transaksi. User dengan role `donatur` hanya dapat melakukan donasi campaign (bisa sebagai guest tanpa login).
 
@@ -243,42 +243,42 @@ Tabel: `users`
 
 Tabel: `profil_yayasan`
 
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|------------|
-| id | bigint, PK, auto-increment | |
-| nama_yayasan | varchar(255) | |
-| logo | varchar(255), nullable | |
-| alamat | text | |
-| no_telp | varchar(20) | |
-| email | varchar(255) | |
-| sejarah_yayasan | text | |
-| visi | text | |
-| misi | text | |
-| legalitas | text, nullable | |
-| foto_legalitas | varchar(255), nullable | |
-| foto_struktur | varchar(255), nullable | |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | nama_yayasan | VARCHAR | 255 | |
+| 3 | logo | VARCHAR | 255 | nullable |
+| 4 | alamat | TEXT | 100 | |
+| 5 | no_telp | VARCHAR | 20 | |
+| 6 | email | VARCHAR | 255 | |
+| 7 | sejarah_yayasan | TEXT | 200 | nullable |
+| 8 | visi | TEXT | 100 | nullable |
+| 9 | misi | TEXT | 100 | nullable |
+| 10 | legalitas | TEXT | 100 | nullable |
+| 11 | foto_legalitas | VARCHAR | 255 | nullable |
+| 12 | foto_struktur | VARCHAR | 255 | nullable |
+| 13 | created_at | TIMESTAMP | 19 | |
+| 14 | updated_at | TIMESTAMP | 19 | |
 
 ### 5. Berita / News
 
 Tabel: `news`
 
-| Kolom | Tipe Data | Keterangan | Foreign Key |
-|-------|-----------|------------|-------------|
-| id | bigint, PK, auto-increment | |
-| judul | varchar(255) | Judul berita |
-| slug | varchar(255), unique | Slug URL |
-| kategori | varchar(255), nullable | Kategori kegiatan |
-| tanggal_kegiatan | date, nullable | Tanggal pelaksanaan |
-| lokasi | varchar(255), nullable | Tempat kegiatan |
-| penyelenggara | varchar(255), nullable | Pihak penyelenggara |
-| ringkasan | text, nullable | Cuplikan singkat |
-| konten | text | Isi berita lengkap |
-| foto_utama | varchar(255), nullable | Gambar sampul |
-| status | enum('draft','published'), default 'draft' | Status publikasi |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan | Foreign Key |
+|----|-------|-----------|------|------------|-------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment | |
+| 2 | judul | VARCHAR | 255 | Judul berita | |
+| 3 | slug | VARCHAR | 255 | Slug URL | unique |
+| 4 | kategori | VARCHAR | 50 | Kategori kegiatan (nullable) | |
+| 5 | tanggal_kegiatan | DATE | 10 | Tanggal pelaksanaan (nullable) | |
+| 6 | lokasi | VARCHAR | 100 | Tempat kegiatan (nullable) | |
+| 7 | penyelenggara | VARCHAR | 100 | Pihak penyelenggara (nullable) | |
+| 8 | ringkasan | TEXT | 200 | Cuplikan singkat (nullable) | |
+| 9 | konten | TEXT | 1000 | Isi berita lengkap | |
+| 10 | foto_utama | VARCHAR | 255 | Gambar sampul (nullable) | |
+| 11 | status | ENUM | 10 | 'draft' / 'published', default 'draft' | |
+| 12 | created_at | TIMESTAMP | 19 | | |
+| 13 | updated_at | TIMESTAMP | 19 | | |
 
 > Berita ditulis oleh admin. Hanya berita dengan status `published` yang tampil di halaman publik yayasan.
 

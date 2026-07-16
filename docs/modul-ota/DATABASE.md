@@ -212,78 +212,78 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 
 Tabel: `foster_children`
 
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|------------|
-| id | bigint, PK, auto-increment | |
-| name | varchar(255) | Nama anak |
-| age | integer | Usia |
-| jenis_kelamin | enum('Laki-laki','Perempuan') | |
-| description | text, nullable | Deskripsi / latar belakang |
-| photo | varchar(255), nullable | Foto anak |
-| status | enum('Tersedia','Diasuh'), default 'Tersedia' | Status ketersediaan |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama anak |
+| 3 | age | INT | 11 | Usia |
+| 4 | jenis_kelamin | ENUM | 10 | 'Laki-laki' / 'Perempuan' |
+| 5 | description | TEXT | 200 | Deskripsi / latar belakang (nullable) |
+| 6 | photo | VARCHAR | 255 | Foto anak (nullable) |
+| 7 | status | ENUM | 8 | 'Tersedia' / 'Diasuh', default 'Tersedia' |
+| 8 | created_at | TIMESTAMP | 19 | |
+| 9 | updated_at | TIMESTAMP | 19 | |
 
 ### 2. Sponsorship
 
 Tabel: `sponsorships`
 
-| Kolom | Tipe Data | Keterangan | Foreign Key |
-|-------|-----------|------------|-------------|
-| id | bigint, PK, auto-increment | |
-| foster_child_id | bigint | Anak asuh yang dipilih | FK → foster_children(id) ON DELETE CASCADE |
-| user_id | bigint, nullable | Donatur OTA (null jika guest) | FK → users(id) ON DELETE SET NULL |
-| order_id | varchar(255), unique | ID transaksi (prefix `SPONSOR-`) |
-| snap_token | varchar(255), nullable | Token Snap Midtrans |
-| donor_name | varchar(255) | Nama donatur |
-| donor_email | varchar(255) | Email donatur |
-| donor_phone | varchar(20) | No. HP donatur |
-| amount | decimal(15,2) | Nominal donasi |
-| package | varchar(255), nullable | Paket komitmen |
-| package_description | text, nullable | Deskripsi paket |
-| payment_method | varchar(255), nullable | Metode bayar dari Midtrans |
-| payment_proof | varchar(255), nullable | Tidak dipakai (Midtrans full) |
-| status | enum('pending','success','failed','expired'), default 'pending' | Status transaksi |
-| starts_at | date, nullable | Tanggal mulai (terisi saat sukses) |
-| expires_at | date, nullable | Tanggal berakhir (+1 bulan dari starts_at) |
-| reminder_sent_at | timestamp, nullable | Waktu notifikasi dikirim |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan | Foreign Key |
+|----|-------|-----------|------|------------|-------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment | |
+| 2 | foster_child_id | BIGINT | 20 | Anak asuh yang dipilih | FK → foster_children(id) ON DELETE CASCADE |
+| 3 | user_id | BIGINT | 20 | Donatur OTA (null jika guest) | FK → users(id) ON DELETE SET NULL |
+| 4 | order_id | VARCHAR | 255 | ID transaksi (prefix `SPONSOR-`) | unique |
+| 5 | snap_token | VARCHAR | 255 | Token Snap Midtrans (nullable) | |
+| 6 | donor_name | VARCHAR | 255 | Nama donatur | |
+| 7 | donor_email | VARCHAR | 255 | Email donatur | |
+| 8 | donor_phone | VARCHAR | 20 | No. HP donatur | |
+| 9 | amount | DECIMAL | 15 | Nominal donasi | |
+| 10 | package | VARCHAR | 100 | Paket komitmen (nullable) | |
+| 11 | package_description | TEXT | 200 | Deskripsi paket (nullable) | |
+| 12 | payment_method | VARCHAR | 50 | Metode bayar dari Midtrans (nullable) | |
+| 13 | payment_proof | VARCHAR | 255 | Tidak dipakai (Midtrans full, nullable) | |
+| 14 | status | ENUM | 12 | 'pending'/'success'/'failed'/'expired', default 'pending' | |
+| 15 | starts_at | DATE | 10 | Tanggal mulai (terisi saat sukses, nullable) | |
+| 16 | expires_at | DATE | 10 | Tanggal berakhir (+1 bulan, nullable) | |
+| 17 | reminder_sent_at | TIMESTAMP | 19 | Waktu notifikasi dikirim (nullable) | |
+| 18 | created_at | TIMESTAMP | 19 | | |
+| 19 | updated_at | TIMESTAMP | 19 | | |
 
 ### 3. Perkembangan Anak
 
 Tabel: `child_developments`
 
-| Kolom | Tipe Data | Keterangan | Foreign Key |
-|-------|-----------|------------|-------------|
-| id | bigint, PK, auto-increment | |
-| sponsorship_id | bigint | Sponsorship terkait | FK → sponsorships(id) ON DELETE CASCADE |
-| foster_child_id | bigint | Anak asuh | FK → foster_children(id) ON DELETE CASCADE |
-| user_id | bigint, nullable | Admin pengisi laporan | FK → users(id) ON DELETE SET NULL |
-| tanggal | date | Tanggal laporan |
-| judul | varchar(255) | Judul laporan |
-| deskripsi | text | Isi laporan |
-| foto | varchar(255), nullable | Foto perkembangan |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan | Foreign Key |
+|----|-------|-----------|------|------------|-------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment | |
+| 2 | sponsorship_id | BIGINT | 20 | Sponsorship terkait | FK → sponsorships(id) ON DELETE CASCADE |
+| 3 | foster_child_id | BIGINT | 20 | Anak asuh | FK → foster_children(id) ON DELETE CASCADE |
+| 4 | user_id | BIGINT | 20 | Admin pengisi laporan (nullable) | FK → users(id) ON DELETE SET NULL |
+| 5 | tanggal | DATE | 10 | Tanggal laporan | |
+| 6 | judul | VARCHAR | 255 | Judul laporan | |
+| 7 | deskripsi | TEXT | 500 | Isi laporan | |
+| 8 | foto | VARCHAR | 255 | Foto perkembangan (nullable) | |
+| 9 | created_at | TIMESTAMP | 19 | | |
+| 10 | updated_at | TIMESTAMP | 19 | | |
 
 ### 4. Users (Donatur & Admin)
 
 Tabel: `users`
 
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|------------|
-| id | bigint, PK, auto-increment | |
-| name | varchar(255) | Nama lengkap |
-| email | varchar(255), unique | Email login |
-| password | varchar(255) | Hash password |
-| role | enum('admin','donatur') | Jenis user |
-| phone | varchar(20), nullable | No. HP |
-| address | text, nullable | Alamat |
-| nik | varchar(20), nullable | NIK |
-| avatar | varchar(255), nullable | Foto profil |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Hash password |
+| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
+| 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 10 | created_at | TIMESTAMP | 19 | |
+| 11 | updated_at | TIMESTAMP | 19 | |
 
 > **Catatan role:** User dengan role `admin` memiliki akses penuh ke seluruh modul — termasuk mengelola profil yayasan, menulis berita kegiatan, mengelola campaign & donasi, memvalidasi sponsorship, dan mengisi laporan perkembangan anak. User dengan role `donatur` hanya dapat melakukan transaksi donasi/sponsorship.
 
@@ -291,44 +291,42 @@ Tabel: `users`
 
 Tabel: `profil_yayasan`
 
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|------------|
-| id | bigint, PK, auto-increment | |
-| nama_yayasan | varchar(255) | |
-| logo | varchar(255), nullable | |
-| alamat | text | |
-| no_telp | varchar(20) | |
-| email | varchar(255) | |
-| sejarah_yayasan | text | |
-| visi | text | |
-| misi | text | |
-| legalitas | text, nullable | |
-| foto_legalitas | varchar(255), nullable | |
-| foto_struktur | varchar(255), nullable | |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | nama_yayasan | VARCHAR | 255 | |
+| 3 | logo | VARCHAR | 255 | nullable |
+| 4 | alamat | TEXT | 100 | |
+| 5 | no_telp | VARCHAR | 20 | |
+| 6 | email | VARCHAR | 255 | |
+| 7 | sejarah_yayasan | TEXT | 200 | nullable |
+| 8 | visi | TEXT | 100 | nullable |
+| 9 | misi | TEXT | 100 | nullable |
+| 10 | legalitas | TEXT | 100 | nullable |
+| 11 | foto_legalitas | VARCHAR | 255 | nullable |
+| 12 | foto_struktur | VARCHAR | 255 | nullable |
+| 13 | created_at | TIMESTAMP | 19 | |
+| 14 | updated_at | TIMESTAMP | 19 | |
 
-> Hanya terdapat 1 (satu) baris data — dikelola oleh admin via panel administrasi. Seluruh halaman publik membaca data dari sini.
-
-### 6. Berita / News
+### f. Spesifikasi File Berita / News
 
 Tabel: `news`
 
-| Kolom | Tipe Data | Keterangan | Foreign Key |
-|-------|-----------|------------|-------------|
-| id | bigint, PK, auto-increment | |
-| judul | varchar(255) | Judul berita |
-| slug | varchar(255), unique | Slug URL |
-| kategori | varchar(255), nullable | Kategori kegiatan |
-| tanggal_kegiatan | date, nullable | Tanggal pelaksanaan |
-| lokasi | varchar(255), nullable | Tempat kegiatan |
-| penyelenggara | varchar(255), nullable | Pihak penyelenggara |
-| ringkasan | text, nullable | Cuplikan singkat |
-| konten | text | Isi berita lengkap |
-| foto_utama | varchar(255), nullable | Gambar sampul |
-| status | enum('draft','published'), default 'draft' | Status publikasi |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| No | Kolom | Tipe Data | Size | Keterangan | Foreign Key |
+|----|-------|-----------|------|------------|-------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment | |
+| 2 | judul | VARCHAR | 255 | Judul berita | |
+| 3 | slug | VARCHAR | 255 | Slug URL | unique |
+| 4 | kategori | VARCHAR | 50 | Kategori kegiatan (nullable) | |
+| 5 | tanggal_kegiatan | DATE | 10 | Tanggal pelaksanaan (nullable) | |
+| 6 | lokasi | VARCHAR | 100 | Tempat kegiatan (nullable) | |
+| 7 | penyelenggara | VARCHAR | 100 | Pihak penyelenggara (nullable) | |
+| 8 | ringkasan | TEXT | 200 | Cuplikan singkat (nullable) | |
+| 9 | konten | TEXT | 1000 | Isi berita lengkap | |
+| 10 | foto_utama | VARCHAR | 255 | Gambar sampul (nullable) | |
+| 11 | status | ENUM | 10 | 'draft' / 'published', default 'draft' | |
+| 12 | created_at | TIMESTAMP | 19 | | |
+| 13 | updated_at | TIMESTAMP | 19 | | |
 
 > **Catatan:** Berita ditulis oleh admin (tidak ada foreign key `user_id` di tabel ini karena admin adalah satu-satunya penulis, cukup tercatat di log aktivitas). Berita dengan status `published` tampil di halaman publik yayasan.
 
