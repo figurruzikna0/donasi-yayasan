@@ -8,28 +8,37 @@
 |----|---------|------------|
 | 1 | **Campaign** | Program penggalangan dana |
 | 2 | **Donasi** | Transaksi donasi campaign via Midtrans |
-| 3 | **Users (Donatur)** | User role donatur yang melakukan donasi (nullable jika guest) |
-| 4 | **Profil Yayasan** | Informasi profil yayasan (single row, konteks global) |
+| 3 | **Users** | User role donatur (melakukan donasi) + admin (mengelola campaign, profil, berita) |
+| 4 | **Profil Yayasan** | Informasi profil yayasan — dikelola oleh admin (single row) |
+| 5 | **Berita** | Berita kegiatan yayasan — ditulis oleh admin |
 
 ### Relasi Antar Entitas (Kardinalitas)
 
 ```
-    ┌─────────────────────────────────────────────────────────┐
-    │                                                         │
-    │  ┌──────────┐    1          M  ┌──────────┐            │
-    │  │ Campaign │──────────────────│  Donasi  │            │
-    │  └──────────┘  menerima        └────┬─────┘            │
-    │                                     │                  │
-    │                                     │ M                │
-    │                                     │                  │
-    │                              ┌──────┴──────┐           │
-    │                              │ Users (Don.)│           │
-    │                              └─────────────┘           │
-    │                                                         │
-    │  ┌──────────────────┐                                  │
-    │  │ Profil Yayasan   │ (single row, 1 record)           │
-    │  └──────────────────┘                                  │
-    └─────────────────────────────────────────────────────────┘
+    ┌──────────────────────────────────────────────────────────────────┐
+    │                                                                  │
+    │  ┌──────────┐    1          M  ┌──────────┐                     │
+    │  │ Campaign │──────────────────│  Donasi  │                     │
+    │  └──────────┘  menerima        └────┬─────┘                     │
+    │                                     │                           │
+    │                                     │ M                         │
+    │                                     │                           │
+    │                              ┌──────┴──────┐                    │
+    │                              │Users (Don.) │                    │
+    │                              └─────────────┘                    │
+    │                                                                  │
+    │  ┌──────────────────────┐         1          ┌──────────────┐   │
+    │  │   Profil Yayasan     │────────────────────│Users (Admin) │   │
+    │  │(single row, dikelola │   mengelola        └──────┬───────┘   │
+    │  │     oleh admin)      │                           │           │
+    │  └──────────────────────┘                           │ 1         │
+    │                                                      │           │
+    │                                                      │ M         │
+    │                                              ┌──────┴──────┐    │
+    │                                              │Berita / News│    │
+    │                                              │  (ditulis)  │    │
+    │                                              └─────────────┘    │
+    └──────────────────────────────────────────────────────────────────┘
 ```
 
 | Entitas Asal | Nama Relasi | Entitas Tujuan | Kardinalitas |
@@ -37,6 +46,8 @@
 | Campaign | Menerima | Donasi | 1 to M |
 | Users (Donatur) | Melakukan | Donasi | 1 to M |
 | Users (Admin) | Mengelola | Campaign | 1 to M |
+| Users (Admin) | Mengelola | Profil Yayasan | 1 to 1 |
+| Users (Admin) | Menulis | Berita | 1 to M |
 
 ### Aturan Bisnis Terkait Data
 
@@ -46,10 +57,76 @@
 4. Satu campaign bisa memiliki banyak donasi (termasuk dari donatur yang sama).
 5. `status` donasi hanya berubah via **Midtrans callback** atau **sync manual admin**.
 6. Riwayat donasi tidak bisa dihapus jika sudah sukses (hanya admin yang bisa hapus via panel).
+7. Admin adalah satu-satunya role yang dapat membuat/mengedit campaign, memperbarui profil yayasan, dan menulis berita.
+8. Profil yayasan hanya berisi **1 baris data** — diedit langsung oleh admin; tidak ada operasi hapus.
+9. Berita memiliki dua status (`draft` / `published`) — hanya yang `published` tampil di halaman publik.
 
 ---
 
 ## Logical Record Structure (LRS)
+
+### Diagram Relasi LRS
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│                                                                            │
+│  ┌──────────────────────┐          ┌──────────────────────────┐           │
+│  │      campaigns        │          │        donations         │           │
+│  │──────────────────────│          │──────────────────────────│           │
+│  │ PK id  bigint        │◄─────────│ FK campaign_id           │           │
+│  │    title              │  1    M  │    user_id  (nullable)   │           │
+│  │    slug (unique)      │          │    order_id  (unique)    │           │
+│  │    description        │          │    snap_token            │           │
+│  │    target_amount      │          │    donor_name            │           │
+│  │    collected_amount   │          │    donor_email           │           │
+│  │    image              │          │    donor_phone           │           │
+│  │    status             │          │    amount                │           │
+│  └──────────────────────┘          │    payment_method        │           │
+│                                     │    status                │           │
+│                                     └───────────┬──────────────┘           │
+│                                                 │                          │
+│                                                 │ M                        │
+│                                                 │                          │
+│                                     ┌───────────┴──────────────┐           │
+│                                     │         users            │           │
+│                                     │──────────────────────────│           │
+│                                     │ PK id  bigint            │           │
+│                                     │    name                  │           │
+│                                     │    email (unique)        │           │
+│                                     │    password              │           │
+│                                     │    role                  │           │
+│                                     │    phone                 │           │
+│                                     │    address               │           │
+│                                     │    nik                   │           │
+│                                     │    avatar                │           │
+│                                     └──────────────────────────┘           │
+│                                                                            │
+│  ┌──────────────────────┐  ┌──────────────────────┐                        │
+│  │    profil_yayasan     │  │        news          │                        │
+│  │──────────────────────│  │──────────────────────│                        │
+│  │ PK id  bigint        │  │ PK id  bigint        │                        │
+│  │    nama_yayasan      │  │    judul             │                        │
+│  │    logo              │  │    slug (unique)     │                        │
+│  │    alamat            │  │    kategori          │                        │
+│  │    no_telp           │  │    konten            │                        │
+│  │    email             │  │    status            │                        │
+│  │    ...               │  └──────────────────────┘                        │
+│  └──────────────────────┘                                                   │
+│                                                                            │
+│  ┌──────────────────────────────────────────────────────┐                  │
+│  │  Admin ──1:1──> profil_yayasan                       │                  │
+│  │  Admin ──1:M──> news                                 │                  │
+│  │  Admin ──1:M──> campaigns                            │                  │
+│  │  Donatur ──1:M──> donations                          │                  │
+│  └──────────────────────────────────────────────────────┘                  │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Keterangan:**
+- `PK` = Primary Key, `FK` = Foreign Key
+- Tabel `users` menampung **dua role**: `admin` dan `donatur` (dibedakan kolom `role`)
+- `donations.user_id` nullable → donatur boleh guest
+- Semua foreign key menggunakan `ON DELETE CASCADE` / `ON DELETE SET NULL`
 
 ### 1. Campaign
 
@@ -89,7 +166,7 @@ Tabel: `donations`
 | created_at | timestamp | |
 | updated_at | timestamp | |
 
-### 3. Users (Donatur)
+### 3. Users (Donatur & Admin)
 
 Tabel: `users`
 
@@ -106,6 +183,8 @@ Tabel: `users`
 | avatar | varchar(255), nullable | Foto profil |
 | created_at | timestamp | |
 | updated_at | timestamp | |
+
+> **Catatan role:** User dengan role `admin` mengelola seluruh konten — campaign, profil yayasan, berita, serta validasi transaksi. User dengan role `donatur` hanya dapat melakukan donasi campaign (bisa sebagai guest tanpa login).
 
 ### 4. Profil Yayasan
 
@@ -128,15 +207,38 @@ Tabel: `profil_yayasan`
 | created_at | timestamp | |
 | updated_at | timestamp | |
 
+### 5. Berita / News
+
+Tabel: `news`
+
+| Kolom | Tipe Data | Keterangan | Foreign Key |
+|-------|-----------|------------|-------------|
+| id | bigint, PK, auto-increment | |
+| judul | varchar(255) | Judul berita |
+| slug | varchar(255), unique | Slug URL |
+| kategori | varchar(255), nullable | Kategori kegiatan |
+| tanggal_kegiatan | date, nullable | Tanggal pelaksanaan |
+| lokasi | varchar(255), nullable | Tempat kegiatan |
+| penyelenggara | varchar(255), nullable | Pihak penyelenggara |
+| ringkasan | text, nullable | Cuplikan singkat |
+| konten | text | Isi berita lengkap |
+| foto_utama | varchar(255), nullable | Gambar sampul |
+| status | enum('draft','published'), default 'draft' | Status publikasi |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+> Berita ditulis oleh admin. Hanya berita dengan status `published` yang tampil di halaman publik yayasan.
+
 ---
 
-## Ringkasan Tabel Modul Donasi
+## Ringkasan Tabel Modul Donasi (+ Konteks Sistem)
 
 | No | Tabel | Peran dalam Modul |
 |----|-------|-------------------|
 | 1 | `campaigns` | Entitas utama — target & progress donasi |
 | 2 | `donations` | Transaksi — mencatat setiap donasi masuk |
-| 3 | `users` | Referensi — data donatur (jika login) |
-| 4 | `profil_yayasan` | Konteks — informasi yayasan di halaman publik |
+| 3 | `users` | Referensi — data donatur (jika login) + admin pengelola sistem |
+| 4 | `profil_yayasan` | Konteks — informasi yayasan di halaman publik (dikelola admin) |
+| 5 | `news` | Konteks — berita kegiatan yayasan (ditulis admin) |
 
 > Semua migrasi dan constraint foreign key sudah diimplementasikan di `database/migrations/`.
