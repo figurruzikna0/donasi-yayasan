@@ -334,6 +334,188 @@ Tabel: `news`
 
 ---
 
+## Spesifikasi File
+
+### a. Spesifikasi File Users (Admin & Donatur)
+
+| | |
+|---|---|
+| Nama File Database | users |
+| Akronim | users.myd |
+| Fungsi | Menyimpan data kredensial akses admin dan donatur yayasan |
+| Tipe File | File Master |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 936 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Kata sandi (hash bcrypt) |
+| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
+| 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 10 | created_at | TIMESTAMP | 19 | |
+| 11 | updated_at | TIMESTAMP | 19 | |
+
+### b. Spesifikasi File Anak Asuh
+
+| | |
+|---|---|
+| Nama File Database | foster_children |
+| Akronim | foster_children.myd |
+| Fungsi | Menyimpan data detail anak asuh binaan yayasan |
+| Tipe File | File Master |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 644 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap anak |
+| 3 | age | INT | 11 | Usia anak |
+| 4 | jenis_kelamin | ENUM | 15 | 'Laki-laki' / 'Perempuan' |
+| 5 | description | TEXT | 200 | Deskripsi / latar belakang (nullable) |
+| 6 | photo | VARCHAR | 255 | Foto anak (nullable) |
+| 7 | status | ENUM | 10 | 'Tersedia' / 'Diasuh' |
+| 8 | created_at | TIMESTAMP | 19 | |
+| 9 | updated_at | TIMESTAMP | 19 | |
+
+### c. Spesifikasi File Sponsorship
+
+| | |
+|---|---|
+| Nama File Database | sponsorships |
+| Akronim | sponsorships.myd |
+| Fungsi | Menyimpan data transaksi orang tua asuh (OTA) via Midtrans |
+| Tipe File | File Transaksi |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 1931 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | foster_child_id | BIGINT | 20 | Foreign Key → foster_children.id |
+| 3 | user_id | BIGINT | 20 | Foreign Key → users.id (nullable) |
+| 4 | order_id | VARCHAR | 255 | ID transaksi (unique) |
+| 5 | snap_token | VARCHAR | 255 | Token Snap Midtrans (nullable) |
+| 6 | donor_name | VARCHAR | 255 | Nama donatur OTA |
+| 7 | donor_email | VARCHAR | 255 | Email donatur OTA |
+| 8 | donor_phone | VARCHAR | 20 | No. HP donatur OTA |
+| 9 | amount | DECIMAL | 15 | Nominal sponsorship |
+| 10 | package | VARCHAR | 100 | Paket komitmen (nullable) |
+| 11 | package_description | TEXT | 200 | Deskripsi paket (nullable) |
+| 12 | payment_method | VARCHAR | 50 | Metode bayar (nullable) |
+| 13 | payment_proof | VARCHAR | 255 | Tidak dipakai (nullable) |
+| 14 | status | ENUM | 15 | 'pending'/'success'/'failed'/'expired' |
+| 15 | starts_at | DATE | 10 | Tanggal mulai (nullable) |
+| 16 | expires_at | DATE | 10 | Tanggal berakhir (nullable) |
+| 17 | reminder_sent_at | TIMESTAMP | 19 | Waktu notifikasi dikirim (nullable) |
+| 18 | created_at | TIMESTAMP | 19 | |
+| 19 | updated_at | TIMESTAMP | 19 | |
+
+### d. Spesifikasi File Perkembangan Anak
+
+| | |
+|---|---|
+| Nama File Database | child_developments |
+| Akronim | child_developments.myd |
+| Fungsi | Menyimpan data laporan perkembangan anak asuh |
+| Tipe File | File Transaksi |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 804 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | sponsorship_id | BIGINT | 20 | Foreign Key → sponsorships.id |
+| 3 | foster_child_id | BIGINT | 20 | Foreign Key → foster_children.id |
+| 4 | user_id | BIGINT | 20 | Foreign Key → users.id (nullable) |
+| 5 | tanggal | DATE | 10 | Tanggal laporan |
+| 6 | judul | VARCHAR | 255 | Judul laporan |
+| 7 | deskripsi | TEXT | 500 | Isi laporan |
+| 8 | foto | VARCHAR | 255 | Foto perkembangan (nullable) |
+| 9 | created_at | TIMESTAMP | 19 | |
+| 10 | updated_at | TIMESTAMP | 19 | |
+
+### e. Spesifikasi File Profil Yayasan
+
+| | |
+|---|---|
+| Nama File Database | profil_yayasan |
+| Akronim | profil_yayasan.myd |
+| Fungsi | Menyimpan informasi profil yayasan (single row) |
+| Tipe File | File Master |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 1363 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | nama_yayasan | VARCHAR | 255 | Nama yayasan |
+| 3 | logo | VARCHAR | 255 | File logo (nullable) |
+| 4 | alamat | TEXT | 100 | Alamat yayasan |
+| 5 | no_telp | VARCHAR | 20 | No. telepon |
+| 6 | email | VARCHAR | 255 | Email yayasan |
+| 7 | sejarah_yayasan | TEXT | 200 | Sejarah (nullable) |
+| 8 | visi | TEXT | 100 | Visi (nullable) |
+| 9 | misi | TEXT | 100 | Misi (nullable) |
+| 10 | legalitas | TEXT | 100 | Legalitas (nullable) |
+| 11 | foto_legalitas | VARCHAR | 255 | File legalitas (nullable) |
+| 12 | foto_struktur | VARCHAR | 255 | File struktur (nullable) |
+| 13 | created_at | TIMESTAMP | 19 | |
+| 14 | updated_at | TIMESTAMP | 19 | |
+
+### f. Spesifikasi File Berita / News
+
+| | |
+|---|---|
+| Nama File Database | news |
+| Akronim | news.myd |
+| Fungsi | Menyimpan data berita kegiatan yayasan |
+| Tipe File | File Master |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 1416 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | judul | VARCHAR | 255 | Judul berita |
+| 3 | slug | VARCHAR | 255 | Slug URL (unique) |
+| 4 | kategori | VARCHAR | 50 | Kategori (nullable) |
+| 5 | tanggal_kegiatan | DATE | 10 | Tanggal kegiatan (nullable) |
+| 6 | lokasi | VARCHAR | 100 | Lokasi kegiatan (nullable) |
+| 7 | penyelenggara | VARCHAR | 100 | Penyelenggara (nullable) |
+| 8 | ringkasan | TEXT | 200 | Ringkasan berita (nullable) |
+| 9 | konten | TEXT | 1000 | Isi berita |
+| 10 | foto_utama | VARCHAR | 255 | Gambar sampul (nullable) |
+| 11 | status | ENUM | 10 | 'draft' / 'published' |
+| 12 | created_at | TIMESTAMP | 19 | |
+| 13 | updated_at | TIMESTAMP | 19 | |
+
+---
+
 ## Ringkasan Tabel Modul OTA (+ Konteks Sistem)
 
 | No | Tabel | Peran dalam Modul |
