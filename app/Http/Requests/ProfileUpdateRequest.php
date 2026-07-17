@@ -16,7 +16,7 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -31,5 +31,11 @@ class ProfileUpdateRequest extends FormRequest
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'remove_avatar' => ['nullable', 'in:0,1'],
         ];
+
+        if ($this->user()->role === 'donatur') {
+            $rules['nik'] = ['nullable', 'string', 'max:20'];
+        }
+
+        return $rules;
     }
 }

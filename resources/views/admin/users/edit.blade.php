@@ -55,10 +55,12 @@
                                 <label class="label"><span class="label-text font-semibold text-emerald-700">No. HP / WA</span></label>
                                 <input type="text" name="phone" class="input input-bordered" value="{{ old('phone', $user->phone) }}" placeholder="081234567890">
                             </div>
+                            @if($user->role === 'donatur')
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-semibold text-emerald-700">NIK</span></label>
                                 <input type="text" name="nik" class="input input-bordered" value="{{ old('nik', $user->nik) }}" placeholder="16 digit NIK">
                             </div>
+                            @endif
                         </div>
 
                         <div class="form-control mt-4">

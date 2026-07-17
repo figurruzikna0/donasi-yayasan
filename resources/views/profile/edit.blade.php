@@ -92,11 +92,13 @@
                                         <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input input-bordered w-full border-base-300 focus:border-primary rounded-lg text-sm" placeholder="08xxxx">
                                         @error('phone')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                                     </div>
+                                    @if($user->role === 'donatur')
                                     <div>
                                         <label class="text-xs font-bold text-base-content/50 uppercase tracking-wider block mb-1.5">NIK</label>
                                         <input type="text" name="nik" value="{{ old('nik', $user->nik) }}" class="input input-bordered w-full border-base-300 focus:border-primary rounded-lg text-sm" placeholder="Nomor Induk Kependudukan">
                                         @error('nik')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                                     </div>
+                                    @endif
                                 </div>
 
                                 <div>

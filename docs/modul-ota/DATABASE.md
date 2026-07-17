@@ -280,12 +280,12 @@ Tabel: `users`
 | 5 | role | ENUM | 10 | 'admin' / 'donatur' |
 | 6 | phone | VARCHAR | 20 | No. HP (nullable) |
 | 7 | address | TEXT | 50 | Alamat (nullable) |
-| 8 | nik | VARCHAR | 20 | NIK (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable, khusus donatur) |
 | 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
 | 10 | created_at | TIMESTAMP | 19 | |
 | 11 | updated_at | TIMESTAMP | 19 | |
 
-> **Catatan role:** User dengan role `admin` memiliki akses penuh ke seluruh modul — termasuk mengelola profil yayasan, menulis berita kegiatan, mengelola campaign & donasi, memvalidasi sponsorship, dan mengisi laporan perkembangan anak. User dengan role `donatur` hanya dapat melakukan transaksi donasi/sponsorship.
+> **Catatan role:** User dengan role `admin` memiliki akses penuh ke seluruh modul — termasuk mengelola profil yayasan, menulis berita kegiatan, mengelola campaign & donasi, memvalidasi sponsorship, dan mengisi laporan perkembangan anak. User dengan role `donatur` hanya dapat melakukan transaksi donasi/sponsorship. Kolom `nik` hanya berlaku untuk role `donatur`; admin tidak memiliki data NIK.
 
 ### 5. Profil Yayasan
 
@@ -357,7 +357,7 @@ Tabel: `news`
 | 5 | role | ENUM | 10 | 'admin' / 'donatur' |
 | 6 | phone | VARCHAR | 20 | No. HP (nullable) |
 | 7 | address | TEXT | 50 | Alamat (nullable) |
-| 8 | nik | VARCHAR | 20 | NIK (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable, khusus donatur) |
 | 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
 | 10 | created_at | TIMESTAMP | 19 | |
 | 11 | updated_at | TIMESTAMP | 19 | |
