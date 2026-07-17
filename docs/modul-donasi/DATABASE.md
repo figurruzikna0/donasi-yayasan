@@ -40,7 +40,6 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 ║      donor_phone           varchar(20)                                ║
 ║      amount                decimal(15,2)                              ║
 ║      payment_method        varchar(255) nullable                      ║
-║      payment_proof         varchar(255) nullable (tdk dipakai)        ║
 ║      status                enum(pending/success/failed)               ║
 ║      created_at            timestamp                                  ║
 ║      updated_at            timestamp                                  ║
@@ -214,8 +213,7 @@ Tabel: `donations`
 | 8 | donor_phone | VARCHAR | 20 | No. HP donatur | |
 | 9 | amount | DECIMAL | 15 | Nominal donasi | |
 | 10 | payment_method | VARCHAR | 50 | Metode bayar dari Midtrans (nullable) | |
-| 11 | payment_proof | VARCHAR | 255 | Tidak dipakai (Midtrans full, nullable) | |
-| 12 | status | ENUM | 10 | 'pending' / 'success' / 'failed', default 'pending' | |
+| 11 | status | ENUM | 10 | 'pending' / 'success' / 'failed', default 'pending' | |
 | 13 | created_at | TIMESTAMP | 19 | | |
 | 14 | updated_at | TIMESTAMP | 19 | | |
 
@@ -417,8 +415,7 @@ Tabel: `news`
 | 8 | donor_phone | VARCHAR | 20 | No. HP donatur |
 | 9 | amount | DECIMAL | 15 | Nominal donasi |
 | 10 | payment_method | VARCHAR | 50 | Metode bayar (nullable) |
-| 11 | payment_proof | VARCHAR | 255 | Tidak dipakai (nullable) |
-| 12 | status | ENUM | 10 | 'pending' / 'success' / 'failed' |
+| 11 | status | ENUM | 10 | 'pending' / 'success' / 'failed' |
 | 13 | created_at | TIMESTAMP | 19 | |
 | 14 | updated_at | TIMESTAMP | 19 | |
 

@@ -21,7 +21,6 @@ class Sponsorship extends Model
         'package',
         'package_description',
         'payment_method',
-        'payment_proof',
         'starts_at',
         'expires_at',
         'reminder_sent_at',

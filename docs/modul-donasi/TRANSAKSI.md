@@ -1,5 +1,17 @@
 # Modul Donasi — Sistem Transaksi & Integrasi Midtrans
 
+## C. Sistem Transaksi & Integrasi Eksternal
+
+Implementasi interaksi donasi campaign mencakup integrasi pihak ketiga, yaitu **API Midtrans Snap**. Donatur checkout → sistem buat record pending → kirim payload ke Midtrans → Snap pop-up → donatur bayar → webhook validasi → status sukses/gagal.
+
+### Tabel 3.1 — Rincian Alur Integrasi Transaksi dan Webhook
+
+| Tahapan | Eksekusi Sistem & Interaksi Aktor | Status Database |
+|---------|----------------------------------|-----------------|
+| **Inisiasi** | Donatur checkout. Sistem membuat record donasi (pending) → mengirim payload ke API Midtrans → memperoleh Snap Token → menampilkan pop-up pembayaran. | `pending` |
+| **Pemrosesan** | Donatur memilih metode pembayaran pada pop-up Midtrans Snap dan menyelesaikan pembayaran di luar sistem. | `pending` |
+| **Validasi** | Webhook Midtrans mengirim notifikasi ke `/midtrans/callback`. Sistem memperbarui status donasi, increment `collected_amount` campaign, kirim WA & Email. | `success` / `failed` |
+
 ## Alur Transaksi Donasi Campaign
 
 ```

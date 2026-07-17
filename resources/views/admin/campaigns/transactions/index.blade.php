@@ -53,15 +53,7 @@
                                         <div class="text-xs text-base-content/50 font-semibold mt-1">Via: {{ $donation->payment_method ?? 'N/A' }}</div>
                                     </td>
                                     <td>
-                                        @if($donation->payment_proof)
-                                            <a href="{{ asset('storage/' . $donation->payment_proof) }}" target="_blank" class="avatar">
-                                                <div class="w-16 h-12 rounded-lg ring ring-base-300 ring-offset-1 hover:opacity-80 transition">
-                                                    <img src="{{ asset('storage/' . $donation->payment_proof) }}" alt="Bukti" class="object-cover">
-                                                </div>
-                                            </a>
-                                        @else
-                                            <span class="text-xs text-rose-400 italic">Belum diupload</span>
-                                        @endif
+                                        <span class="text-xs text-base-content/50 italic">Midtrans</span>
                                     </td>
                                     <td class="text-center">
                                         @if($donation->status == 'pending')

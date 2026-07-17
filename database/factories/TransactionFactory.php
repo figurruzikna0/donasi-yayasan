@@ -22,7 +22,6 @@ class TransactionFactory extends Factory
             'amount' => fake()->numberBetween(10000, 5000000),
             'donor_name' => fake()->name(),
             'donor_phone' => fake()->phoneNumber(),
-            'payment_proof' => null,
             'status' => 'verified',
             'message' => null,
         ];

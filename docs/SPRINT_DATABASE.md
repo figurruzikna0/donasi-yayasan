@@ -119,7 +119,6 @@
 | donor_phone | varchar(20) | No. HP donatur |
 | amount | decimal(15,2) | Nominal donasi |
 | payment_method | varchar(255), nullable | Metode bayar |
-| payment_proof | varchar(255), nullable | Bukti bayar |
 | status | enum('pending','success','failed'), default 'pending' | |
 
 ### 7. Anak Asuh / Foster Children
@@ -150,7 +149,6 @@
 | package | varchar(255), nullable | Paket komitmen |
 | package_description | text, nullable | |
 | payment_method | varchar(255), nullable | |
-| payment_proof | varchar(255), nullable | |
 | status | enum('pending','success','failed','expired'), default 'pending' | |
 | starts_at | date, nullable | Mulai sponsorship |
 | expires_at | date, nullable | Berakhir sponsorship |

@@ -1,5 +1,44 @@
 # Modul Orang Tua Asuh (OTA) — Sistem Transaksi & Integrasi Midtrans
 
+## C. Sistem Transaksi & Integrasi Eksternal
+
+Implementasi interaksi sponsorship OTA mencakup integrasi pihak ketiga, yaitu **API Midtrans Snap**. Donatur pilih anak asuh + paket → checkout → sistem buat record pending → kirim payload ke Midtrans → Snap pop-up → donatur bayar → webhook validasi → status sukses/gagal + update masa berlaku anak.
+
+### Tabel 3.1 — Rincian Alur Integrasi Transaksi dan Webhook
+
+| Tahapan | Eksekusi Sistem & Interaksi Aktor | Status Database |
+|---------|----------------------------------|-----------------|
+| **Inisiasi** | Donatur pilih anak asuh + paket komitmen. Sistem membuat record sponsorship (pending) → mengirim payload ke API Midtrans → memperoleh Snap Token → menampilkan pop-up pembayaran. | `pending` |
+| **Pemrosesan** | Donatur memilih metode pembayaran pada pop-up Midtrans Snap dan menyelesaikan pembayaran di luar sistem. | `pending` |
+| **Validasi** | Webhook Midtrans mengirim notifikasi ke `/midtrans/callback`. Sistem memperbarui status sponsorship, set `starts_at`/`expires_at`, ubah anak menjadi `Diasuh`, kirim WA & Email. | `success` / `failed` |
+
+### Callback Response Mapping
+
+| `transaction_status` | Aksi Sistem | Status DB |
+|---------------------|-------------|-----------|
+| `settlement` / `capture` | Update success, set starts_at/expires_at (+1 bln), anak → Diasuh, WA + Email | `success` |
+| `pending` | Tidak ada perubahan | `pending` |
+| `deny` / `cancel` / `expire` | Update failed | `failed` |
+
+### Notifikasi Khusus OTA
+
+| Trigger | Channel | Isi |
+|---------|---------|-----|
+| Sponsorship sukses | WA | Nama anak asuh, usia, JK, paket, nominal, masa berlaku, order ID |
+| Sponsorship sukses | Email | Data sponsorship + anak asuh |
+| Laporan perkembangan | WA + Foto | Judul laporan, deskripsi, foto anak via `sendWithMedia()` |
+| H-7 expired | Email | Pengingat perpanjangan sponsorship |
+| H-3 expired | WA | Pengingat perpanjangan via WA |
+
+### Fallback Error Handling
+
+| Skenario | Penanganan |
+|----------|-----------|
+| Midtrans down (Snap gagal) | Try-catch → log error → redirect back + flash error |
+| Anak tanpa sponsorship aktif di form perkembangan | Controller filter `whereHas('sponsorships', success)` — anak tidak muncul |
+| Submit perkembangan tanpa sponsorship aktif | Redirect back + error *"Anak ini belum memiliki sponsorship aktif."* |
+| WA laporan gagal (Fonnte free plan) | `sendWithMedia()` hanya untuk paket berbayar → log error |
+
 ## Alur Transaksi Sponsorship
 
 ```
@@ -88,29 +127,4 @@ $params = [
 ];
 ```
 
-## Callback Response Mapping
 
-| `transaction_status` | Aksi Sistem | Status DB |
-|---------------------|-------------|-----------|
-| `settlement` / `capture` | Update success, set starts_at/expires_at (+1 bln), anak → Diasuh, WA + Email | `success` |
-| `pending` | Tidak ada perubahan | `pending` |
-| `deny` / `cancel` / `expire` | Update failed | `failed` |
-
-## Notifikasi Khusus OTA
-
-| Trigger | Channel | Isi |
-|---------|---------|-----|
-| Sponsorship sukses | WA | Nama anak asuh, usia, JK, paket, nominal, masa berlaku, order ID |
-| Sponsorship sukses | Email | Data sponsorship + anak asuh |
-| Laporan perkembangan | WA + Foto | Judul laporan, deskripsi, foto anak via `sendWithMedia()` |
-| H-7 expired | Email | Pengingat perpanjangan sponsorship |
-| H-3 expired | WA | Pengingat perpanjangan via WA |
-
-## Fallback Error Handling
-
-| Skenario | Penanganan |
-|----------|-----------|
-| Midtrans down (Snap gagal) | Try-catch → log error → redirect back + flash error |
-| Anak tanpa sponsorship aktif di form perkembangan | Controller filter `whereHas('sponsorships', success)` — anak tidak muncul |
-| Submit perkembangan tanpa sponsorship aktif | Redirect back + error *"Anak ini belum memiliki sponsorship aktif."* |
-| WA laporan gagal (Fonnte free plan) | `sendWithMedia()` hanya untuk paket berbayar → log error |

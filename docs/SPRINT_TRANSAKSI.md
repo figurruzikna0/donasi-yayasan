@@ -1,5 +1,17 @@
 # Sprint — Sistem Transaksi & Integrasi Eksternal (Midtrans)
 
+## C. Sistem Transaksi & Integrasi Eksternal
+
+Implementasi interaksi donasi dan sponsorship mencakup integrasi pihak ketiga, yaitu **API Midtrans Snap** sebagai payment gateway. Seluruh transaksi diproses secara real-time melalui pop-up pembayaran di sisi donatur, dengan validasi akhir via webhook callback dari Midtrans.
+
+### Tabel 3.1 — Rincian Alur Integrasi Transaksi dan Webhook
+
+| Tahapan | Eksekusi Sistem & Interaksi Aktor | Status Database |
+|---------|----------------------------------|-----------------|
+| **Inisiasi** | Donatur checkout. Sistem membuat record transaksi (pending) → mengirim payload ke API Midtrans → memperoleh Snap Token → menampilkan pop-up pembayaran. | `pending` |
+| **Pemrosesan** | Donatur memilih metode pembayaran pada pop-up Midtrans Snap (VA, QRIS, GoPay, ShopeePay, Kartu Kredit, dll) dan menyelesaikan pembayaran di luar sistem. | `pending` |
+| **Validasi** | Webhook Midtrans mengirim notifikasi HTTP POST ke endpoint `/midtrans/callback`. Sistem Laravel membaca `transaction_status`, memperbarui status transaksi, dan menjalankan aksi lanjutan (increment dana, kirim notifikasi WA/Email). | `success` / `failed` |
+
 ## Teknologi Integrasi
 
 | Komponen | Implementasi |

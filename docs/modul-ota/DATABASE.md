@@ -41,7 +41,6 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 ║      package               varchar(255) nullable                            ║
 ║      package_description   text nullable                                    ║
 ║      payment_method        varchar(255) nullable                            ║
-║      payment_proof         varchar(255) nullable (tdk dipakai)              ║
 ║      status                enum(pending/success/failed/expired)             ║
 ║      starts_at             date nullable                                    ║
 ║      expires_at            date nullable                                    ║
@@ -242,8 +241,7 @@ Tabel: `sponsorships`
 | 10 | package | VARCHAR | 100 | Paket komitmen (nullable) | |
 | 11 | package_description | TEXT | 200 | Deskripsi paket (nullable) | |
 | 12 | payment_method | VARCHAR | 50 | Metode bayar dari Midtrans (nullable) | |
-| 13 | payment_proof | VARCHAR | 255 | Tidak dipakai (Midtrans full, nullable) | |
-| 14 | status | ENUM | 12 | 'pending'/'success'/'failed'/'expired', default 'pending' | |
+| 13 | status | ENUM | 12 | 'pending'/'success'/'failed'/'expired', default 'pending' | |
 | 15 | starts_at | DATE | 10 | Tanggal mulai (terisi saat sukses, nullable) | |
 | 16 | expires_at | DATE | 10 | Tanggal berakhir (+1 bulan, nullable) | |
 | 17 | reminder_sent_at | TIMESTAMP | 19 | Waktu notifikasi dikirim (nullable) | |
@@ -466,8 +464,7 @@ Tabel: `news`
 | 10 | package | VARCHAR | 100 | Paket komitmen (nullable) |
 | 11 | package_description | TEXT | 200 | Deskripsi paket (nullable) |
 | 12 | payment_method | VARCHAR | 50 | Metode bayar (nullable) |
-| 13 | payment_proof | VARCHAR | 255 | Tidak dipakai (nullable) |
-| 14 | status | ENUM | 15 | 'pending'/'success'/'failed'/'expired' |
+| 13 | status | ENUM | 15 | 'pending'/'success'/'failed'/'expired' |
 | 15 | starts_at | DATE | 10 | Tanggal mulai (nullable) |
 | 16 | expires_at | DATE | 10 | Tanggal berakhir (nullable) |
 | 17 | reminder_sent_at | TIMESTAMP | 19 | Waktu notifikasi dikirim (nullable) |

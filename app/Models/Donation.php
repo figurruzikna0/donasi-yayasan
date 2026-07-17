@@ -19,7 +19,6 @@ class Donation extends Model
         'user_id',
         'amount',
         'payment_method',
-        'payment_proof',
         'status',
     ];
 
