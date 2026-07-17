@@ -219,25 +219,44 @@ Tabel: `donations`
 | 13 | created_at | TIMESTAMP | 19 | | |
 | 14 | updated_at | TIMESTAMP | 19 | | |
 
-### 3. Users (Donatur & Admin)
+### 3a. Users — Role Admin
 
-Tabel: `users`
+Tabel: `users` (filter `role = 'admin'`)
 
 | No | Kolom | Tipe Data | Size | Keterangan |
 |----|-------|-----------|------|------------|
 | 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
-| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 2 | name | VARCHAR | 255 | Nama lengkap admin |
 | 3 | email | VARCHAR | 255 | Email login (unique) |
 | 4 | password | VARCHAR | 255 | Hash password |
-| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 5 | role | ENUM | 10 | 'admin' |
 | 6 | phone | VARCHAR | 20 | No. HP (nullable) |
 | 7 | address | TEXT | 50 | Alamat (nullable) |
-| 8 | nik | VARCHAR | 20 | NIK (nullable, khusus donatur) |
+| 8 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 9 | created_at | TIMESTAMP | 19 | |
+| 10 | updated_at | TIMESTAMP | 19 | |
+
+> **Khusus Admin:** Mengelola seluruh konten — campaign, profil yayasan, berita, serta validasi transaksi. Tidak memiliki data `nik`.
+
+### 3b. Users — Role Donatur
+
+Tabel: `users` (filter `role = 'donatur'`)
+
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap donatur |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Hash password |
+| 5 | role | ENUM | 10 | 'donatur' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
 | 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
 | 10 | created_at | TIMESTAMP | 19 | |
 | 11 | updated_at | TIMESTAMP | 19 | |
 
-> **Catatan role:** User dengan role `admin` mengelola seluruh konten — campaign, profil yayasan, berita, serta validasi transaksi. User dengan role `donatur` hanya dapat melakukan donasi campaign (bisa sebagai guest tanpa login). Kolom `nik` hanya berlaku untuk role `donatur`; admin tidak memiliki data NIK.
+> **Khusus Donatur:** Hanya dapat melakukan donasi campaign (bisa sebagai guest tanpa login). Memiliki data `nik` untuk keperluan administrasi dan pelaporan.
 
 ### 4. Profil Yayasan
 
@@ -286,13 +305,42 @@ Tabel: `news`
 
 ## Spesifikasi File
 
-### a. Spesifikasi File Users (Admin & Donatur)
+### a1. Spesifikasi File Users — Role Admin
 
 | | |
 |---|---|
 | Nama File Database | users |
-| Akronim | users.myd |
-| Fungsi | Menyimpan data kredensial akses admin dan donatur yayasan |
+| Akronim | admin.myd |
+| Fungsi | Menyimpan data kredensial akses admin yayasan |
+| Tipe File | File Master |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 916 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap admin |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Kata sandi (hash bcrypt) |
+| 5 | role | ENUM | 10 | 'admin' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 9 | created_at | TIMESTAMP | 19 | |
+| 10 | updated_at | TIMESTAMP | 19 | |
+
+> **Catatan:** Admin tidak memiliki data `nik`. Kolom `nik` tidak tercantum karena tidak berlaku untuk role admin.
+
+### a2. Spesifikasi File Users — Role Donatur
+
+| | |
+|---|---|
+| Nama File Database | users |
+| Akronim | donatur.myd |
+| Fungsi | Menyimpan data kredensial akses donatur yayasan |
 | Tipe File | File Master |
 | Organisasi File | Index Sequential |
 | Akses File | Random |
@@ -303,16 +351,18 @@ Tabel: `news`
 | No | Nama Field | Tipe Data | Size | Keterangan |
 |----|-----------|-----------|------|------------|
 | 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
-| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 2 | name | VARCHAR | 255 | Nama lengkap donatur |
 | 3 | email | VARCHAR | 255 | Email login (unique) |
 | 4 | password | VARCHAR | 255 | Kata sandi (hash bcrypt) |
-| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 5 | role | ENUM | 10 | 'donatur' |
 | 6 | phone | VARCHAR | 20 | No. HP (nullable) |
 | 7 | address | TEXT | 50 | Alamat (nullable) |
-| 8 | nik | VARCHAR | 20 | NIK (nullable, khusus donatur) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
 | 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
 | 10 | created_at | TIMESTAMP | 19 | |
 | 11 | updated_at | TIMESTAMP | 19 | |
+
+> **Catatan:** Donatur memiliki data `nik` untuk keperluan administrasi dan pelaporan.
 
 ### b. Spesifikasi File Campaign
 

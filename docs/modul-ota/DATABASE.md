@@ -267,25 +267,44 @@ Tabel: `child_developments`
 | 9 | created_at | TIMESTAMP | 19 | | |
 | 10 | updated_at | TIMESTAMP | 19 | | |
 
-### 4. Users (Donatur & Admin)
+### 4a. Users — Role Admin
 
-Tabel: `users`
+Tabel: `users` (filter `role = 'admin'`)
 
 | No | Kolom | Tipe Data | Size | Keterangan |
 |----|-------|-----------|------|------------|
 | 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
-| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 2 | name | VARCHAR | 255 | Nama lengkap admin |
 | 3 | email | VARCHAR | 255 | Email login (unique) |
 | 4 | password | VARCHAR | 255 | Hash password |
-| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 5 | role | ENUM | 10 | 'admin' |
 | 6 | phone | VARCHAR | 20 | No. HP (nullable) |
 | 7 | address | TEXT | 50 | Alamat (nullable) |
-| 8 | nik | VARCHAR | 20 | NIK (nullable, khusus donatur) |
+| 8 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 9 | created_at | TIMESTAMP | 19 | |
+| 10 | updated_at | TIMESTAMP | 19 | |
+
+> **Khusus Admin:** Akses penuh ke seluruh modul — mengelola profil yayasan, menulis berita, mengelola campaign & donasi, memvalidasi sponsorship, mengisi perkembangan anak. Tidak memiliki data `nik`.
+
+### 4b. Users — Role Donatur
+
+Tabel: `users` (filter `role = 'donatur'`)
+
+| No | Kolom | Tipe Data | Size | Keterangan |
+|----|-------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap donatur |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Hash password |
+| 5 | role | ENUM | 10 | 'donatur' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
 | 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
 | 10 | created_at | TIMESTAMP | 19 | |
 | 11 | updated_at | TIMESTAMP | 19 | |
 
-> **Catatan role:** User dengan role `admin` memiliki akses penuh ke seluruh modul — termasuk mengelola profil yayasan, menulis berita kegiatan, mengelola campaign & donasi, memvalidasi sponsorship, dan mengisi laporan perkembangan anak. User dengan role `donatur` hanya dapat melakukan transaksi donasi/sponsorship. Kolom `nik` hanya berlaku untuk role `donatur`; admin tidak memiliki data NIK.
+> **Khusus Donatur:** Hanya dapat melakukan transaksi donasi/sponsorship. Memiliki data `nik` untuk keperluan administrasi dan pelaporan. Bisa registrasi mandiri atau diinput admin.
 
 ### 5. Profil Yayasan
 
@@ -334,13 +353,42 @@ Tabel: `news`
 
 ## Spesifikasi File
 
-### a. Spesifikasi File Users (Admin & Donatur)
+### a1. Spesifikasi File Users — Role Admin
 
 | | |
 |---|---|
 | Nama File Database | users |
-| Akronim | users.myd |
-| Fungsi | Menyimpan data kredensial akses admin dan donatur yayasan |
+| Akronim | admin.myd |
+| Fungsi | Menyimpan data kredensial akses admin yayasan |
+| Tipe File | File Master |
+| Organisasi File | Index Sequential |
+| Akses File | Random |
+| Media | Harddisk |
+| Panjang Record | 916 karakter |
+| Kunci Field (PK) | id |
+
+| No | Nama Field | Tipe Data | Size | Keterangan |
+|----|-----------|-----------|------|------------|
+| 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
+| 2 | name | VARCHAR | 255 | Nama lengkap admin |
+| 3 | email | VARCHAR | 255 | Email login (unique) |
+| 4 | password | VARCHAR | 255 | Kata sandi (hash bcrypt) |
+| 5 | role | ENUM | 10 | 'admin' |
+| 6 | phone | VARCHAR | 20 | No. HP (nullable) |
+| 7 | address | TEXT | 50 | Alamat (nullable) |
+| 8 | avatar | VARCHAR | 255 | Foto profil (nullable) |
+| 9 | created_at | TIMESTAMP | 19 | |
+| 10 | updated_at | TIMESTAMP | 19 | |
+
+> **Catatan:** Admin tidak memiliki data `nik`. Kolom `nik` tidak tercantum karena tidak berlaku untuk role admin.
+
+### a2. Spesifikasi File Users — Role Donatur
+
+| | |
+|---|---|
+| Nama File Database | users |
+| Akronim | donatur.myd |
+| Fungsi | Menyimpan data kredensial akses donatur yayasan |
 | Tipe File | File Master |
 | Organisasi File | Index Sequential |
 | Akses File | Random |
@@ -351,16 +399,18 @@ Tabel: `news`
 | No | Nama Field | Tipe Data | Size | Keterangan |
 |----|-----------|-----------|------|------------|
 | 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
-| 2 | name | VARCHAR | 255 | Nama lengkap |
+| 2 | name | VARCHAR | 255 | Nama lengkap donatur |
 | 3 | email | VARCHAR | 255 | Email login (unique) |
 | 4 | password | VARCHAR | 255 | Kata sandi (hash bcrypt) |
-| 5 | role | ENUM | 10 | 'admin' / 'donatur' |
+| 5 | role | ENUM | 10 | 'donatur' |
 | 6 | phone | VARCHAR | 20 | No. HP (nullable) |
 | 7 | address | TEXT | 50 | Alamat (nullable) |
-| 8 | nik | VARCHAR | 20 | NIK (nullable, khusus donatur) |
+| 8 | nik | VARCHAR | 20 | NIK (nullable) |
 | 9 | avatar | VARCHAR | 255 | Foto profil (nullable) |
 | 10 | created_at | TIMESTAMP | 19 | |
 | 11 | updated_at | TIMESTAMP | 19 | |
+
+> **Catatan:** Donatur memiliki data `nik` untuk keperluan administrasi dan pelaporan.
 
 ### b. Spesifikasi File Anak Asuh
 
