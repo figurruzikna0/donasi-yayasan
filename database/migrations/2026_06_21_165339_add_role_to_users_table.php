@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_21_165339_add_role_to_users_table: menambah kolom role (default 'donatur') ke tabel users ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

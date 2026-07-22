@@ -1,5 +1,7 @@
 <?php
 
+// === News: model untuk tabel news, berita/kegiatan yayasan ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

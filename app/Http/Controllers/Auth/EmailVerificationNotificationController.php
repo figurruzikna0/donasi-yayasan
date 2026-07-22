@@ -1,4 +1,5 @@
 <?php
+// === EmailVerificationNotificationController: mengirim ulang notifikasi verifikasi email ===
 
 namespace App\Http\Controllers\Auth;
 
@@ -11,6 +12,7 @@ class EmailVerificationNotificationController extends Controller
     /**
      * Send a new email verification notification.
      */
+    // --- KIRIM ULANG EMAIL VERIFIKASI: kirim notifikasi verifikasi baru, redirect back dengan status ---
     public function store(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {

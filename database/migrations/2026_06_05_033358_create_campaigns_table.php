@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_05_033358_create_campaigns_table: membuat tabel campaigns dengan kolom title, slug, description, target_amount, collected_amount, image, status ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

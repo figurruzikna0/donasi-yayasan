@@ -1,5 +1,7 @@
 <?php
 
+// === ProfilYayasan: model untuk tabel profil_yayasan, menyimpan profil yayasan ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

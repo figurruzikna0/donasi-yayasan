@@ -1,3 +1,4 @@
+{{-- LAYOUTS_ADMIN: layout utama panel admin -- sidebar navigasi kiri, top navbar, konten halaman, dan notifikasi toast --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="baitul">
 <head>
@@ -37,6 +38,7 @@
         {{-- ══ SIDEBAR BACKDROP (mobile only) ══ --}}
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden transition-opacity duration-300" onclick="closeSidebar()"></div>
 
+        {{-- BAGIAN: sidebar kiri navigasi dengan menu utama, konten, program, dan rekap data --}}
         {{-- ══ SIDEBAR ══ --}}
         <aside id="admin-sidebar"
                class="w-60 shrink-0 bg-primary flex flex-col h-screen overflow-y-auto
@@ -141,9 +143,11 @@
             </div>
         </aside>
 
+        {{-- BAGIAN: area konten utama (top navbar + slot) --}}
         {{-- ══ MAIN CONTENT ══ --}}
         <main class="flex-1 overflow-x-hidden min-w-0 flex flex-col">
 
+            {{-- BAGIAN: header top navbar dengan judul halaman, tanggal, dan menu dropdown akun --}}
             {{-- ══ TOP NAVBAR ══ --}}
             <header class="bg-base-100 border-b border-base-200 sticky top-0 z-40">
                 <div class="px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -203,11 +207,12 @@
                 </div>
             </header>
 
-            {{-- ══ PAGE CONTENT ══ --}}
+                {{-- BAGIAN: konten utama halaman yang di-inject dari child view melalui $slot --}}
             {{ $slot }}
         </main>
     </div>
 
+    {{-- BAGIAN: script JavaScript untuk toggle sidebar pada mobile --}}
     <script>
     const sidebar = document.getElementById('admin-sidebar');
     const overlay = document.getElementById('sidebar-overlay');

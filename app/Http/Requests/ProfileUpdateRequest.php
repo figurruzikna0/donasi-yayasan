@@ -1,5 +1,7 @@
 <?php
 
+// === ProfileUpdateRequest: validasi input saat update profil user ===
+
 namespace App\Http\Requests;
 
 use App\Models\User;
@@ -14,6 +16,7 @@ class ProfileUpdateRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
+    // --- ATURAN VALIDASI: validasi field profil user (name, email, phone, address, avatar) ---
     public function rules(): array
     {
         $rules = [

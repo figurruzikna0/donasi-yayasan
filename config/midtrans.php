@@ -1,4 +1,5 @@
 <?php
+// === midtrans.php: konfigurasi Midtrans (merchant_id, client_key, server_key) ===
 
 return [
     'merchant_id' => env('MIDTRANS_MERCHANT_ID'),

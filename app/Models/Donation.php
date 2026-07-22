@@ -1,5 +1,7 @@
 <?php
 
+// === Donation: model untuk tabel donations, menyimpan data donasi ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,11 +24,13 @@ class Donation extends Model
         'status',
     ];
 
+    // --- RELASI: donasi milik satu campaign (BelongsTo) ---
     public function campaign()
     {
         return $this->belongsTo(Campaign::class);
     }
 
+    // --- RELASI: donasi milik satu user/donatur (BelongsTo) ---
     public function user()
     {
         return $this->belongsTo(User::class);

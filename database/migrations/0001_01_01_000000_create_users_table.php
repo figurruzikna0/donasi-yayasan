@@ -1,4 +1,5 @@
 <?php
+// === 0001_01_01_000000_create_users_table: membuat tabel users, password_reset_tokens, dan sessions ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

@@ -1,5 +1,7 @@
+{{-- LAYOUTS_NAVIGATION: navigasi utama untuk pengguna non-admin -- logo, tautan dashboard, dropdown profil, dan menu mobile --}}
 @php $navUser = Auth::user(); @endphp
 @if(!$navUser || $navUser->role !== 'admin')
+{{-- BAGIAN: wrapper navigasi desktop dengan logo, tautan, dan dropdown profil --}}
 <nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200">
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4rem]">
         <div class="flex-1 flex items-center gap-4">
@@ -19,6 +21,7 @@
             </div>
         </div>
 
+        {{-- BAGIAN: dropdown profil pengguna untuk layar desktop --}}
         <div class="flex-none hidden sm:flex">
             <div class="dropdown dropdown-end">
                 <button tabindex="0" class="btn btn-ghost btn-sm gap-2">
@@ -39,6 +42,7 @@
             </div>
         </div>
 
+        {{-- BAGIAN: tombol hamburger untuk menu navigasi mobile --}}
         <div class="flex-none sm:hidden">
             <button @click="open = ! open" class="btn btn-ghost btn-square">
                 <svg x-show="!open" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,6 +55,7 @@
         </div>
     </div>
 
+    {{-- BAGIAN: panel menu navigasi dropdown untuk layar mobile --}}
     <div x-show="open" class="sm:hidden bg-base-100 border-t border-base-200">
         <ul class="menu menu-md p-4 pt-2">
             <li><a :href="route('dashboard')" wire:navigate>Dashboard</a></li>

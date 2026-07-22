@@ -1,20 +1,19 @@
 <?php
+// === TransactionController (Admin): mengelola dan mensinkronkan transaksi donasi & sponsorship ===
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\DonationSuccessMail;
-use App\Mail\SponsorshipSuccessMail;
 use App\Models\Donation;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Transaction;
 
 class TransactionController extends Controller
 {
+    // --- DAFTAR TRANSAKSI: menampilkan statistik & daftar donasi dan sponsorship dengan pagination ---
     public function index()
     {
         $donationCount = Donation::count();
@@ -58,9 +57,10 @@ class TransactionController extends Controller
         ));
     }
 
+    // --- SETUJUI TRANSAKSI: update status sponsorship/donasi jadi success, kirim WA notifikasi, redirect back ---
     public function approve($id)
     {
-        // ── Sponsorship ──
+        // ── Cek & update sponsorship ──
         if (str_starts_with($id, 'SPONSOR-')) {
             $sponsorship = Sponsorship::with('fosterChild')
                 ->where('order_id', $id)
@@ -82,18 +82,10 @@ class TransactionController extends Controller
                 $this->kirimWaSponsor($sponsorship);
             }
 
-            if ($sponsorship->donor_email) {
-                try {
-                    Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
-                } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
-                }
-            }
-
             return redirect()->back()->with('success', 'Sponsorship berhasil disetujui!');
         }
 
-        // ── Donasi kampanye ──
+        // ── Cek & update donasi kampanye ──
         $donation = Donation::where('order_id', $id)->first();
 
         if (!$donation) {
@@ -103,17 +95,10 @@ class TransactionController extends Controller
         $donation->update(['status' => 'success']);
         $donation->campaign?->increment('collected_amount', $donation->amount);
 
-        if ($donation->donor_email) {
-            try {
-                Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
-            }
-        }
-
         return redirect()->back()->with('success', 'Transaksi berhasil disetujui!');
     }
 
+    // --- HAPUS TRANSAKSI: hapus data sponsorship/donasi berdasarkan order_id, redirect back ---
     public function destroy($id)
     {
         if (str_starts_with($id, 'SPONSOR-')) {
@@ -137,6 +122,7 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'Data transaksi berhasil dihapus dari sistem!');
     }
 
+    // --- SINKRON SEMUA: cek status semua transaksi pending ke Midtrans, update status otomatis, redirect back dengan ringkasan ---
     public function syncAll()
     {
         $results = ['success' => 0, 'failed' => 0, 'pending' => 0, 'errors' => 0];
@@ -181,14 +167,6 @@ class TransactionController extends Controller
                     ]);
                     $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
-                    if ($sponsorship->donor_email) {
-                        try {
-                            Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
-                        } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
-                        }
-                    }
-
                     $results['success']++;
                 } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
                     $sponsorship->update(['status' => 'failed']);
@@ -203,14 +181,6 @@ class TransactionController extends Controller
                 if (in_array($midtransStatus, ['settlement', 'capture'])) {
                     $donation->update(['status' => 'success']);
                     $donation->campaign?->increment('collected_amount', $donation->amount);
-
-                    if ($donation->donor_email) {
-                        try {
-                            Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
-                        } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
-                        }
-                    }
 
                     $results['success']++;
                 } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
@@ -256,6 +226,7 @@ class TransactionController extends Controller
         return $redirect;
     }
 
+    // --- SINKRON SATU TRANSAKSI: cek status order tertentu ke Midtrans, update status, redirect back ---
     public function sync($id)
     {
         Config::$serverKey    = config('midtrans.server_key');
@@ -285,14 +256,6 @@ class TransactionController extends Controller
                 ]);
                 $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
-                if ($sponsorship->donor_email) {
-                    try {
-                        Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
-                    } catch (\Throwable $e) {
-                        \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
-                    }
-                }
-
                 return redirect()->back()->with('success', 'Sync: Sponsorship sukses (settlement).');
             } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
                 $sponsorship->update(['status' => 'failed']);
@@ -302,7 +265,7 @@ class TransactionController extends Controller
             }
         }
 
-        // Donasi
+        // Deteksi jenis: donasi atau sponsorship
         $donation = Donation::where('order_id', $id)->first();
         if (!$donation) {
             return redirect()->back()->with('error', 'Data donasi tidak ditemukan.');
@@ -311,14 +274,6 @@ class TransactionController extends Controller
         if (in_array($midtransStatus, ['settlement', 'capture'])) {
             $donation->update(['status' => 'success']);
             $donation->campaign?->increment('collected_amount', $donation->amount);
-
-            if ($donation->donor_email) {
-                try {
-                    Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
-                } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
-                }
-            }
 
             return redirect()->back()->with('success', 'Sync: Donasi sukses (settlement).');
         } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {

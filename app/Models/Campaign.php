@@ -1,5 +1,7 @@
 <?php
 
+// === Campaign: model untuk tabel campaigns, menyimpan data campaign donasi ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

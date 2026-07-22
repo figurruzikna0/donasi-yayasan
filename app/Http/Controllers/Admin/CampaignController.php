@@ -1,4 +1,5 @@
 <?php
+// === CampaignController (Admin): CRUD kampanye donasi ===
 
 namespace App\Http\Controllers\Admin;
 
@@ -12,17 +13,20 @@ class CampaignController extends Controller
 {
     use HandlesFileUpload;
 
+    // --- DAFTAR KAMPANYE: menampilkan semua data kampanye ---
     public function index()
     {
         $campaigns = Campaign::all();
         return view('admin.campaigns.index', compact('campaigns'));
     }
 
+    // --- FORM TAMBAH KAMPANYE: menampilkan halaman tambah kampanye baru ---
     public function create()
     {
         return view('admin.campaigns.create');
     }
 
+    // --- PROSES TAMBAH KAMPANYE: validasi input, upload image, generate slug, simpan status active, redirect ke daftar kampanye ---
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -45,16 +49,19 @@ class CampaignController extends Controller
             ->with('success', 'Kampanye berhasil ditambahkan!');
     }
 
+    // --- DETAIL KAMPANYE: menampilkan halaman detail kampanye ---
     public function show(Campaign $campaign)
     {
         return view('admin.campaigns.show', compact('campaign'));
     }
 
+    // --- FORM EDIT KAMPANYE: menampilkan halaman edit kampanye ---
     public function edit(Campaign $campaign)
     {
         return view('admin.campaigns.edit', compact('campaign'));
     }
 
+    // --- PROSES UPDATE KAMPANYE: validasi input, upload image jika ada, update slug, redirect ke daftar kampanye ---
     public function update(Request $request, Campaign $campaign)
     {
         $validated = $request->validate([
@@ -85,6 +92,7 @@ class CampaignController extends Controller
             ->with('success', 'Kampanye berhasil diperbarui!');
     }
 
+    // --- HAPUS KAMPANYE: hapus data kampanye, redirect ke daftar kampanye ---
     public function destroy(Campaign $campaign)
     {
         $campaign->delete();

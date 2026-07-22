@@ -1,4 +1,5 @@
 <?php
+// === InvoiceController: menampilkan dan mengunduh invoice donasi, sponsorship, & laporan perkembangan ===
 
 namespace App\Http\Controllers;
 
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
+    // --- TAMPILKAN INVOICE DONASI: menerima $id donasi, cek kepemilikan, tampilkan halaman invoice donasi ---
     public function donation($id)
     {
         $donation = Donation::with('campaign')->findOrFail($id);
@@ -23,6 +25,7 @@ class InvoiceController extends Controller
         return view('invoices.donation', compact('donation'));
     }
 
+    // --- TAMPILKAN INVOICE SPONSORSHIP: menerima $id sponsorship, cek kepemilikan, tampilkan halaman invoice sponsorship ---
     public function sponsorship($id)
     {
         $sponsorship = Sponsorship::with('fosterChild')->findOrFail($id);
@@ -34,6 +37,7 @@ class InvoiceController extends Controller
         return view('invoices.sponsorship', compact('sponsorship'));
     }
 
+    // --- DOWNLOAD PDF DONASI: generate PDF invoice donasi dengan data campaign & profil yayasan, return download ---
     public function donationPdf($id)
     {
         $donation = Donation::with('campaign')->findOrFail($id);
@@ -47,6 +51,7 @@ class InvoiceController extends Controller
         return $pdf->download('invoice-donasi-'.$donation->order_id.'.pdf');
     }
 
+    // --- DOWNLOAD PDF SPONSORSHIP: generate PDF invoice sponsorship dengan data anak asuh & profil yayasan, return download ---
     public function sponsorshipPdf($id)
     {
         $sponsorship = Sponsorship::with('fosterChild')->findOrFail($id);
@@ -60,6 +65,7 @@ class InvoiceController extends Controller
         return $pdf->download('invoice-sponsorship-'.$sponsorship->order_id.'.pdf');
     }
 
+    // --- DOWNLOAD PDF LAPORAN PERKEMBANGAN: generate PDF laporan perkembangan anak, auto-rotate foto sesuai EXIF, return download ---
     public function childDevelopmentPdf($id)
     {
         $development = ChildDevelopment::with(['fosterChild', 'sponsorship'])->findOrFail($id);

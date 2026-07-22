@@ -1,4 +1,5 @@
 <?php
+// === 2026_07_06_112948_add_foto_qris_to_profil_yayasan_table: menambah kolom foto_qris ke tabel profil_yayasan ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

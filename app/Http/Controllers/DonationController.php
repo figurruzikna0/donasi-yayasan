@@ -1,16 +1,14 @@
 <?php
+// === DonationController: menangani proses donasi kampanye dan sponsorship melalui Midtrans ===
 
 namespace App\Http\Controllers;
 
-use App\Mail\DonationSuccessMail;
-use App\Mail\SponsorshipSuccessMail;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\FosterChild;
-use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -24,11 +22,13 @@ class DonationController extends Controller
         Config::$is3ds        = config('midtrans.is_3ds');
     }
 
+    // --- TAMPILKAN FORM DONASI: menerima $campaign, menampilkan halaman donasi dengan data campaign ---
     public function create(Campaign $campaign)
     {
         return view('donations.create', compact('campaign'));
     }
 
+    // --- PROSES DONASI BARU: validasi input, simpan donasi status pending, dapatkan Snap token Midtrans, tampilkan halaman pembayaran ---
     public function store(Request $request, Campaign $campaign)
     {
         $user = auth()->user();
@@ -82,12 +82,14 @@ class DonationController extends Controller
         return view('donations.payment', compact('donation', 'campaign', 'snapToken'));
     }
 
+    // --- TAMPILKAN FORM SPONSORSHIP: menerima $id anak asuh, menampilkan halaman sponsorship ---
     public function sponsorForm($id)
     {
         $child = FosterChild::findOrFail($id);
         return view('donations.sponsor', compact('child'));
     }
 
+    // --- PROSES SPONSORSHIP BARU: validasi input, simpan sponsorship status pending, dapatkan Snap token Midtrans, tampilkan halaman pembayaran ---
     public function sponsorStore(Request $request, $id)
     {
         $child = FosterChild::findOrFail($id);
@@ -146,6 +148,7 @@ class DonationController extends Controller
         return view('donations.sponsor_payment', compact('sponsorship', 'child', 'snapToken'));
     }
 
+    // --- CALLBACK MIDTRANS: menerima notifikasi pembayaran dari Midtrans, update status donasi/sponsorship, kirim WA notifikasi, return JSON ---
     public function callback(Request $request)
     {
         $this->initMidtrans();
@@ -187,15 +190,6 @@ class DonationController extends Controller
                         }
                     }
 
-                    // ✅ Kirim notifikasi email ke donatur
-                    if ($sponsorship->donor_email) {
-                        try {
-                            Mail::to($sponsorship->donor_email)->send(new SponsorshipSuccessMail($sponsorship));
-                        } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Gagal kirim email sponsorship: ' . $e->getMessage());
-                        }
-                    }
-
                 } elseif ($status === 'pending') {
                     $sponsorship->update(['status' => 'pending']);
                 } else {
@@ -228,14 +222,6 @@ class DonationController extends Controller
                         }
                     }
 
-                    // ✅ Kirim notifikasi email ke donatur
-                    if ($donation->donor_email) {
-                        try {
-                            Mail::to($donation->donor_email)->send(new DonationSuccessMail($donation));
-                        } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Gagal kirim email donasi: ' . $e->getMessage());
-                        }
-                    }
                 } elseif ($status === 'pending') {
                     $donation->update(['status' => 'pending']);
                 } else {

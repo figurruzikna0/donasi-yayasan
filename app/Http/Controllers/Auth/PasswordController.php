@@ -1,4 +1,5 @@
 <?php
+// === PasswordController: mengubah password user yang sudah login ===
 
 namespace App\Http\Controllers\Auth;
 
@@ -14,6 +15,7 @@ class PasswordController extends Controller
     /**
      * Update the user's password.
      */
+    // --- UBAH PASSWORD: validasi current_password & password baru, update, logout, redirect ke login dengan pesan sukses ---
     public function update(Request $request): RedirectResponse
     {
         $request->validateWithBag('updatePassword', [

@@ -1,4 +1,5 @@
 <?php
+// === AuthController: menangani login dan logout user ===
 
 namespace App\Http\Controllers;
 

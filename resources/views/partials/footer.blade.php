@@ -1,10 +1,11 @@
+{{-- PARTIALS_FOOTER: footer halaman publik -- logo yayasan, navigasi, program, kontak, lokasi (Google Maps), dan copyright --}}
 <footer class="relative overflow-hidden" style="background-color:#091f19">
-    {{-- Subtle top wave/glow --}}
+    {{-- Garis dekoratif gradasi di tepi atas footer --}}
     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
 
-        {{-- TOP SECTION: Logo + CTA --}}
+        {{-- Bagian atas: logo & nama yayasan, data dari $profil --}}
         <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-10 border-b border-brand-800/60">
             <div class="flex items-center gap-4">
                 <div class="relative">
@@ -23,30 +24,12 @@
                     <p class="text-xs text-brand-400 font-medium tracking-wide">Lembaga Sosial Amanah & Terpercaya</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="{{ url('/#kampanye') }}"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-brand-950 transition-all duration-200"
-                   style="background-color:#2d7d62;box-shadow:0 4px 14px rgba(45,125,98,0.35)"
-                   onmouseover="this.style.backgroundColor='#1e634d';this.style.boxShadow='0 6px 20px rgba(45,125,98,0.45)'"
-                   onmouseout="this.style.backgroundColor='#2d7d62';this.style.boxShadow='0 4px 14px rgba(45,125,98,0.35)'">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    Donasi Sekarang
-                </a>
-                <a href="{{ url('/#program-ota') }}"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 border"
-                   style="border-color:rgba(45,125,98,0.3);color:#75b89b"
-                   onmouseover="this.style.borderColor='#2d7d62';this.style.color='#d4e9df'"
-                   onmouseout="this.style.borderColor='rgba(45,125,98,0.3)';this.style.color='#75b89b'">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
-                    Jadi OTA
-                </a>
-            </div>
         </div>
 
-        {{-- MAIN GRID: 4 kolom --}}
+        {{-- Grid utama 4 kolom: Navigasi, Program, Kontak, Lokasi --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 py-12">
 
-            {{-- KOLOM 1: Navigasi --}}
+            {{-- Kolom 1 - Navigasi: tautan ke profil, donasi, OTA, berita, legalitas --}}
             <div>
                 <p class="text-xs font-bold text-brand-300 uppercase tracking-widest mb-5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
@@ -91,7 +74,7 @@
                 </ul>
             </div>
 
-            {{-- KOLOM 2: Program --}}
+            {{-- Kolom 2 - Program: daftar program yayasan (informasi statis) --}}
             <div>
                 <p class="text-xs font-bold text-brand-300 uppercase tracking-widest mb-5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
@@ -125,7 +108,7 @@
                 </ul>
             </div>
 
-            {{-- KOLOM 3: Kontak --}}
+            {{-- Kolom 3 - Kontak: telepon, email, alamat dari $profil --}}
             <div>
                 <p class="text-xs font-bold text-brand-300 uppercase tracking-widest mb-5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
@@ -166,7 +149,7 @@
                 </ul>
             </div>
 
-            {{-- KOLOM 4: Maps --}}
+            {{-- Kolom 4 - Lokasi: embed Google Maps iframe + tombol buka Google Maps --}}
             <div>
                 <p class="text-xs font-bold text-brand-300 uppercase tracking-widest mb-5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
@@ -190,10 +173,9 @@
             </div>
         </div>
 
-        {{-- BOTTOM BAR --}}
+        {{-- Baris bawah: copyright otomatis & nama yayasan dari $profil --}}
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-brand-800/60">
             <p class="text-xs text-brand-500 text-center sm:text-left">&copy; {{ date('Y') }} {{ $profil?->nama_yayasan ?? 'Yayasan Baitul Yatim Sukabumi' }}. Dikelola dengan penuh amanah &amp; transparansi.</p>
-            <p class="text-xs text-brand-600">Dibangun dengan <span class="text-brand-400">❤️</span> untuk kebaikan</p>
         </div>
     </div>
 </footer>

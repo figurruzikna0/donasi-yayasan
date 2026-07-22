@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_30_071122_add_deskripsi_to_pendiris_table: menambah kolom deskripsi ke tabel pendiris ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

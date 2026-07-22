@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_05_072730_create_donations_table: membuat tabel donations dengan kolom campaign_id, donor_name, donor_email, amount, status, order_id, snap_token, payment_proof ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_05_033404_create_foster_children_table: membuat tabel foster_children dengan kolom name, age, description, photo, status ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

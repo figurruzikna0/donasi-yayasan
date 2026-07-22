@@ -1,4 +1,5 @@
 <?php
+// === RekapController (Admin): menampilkan dan mengekspor rekap donasi, donatur, & orang tua asuh ===
 
 namespace App\Http\Controllers\Admin;
 
@@ -22,6 +23,7 @@ class RekapController extends Controller
         return $query;
     }
 
+    // --- REKAP DONASI: filter/search/paginate data donasi, hitung total amount & status counts, tampilkan halaman rekap donasi ---
     public function donasi(Request $request)
     {
         $query = Donation::with(['campaign', 'user'])->latest();
@@ -51,6 +53,7 @@ class RekapController extends Controller
         return view('admin.rekap.donasi', compact('donations', 'totalAmount', 'totalCount', 'pendingCount', 'successCount'));
     }
 
+    // --- EXPORT CSV DONASI: filter data donasi, generate & download file CSV dengan BOM UTF-8 ---
     public function donasiExport(Request $request)
     {
         $query = Donation::with(['campaign', 'user'])->latest();
@@ -97,6 +100,7 @@ class RekapController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    // --- REKAP DONATUR: filter/search/paginate data donatur dengan jumlah donasi & sponsorship, tampilkan halaman rekap donatur ---
     public function donatur(Request $request)
     {
         $query = User::where('role', 'donatur')->withCount(['donations', 'sponsorships'])->latest();
@@ -123,6 +127,7 @@ class RekapController extends Controller
         return view('admin.rekap.donatur', compact('donaturs', 'totalDonatur', 'totalDonasiAll', 'totalSponsorshipAll'));
     }
 
+    // --- EXPORT CSV DONATUR: filter data donatur, generate & download file CSV ---
     public function donaturExport(Request $request)
     {
         $query = User::where('role', 'donatur')->withCount(['donations', 'sponsorships'])->latest();
@@ -168,6 +173,7 @@ class RekapController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    // --- REKAP ORANG TUA ASUH: filter/search/paginate data sponsorship dengan status aktif/pending/kadaluarsa, tampilkan halaman ---
     public function orangTuaAsuh(Request $request)
     {
         $query = Sponsorship::with(['fosterChild', 'user'])->latest();
@@ -214,6 +220,7 @@ class RekapController extends Controller
         return view('admin.rekap.orang_tua_asuh', compact('sponsorships', 'totalAmount', 'activeCount', 'totalCount'));
     }
 
+    // --- EXPORT CSV ORANG TUA ASUH: filter data sponsorship, generate & download file CSV ---
     public function orangTuaAsuhExport(Request $request)
     {
         $query = Sponsorship::with(['fosterChild', 'user'])->latest();
@@ -281,6 +288,7 @@ class RekapController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    // --- EXPORT PDF DONASI: filter data donasi, generate & download file PDF landscape ---
     public function donasiExportPdf(Request $request)
     {
         $query = Donation::with(['campaign', 'user'])->latest();
@@ -305,6 +313,7 @@ class RekapController extends Controller
         return $pdf->download('rekap-donasi-' . now()->format('Y-m-d') . '.pdf');
     }
 
+    // --- EXPORT PDF DONATUR: filter data donatur, generate & download file PDF landscape ---
     public function donaturExportPdf(Request $request)
     {
         $query = User::where('role', 'donatur')->withCount(['donations', 'sponsorships'])->latest();
@@ -328,6 +337,7 @@ class RekapController extends Controller
         return $pdf->download('rekap-donatur-' . now()->format('Y-m-d') . '.pdf');
     }
 
+    // --- EXPORT PDF ORANG TUA ASUH: filter data sponsorship, generate & download file PDF landscape ---
     public function orangTuaAsuhExportPdf(Request $request)
     {
         $query = Sponsorship::with(['fosterChild', 'user'])->latest();

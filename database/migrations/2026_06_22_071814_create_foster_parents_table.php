@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_22_071814_create_foster_parents_table: membuat tabel foster_parents dengan kolom user_id, foster_child_id, monthly_amount, status ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

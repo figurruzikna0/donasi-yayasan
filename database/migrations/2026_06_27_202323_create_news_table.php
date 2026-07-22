@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_27_202323_create_news_table: membuat tabel news dengan kolom judul, slug, kategori, tanggal_kegiatan, lokasi, penyelenggara, ringkasan, konten, foto_utama, status ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

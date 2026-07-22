@@ -1,4 +1,5 @@
 <?php
+// === ProfileController: menangani edit profil user, upload avatar, dan hapus akun ===
 
 namespace App\Http\Controllers;
 
@@ -14,6 +15,7 @@ class ProfileController extends Controller
 {
     use HandlesFileUpload;
 
+    // --- TAMPILKAN FORM EDIT PROFIL: menampilkan halaman edit profil untuk user yang sedang login ---
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,6 +23,7 @@ class ProfileController extends Controller
         ]);
     }
 
+    // --- PROSES UPDATE PROFIL: validasi input, upload/remove avatar jika ada, redirect ke form edit dengan status ---
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
@@ -50,6 +53,7 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
+    // --- HAPUS AKUN: validasi password, logout, hapus user, invalidate session, redirect ke home ---
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

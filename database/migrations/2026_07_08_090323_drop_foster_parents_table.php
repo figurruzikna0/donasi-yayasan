@@ -1,4 +1,5 @@
 <?php
+// === 2026_07_08_090323_drop_foster_parents_table: menghapus tabel foster_parents (diganti dengan sistem sponsorship) ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;

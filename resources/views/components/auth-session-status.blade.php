@@ -1,3 +1,4 @@
+{{-- COMPONENTS_AUTH_SESSION_STATUS: menampilkan status sesi (misal sukses reset password) dalam kotak notifikasi hijau --}}
 @props(['status'])
 
 @if ($status)

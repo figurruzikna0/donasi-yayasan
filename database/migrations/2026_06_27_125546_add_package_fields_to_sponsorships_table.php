@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_27_125546_add_package_fields_to_sponsorships_table: menambah kolom package, package_description, payment_method ke tabel sponsorships ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

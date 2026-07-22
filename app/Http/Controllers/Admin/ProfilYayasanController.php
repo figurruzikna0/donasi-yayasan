@@ -1,4 +1,5 @@
 <?php
+// === ProfilYayasanController (Admin): mengelola profil yayasan dan data pendiri ===
 
 namespace App\Http\Controllers\Admin;
 
@@ -12,6 +13,7 @@ class ProfilYayasanController extends Controller
 {
     use HandlesFileUpload;
 
+    // --- DAFTAR PENDIRI: menampilkan halaman profil yayasan dengan daftar pendiri ---
     public function index()
     {
         $pendiris = Pendiri::latest()->paginate(10);
@@ -19,11 +21,13 @@ class ProfilYayasanController extends Controller
         return view('admin.profil.index', compact('pendiris'));
     }
 
+    // --- FORM EDIT PROFIL: menampilkan halaman edit profil yayasan ---
     public function edit()
     {
         return view('admin.profil.edit');
     }
 
+    // --- PROSES UPDATE PROFIL: validasi input, upload logo/foto legalitas/foto struktur, simpan pendiri baru, update profil, redirect ke dashboard ---
     public function update(Request $request)
     {
         $validated = $request->validate([

@@ -1,4 +1,5 @@
 <?php
+// === sanctum.php: konfigurasi Sanctum untuk API token dan SPA auth ===
 
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;

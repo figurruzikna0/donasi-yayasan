@@ -1,3 +1,4 @@
+{{-- LAYOUTS_APP: layout utama untuk halaman user setelah login -- menyertakan navbar, notifikasi, header opsional, dan konten utama --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="baitul">
     <head>
@@ -7,11 +8,11 @@
 
         <title>{{ $profil?->nama_yayasan ?? 'Yayasan Baitul Yatim Sukabumi' }}</title>
 
-        <!-- Fonts -->
+        {{-- FONT: Google Font Figtree dari bunny.net --}}
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
+        {{-- ASSET: CSS & JS via Vite --}}
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
@@ -39,6 +40,7 @@
                 </div>
             </div>
 
+            {{-- BAGIAN: header halaman opsional (hanya muncul jika child view mendefinisikan $header) --}}
             @isset($header)
                 <header class="bg-base-100 shadow-sm">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -47,6 +49,7 @@
                 </header>
             @endisset
 
+            {{-- BAGIAN: konten utama halaman dari child view --}}
             <main>
                 {{ $slot }}
             </main>

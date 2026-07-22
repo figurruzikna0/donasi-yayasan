@@ -1,4 +1,5 @@
 <?php
+// === 2026_07_03_182550_add_donor_phone_to_donations_table: menambah kolom donor_phone ke tabel donations ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

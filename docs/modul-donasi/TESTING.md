@@ -22,7 +22,7 @@
 | Callback Deny | Midtrans kirim `deny` | Status → `failed` | ✅ |
 | Invoice HTML | Akses URL invoice | Detail donasi + data yayasan tampil | ✅ |
 | Invoice PDF | Klik download PDF | File PDF terdownload | ✅ |
-| Approve Manual (Admin) | Klik "Konfirmasi" di transaksi pending | Status → success, WA + Email terkirim | ✅ |
+| Approve Manual (Admin) | Klik "Konfirmasi" di transaksi pending | Status → success, WA terkirim | ✅ |
 | Hapus Transaksi | Klik "Hapus" | Data donasi terhapus | ✅ |
 | Sync All | Klik "Sync All" | Semua donasi pending dicek ke Midtrans | ✅ |
 

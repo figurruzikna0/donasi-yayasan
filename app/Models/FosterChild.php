@@ -1,5 +1,7 @@
 <?php
 
+// === FosterChild: model untuk tabel foster_children, data anak asuh ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,11 +30,13 @@ class FosterChild extends Model
         });
     }
 
+    // --- RELASI: foster_child memiliki banyak sponsorship (HasMany) ---
     public function sponsorships()
     {
         return $this->hasMany(Sponsorship::class);
     }
 
+    // --- RELASI: foster_child memiliki satu sponsorship aktif (HasOne) ---
     public function activeSponsorship()
     {
         return $this->hasOne(Sponsorship::class)
@@ -40,7 +44,7 @@ class FosterChild extends Model
             ->latestOfMany('expires_at');
     }
 
-    // ★ TAMBAHAN: relasi ke laporan perkembangan
+    // --- RELASI: foster_child memiliki banyak laporan perkembangan (HasMany) ---
     public function developments()
     {
         return $this->hasMany(ChildDevelopment::class)

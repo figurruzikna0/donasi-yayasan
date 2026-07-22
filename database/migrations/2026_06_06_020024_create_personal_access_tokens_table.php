@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_06_020024_create_personal_access_tokens_table: membuat tabel personal_access_tokens untuk Sanctum API token ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

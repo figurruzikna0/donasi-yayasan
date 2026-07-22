@@ -1,3 +1,4 @@
+{{-- LAYOUTS_GUEST: layout halaman publik/guest -- background gradasi hijau, logo yayasan, card form, dekorasi geometris --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="baitul">
     <head>
@@ -36,7 +37,7 @@
                 </div>
             </div>
 
-            {{-- Decorative ornaments --}}
+            {{-- BAGIAN: elemen dekoratif latar belakang (lingkaran gradasi, pola geometris, garis) --}}
             <div class="absolute inset-0 pointer-events-none overflow-hidden">
                 <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
                 <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl"></div>
@@ -57,7 +58,7 @@
                 <div class="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-emerald-400/20 to-transparent"></div>
             </div>
 
-            {{-- Logo & Brand --}}
+            {{-- BAGIAN: logo dan nama yayasan sebagai branding header --}}
             <div class="relative z-10">
                 <a href="/" class="flex flex-col items-center gap-3">
                     @php $logoProfil = $profil; @endphp
@@ -72,12 +73,12 @@
                 </a>
             </div>
 
-            {{-- Card --}}
+            {{-- BAGIAN: card putih transparan sebagai wadah konten form --}}
             <div class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-5 bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden sm:rounded-2xl ring-1 ring-white/20">
                 {{ $slot }}
             </div>
 
-            {{-- Footer text --}}
+            {{-- BAGIAN: teks hak cipta footer --}}
             <p class="relative z-10 mt-6 text-xs text-white/40 font-semibold tracking-wider">© {{ date('Y') }} {{ $logoProfil?->nama_yayasan ?? 'Yayasan Baitul Yatim' }}. All rights reserved.</p>
         </div>
     </body>

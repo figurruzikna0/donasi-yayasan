@@ -1,4 +1,5 @@
 <?php
+// === 2026_07_04_151729_add_avatar_to_users_table: menambah kolom avatar ke tabel users ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

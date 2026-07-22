@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_21_165345_add_user_id_to_donations_table: menambah kolom user_id (nullable) ke tabel donations ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

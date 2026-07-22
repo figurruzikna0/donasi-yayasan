@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_28_101553_add_period_and_phone_to_sponsorships_table: menambah kolom donor_phone, starts_at, expires_at, reminder_sent_at ke tabel sponsorships ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

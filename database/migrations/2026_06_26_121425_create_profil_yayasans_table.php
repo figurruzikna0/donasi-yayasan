@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_26_121425_create_profil_yayasans_table: membuat tabel profil_yayasan dengan kolom nama_yayasan, email, no_telp, alamat, sejarah, visi, misi, logo, legalitas, foto ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

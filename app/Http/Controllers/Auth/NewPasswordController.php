@@ -1,4 +1,5 @@
 <?php
+// === NewPasswordController: mereset password dengan token dari email ===
 
 namespace App\Http\Controllers\Auth;
 
@@ -19,6 +20,7 @@ class NewPasswordController extends Controller
     /**
      * Display the password reset view.
      */
+    // --- TAMPILKAN FORM RESET PASSWORD: menampilkan halaman reset password dengan token & email dari request ---
     public function create(Request $request): View
     {
         return view('auth.reset-password', ['request' => $request]);
@@ -29,6 +31,7 @@ class NewPasswordController extends Controller
      *
      * @throws ValidationException
      */
+    // --- PROSES RESET PASSWORD: validasi token-email-password, reset via Password::reset, redirect ke login dengan status ---
     public function store(Request $request): RedirectResponse
     {
         $request->validate([

@@ -10,13 +10,13 @@ Implementasi interaksi sponsorship OTA mencakup integrasi pihak ketiga, yaitu **
 |---------|----------------------------------|-----------------|
 | **Inisiasi** | Donatur pilih anak asuh + paket komitmen. Sistem membuat record sponsorship (pending) → mengirim payload ke API Midtrans → memperoleh Snap Token → menampilkan pop-up pembayaran. | `pending` |
 | **Pemrosesan** | Donatur memilih metode pembayaran pada pop-up Midtrans Snap dan menyelesaikan pembayaran di luar sistem. | `pending` |
-| **Validasi** | Webhook Midtrans mengirim notifikasi ke `/midtrans/callback`. Sistem memperbarui status sponsorship, set `starts_at`/`expires_at`, ubah anak menjadi `Diasuh`, kirim WA & Email. | `success` / `failed` |
+| **Validasi** | Webhook Midtrans mengirim notifikasi ke `/midtrans/callback`. Sistem memperbarui status sponsorship, set `starts_at`/`expires_at`, ubah anak menjadi `Diasuh`, kirim WA. | `success` / `failed` |
 
 ### Callback Response Mapping
 
 | `transaction_status` | Aksi Sistem | Status DB |
 |---------------------|-------------|-----------|
-| `settlement` / `capture` | Update success, set starts_at/expires_at (+1 bln), anak → Diasuh, WA + Email | `success` |
+| `settlement` / `capture` | Update success, set starts_at/expires_at (+1 bln), anak → Diasuh, WA | `success` |
 | `pending` | Tidak ada perubahan | `pending` |
 | `deny` / `cancel` / `expire` | Update failed | `failed` |
 
@@ -25,9 +25,8 @@ Implementasi interaksi sponsorship OTA mencakup integrasi pihak ketiga, yaitu **
 | Trigger | Channel | Isi |
 |---------|---------|-----|
 | Sponsorship sukses | WA | Nama anak asuh, usia, JK, paket, nominal, masa berlaku, order ID |
-| Sponsorship sukses | Email | Data sponsorship + anak asuh |
 | Laporan perkembangan | WA + Foto | Judul laporan, deskripsi, foto anak via `sendWithMedia()` |
-| H-7 expired | Email | Pengingat perpanjangan sponsorship |
+| H-7 expired | WA | Pengingat perpanjangan sponsorship |
 | H-3 expired | WA | Pengingat perpanjangan via WA |
 
 ### Fallback Error Handling
@@ -85,9 +84,8 @@ DONATUR                   SERVER LARAVEL                      MIDTRANS
    │                            │       ├ starts_at = now()      │
    │                            │       ├ expires_at = now()+1bln │
    │                            │       ├ anak.status = Diasuh   │
-   │                            │       ├ kirim WA (dgn detail   │
-   │                            │       │   anak asuh)           │
-   │                            │       └ kirim Email sukses     │
+    │                            │       └ kirim WA (dgn detail   │
+    │                            │           anak asuh)           │
 ```
 
 ## Siklus Hidup Sponsorship
@@ -100,7 +98,7 @@ REGISTRASI                      AKTIF                      EXPIRED
 │ PENDING │ ──────────────────> │ SUCCESS│ ──────────────> │ EXPIRED │
 └─────────┘                     └───┬────┘                  └────┬────┘
        │                            │                           │
-       │ callback deny/fail         │ H-7: Email reminder       │ anak → Tersedia
+        │ callback deny/fail         │ H-7: WA reminder          │ anak → Tersedia
        ▼                            │ H-3: WA reminder         ▼
    ┌───────┐                       │                        (siap disponsori
    │ FAILED│                       ▼                          ulang)

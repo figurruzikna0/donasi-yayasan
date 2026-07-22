@@ -1,4 +1,5 @@
 <?php
+// === ConfirmablePasswordController: konfirmasi password untuk akses area sensitif ===
 
 namespace App\Http\Controllers\Auth;
 
@@ -14,6 +15,7 @@ class ConfirmablePasswordController extends Controller
     /**
      * Show the confirm password view.
      */
+    // --- TAMPILKAN FORM KONFIRMASI PASSWORD: menampilkan halaman konfirmasi password ---
     public function show(): View
     {
         return view('auth.confirm-password');
@@ -22,6 +24,7 @@ class ConfirmablePasswordController extends Controller
     /**
      * Confirm the user's password.
      */
+    // --- PROSES KONFIRMASI PASSWORD: validasi password user, simpan timestamp konfirmasi di session, redirect ke dashboard ---
     public function store(Request $request): RedirectResponse
     {
         if (! Auth::guard('web')->validate([

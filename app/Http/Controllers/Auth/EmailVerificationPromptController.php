@@ -1,4 +1,5 @@
 <?php
+// === EmailVerificationPromptController: menampilkan halaman pengingat verifikasi email ===
 
 namespace App\Http\Controllers\Auth;
 
@@ -12,6 +13,7 @@ class EmailVerificationPromptController extends Controller
     /**
      * Display the email verification prompt.
      */
+    // --- TAMPILKAN PROMPT VERIFIKASI: redirect ke dashboard jika sudah verifikasi, atau tampilkan halaman verify-email ---
     public function __invoke(Request $request): RedirectResponse|View
     {
         return $request->user()->hasVerifiedEmail()

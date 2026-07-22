@@ -1,4 +1,5 @@
 <?php
+// === DashboardController (Admin): menampilkan dashboard admin dengan statistik dan grafik ===
 
 namespace App\Http\Controllers\Admin;
 
@@ -10,6 +11,7 @@ use App\Models\Sponsorship;
 
 class DashboardController extends Controller
 {
+    // --- DASHBOARD ADMIN: hitung total dana, campaign aktif, anak asuh, transaksi terbaru, statistik anak, grafik cashflow 12 bulan, tampilkan view ---
     public function index()
     {
         $totalFunds = Donation::where('status', 'success')->sum('amount');

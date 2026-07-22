@@ -1,5 +1,7 @@
 <?php
 
+// === Pendiri: model untuk tabel pendiris, data pendiri yayasan ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

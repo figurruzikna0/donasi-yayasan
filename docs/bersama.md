@@ -28,9 +28,8 @@ Bagian ini mencakup fitur-fitur yang digunakan bersama oleh **Modul Donasi** dan
 | PB-B-18 | Sebagai Tamuu, saya ingin mendaftar menjadi donatur. | Tinggi |
 | PB-B-19 | Sebagai Tamuu, saya ingin mereset password jika lupa. | Sedang |
 | PB-B-20 | Sebagai Sistem, saya menerima notifikasi pembayaran dari Midtrans (callback) dan memperbarui status transaksi secara otomatis. | Tinggi |
-| PB-B-21 | Sebagai Sistem, saya mengirim email konfirmasi transaksi berhasil ke donatur. | Tinggi |
-| PB-B-22 | Sebagai Sistem, saya mengirim notifikasi WhatsApp ke donatur saat transaksi berhasil dikonfirmasi. | Tinggi |
-| PB-B-23 | Sebagai Sistem, saya mengirim email pengingat untuk sponsorship yang akan kadaluwarsa (H-7). | Sedang |
+| PB-B-21 | Sebagai Sistem, saya mengirim notifikasi WhatsApp ke donatur saat transaksi berhasil dikonfirmasi. | Tinggi |
+| PB-B-22 | Sebagai Sistem, saya mengirim WA pengingat untuk sponsorship yang akan kadaluwarsa (H-7 & H-3). | Sedang |
 | PB-B-24 | Sebagai Sistem, saya memperbarui status sponsorship menjadi expired dan mengembalikan status anak menjadi Tersedia jika masa berlaku habis. | Sedang |
 
 ---
@@ -41,7 +40,7 @@ Bagian ini mencakup fitur-fitur yang digunakan bersama oleh **Modul Donasi** dan
 |-------|-------|---------------------------|--------|
 | Registrasi | Nama, email, password, no HP, alamat, NIK | `RegisteredUserController@store()` — validasi → create user → auto-login | Redirect ke dashboard |
 | Login | Email & password | `AuthenticatedSessionController@store()` — autentikasi → cek role → redirect | Redirect ke `/admin/dashboard` (admin) atau `/dashboard` (donatur) |
-| Lupa Password | Email | `PasswordResetLinkController@store()` — kirim link reset via email | Email terkirim |
+| Lupa Password | Email | `PasswordResetLinkController@store()` — kirim link reset via email (nonaktif, hanya tercatat di log) | Log tercatat |
 | Profil Yayasan | Logo, alamat, kontak, visi-misi, legalitas | `ProfilYayasanController@update()` — validasi → upload file → update | Data profil tersimpan |
 | Pendiri | Nama, jabatan, foto | `PendiriController@store()` / `destroy()` | Pendiri tersimpan/dihapus |
 | Berita | Judul, konten, foto, status | `NewsController` CRUD | Berita tampil di publik |
@@ -50,7 +49,7 @@ Bagian ini mencakup fitur-fitur yang digunakan bersama oleh **Modul Donasi** dan
 | Manajemen User | Data user | `UserController@index()/edit()/update()/destroy()` | Data user terkelola |
 | Rekap & Ekspor | Filter + search | `RekapController@donasi()/donatur()/orangTuaAsuh()` + export CSV/PDF | Tabel + file download |
 | Notifikasi WA | Data transaksi | `FonnteService::send()` / `sendWithMedia()` | WA terkirim |
-| Notifikasi Email | Data transaksi | `DonationSuccessMail` / `SponsorshipSuccessMail` / `SponsorshipReminderMail` | Email terkirim |
+
 
 ---
 
@@ -60,7 +59,7 @@ Bagian ini mencakup fitur-fitur yang digunakan bersama oleh **Modul Donasi** dan
 |---------|----------------|----------|
 | User akses `/admin/*` | `AdminMiddleware` cek `role === 'admin'` | Hanya Admin |
 | User belum login | Middleware `auth` → redirect ke `/login` | Tamuu tidak bisa |
-| Email belum diverifikasi | Middleware `verified` → redirect ke `/verify-email` | Donatur tidak bisa transaksi |
+| Email belum diverifikasi | Middleware `verified` → redirect ke `/verify-email` (email nonaktif, verifikasi tidak berfungsi) | Donatur tetap bisa akses |
 | Admin hapus admin lain | `UserController@destroy()` → error *"Tidak bisa menghapus akun admin."* | Tidak bisa |
 | Donatur hapus akun sendiri | `ProfileController@destroy()` → required password confirmation | Hanya pemilik |
 | File upload > 2MB / 3MB | Validasi `max:2048`/`max:3072` → validation error | Tidak bisa upload |
@@ -79,9 +78,9 @@ Bagian ini mencakup fitur-fitur yang digunakan bersama oleh **Modul Donasi** dan
 | Login Admin | Email + password admin valid | Masuk ke `/admin/dashboard` | ✅ |
 | Login Donatur | Email + password donatur valid | Masuk ke `/dashboard` | ✅ |
 | Login Gagal | Email/password salah | Error validasi, tetap di login | ✅ |
-| Register Donatur | Data valid | Akun terdaftar, email verifikasi terkirim | ✅ |
+| Register Donatur | Data valid | Akun terdaftar (email nonaktif, verifikasi tidak terkirim) | ✅ |
 | Logout | Klik logout | Session dihapus, redirect ke home | ✅ |
-| Lupa + Reset Password | Email terdaftar | Link reset terkirim, password berubah | ✅ |
+| Lupa + Reset Password | Email terdaftar | Link reset tercatat di log (email nonaktif), password berubah | ✅ |
 | CRUD Profil Yayasan | Logo, teks, legalitas | Data profil terupdate | ✅ |
 | CRUD Pendiri | Nama, jabatan, foto | Pendiri tersimpan/dihapus | ✅ |
 | CRUD Berita | Judul, konten, foto, status | Berita tersimpan, slug auto | ✅ |
@@ -95,4 +94,3 @@ Bagian ini mencakup fitur-fitur yang digunakan bersama oleh **Modul Donasi** dan
 | Akses Invoice Orang Lain | Donatur A akses invoice B | 403 Forbidden | ✅ |
 | Throttle Donasi | Submit >10x/menit | 429 Too Many Requests | ✅ |
 | Notifikasi WA | Transaksi sukses | WA konfirmasi terkirim | ✅ |
-| Notifikasi Email | Transaksi sukses | Email konfirmasi terkirim | ✅ |

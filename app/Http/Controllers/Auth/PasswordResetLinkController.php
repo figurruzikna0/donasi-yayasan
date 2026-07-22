@@ -1,4 +1,5 @@
 <?php
+// === PasswordResetLinkController: mengirim link reset password ke email user ===
 
 namespace App\Http\Controllers\Auth;
 
@@ -14,6 +15,7 @@ class PasswordResetLinkController extends Controller
     /**
      * Display the password reset link request view.
      */
+    // --- TAMPILKAN FORM LUPA PASSWORD: menampilkan halaman input email untuk reset password ---
     public function create(): View
     {
         return view('auth.forgot-password');
@@ -24,6 +26,7 @@ class PasswordResetLinkController extends Controller
      *
      * @throws ValidationException
      */
+    // --- KIRIM LINK RESET: validasi email, kirim link reset via Password::sendResetLink, redirect back dengan status ---
     public function store(Request $request): RedirectResponse
     {
         $request->validate([

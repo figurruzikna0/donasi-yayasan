@@ -1,4 +1,5 @@
 <?php
+// === auth.php: routes autentikasi (login, register, verifikasi email, reset password) ===
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -11,51 +12,68 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// --- GRUP RUTE: guest (login, register, forgot/reset password) ---
 Route::middleware('guest')->group(function () {
+    // --- RUTE: GET /register → RegisteredUserController@create ---
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
+    // --- RUTE: POST /register → RegisteredUserController@store ---
     Route::post('register', [RegisteredUserController::class, 'store'])
-        ->middleware('throttle:5,30');
+        ->middleware('throttle:10,30');
 
+    // --- RUTE: GET /login → AuthenticatedSessionController@create ---
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
+    // --- RUTE: POST /login → AuthenticatedSessionController@store ---
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
         ->middleware('throttle:10,1');
 
+    // --- RUTE: GET /forgot-password → PasswordResetLinkController@create ---
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
+    // --- RUTE: POST /forgot-password → PasswordResetLinkController@store ---
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
 
+    // --- RUTE: GET /reset-password/{token} → NewPasswordController@create ---
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
+    // --- RUTE: POST /reset-password → NewPasswordController@store ---
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
 
+// --- GRUP RUTE: auth (verifikasi email, konfirmasi password, logout) ---
 Route::middleware('auth')->group(function () {
+    // --- RUTE: GET /verify-email → EmailVerificationPromptController ---
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
+    // --- RUTE: GET /verify-email/{id}/{hash} → VerifyEmailController ---
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
 
+    // --- RUTE: POST /email/verification-notification → EmailVerificationNotificationController@store ---
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
+    // --- RUTE: GET /confirm-password → ConfirmablePasswordController@show ---
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');
 
+    // --- RUTE: POST /confirm-password → ConfirmablePasswordController@store ---
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
+    // --- RUTE: PUT /password → PasswordController@update ---
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
+    // --- RUTE: POST /logout → AuthenticatedSessionController@destroy ---
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });

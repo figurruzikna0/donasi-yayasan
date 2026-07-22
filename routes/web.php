@@ -1,4 +1,5 @@
 <?php
+// === web.php: routes publik, auth, dan admin untuk donasi yayasan ===
 
 use Illuminate\Support\Facades\Route;
 
@@ -96,9 +97,13 @@ Route::get('/dashboard/rekap', [DonorController::class, 'rekap'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard.rekap');
 
+// --- GRUP RUTE: profil donatur (edit/update/hapus akun) ---
 Route::middleware(['auth', 'verified'])->group(function () {
+    // --- RUTE: GET /profile → ProfileController@edit ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // --- RUTE: PATCH /profile → ProfileController@update ---
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // --- RUTE: DELETE /profile → ProfileController@destroy ---
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 });
@@ -149,7 +154,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // Rekap Data
+    // --- GRUP RUTE: rekap data donasi, donatur, orang tua asuh ---
     Route::prefix('rekap')->name('rekap.')->group(function () {
         Route::get('/donasi', [RekapController::class, 'donasi'])->name('donasi');
         Route::get('/donasi/export', [RekapController::class, 'donasiExport'])->name('donasi.export');

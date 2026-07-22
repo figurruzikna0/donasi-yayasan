@@ -1,4 +1,5 @@
 <?php
+// === auth.php: konfigurasi autentikasi (guard, provider, reset password) ===
 
 use App\Models\User;
 

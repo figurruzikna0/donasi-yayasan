@@ -9,10 +9,10 @@
 | Login Admin | Email + password admin valid | Masuk ke Dashboard Admin (`/admin/dashboard`) | Sesuai (Valid) |
 | Login Donatur | Email + password donatur valid | Masuk ke Dashboard Donatur (`/dashboard`) | Sesuai (Valid) |
 | Login Gagal | Email tidak terdaftar / password salah | Tampil error validasi, tetap di halaman login | Sesuai (Valid) |
-| Register Donatur | Nama, email, password, no HP, alamat, NIK valid | Akun terdaftar, redirect ke dashboard, email verifikasi terkirim | Sesuai (Valid) |
+| Register Donatur | Nama, email, password, no HP, alamat, NIK valid | Akun terdaftar, redirect ke dashboard (email nonaktif, hanya WA) | Sesuai (Valid) |
 | Register dengan Email Duplikat | Email yang sudah terdaftar | Error validasi `email already exists` | Sesuai (Valid) |
 | Logout | Klik tombol logout | Session dihapus, redirect ke halaman utama | Sesuai (Valid) |
-| Lupa Password | Email terdaftar | Link reset password terkirim ke email | Sesuai (Valid) |
+| Lupa Password | Email terdaftar | Link reset password tercatat di log (email nonaktif) | Sesuai (Valid) |
 | Reset Password | Token + password baru valid | Password berubah, redirect ke login | Sesuai (Valid) |
 
 ### Modul Master Data (Admin)
@@ -34,7 +34,7 @@
 |--------------------|---------------------|----------------------|-----------------|
 | Submit Donasi | Pilih campaign, isi nominal min Rp 1.000, pilih metode bayar | Donation record terbuat (status pending), redirect ke halaman pembayaran Midtrans | Sesuai (Valid) |
 | Midtrans Snap Pop-up | Klik "Pilih Metode Pembayaran" | Pop-up Midtrans muncul dengan berbagai channel pembayaran | Sesuai (Valid) |
-| Pembayaran Sukses (Callback) | Midtrans kirim webhook `settlement` | Status → `success`, `collected_amount` terincrement, WA + Email terkirim | Sesuai (Valid) |
+| Pembayaran Sukses (Callback) | Midtrans kirim webhook `settlement` | Status → `success`, `collected_amount` terincrement, WA terkirim | Sesuai (Valid) |
 | Pembayaran Gagal (Callback) | Midtrans kirim webhook `deny`/`cancel`/`expire` | Status → `failed` | Sesuai (Valid) |
 | Invoice HTML | Akses URL invoice donasi | Tampil detail donasi + data yayasan | Sesuai (Valid) |
 | Invoice PDF | Klik download PDF donasi | File PDF terdownload dengan format yang benar | Sesuai (Valid) |
@@ -44,10 +44,10 @@
 | Skenario Pengujian | Input yang Diberikan | Hasil yang Diharapkan | Hasil Pengujian |
 |--------------------|---------------------|----------------------|-----------------|
 | Submit Sponsorship | Pilih anak asuh, nominal Rp 100.000–500.000, pilih paket + metode bayar | Sponsorship record terbuat (status pending), redirect ke halaman pembayaran Midtrans | Sesuai (Valid) |
-| Pembayaran Sukses (Callback) | Midtrans kirim webhook `settlement` | Status → `success`, `starts_at`/`expires_at` terisi (+1 bulan), anak → `Diasuh`, WA + Email terkirim | Sesuai (Valid) |
+| Pembayaran Sukses (Callback) | Midtrans kirim webhook `settlement` | Status → `success`, `starts_at`/`expires_at` terisi (+1 bulan), anak → `Diasuh`, WA terkirim | Sesuai (Valid) |
 | Invoice + PDF | Akses invoice sponsorship | HTML + PDF sponsorship tampil benar | Sesuai (Valid) |
 | Expired Otomatis | `expires_at` sudah lewat (cronjob) | Status → `expired`, anak → `Tersedia` (jika tidak ada sponsor aktif lain) | Sesuai (Valid) |
-| Reminder H-7 | Sponsorship akan expired dalam 7 hari | Email reminder terkirim | Sesuai (Valid) |
+| Reminder H-7 | Sponsorship akan expired dalam 7 hari | WA reminder terkirim | Sesuai (Valid) |
 | Reminder H-3 | Sponsorship akan expired dalam 3 hari | WA reminder terkirim | Sesuai (Valid) |
 
 ### Modul Manajemen Transaksi (Admin)
@@ -55,7 +55,7 @@
 | Skenario Pengujian | Input yang Diberikan | Hasil yang Diharapkan | Hasil Pengujian |
 |--------------------|---------------------|----------------------|-----------------|
 | Lihat Riwayat Transaksi | Akses `/admin/transactions` | Tabel donasi + sponsorship dengan stat cards (total, sukses, pending) | Sesuai (Valid) |
-| Approve Transaksi | Klik "Konfirmasi" pada transaksi pending | Status → `success`, notifikasi WA + Email terkirim | Sesuai (Valid) |
+| Approve Transaksi | Klik "Konfirmasi" pada transaksi pending | Status → `success`, notifikasi WA terkirim | Sesuai (Valid) |
 | Hapus Transaksi | Klik "Hapus" pada transaksi | Data transaksi terhapus dari database | Sesuai (Valid) |
 | Sync All | Klik "Sync All" | Semua transaksi pending dicek ke Midtrans, status diupdate massal | Sesuai (Valid) |
 
@@ -87,8 +87,6 @@
 | WA Donasi Sukses | Donasi settlement via callback/approve | WA konfirmasi diterima nomor donatur | Sesuai (Valid) |
 | WA Sponsor Sukses | Sponsorship settlement via callback/approve | WA konfirmasi + detail anak asuh diterima | Sesuai (Valid) |
 | WA Laporan Perkembangan | Admin input laporan + upload foto | WA + foto diterima nomor sponsor | Sesuai (Valid) |
-| Email Donasi Sukses | Donasi settlement | Email konfirmasi diterima email donatur | Sesuai (Valid) |
-| Email Sponsor Sukses | Sponsorship settlement | Email konfirmasi diterima | Sesuai (Valid) |
 
 ### Modul Access Control & Keamanan
 
@@ -121,7 +119,7 @@
 | 10 | Dashboard & Statistik | Admin Yayasan | Juli 2026 | ✅ Lolos | Cashflow chart sesuai |
 | 11 | Rekap & Ekspor (CSV/PDF) | Admin Yayasan | Juli 2026 | ✅ Lolos | - |
 | 12 | Manajemen User | Admin Yayasan | Juli 2026 | ✅ Lolos | Proteksi hapus admin ok |
-| 13 | Notifikasi WA & Email | Admin Yayasan | Juli 2026 | ✅ Lolos | - |
+| 13 | Notifikasi WA | Admin Yayasan | Juli 2026 | ✅ Lolos | - |
 | 14 | Akses Kontrol (Role/Verified) | Admin Yayasan | Juli 2026 | ✅ Lolos | - |
 
 **Kesimpulan UAT:** Seluruh modul dinyatakan **lolos uji tanpa perbaikan mayor**. Sistem siap diimplementasikan.

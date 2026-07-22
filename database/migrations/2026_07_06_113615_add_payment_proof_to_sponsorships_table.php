@@ -1,4 +1,5 @@
 <?php
+// === 2026_07_06_113615_add_payment_proof_to_sponsorships_table: menambah kolom payment_proof ke tabel sponsorships ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

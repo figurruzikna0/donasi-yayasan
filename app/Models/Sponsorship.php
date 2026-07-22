@@ -1,5 +1,7 @@
 <?php
 
+// === Sponsorship: model untuk tabel sponsorships, data sponsorship anak asuh ===
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,11 +34,13 @@ class Sponsorship extends Model
         'reminder_sent_at' => 'datetime',
     ];
 
+    // --- RELASI: sponsorship milik satu user/donatur (BelongsTo) ---
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // --- RELASI: sponsorship milik satu foster_child (BelongsTo) ---
     public function fosterChild()
     {
         return $this->belongsTo(FosterChild::class, 'foster_child_id');

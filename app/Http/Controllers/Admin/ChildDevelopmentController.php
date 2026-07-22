@@ -1,4 +1,5 @@
 <?php
+// === ChildDevelopmentController (Admin): CRUD laporan perkembangan anak asuh + notifikasi WA ===
 
 namespace App\Http\Controllers\Admin;
 
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ChildDevelopmentController extends Controller
 {
+    // --- DAFTAR PERKEMBANGAN: menampilkan semua laporan perkembangan dengan pagination ---
     public function index()
     {
         $developments = ChildDevelopment::with(['fosterChild', 'sponsorship', 'user'])
@@ -22,6 +24,7 @@ class ChildDevelopmentController extends Controller
         return view('admin.child-developments.index', compact('developments'));
     }
 
+    // --- FORM TAMBAH PERKEMBANGAN: menampilkan halaman tambah laporan, hanya anak dengan sponsorship aktif ---
     public function create()
     {
         $children = FosterChild::whereHas('sponsorships', function ($q) {
@@ -30,6 +33,7 @@ class ChildDevelopmentController extends Controller
         return view('admin.child-developments.create', compact('children'));
     }
 
+    // --- PROSES TAMBAH PERKEMBANGAN: validasi, cari sponsorship aktif, simpan laporan + foto, kirim WA ke orang tua asuh, redirect ---
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -72,12 +76,14 @@ class ChildDevelopmentController extends Controller
             ->with('success', 'Laporan perkembangan berhasil ditambahkan & notifikasi WA terkirim ke orang tua asuh!');
     }
 
+    // --- DETAIL PERKEMBANGAN: menampilkan halaman detail laporan perkembangan ---
     public function show(ChildDevelopment $childDevelopment)
     {
         $childDevelopment->load(['fosterChild', 'sponsorship', 'user']);
         return view('admin.child-developments.show', compact('childDevelopment'));
     }
 
+    // --- FORM EDIT PERKEMBANGAN: menampilkan halaman edit laporan perkembangan ---
     public function edit(ChildDevelopment $childDevelopment)
     {
         $children = FosterChild::whereHas('sponsorships', function ($q) {
@@ -89,6 +95,7 @@ class ChildDevelopmentController extends Controller
         ]);
     }
 
+    // --- PROSES UPDATE PERKEMBANGAN: validasi, upload/hapus foto, update data, redirect ke daftar ---
     public function update(Request $request, ChildDevelopment $childDevelopment)
     {
         $validated = $request->validate([
@@ -111,6 +118,7 @@ class ChildDevelopmentController extends Controller
             ->with('success', 'Laporan perkembangan berhasil diperbarui!');
     }
 
+    // --- HAPUS PERKEMBANGAN: hapus foto dari storage, hapus data laporan, redirect ke daftar ---
     public function destroy(ChildDevelopment $childDevelopment)
     {
         if ($childDevelopment->foto) {
@@ -153,7 +161,7 @@ class ChildDevelopmentController extends Controller
         $fonnte->send($sponsorship->donor_phone, $pesan);
 
         // Kirim foto sebagai pesan terpisah kalau ada
-        // (hanya berhasil kalau paket Fonnte support attachment & APP_URL bisa diakses publik)
+        // (hanya berhasil kalau paket Fonnte mendukung attachment & APP_URL bisa diakses publik)
         if ($development->foto) {
             $fonnte->sendWithMedia(
                 $sponsorship->donor_phone,

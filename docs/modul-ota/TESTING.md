@@ -39,7 +39,7 @@
 
 | Skenario | Input | Hasil Diharapkan | Hasil |
 |----------|-------|-----------------|-------|
-| Approve Sponsor | Klik "Konfirmasi" di pending | Status → success, starts_at/expires_at, anak → Diasuh, WA + Email | ✅ |
+| Approve Sponsor | Klik "Konfirmasi" di pending | Status → success, starts_at/expires_at, anak → Diasuh, WA | ✅ |
 | Hapus Sponsor | Klik "Hapus" | Sponsorship terhapus | ✅ |
 | Lihat Kontak | Akses `/admin/sponsorships/contacts` | Daftar anak + info sponsor aktif | ✅ |
 
@@ -47,10 +47,10 @@
 
 | Skenario | Input | Hasil Diharapkan | Hasil |
 |----------|-------|-----------------|-------|
-| Reminder H-7 | Expires_at dalam 7 hari | Email reminder terkirim, `reminder_sent_at` terisi | ✅ |
+| Reminder H-7 | Expires_at dalam 7 hari | WA reminder terkirim, `reminder_sent_at` terisi | ✅ |
 | Reminder H-3 | Expires_at dalam 3 hari | WA reminder terkirim | ✅ |
 | Expired Otomatis | Expires_at sudah lewat | Status → `expired`, anak → `Tersedia` (jika tdk ada sponsor aktif lain) | ✅ |
-| Tidak Reminder Ulang | Reminder sudah dikirim < 7 hari lalu | Tidak ada email/WA duplikat | ✅ |
+| Tidak Reminder Ulang | Reminder sudah dikirim < 7 hari lalu | Tidak ada WA duplikat | ✅ |
 
 ## Rekap Orang Tua Asuh
 

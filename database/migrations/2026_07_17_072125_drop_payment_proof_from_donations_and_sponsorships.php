@@ -1,4 +1,5 @@
 <?php
+// === 2026_07_17_072125_drop_payment_proof_from_donations_and_sponsorships: menghapus kolom payment_proof dari tabel donations dan sponsorships ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

@@ -1,5 +1,7 @@
+{{-- COMPONENTS_INPUT_ERROR: menampilkan daftar error validasi untuk field tertentu dengan ikon peringatan --}}
 @props(['messages'])
 
+{{-- BAGIAN: menampilkan daftar pesan error validasi dengan ikon peringatan --}}
 @if ($messages)
     <ul {{ $attributes->merge(['class' => 'mt-1.5 space-y-1']) }}>
         @foreach ((array) $messages as $message)

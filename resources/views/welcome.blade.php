@@ -12,31 +12,32 @@
     {{-- ════════════════════ NAVBAR ════════════════════ --}}
     @include('partials.public-navbar', ['isHome' => true, 'scrollEffect' => true])
 
-    {{-- ════════════════════ HERO ════════════════════ --}}
-    <header class="relative hero min-h-[65vh] lg:min-h-[75vh] overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/hero-bg.jpg') }}'); background-size: cover;">
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/80 via-emerald-900/60 to-emerald-900/40"></div>
+    {{-- HERO SECTION: banner utama dengan background gambar, teks ajakan donasi & tombol CTA ke #kampanye dan #program-ota --}}
+    <header class="relative hero min-h-[85vh] lg:min-h-screen overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105" style="background-image: url('{{ asset('images/hero.jpeg') }}'); background-size: cover;">
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/95 via-emerald-900/85 to-emerald-900/75"></div>
+            <div class="absolute inset-0 bg-black/20"></div>
         </div>
         <div class="hero-content text-center max-w-4xl px-4 py-20 lg:py-28 relative z-10">
             <div>
                 <span data-aos="fade-down" class="bg-white/90 border border-emerald-300 text-emerald-700 text-xs uppercase tracking-[0.2em] font-bold px-5 py-2 rounded-full inline-block mb-6 shadow-sm">
-                    Jembatan Kebaikan Berkelanjutan
+                    Setiap Kebaikan Pasti Berbuah
                 </span>
                 <h1 data-aos="fade-up" data-aos-delay="100" class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
-                    Salurkan <span class="text-emerald-300">Kebaikan</span>,<br>Ubah <span class="text-emerald-300">Masa Depan</span>
+                    Hal Kecil untuk <span class="text-emerald-300">Mereka</span>,<br>Pahala Besar untuk <span class="text-emerald-300">Anda</span>
                 </h1>
                 <p data-aos="fade-up" data-aos-delay="200" class="text-base md:text-lg mt-6 max-w-2xl mx-auto text-white/80 font-medium leading-relaxed">
-                    Setiap rupiah yang Anda salurkan memiliki kekuatan besar untuk mengukir senyuman dan masa depan mereka yang membutuhkan.
+                    Setiap hal kecil yang diberikan untuk anak yatim tidak akan pernah membuat Anda rugi. Sebaliknya, Allah menggantinya dengan keberkahan yang tak terduga.
                 </p>
                 <div data-aos="fade-up" data-aos-delay="300" class="mt-10 flex flex-wrap justify-center gap-3">
                     <a href="#kampanye" class="btn btn-success text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide shadow-lg hover:shadow-xl transition-all">Lihat Program Donasi Aktif</a>
-                    <a href="#program-ota" class="btn btn-outline border-white text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide bg-white/10 hover:bg-white hover:text-emerald-800 hover:border-white transition-all">🤝 Jadi Orang Tua Asuh</a>
+                    <a href="#program-ota" class="btn btn-outline border-white text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide bg-white/10 hover:bg-white hover:text-emerald-800 hover:border-white transition-all">Jadi Orang Tua Asuh</a>
                 </div>
             </div>
         </div>
     </header>
 
-    {{-- ════════════════════ PROGRAM DONASI ════════════════════ --}}
+    {{-- PROGRAM DONASI: daftar campaign aktif dari DB ($campaigns), tiap card menampilkan progress & tombol "Donasi Sekarang" menuju donations.create --}}
     <section id="kampanye" class="py-20 lg:py-28 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
             <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
@@ -55,7 +56,7 @@
                                 </figure>
                             @else
                                 <div class="h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
-                                    <span class="text-4xl">❤️</span>
+                                    <svg class="w-12 h-12 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
                                 </div>
                             @endif
                             <div class="card-body p-5 flex flex-col flex-1">
@@ -82,11 +83,11 @@
         </div>
     </section>
 
-    {{-- ════════════════════ STATS DONASI ════════════════════ --}}
+    {{-- STATS DONASI: menampilkan total campaign, total donasi terkumpul & total transaksi dari controller --}}
     <section class="py-16 lg:py-20 px-4 bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
         <div class="max-w-7xl mx-auto" data-aos="fade-up">
             <div class="text-center mb-14">
-                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">📊 Bukti Transparansi</span>
+                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Bukti Transparansi</span>
                 <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight mb-2">Pergerakan Donasi <span class="text-emerald-500">Real-Time</span></h2>
                 <p class="text-sm text-gray-500 max-w-xl mx-auto">Setiap rupiah yang disalurkan tercatat dan dapat dipertanggungjawabkan.</p>
             </div>
@@ -110,16 +111,16 @@
         </div>
     </section>
 
-    {{-- ════════════════════ ORANG TUA ASUH ════════════════════ --}}
+    {{-- ORANG TUA ASUH: ajakan menjadi sponsor anak yatim, tombol Daftar/Mengarah ke register/login --}}
     <section id="program-ota" class="py-20 lg:py-28 px-4 bg-emerald-50">
         <div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
-            <span class="bg-white/80 border border-emerald-300 text-emerald-700 text-xs uppercase tracking-[0.2em] font-bold px-5 py-2 rounded-full inline-block mb-4 shadow-sm">💚 Program Kebaikan Berkelanjutan</span>
+            <span class="bg-white/80 border border-emerald-300 text-emerald-700 text-xs uppercase tracking-[0.2em] font-bold px-5 py-2 rounded-full inline-block mb-4 shadow-sm">Program Kebaikan Berkelanjutan</span>
             <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Program Orang Tua Asuh</h2>
             <p class="mt-4 text-sm text-emerald-700/70 font-medium max-w-xl mx-auto leading-relaxed">
                 Jadilah orang tua asuh dan berikan masa depan yang lebih cerah bagi anak-anak yatim.
             </p>
             <div class="mt-8 bg-white/70 border border-emerald-200 rounded-2xl p-8 shadow-sm max-w-lg mx-auto">
-                <span class="text-3xl block mb-3">🔒</span>
+                <svg class="w-10 h-10 text-emerald-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
                 <p class="text-sm text-emerald-700 font-semibold">Data anak asuh dan formulir pendaftaran</p>
                 <p class="text-sm text-emerald-600">hanya tersedia untuk donatur yang sudah login.</p>
                 <div class="mt-6 flex flex-wrap justify-center gap-3">
@@ -130,12 +131,12 @@
         </div>
     </section>
 
-    {{-- ════════════════════ BERITA KEGIATAN ════════════════════ --}}
+    {{-- BERITA KEGIATAN: carousel berita dari DB ($newsList), tiap item mengarah ke news.show --}}
     @if(isset($newsList) && $newsList->count() > 0)
     <section id="berita-kegiatan" class="py-20 lg:py-28 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
             <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
-                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">📰 Liputan Terkini</span>
+                <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Liputan Terkini</span>
                 <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Berita & Kegiatan</h2>
                 <p class="text-gray-500 mt-2 text-sm">Ikuti perkembangan program, kegiatan, dan laporan terbaru dari lapangan.</p>
             </div>
@@ -155,7 +156,7 @@
                                     </figure>
                                 @else
                                     <div class="h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
-                                        <span class="text-3xl">📰</span>
+                                        <svg class="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/></svg>
                                     </div>
                                 @endif
                                 <div class="p-5 flex flex-col flex-1">
@@ -165,8 +166,8 @@
                                         {{ $item->ringkasan ?: \Illuminate\Support\Str::limit(strip_tags($item->konten), 120) }}
                                     </p>
                                     <div class="flex items-center justify-between text-[0.65rem] text-emerald-500 font-semibold border-t border-emerald-100 pt-3 mt-auto">
-                                        <span>📅 {{ $item->tanggal_kegiatan->translatedFormat('d M Y') }}</span>
-                                        @if($item->lokasi)<span>📍 {{ \Illuminate\Support\Str::limit($item->lokasi, 22) }}</span>@endif
+                                        <span>{{ $item->tanggal_kegiatan->translatedFormat('d M Y') }}</span>
+                                        @if($item->lokasi)<span>{{ \Illuminate\Support\Str::limit($item->lokasi, 22) }}</span>@endif
                                     </div>
                                 </div>
                             </a>
@@ -184,9 +185,10 @@
     </section>
     @endif
 
+    {{-- FOOTER: partial footer yayasan --}}
     @include('partials.footer')
 
-    {{-- ════════════════════ SCRIPTS ════════════════════ --}}
+    {{-- SCRIPTS: AOS animasi + carousel berita dengan auto-slide & touch support --}}
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 700, once: true, offset: 40 });</script>
 

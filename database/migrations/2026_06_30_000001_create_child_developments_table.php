@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_30_000001_create_child_developments_table: membuat tabel child_developments dengan kolom sponsorship_id, foster_child_id, user_id, tanggal, judul, deskripsi, foto ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

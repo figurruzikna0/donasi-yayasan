@@ -1,13 +1,13 @@
 <x-admin-layout>
     <div class="bg-base-200 min-h-screen">
 
-        {{-- Page header --}}
+        {{-- Header: judul Data Anak & Orang Tua Asuh + tombol kelola anak & riwayat transaksi --}}
         <div class="px-8 pt-8 pb-0">
             <div class="flex items-end justify-between gap-3 mb-2 flex-wrap">
                 <div>
                     <div class="flex items-center gap-2.5 mb-2">
                         <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857"/></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </span>
                         <div>
                             <h1 class="text-2xl font-black text-base-content">Data Anak &amp; Orang Tua Asuh</h1>
@@ -24,7 +24,45 @@
 
         <div class="p-8 pt-6 space-y-6">
 
-            {{-- Table Card --}}
+            {{-- Hitung total anak, sudah disponsori, & sponsorship tertunda dari $children --}}
+            @php
+                $totalChildren = $children->count();
+                $sponsoredCount = $children->filter(fn($c) => $c->activeSponsorship)->count();
+                $pendingSponsorshipCount = $children->filter(fn($c) => $c->activeSponsorship && $c->activeSponsorship->status === 'pending')->count();
+            @endphp
+
+            {{-- Kartu statistik: Total Anak, Sudah Disponsori, Sponsorship Tertunda --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m4-4a4 4 0 100-8 4 4 0 000 8z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Total Anak</p>
+                        <p class="text-2xl font-black text-base-content">{{ $totalChildren }}</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sudah Disponsori</p>
+                        <p class="text-2xl font-black text-base-content">{{ $sponsoredCount }}</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-[0.65rem] font-bold uppercase tracking-widest text-base-content/40">Sponsorship Tertunda</p>
+                        <p class="text-2xl font-black text-base-content">{{ $pendingSponsorshipCount }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Panel pencarian & filter: cari nama anak/ortu asuh & filter status sponsorship --}}
             <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
                 <div class="px-6 py-4 border-b border-base-200 flex flex-wrap gap-3 items-center justify-between">
                     <div class="relative w-full max-w-[300px]">
@@ -42,16 +80,17 @@
                     </div>
                 </div>
 
+                {{-- Tabel data anak & orang tua asuh: nama, foto, usia, kontak donor, paket, & masa aktif --}}
                 <div class="overflow-x-auto">
                     <table class="table w-full">
                         <thead>
                             <tr class="bg-base-200/50">
-                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Anak Asuh</th>
-                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Orang Tua Asuh</th>
-                                <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Masa Aktif</th>
+                                <th class="w-[180px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Anak Asuh</th>
+                                <th class="w-[240px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Orang Tua Asuh</th>
+                                <th class="w-[160px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Masa Aktif</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody">
+                        <tbody id="tableBody" class="divide-y divide-base-200/60">
                             @forelse($children as $child)
                                 @php
                                     $sponsorship = $child->activeSponsorship;
@@ -84,7 +123,10 @@
                                             <div class="font-bold text-sm text-base-content">{{ $sponsorship->donor_name }}</div>
                                             <a href="mailto:{{ $sponsorship->donor_email }}" class="link link-hover text-primary text-xs">{{ $sponsorship->donor_email }}</a>
                                             @if($sponsorship->donor_phone)
-                                                <div class="text-xs text-base-content/40">📱 {{ $sponsorship->donor_phone }}</div>
+                                                <div class="text-xs text-base-content/40">
+                                                    <svg class="w-3.5 h-3.5 inline-block align-text-bottom" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-1.5 16.5h.01"/></svg>
+                                                    {{ $sponsorship->donor_phone }}
+                                                </div>
                                             @endif
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-bold bg-amber-50 text-amber-700 border border-amber-200 mt-1">{{ $sponsorship->package ?? '-' }}</span>
                                             @if($sponsorship->payment_method)
@@ -138,6 +180,7 @@
         </div>
     </div>
 
+    {{-- Script filter & pencarian tabel: filter berdasarkan input teks dan dropdown status --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput  = document.getElementById('tableSearch');

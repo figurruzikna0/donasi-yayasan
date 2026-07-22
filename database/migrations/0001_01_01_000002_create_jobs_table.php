@@ -1,4 +1,5 @@
 <?php
+// === 0001_01_01_000002_create_jobs_table: membuat tabel jobs, job_batches, dan failed_jobs ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

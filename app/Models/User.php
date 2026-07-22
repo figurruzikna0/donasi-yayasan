@@ -1,7 +1,10 @@
 <?php
 
+// === User: model untuk tabel users, data donatur & admin (dibedakan via role) ===
+
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -26,11 +29,18 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    // --- RELASI: user memiliki banyak donasi (HasMany) ---
     public function donations()
     {
         return $this->hasMany(Donation::class);
     }
 
+    // --- RELASI: user memiliki banyak sponsorship (HasMany) ---
     public function sponsorships()
     {
         return $this->hasMany(Sponsorship::class, 'user_id');

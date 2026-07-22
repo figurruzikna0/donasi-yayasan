@@ -1,4 +1,5 @@
 <?php
+// === PendiriController (Admin): mengelola data anggota pendiri yayasan ===
 
 namespace App\Http\Controllers\Admin;
 
@@ -9,12 +10,14 @@ use Illuminate\Support\Facades\Storage;
 
 class PendiriController extends Controller
 {
+    // --- DAFTAR PENDIRI: menampilkan semua data pendiri dengan pagination ---
     public function index()
     {
         $pendiris = Pendiri::latest()->paginate(10);
         return view('admin.pendiri.index', compact('pendiris'));
     }
 
+    // --- TAMBAH PENDIRI BARU: validasi input, upload foto, simpan ke DB, redirect back dengan pesan sukses ---
     public function store(Request $request)
     {
         $request->validate([
@@ -35,6 +38,7 @@ class PendiriController extends Controller
         return back()->with('success', 'Anggota Pendiri berhasil ditambahkan!');
     }
 
+    // --- HAPUS PENDIRI: hapus foto dari storage, hapus data pendiri, redirect back ---
     public function destroy($id)
     {
         $pendiri = Pendiri::findOrFail($id);

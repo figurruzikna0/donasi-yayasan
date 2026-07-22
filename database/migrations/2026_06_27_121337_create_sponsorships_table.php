@@ -1,4 +1,5 @@
 <?php
+// === 2026_06_27_121337_create_sponsorships_table: membuat tabel sponsorships dengan kolom foster_child_id, order_id, donor_name, donor_email, amount, snap_token, status ===
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
