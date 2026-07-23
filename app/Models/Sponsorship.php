@@ -23,6 +23,8 @@ class Sponsorship extends Model
         'package',
         'package_description',
         'payment_method',
+        'payment_proof',
+        'transfer_date',
         'starts_at',
         'expires_at',
         'reminder_sent_at',
@@ -32,6 +34,7 @@ class Sponsorship extends Model
         'starts_at' => 'datetime',
         'expires_at' => 'datetime',
         'reminder_sent_at' => 'datetime',
+        'transfer_date' => 'date',
     ];
 
     // --- RELASI: sponsorship milik satu user/donatur (BelongsTo) ---

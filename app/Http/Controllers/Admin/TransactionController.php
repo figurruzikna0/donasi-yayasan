@@ -31,6 +31,7 @@ class TransactionController extends Controller
                 'amount'         => $item->amount,
                 'target'         => $item->campaign->title ?? '-',
                 'payment_method' => $item->payment_method,
+                'payment_proof'  => $item->payment_proof,
                 'status'         => $item->status,
                 'created_at'     => $item->created_at,
             ]);
@@ -45,6 +46,7 @@ class TransactionController extends Controller
                 'target'         => $item->fosterChild->name ?? '-',
                 'package'        => $item->package,
                 'payment_method' => $item->payment_method,
+                'payment_proof'  => $item->payment_proof,
                 'status'         => $item->status,
                 'created_at'     => $item->created_at,
             ]);
@@ -94,6 +96,10 @@ class TransactionController extends Controller
 
         $donation->update(['status' => 'success']);
         $donation->campaign?->increment('collected_amount', $donation->amount);
+
+        if ($donation->donor_phone) {
+            $this->kirimWaDonasi($donation);
+        }
 
         return redirect()->back()->with('success', 'Transaksi berhasil disetujui!');
     }
@@ -275,6 +281,10 @@ class TransactionController extends Controller
             $donation->update(['status' => 'success']);
             $donation->campaign?->increment('collected_amount', $donation->amount);
 
+            if ($donation->donor_phone) {
+                $this->kirimWaDonasi($donation);
+            }
+
             return redirect()->back()->with('success', 'Sync: Donasi sukses (settlement).');
         } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
             $donation->update(['status' => 'failed']);
@@ -320,5 +330,34 @@ class TransactionController extends Controller
                . "_Baitul Yatim_";
 
         $fonnte->send($sponsorship->donor_phone, $pesan);
+    }
+
+    private function kirimWaDonasi(Donation $donation): void
+    {
+        $fonnte  = new FonnteService();
+
+        $campaign = $donation->campaign;
+        $judul    = $campaign ? $campaign->title : '-';
+        $nominal  = 'Rp ' . number_format($donation->amount, 0, ',', '.');
+        $tanggal  = $donation->created_at->translatedFormat('d F Y');
+        $donatur  = $donation->donor_name;
+        $metode   = $donation->payment_method ?? '-';
+
+        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
+               . "✅ *Donasi Berhasil Dikonfirmasi!*\n\n"
+               . "Terima kasih atas donasi Anda. Semoga kebaikan ini menjadi amal jariyah yang tak terputus pahalanya. 🤲\n\n"
+               . "━━━━━━━━━━━━━━━━━\n"
+               . "📌 *Detail Donasi*\n"
+               . "Campaign : {$judul}\n"
+               . "Nominal  : {$nominal}\n"
+               . "Tanggal  : {$tanggal}\n"
+               . "Metode   : {$metode}\n\n"
+               . "🆔 *ID Transaksi*\n"
+               . "{$donation->order_id}\n"
+               . "━━━━━━━━━━━━━━━━━\n\n"
+               . "Semoga Allah SWT menerima amal ibadah Anda dan membalasnya dengan berlipat ganda. Aamiin 🤍\n\n"
+               . "_Baitul Yatim_";
+
+        $fonnte->send($donation->donor_phone, $pesan);
     }
 }

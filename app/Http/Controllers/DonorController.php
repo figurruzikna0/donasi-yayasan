@@ -26,10 +26,19 @@ class DonorController extends Controller
             ->where('status', 'success')
             ->pluck('foster_child_id');
 
-        $fosterChildren = FosterChild::where(function ($q) use ($sponsoredChildIds) {
-                $q->where('status', 'Tersedia')
-                  ->orWhereIn('id', $sponsoredChildIds);
-            })
+        $usia = request('usia');
+        $jenisKelamin = request('jenis_kelamin');
+
+        $fosterChildrenQuery = FosterChild::where(function ($q) use ($sponsoredChildIds) {
+            $q->where('status', 'Tersedia')
+              ->orWhereIn('id', $sponsoredChildIds);
+        });
+
+        $totalVisible = $fosterChildrenQuery->count();
+
+        $fosterChildren = $fosterChildrenQuery
+            ->when($usia, fn($q, $usia) => $q->whereBetween('age', explode('-', $usia)))
+            ->when($jenisKelamin, fn($q, $v) => $q->where('jenis_kelamin', $v))
             ->latest()
             ->get();
 
@@ -58,7 +67,7 @@ class DonorController extends Controller
         return view('dashboard', compact(
             'pendiris', 'newsList', 'campaigns', 'fosterChildren',
             'donations', 'sponsorships', 'totalDonated', 'activeSponsorships', 'user',
-            'totalFoster', 'tersediaFoster', 'diasuhFoster'
+            'totalFoster', 'tersediaFoster', 'diasuhFoster', 'totalVisible'
         ));
     }
 

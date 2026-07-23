@@ -72,6 +72,7 @@ Route::get('/legalitas', function () {
 Route::middleware(['auth', 'verified', 'throttle:10,1'])->group(function () {
     Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donations.create');
     Route::post('/campaign/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
+    Route::get('/foster-children/{id}', [DonationController::class, 'childDetail'])->name('sponsor.child-detail');
     Route::get('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorForm'])->name('sponsor.form');
     Route::post('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorStore'])->name('sponsor.store');
 

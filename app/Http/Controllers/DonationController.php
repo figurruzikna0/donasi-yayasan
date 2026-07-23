@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\FosterChild;
+use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -28,7 +29,7 @@ class DonationController extends Controller
         return view('donations.create', compact('campaign'));
     }
 
-    // --- PROSES DONASI BARU: validasi input, simpan donasi status pending, dapatkan Snap token Midtrans, tampilkan halaman pembayaran ---
+    // --- PROSES DONASI BARU: validasi input, upload bukti transfer, simpan donasi status pending, redirect ke dashboard ---
     public function store(Request $request, Campaign $campaign)
     {
         $user = auth()->user();
@@ -38,10 +39,13 @@ class DonationController extends Controller
             'donor_email'    => 'required|email|max:255',
             'donor_phone'    => 'required|string|max:20',
             'amount'         => 'required|numeric|min:1000',
-            'payment_method' => 'required|string|max:255',
+            'payment_proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'transfer_date'  => 'required|date',
         ]);
 
         $orderId  = 'DONASI-' . uniqid();
+
+        $proofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
 
         $donation = Donation::create([
             'campaign_id'    => $campaign->id,
@@ -51,35 +55,21 @@ class DonationController extends Controller
             'donor_email'    => $validated['donor_email'],
             'donor_phone'    => $validated['donor_phone'],
             'amount'         => $validated['amount'],
-            'payment_method' => $validated['payment_method'],
+            'payment_method' => 'Transfer Bank',
+            'payment_proof'  => $proofPath,
+            'transfer_date'  => $validated['transfer_date'],
             'status'         => 'pending',
         ]);
 
-        $this->initMidtrans();
+        return redirect()->route('dashboard')
+            ->with('success', 'Bukti transfer berhasil diupload! Donasi Anda sedang menunggu konfirmasi admin.');
+    }
 
-        $params = [
-            'transaction_details' => [
-                'order_id'     => $orderId,
-                'gross_amount' => (int) $donation->amount,
-            ],
-            'customer_details' => [
-                'first_name' => $donation->donor_name,
-                'email'      => $donation->donor_email,
-                'phone'      => $donation->donor_phone,
-            ],
-        ];
-
-        try {
-            $snapToken = Snap::getSnapToken($params);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Midtrans Snap error (donasi): ' . $e->getMessage());
-            return redirect()->back()
-                ->with('error', 'Maaf, gerbang pembayaran sedang sibuk. Silakan pilih metode lain atau coba beberapa saat lagi.')
-                ->withInput();
-        }
-        $donation->update(['snap_token' => $snapToken]);
-
-        return view('donations.payment', compact('donation', 'campaign', 'snapToken'));
+    // --- DETAIL ANAK ASUH (user donatur): menampilkan profil lengkap anak asuh ---
+    public function childDetail($id)
+    {
+        $child = FosterChild::with(['sponsorships' => fn($q) => $q->where('user_id', auth()->id())])->findOrFail($id);
+        return view('donations.child_detail', compact('child'));
     }
 
     // --- TAMPILKAN FORM SPONSORSHIP: menerima $id anak asuh, menampilkan halaman sponsorship ---
@@ -89,7 +79,7 @@ class DonationController extends Controller
         return view('donations.sponsor', compact('child'));
     }
 
-    // --- PROSES SPONSORSHIP BARU: validasi input, simpan sponsorship status pending, dapatkan Snap token Midtrans, tampilkan halaman pembayaran ---
+    // --- PROSES SPONSORSHIP BARU: validasi input, upload bukti transfer, simpan sponsorship status pending, redirect ke dashboard ---
     public function sponsorStore(Request $request, $id)
     {
         $child = FosterChild::findOrFail($id);
@@ -102,10 +92,13 @@ class DonationController extends Controller
             'amount'         => 'required|numeric|min:100000|max:500000',
             'paket_komitmen' => 'required|string|max:255',
             'description'    => 'nullable|string',
-            'payment_method' => 'required|string|max:255',
+            'payment_proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'transfer_date'  => 'required|date',
         ]);
 
         $orderId = 'SPONSOR-' . uniqid();
+
+        $proofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
 
         $sponsorship = Sponsorship::create([
             'foster_child_id'     => $child->id,
@@ -117,35 +110,14 @@ class DonationController extends Controller
             'amount'              => $validated['amount'],
             'package'             => $validated['paket_komitmen'],
             'package_description' => $validated['description'] ?? null,
-            'payment_method'      => $validated['payment_method'],
+            'payment_method'      => 'Transfer Bank',
+            'payment_proof'       => $proofPath,
+            'transfer_date'       => $validated['transfer_date'],
             'status'              => 'pending',
         ]);
 
-        $this->initMidtrans();
-
-        $params = [
-            'transaction_details' => [
-                'order_id'     => $orderId,
-                'gross_amount' => (int) $sponsorship->amount,
-            ],
-            'customer_details' => [
-                'first_name' => $sponsorship->donor_name,
-                'email'      => $sponsorship->donor_email,
-                'phone'      => $sponsorship->donor_phone,
-            ],
-        ];
-
-        try {
-            $snapToken = Snap::getSnapToken($params);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Midtrans Snap error (sponsor): ' . $e->getMessage());
-            return redirect()->back()
-                ->with('error', 'Maaf, gerbang pembayaran sedang sibuk. Silakan pilih metode lain atau coba beberapa saat lagi.')
-                ->withInput();
-        }
-        $sponsorship->update(['snap_token' => $snapToken]);
-
-        return view('donations.sponsor_payment', compact('sponsorship', 'child', 'snapToken'));
+        return redirect()->route('dashboard')
+            ->with('success', 'Bukti transfer berhasil diupload! Sponsorship Anda sedang menunggu konfirmasi admin.');
     }
 
     // --- CALLBACK MIDTRANS: menerima notifikasi pembayaran dari Midtrans, update status donasi/sponsorship, kirim WA notifikasi, return JSON ---

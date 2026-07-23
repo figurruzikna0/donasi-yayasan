@@ -49,7 +49,7 @@
             <div class="card bg-base-100 shadow-md border border-emerald-200">
                 <div class="card-body p-6 sm:p-8">
 
-                    <form action="{{ route('donations.store', $campaign->id) }}" method="POST" id="donation-form">
+                    <form action="{{ route('donations.store', $campaign->id) }}" method="POST" id="donation-form" enctype="multipart/form-data">
                         @csrf
 
                         {{-- Nama --}}
@@ -114,28 +114,58 @@
                             </div>
                         </div>
 
-                        {{-- Payment Method --}}
+                        {{-- Info Rekening Tujuan --}}
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-200 flex items-center justify-center text-xl shrink-0">🏦</div>
+                                <div>
+                                    <p class="font-bold text-emerald-700 text-sm">Transfer ke Rekening Tujuan</p>
+                                    <p class="text-xs text-emerald-500">Gunakan rekening berikut untuk melakukan pembayaran</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-emerald-200 space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-emerald-600 font-medium">Bank</span>
+                                    <span class="text-sm font-bold text-emerald-800">Bank Syariah Indonesia (BSI)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-emerald-600 font-medium">No. Rekening</span>
+                                    <span class="text-sm font-bold text-emerald-800 tracking-wider">7122-8023-98</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-emerald-600 font-medium">Atas Nama</span>
+                                    <span class="text-sm font-bold text-emerald-800">Baitul Yatim Sukabumi</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Upload Bukti Transfer --}}
+                        <div class="form-control w-full mb-5">
+                            <label class="label">
+                                <span class="label-text font-bold text-emerald-700">Upload Bukti Transfer <span class="text-red-500">*</span></span>
+                            </label>
+                            <div class="join w-full">
+                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">📷</span>
+                                <input type="file" name="payment_proof" accept="image/jpg,image/jpeg,image/png" required
+                                    class="file-input file-input-bordered w-full join-item border-emerald-200 focus:border-emerald-500">
+                            </div>
+                            <label class="label"><span class="label-text-alt text-emerald-500">Format: JPG/JPEG/PNG, maks 2MB</span></label>
+                        </div>
+
+                        {{-- Tanggal Transfer --}}
                         <div class="form-control w-full mb-6">
                             <label class="label">
-                                <span class="label-text font-bold text-emerald-700">Metode Pembayaran <span class="text-red-500">*</span></span>
+                                <span class="label-text font-bold text-emerald-700">Tanggal Transfer <span class="text-red-500">*</span></span>
                             </label>
-                            <select name="payment_method" class="select select-bordered w-full border-emerald-200 focus:border-emerald-500" required>
-                                <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>-- Pilih Metode Pembayaran --</option>
-                                <option value="BCA VA" {{ old('payment_method') == 'BCA VA' ? 'selected' : '' }}>🏦 Virtual Account BCA</option>
-                                <option value="Mandiri Bill Payment" {{ old('payment_method') == 'Mandiri Bill Payment' ? 'selected' : '' }}>🏦 Mandiri Bill Payment</option>
-                                <option value="BNI VA" {{ old('payment_method') == 'BNI VA' ? 'selected' : '' }}>🏦 Virtual Account BNI</option>
-                                <option value="BRI VA" {{ old('payment_method') == 'BRI VA' ? 'selected' : '' }}>🏦 Virtual Account BRI</option>
-                                <option value="CIMB NIAGA VA" {{ old('payment_method') == 'CIMB NIAGA VA' ? 'selected' : '' }}>🏦 Virtual Account CIMB Niaga</option>
-                                <option value="Permata VA" {{ old('payment_method') == 'Permata VA' ? 'selected' : '' }}>🏦 Virtual Account Permata</option>
-                                <option value="BSI VA" {{ old('payment_method') == 'BSI VA' ? 'selected' : '' }}>🏦 Virtual Account BSI</option>
-                                <option value="GoPay" {{ old('payment_method') == 'GoPay' ? 'selected' : '' }}>📱 GoPay</option>
-                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>📱 QRIS (Midtrans)</option>
-                                <option value="ShopeePay" {{ old('payment_method') == 'ShopeePay' ? 'selected' : '' }}>📱 ShopeePay</option>
-                            </select>
+                            <div class="join w-full">
+                                <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 px-4 text-lg">📅</span>
+                                <input type="date" name="transfer_date" required
+                                    class="input input-bordered w-full join-item border-emerald-200 focus:border-emerald-500" value="{{ old('transfer_date', date('Y-m-d')) }}">
+                            </div>
                         </div>
 
                         <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base">
-                            🔐 Lanjut ke Pembayaran
+                            📤 Kirim Donasi
                         </button>
 
                         <div class="mt-6 text-center">
@@ -147,9 +177,9 @@
                 </div>
             </div>
 
-            {{-- Trust Badge --}}
+            {{-- Info --}}
             <div class="text-center mt-6 text-xs text-slate-400">
-                <p>🔒 Pembayaran diproses secara aman melalui <span class="font-semibold text-emerald-600">Midtrans</span></p>
+                <p>🕌 Setiap rupiah donasi Anda akan disalurkan untuk program kebaikan</p>
             </div>
             @endif
         </div>

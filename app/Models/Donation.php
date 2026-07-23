@@ -21,7 +21,13 @@ class Donation extends Model
         'user_id',
         'amount',
         'payment_method',
+        'payment_proof',
+        'transfer_date',
         'status',
+    ];
+
+    protected $casts = [
+        'transfer_date' => 'date',
     ];
 
     // --- RELASI: donasi milik satu campaign (BelongsTo) ---

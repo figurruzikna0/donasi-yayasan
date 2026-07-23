@@ -255,6 +255,70 @@
                         </div>
                     </div>
 
+                    <div class="bg-gradient-to-r from-primary/5 via-primary/5 to-primary/[0.02] rounded-xl border border-primary/10 p-4 mb-6">
+                        <form method="GET" action="{{ route('dashboard') }}#program-ota" class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <input type="hidden" name="usia" id="usia-input" value="{{ request('usia') }}">
+                            <input type="hidden" name="jenis_kelamin" id="jenis_kelamin-input" value="{{ request('jenis_kelamin') }}">
+
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider mr-1">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                                Filter
+                            </span>
+
+                            <div class="dropdown dropdown-bottom">
+                                <button type="button" class="btn btn-xs border-primary/20 rounded-lg font-bold transition-all duration-200 {{ request('usia') ? 'bg-primary text-white shadow-sm shadow-primary/20 border-primary' : 'bg-white text-base-content/70 hover:border-primary/40 hover:text-base-content' }}" onclick="this.closest('.dropdown').classList.toggle('dropdown-open')">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    {{ request('usia') ? 'Usia ' . request('usia') . ' Thn' : 'Usia' }}
+                                    <svg class="w-3 h-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <ul class="dropdown-content menu bg-white rounded-xl shadow-xl border border-base-200 p-1.5 w-44 z-10">
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ !request('usia') ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('usia', '')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ !request('usia') ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ !request('usia') ? 'bg-white' : '' }}"></span></span>Semua Usia</button></li>
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('usia') == '0-5' ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('usia', '0-5')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('usia') == '0-5' ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('usia') == '0-5' ? 'bg-white' : '' }}"></span></span>0 - 5 Tahun</button></li>
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('usia') == '6-10' ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('usia', '6-10')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('usia') == '6-10' ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('usia') == '6-10' ? 'bg-white' : '' }}"></span></span>6 - 10 Tahun</button></li>
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('usia') == '11-15' ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('usia', '11-15')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('usia') == '11-15' ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('usia') == '11-15' ? 'bg-white' : '' }}"></span></span>11 - 15 Tahun</button></li>
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('usia') == '16-20' ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('usia', '16-20')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('usia') == '16-20' ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('usia') == '16-20' ? 'bg-white' : '' }}"></span></span>16 - 20 Tahun</button></li>
+                                </ul>
+                            </div>
+
+                            <div class="dropdown dropdown-bottom">
+                                <button type="button" class="btn btn-xs border-primary/20 rounded-lg font-bold transition-all duration-200 {{ request('jenis_kelamin') ? 'bg-primary text-white shadow-sm shadow-primary/20 border-primary' : 'bg-white text-base-content/70 hover:border-primary/40 hover:text-base-content' }}" onclick="this.closest('.dropdown').classList.toggle('dropdown-open')">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                    {{ request('jenis_kelamin') ?? 'Jenis Kelamin' }}
+                                    <svg class="w-3 h-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <ul class="dropdown-content menu bg-white rounded-xl shadow-xl border border-base-200 p-1.5 w-44 z-10">
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ !request('jenis_kelamin') ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('jenis_kelamin', '')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ !request('jenis_kelamin') ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ !request('jenis_kelamin') ? 'bg-white' : '' }}"></span></span>Semua</button></li>
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('jenis_kelamin') == 'Laki-laki' ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('jenis_kelamin', 'Laki-laki')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('jenis_kelamin') == 'Laki-laki' ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('jenis_kelamin') == 'Laki-laki' ? 'bg-white' : '' }}"></span></span>👦 Laki-laki</button></li>
+                                    <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('jenis_kelamin') == 'Perempuan' ? 'bg-primary/10 text-primary font-bold' : 'text-base-content/70 hover:bg-base-200' }}" onclick="setFilter('jenis_kelamin', 'Perempuan')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('jenis_kelamin') == 'Perempuan' ? 'border-primary bg-primary' : 'border-base-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('jenis_kelamin') == 'Perempuan' ? 'bg-white' : '' }}"></span></span>👧 Perempuan</button></li>
+                                </ul>
+                            </div>
+
+                            @if(request('usia') || request('jenis_kelamin'))
+                                <a href="{{ route('dashboard') }}#program-ota" class="btn btn-xs bg-error/10 hover:bg-error/20 text-error border-0 rounded-lg font-bold transition-all duration-200">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    Reset Filter
+                                </a>
+                            @endif
+                        </form>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 mb-3">
+                        <p class="text-xs text-base-content/50">
+                            Menampilkan <span class="font-bold text-base-content/70">{{ $fosterChildren->count() }}</span> dari <span class="font-bold text-base-content/70">{{ $totalVisible }}</span> anak
+                        </p>
+                    </div>
+
+                    <script>
+                        function setFilter(key, value) {
+                            if (key === 'usia') {
+                                document.getElementById('usia-input').value = value;
+                            } else {
+                                document.getElementById('jenis_kelamin-input').value = value;
+                            }
+                            document.querySelector('#program-ota form').submit();
+                        }
+                    </script>
+
                     @if($fosterChildren->isNotEmpty())
                         @php
                             $chunks = $fosterChildren->chunk(3);
@@ -282,7 +346,14 @@
                                                         <p class="text-xs text-base-content/50 mb-3 line-clamp-2">{{ Str::limit($child->description, 100) }}</p>
                                                     @endif
                                                     @if($child->status == 'Tersedia')
-                                                        <a href="{{ route('sponsor.form', $child->id) }}" class="btn btn-sm bg-primary hover:bg-primary/90 text-white border-0 rounded-lg font-bold w-full">Asuh Sekarang</a>
+                                                        <div class="flex gap-2">
+                                                            <a href="{{ route('sponsor.child-detail', $child->id) }}" class="btn btn-sm btn-outline border-base-300 text-base-content/70 hover:bg-base-200 hover:text-base-content rounded-lg font-bold flex-1">
+                                                                Lihat Profil
+                                                            </a>
+                                                            <a href="{{ route('sponsor.form', $child->id) }}" class="btn btn-sm bg-primary hover:bg-primary/90 text-white border-0 rounded-lg font-bold flex-1 shadow-sm shadow-primary/20">
+                                                                Asuh Sekarang
+                                                            </a>
+                                                        </div>
                                                     @else
                                                         <span class="btn btn-sm bg-brand-500/10 text-brand-700 border-brand-200 rounded-lg font-bold w-full cursor-default flex items-center justify-center gap-1">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>

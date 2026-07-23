@@ -92,7 +92,7 @@
                                     <th class="w-[130px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Kampanye</th>
                                     <th class="w-[110px] text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Nominal</th>
                                     <th class="w-[150px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Kode Donasi</th>
-                                    <th class="w-[120px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Metode</th>
+                                    <th class="w-[120px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Bukti</th>
                                     <th class="w-[90px] text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Status</th>
                                     <th class="w-[130px] text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Tanggal</th>
                                     <th class="w-[110px] text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Aksi</th>
@@ -123,21 +123,12 @@
                                             <span class="inline-flex text-[0.6rem] text-base-content/30 font-mono bg-base-200/70 px-1.5 py-0.5 rounded">{{ $item->order_id }}</span>
                                         </td>
                                         <td>
-                                            @if($item->payment_method)
-                                                @php
-                                                    $pmt = $item->payment_method;
-                                                    $pmClass = match(true) {
-                                                        str_contains($pmt, 'BRI') => 'bg-blue-50 text-blue-700 border-blue-200',
-                                                        str_contains($pmt, 'BCA') => 'bg-red-50 text-red-700 border-red-200',
-                                                        str_contains($pmt, 'Mandiri') => 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                                                        str_contains($pmt, 'BNI') => 'bg-orange-50 text-orange-700 border-orange-200',
-                                                        default => 'bg-base-200/70 text-base-content/50 border-base-300'
-                                                    };
-                                                @endphp
-                                                <span class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border {{ $pmClass }}">
-                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                                    {{ $pmt }}
-                                                </span>
+                                            @if($item->payment_proof)
+                                                <a href="{{ asset('storage/' . $item->payment_proof) }}" target="_blank"
+                                                   class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 transition-colors">
+                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    Lihat Bukti
+                                                </a>
                                             @else
                                                 <span class="text-xs text-base-content/30">-</span>
                                             @endif
@@ -216,7 +207,7 @@
                                     <th class="w-[90px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Paket</th>
                                     <th class="w-[110px] text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Nominal</th>
                                     <th class="w-[150px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Kode Donasi</th>
-                                    <th class="w-[120px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Metode</th>
+                                    <th class="w-[120px] text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Bukti</th>
                                     <th class="w-[90px] text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Status</th>
                                     <th class="w-[130px] text-right text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Tanggal</th>
                                     <th class="w-[110px] text-center text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40">Aksi</th>
@@ -266,21 +257,12 @@
                                             <span class="inline-flex text-[0.6rem] text-base-content/30 font-mono bg-base-200/70 px-1.5 py-0.5 rounded">{{ $item->order_id }}</span>
                                         </td>
                                         <td>
-                                            @if($item->payment_method)
-                                                @php
-                                                    $pmt = $item->payment_method;
-                                                    $pmClass = match(true) {
-                                                        str_contains($pmt, 'BRI') => 'bg-blue-50 text-blue-700 border-blue-200',
-                                                        str_contains($pmt, 'BCA') => 'bg-red-50 text-red-700 border-red-200',
-                                                        str_contains($pmt, 'Mandiri') => 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                                                        str_contains($pmt, 'BNI') => 'bg-orange-50 text-orange-700 border-orange-200',
-                                                        default => 'bg-base-200/70 text-base-content/50 border-base-300'
-                                                    };
-                                                @endphp
-                                                <span class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border {{ $pmClass }}">
-                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                                    {{ $pmt }}
-                                                </span>
+                                            @if($item->payment_proof)
+                                                <a href="{{ asset('storage/' . $item->payment_proof) }}" target="_blank"
+                                                   class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 transition-colors">
+                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    Lihat Bukti
+                                                </a>
                                             @else
                                                 <span class="text-xs text-base-content/30">-</span>
                                             @endif

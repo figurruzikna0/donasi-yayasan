@@ -13,10 +13,14 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
-    // --- TAMPILKAN INVOICE DONASI: menerima $id donasi, cek kepemilikan, tampilkan halaman invoice donasi ---
+    // --- TAMPILKAN INVOICE DONASI: menerima $id donasi, cek status success, cek kepemilikan, tampilkan halaman invoice donasi ---
     public function donation($id)
     {
         $donation = Donation::with('campaign')->findOrFail($id);
+
+        if ($donation->status !== 'success') {
+            abort(404);
+        }
 
         if ($donation->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403);
@@ -25,10 +29,14 @@ class InvoiceController extends Controller
         return view('invoices.donation', compact('donation'));
     }
 
-    // --- TAMPILKAN INVOICE SPONSORSHIP: menerima $id sponsorship, cek kepemilikan, tampilkan halaman invoice sponsorship ---
+    // --- TAMPILKAN INVOICE SPONSORSHIP: menerima $id sponsorship, cek status success, cek kepemilikan, tampilkan halaman invoice sponsorship ---
     public function sponsorship($id)
     {
         $sponsorship = Sponsorship::with('fosterChild')->findOrFail($id);
+
+        if ($sponsorship->status !== 'success') {
+            abort(404);
+        }
 
         if ($sponsorship->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403);
@@ -37,10 +45,14 @@ class InvoiceController extends Controller
         return view('invoices.sponsorship', compact('sponsorship'));
     }
 
-    // --- DOWNLOAD PDF DONASI: generate PDF invoice donasi dengan data campaign & profil yayasan, return download ---
+    // --- DOWNLOAD PDF DONASI: menerima $id donasi, cek status success, generate PDF invoice donasi, return download ---
     public function donationPdf($id)
     {
         $donation = Donation::with('campaign')->findOrFail($id);
+
+        if ($donation->status !== 'success') {
+            abort(404);
+        }
 
         if ($donation->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403);
@@ -51,10 +63,14 @@ class InvoiceController extends Controller
         return $pdf->download('invoice-donasi-'.$donation->order_id.'.pdf');
     }
 
-    // --- DOWNLOAD PDF SPONSORSHIP: generate PDF invoice sponsorship dengan data anak asuh & profil yayasan, return download ---
+    // --- DOWNLOAD PDF SPONSORSHIP: menerima $id sponsorship, cek status success, generate PDF invoice, return download ---
     public function sponsorshipPdf($id)
     {
         $sponsorship = Sponsorship::with('fosterChild')->findOrFail($id);
+
+        if ($sponsorship->status !== 'success') {
+            abort(404);
+        }
 
         if ($sponsorship->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403);
