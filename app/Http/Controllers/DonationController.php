@@ -10,18 +10,18 @@ use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\FosterChild;
 use Illuminate\Support\Facades\Storage;
-use Midtrans\Config;
-use Midtrans\Snap;
+// use Midtrans\Config;
+// use Midtrans\Snap;
 
 class DonationController extends Controller
 {
-    private function initMidtrans()
-    {
-        Config::$serverKey    = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized  = config('midtrans.is_sanitized');
-        Config::$is3ds        = config('midtrans.is_3ds');
-    }
+    // private function initMidtrans()
+    // {
+    //     Config::$serverKey    = config('midtrans.server_key');
+    //     Config::$isProduction = config('midtrans.is_production');
+    //     Config::$isSanitized  = config('midtrans.is_sanitized');
+    //     Config::$is3ds        = config('midtrans.is_3ds');
+    // }
 
     // --- TAMPILKAN FORM DONASI: menerima $campaign, menampilkan halaman donasi dengan data campaign ---
     public function create(Campaign $campaign)
@@ -120,90 +120,90 @@ class DonationController extends Controller
             ->with('success', 'Bukti transfer berhasil diupload! Sponsorship Anda sedang menunggu konfirmasi admin.');
     }
 
-    // --- CALLBACK MIDTRANS: menerima notifikasi pembayaran dari Midtrans, update status donasi/sponsorship, kirim WA notifikasi, return JSON ---
-    public function callback(Request $request)
-    {
-        $this->initMidtrans();
+    // // --- CALLBACK MIDTRANS: TIDAK AKTIF — sistem menggunakan upload bukti transfer manual + konfirmasi admin ---
+    // public function callback(Request $request)
+    // {
+    //     $this->initMidtrans();
 
-        $notification = new \Midtrans\Notification();
-        $status       = $notification->transaction_status;
-        $orderId      = $notification->order_id;
+    //     $notification = new \Midtrans\Notification();
+    //     $status       = $notification->transaction_status;
+    //     $orderId      = $notification->order_id;
 
-        try {
-            $paymentMethod = $this->extractPaymentMethod($notification);
-        } catch (\Throwable $e) {
-            $paymentMethod = null;
-        }
+    //     try {
+    //         $paymentMethod = $this->extractPaymentMethod($notification);
+    //     } catch (\Throwable $e) {
+    //         $paymentMethod = null;
+    //     }
 
-        // ── Sponsorship ──
-        if (str_starts_with($orderId, 'SPONSOR-')) {
-            $sponsorship = Sponsorship::where('order_id', $orderId)->first();
+    //     // ── Sponsorship ──
+    //     if (str_starts_with($orderId, 'SPONSOR-')) {
+    //         $sponsorship = Sponsorship::where('order_id', $orderId)->first();
 
-            if ($sponsorship) {
-                if (in_array($status, ['settlement', 'capture'])) {
-                    $sponsorship->update([
-                        'status'         => 'success',
-                        'starts_at'      => now(),
-                        'expires_at'     => now()->addMonth(),
-                        'payment_method' => $paymentMethod ?? $sponsorship->payment_method,
-                    ]);
+    //         if ($sponsorship) {
+    //             if (in_array($status, ['settlement', 'capture'])) {
+    //                 $sponsorship->update([
+    //                     'status'         => 'success',
+    //                     'starts_at'      => now(),
+    //                     'expires_at'     => now()->addMonth(),
+    //                     'payment_method' => $paymentMethod ?? $sponsorship->payment_method,
+    //                 ]);
 
-                    $child = FosterChild::find($sponsorship->foster_child_id);
-                    if ($child) {
-                        $child->update(['status' => 'Diasuh']);
-                    }
+    //                 $child = FosterChild::find($sponsorship->foster_child_id);
+    //                 if ($child) {
+    //                     $child->update(['status' => 'Diasuh']);
+    //                 }
 
-                    // ✅ Kirim notifikasi WA ke donatur
-                    if ($sponsorship->donor_phone) {
-                        try {
-                            $this->kirimWaSponsor($sponsorship, $child);
-                        } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Gagal kirim WA: ' . $e->getMessage());
-                        }
-                    }
+    //                 // ✅ Kirim notifikasi WA ke donatur
+    //                 if ($sponsorship->donor_phone) {
+    //                     try {
+    //                         $this->kirimWaSponsor($sponsorship, $child);
+    //                     } catch (\Throwable $e) {
+    //                         \Illuminate\Support\Facades\Log::error('Gagal kirim WA: ' . $e->getMessage());
+    //                     }
+    //                 }
 
-                } elseif ($status === 'pending') {
-                    $sponsorship->update(['status' => 'pending']);
-                } else {
-                    $sponsorship->update(['status' => 'failed']);
-                }
-            }
+    //             } elseif ($status === 'pending') {
+    //                 $sponsorship->update(['status' => 'pending']);
+    //             } else {
+    //                 $sponsorship->update(['status' => 'failed']);
+    //             }
+    //         }
 
-        // ── Donasi kampanye ──
-        } else {
-            $donation = Donation::where('order_id', $orderId)->first();
+    //     // ── Donasi kampanye ──
+    //     } else {
+    //         $donation = Donation::where('order_id', $orderId)->first();
 
-            if ($donation) {
-                if (in_array($status, ['settlement', 'capture'])) {
-                    $donation->update([
-                        'status'         => 'success',
-                        'payment_method' => $paymentMethod,
-                    ]);
+    //         if ($donation) {
+    //             if (in_array($status, ['settlement', 'capture'])) {
+    //                 $donation->update([
+    //                     'status'         => 'success',
+    //                     'payment_method' => $paymentMethod,
+    //                 ]);
 
-                    $campaign = Campaign::find($donation->campaign_id);
-                    if ($campaign) {
-                        $campaign->increment('collected_amount', $donation->amount);
-                    }
+    //                 $campaign = Campaign::find($donation->campaign_id);
+    //                 if ($campaign) {
+    //                     $campaign->increment('collected_amount', $donation->amount);
+    //                 }
 
-                    // ✅ Kirim notifikasi WA ke donatur
-                    if ($donation->donor_phone) {
-                        try {
-                            $this->kirimWaDonasi($donation, $campaign);
-                        } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Gagal kirim WA donasi: ' . $e->getMessage());
-                        }
-                    }
+    //                 // ✅ Kirim notifikasi WA ke donatur
+    //                 if ($donation->donor_phone) {
+    //                     try {
+    //                         $this->kirimWaDonasi($donation, $campaign);
+    //                     } catch (\Throwable $e) {
+    //                         \Illuminate\Support\Facades\Log::error('Gagal kirim WA donasi: ' . $e->getMessage());
+    //                     }
+    //                 }
 
-                } elseif ($status === 'pending') {
-                    $donation->update(['status' => 'pending']);
-                } else {
-                    $donation->update(['status' => 'failed']);
-                }
-            }
-        }
+    //             } elseif ($status === 'pending') {
+    //                 $donation->update(['status' => 'pending']);
+    //             } else {
+    //                 $donation->update(['status' => 'failed']);
+    //             }
+    //         }
+    //     }
 
-        return response()->json(['message' => 'Laporan diterima']);
-    }
+    //     return response()->json(['message' => 'Laporan diterima']);
+    // }
 
     // ── Private: format pesan & kirim WA ──
     private function kirimWaSponsor(Sponsorship $sponsorship, ?FosterChild $child): void
@@ -276,39 +276,39 @@ class DonationController extends Controller
         $fonnte->send($donation->donor_phone, $pesan);
     }
 
-    private function extractPaymentMethod($notification): ?string
-    {
-        $type = $notification->payment_type ?? null;
+    // private function extractPaymentMethod($notification): ?string
+    // {
+    //     $type = $notification->payment_type ?? null;
 
-        if (!$type) return null;
+    //     if (!$type) return null;
 
-        if ($type === 'bank_transfer') {
-            $vaNumbers = $notification->va_numbers ?? null;
-            $bank      = null;
-            if (is_array($vaNumbers) && isset($vaNumbers[0])) {
-                $first = $vaNumbers[0];
-                $bank  = is_object($first) ? ($first->bank ?? null) : ($first['bank'] ?? null);
-            }
-            return $bank ? 'Transfer Bank ' . strtoupper($bank) : 'Transfer Bank';
-        }
+    //     if ($type === 'bank_transfer') {
+    //         $vaNumbers = $notification->va_numbers ?? null;
+    //         $bank      = null;
+    //         if (is_array($vaNumbers) && isset($vaNumbers[0])) {
+    //             $first = $vaNumbers[0];
+    //             $bank  = is_object($first) ? ($first->bank ?? null) : ($first['bank'] ?? null);
+    //         }
+    //         return $bank ? 'Transfer Bank ' . strtoupper($bank) : 'Transfer Bank';
+    //     }
 
-        if ($type === 'echannel')   return 'Mandiri Bill Payment';
-        if ($type === 'cstore') {
-            $store = $notification->store ?? null;
-            return $store ? ucfirst($store) : 'Convenience Store';
-        }
-        if ($type === 'credit_card') {
-            $bank = $notification->bank ?? null;
-            return $bank ? 'Kartu Kredit (' . strtoupper($bank) . ')' : 'Kartu Kredit';
-        }
+    //     if ($type === 'echannel')   return 'Mandiri Bill Payment';
+    //     if ($type === 'cstore') {
+    //         $store = $notification->store ?? null;
+    //         return $store ? ucfirst($store) : 'Convenience Store';
+    //     }
+    //     if ($type === 'credit_card') {
+    //         $bank = $notification->bank ?? null;
+    //         return $bank ? 'Kartu Kredit (' . strtoupper($bank) . ')' : 'Kartu Kredit';
+    //     }
 
-        $labels = [
-            'gopay'      => 'GoPay',
-            'qris'       => 'QRIS',
-            'shopeepay'  => 'ShopeePay',
-            'akulaku'    => 'Akulaku',
-        ];
+    //     $labels = [
+    //         'gopay'      => 'GoPay',
+    //         'qris'       => 'QRIS',
+    //         'shopeepay'  => 'ShopeePay',
+    //         'akulaku'    => 'Akulaku',
+    //     ];
 
-        return $labels[$type] ?? strtoupper(str_replace('_', ' ', $type));
-    }
+    //     return $labels[$type] ?? strtoupper(str_replace('_', ' ', $type));
+    // }
 }

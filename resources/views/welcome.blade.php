@@ -13,22 +13,22 @@
     @include('partials.public-navbar', ['isHome' => true, 'scrollEffect' => true])
 
     {{-- HERO SECTION: banner utama dengan background gambar, teks ajakan donasi & tombol CTA ke #kampanye dan #program-ota --}}
-    <header class="relative hero min-h-[85vh] lg:min-h-screen overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105" style="background-image: url('{{ asset('images/hero.jpeg') }}'); background-size: cover;">
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/95 via-emerald-900/85 to-emerald-900/75"></div>
-            <div class="absolute inset-0 bg-black/20"></div>
+    <header class="relative hero min-h-screen overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/hero.jpeg') }}'); background-size: cover;">
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/95 via-emerald-900/90 to-emerald-900/85"></div>
+            <div class="absolute inset-0 bg-black/40"></div>
         </div>
-        <div class="hero-content text-center max-w-4xl px-4 py-20 lg:py-28 relative z-10">
+        <div class="hero-content text-center max-w-4xl px-4 pt-8 lg:pt-12 pb-32 lg:pb-40 relative z-10">
             <div>
-                <span data-aos="fade-down" class="bg-white/90 border border-emerald-300 text-emerald-700 text-xs uppercase tracking-[0.2em] font-bold px-5 py-2 rounded-full inline-block mb-6 shadow-sm">
-                    Setiap Kebaikan Pasti Berbuah
-                </span>
-                <h1 data-aos="fade-up" data-aos-delay="100" class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
-                    Hal Kecil untuk <span class="text-emerald-300">Mereka</span>,<br>Pahala Besar untuk <span class="text-emerald-300">Anda</span>
-                </h1>
-                <p data-aos="fade-up" data-aos-delay="200" class="text-base md:text-lg mt-6 max-w-2xl mx-auto text-white/80 font-medium leading-relaxed">
-                    Setiap hal kecil yang diberikan untuk anak yatim tidak akan pernah membuat Anda rugi. Sebaliknya, Allah menggantinya dengan keberkahan yang tak terduga.
+                <p data-aos="fade-down" class="text-emerald-200 text-lg sm:text-xl md:text-2xl uppercase tracking-[0.4em] font-black mb-5 drop-shadow-lg">
+                    PEDULI YATIM
                 </p>
+                <span data-aos="fade-down" data-aos-delay="50" class="bg-white/95 border-2 border-emerald-300 text-emerald-700 text-sm sm:text-base uppercase tracking-[0.2em] font-bold px-6 py-2.5 rounded-full inline-block mb-6 shadow-lg">
+                    Titipan Rasulullah SAW
+                </span>
+                <h1 data-aos="fade-up" data-aos-delay="100" class="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-[1.15] tracking-tight">
+                    Rezeki Itu <span class="text-emerald-300">Pasti</span>,<br>Kemuliaan Harus <span class="text-emerald-300">Dicari</span>,<br>Berbagi Tidak Akan Membuatmu <span class="text-emerald-300">Rugi</span>.
+                </h1>
                 <div data-aos="fade-up" data-aos-delay="300" class="mt-10 flex flex-wrap justify-center gap-3">
                     <a href="#kampanye" class="btn btn-success text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide shadow-lg hover:shadow-xl transition-all">Lihat Program Donasi Aktif</a>
                     <a href="#program-ota" class="btn btn-outline border-white text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide bg-white/10 hover:bg-white hover:text-emerald-800 hover:border-white transition-all">Jadi Orang Tua Asuh</a>

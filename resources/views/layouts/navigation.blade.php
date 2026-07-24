@@ -31,11 +31,11 @@
                     </svg>
                 </button>
                 <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg">
-                    <li><a :href="route('profile.edit')" onclick="event.preventDefault(); window.location.href='{{ route('profile.edit') }}'">Profile</a></li>
+                    <li><a :href="route('profile.edit')" onclick="event.preventDefault(); window.location.href='{{ route('profile.edit') }}'">Profil</a></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" class="p-0">
                             @csrf
-                            <button type="submit" class="w-full text-left">Log Out</button>
+                            <button type="submit" class="w-full text-left">Keluar</button>
                         </form>
                     </li>
                 </ul>
@@ -60,11 +60,11 @@
         <ul class="menu menu-md p-4 pt-2">
             <li><a :href="route('dashboard')" wire:navigate>Dashboard</a></li>
             <li class="menu-title text-xs"><span>Akun</span></li>
-            <li><a :href="route('profile.edit')" wire:navigate>Profile</a></li>
+            <li><a :href="route('profile.edit')" wire:navigate>Profil</a></li>
             <li>
                 <form method="POST" action="{{ route('logout') }}" class="p-0">
                     @csrf
-                    <button type="submit" class="w-full text-left">Log Out</button>
+                    <button type="submit" class="w-full text-left">Keluar</button>
                 </form>
             </li>
         </ul>
