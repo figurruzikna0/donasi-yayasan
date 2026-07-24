@@ -61,6 +61,13 @@
                             <input type="file" name="foto" class="file-input file-input-bordered w-full input-sm" required>
                         </div>
 
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text font-bold text-base-content/70 text-xs">Urutan Tampil</span>
+                            </label>
+                            <input type="number" name="urutan" class="input input-bordered w-full input-sm" value="0" min="0">
+                        </div>
+
                         <button type="submit" class="btn bg-primary hover:bg-primary/90 text-white border-0 w-full font-bold rounded-lg">
                             Simpan Data Pendiri
                         </button>

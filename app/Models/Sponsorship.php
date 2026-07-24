@@ -28,6 +28,7 @@ class Sponsorship extends Model
         'starts_at',
         'expires_at',
         'reminder_sent_at',
+        'rejection_reason',
     ];
 
     protected $casts = [

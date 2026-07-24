@@ -27,7 +27,7 @@
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Umur (Tahun)</span>
                             </label>
-                            <input type="number" name="age" required min="0" max="100" placeholder="0" class="input input-bordered w-full max-w-[160px]" value="{{ old('age') }}">
+                            <input type="text" name="age" required placeholder="0 atau - jika belum diketahui" class="input input-bordered w-full max-w-[220px]" value="{{ old('age') }}">
                             @error('age')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -72,7 +72,7 @@
                                 </label>
                                 <input type="file" name="photo" id="photo-input" accept="image/*" class="hidden-file">
                             </div>
-                            <p class="text-xs text-emerald-500 mt-1">Format: JPG, PNG, WEBP &mdash; Maks. 2 MB</p>
+                            <p class="text-xs text-emerald-500 mt-1">Format: JPG, PNG, WEBP &mdash; Maks. 5 MB</p>
                             @error('photo')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror

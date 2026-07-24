@@ -16,7 +16,7 @@ class ProfilYayasanController extends Controller
     // --- DAFTAR PENDIRI: menampilkan halaman profil yayasan dengan daftar pendiri ---
     public function index()
     {
-        $pendiris = Pendiri::latest()->paginate(10);
+        $pendiris = Pendiri::orderBy('urutan')->latest()->paginate(10)->appends(['tab' => 'pendiri']);
 
         return view('admin.profil.index', compact('pendiris'));
     }
@@ -32,7 +32,7 @@ class ProfilYayasanController extends Controller
     {
         $validated = $request->validate([
             'nama_yayasan'    => 'required|string|max:255',
-            'logo'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'logo'            => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'alamat'          => 'required|string',
             'no_telp'         => 'required|string',
             'email'           => 'required|email',
@@ -40,12 +40,12 @@ class ProfilYayasanController extends Controller
             'visi'            => 'required|string',
             'misi'            => 'required|string',
             'legalitas'       => 'nullable|string',
-            'foto_legalitas'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'foto_struktur'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_legalitas'  => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'foto_struktur'   => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'pendiri_nama' => 'nullable|string|max:255',
             'pendiri_jabatan' => 'required_with:pendiri_nama|string|max:255',
             'pendiri_deskripsi' => 'nullable|string',
-            'pendiri_foto' => 'required_with:pendiri_nama|image|max:1024',
+            'pendiri_foto' => 'required_with:pendiri_nama|image|max:5120',
         ]);
 
         $profil = ProfilYayasan::first();

@@ -31,10 +31,10 @@ class FosterChildController extends Controller
     {
         $request->validate([
             'name'          => 'required|string|max:255',
-            'age'           => 'required|integer|min:0',
+            'age'           => 'required|string|max:10',
             'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
             'description'   => 'nullable|string',
-            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'status'        => 'nullable|string|max:50',
         ]);
 
@@ -68,10 +68,10 @@ class FosterChildController extends Controller
     {
         $request->validate([
             'name'          => 'required|string|max:255',
-            'age'           => 'required|integer|min:0',
+            'age'           => 'required|string|max:10',
             'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
             'description'   => 'nullable|string',
-            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'status'        => 'nullable|string|max:50',
         ]);
 

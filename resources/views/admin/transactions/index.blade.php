@@ -130,56 +130,57 @@
                                                     Lihat Bukti
                                                 </a>
                                             @else
-                                                <span class="text-xs text-base-content/30">-</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if($item->status=='success')
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                    Sukses
-                                                </span>
-                                            @elseif($item->status=='pending')
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                    Tertunda
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-600">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                                    Gagal
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="text-right whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-base-content">{{ $item->created_at?->format('d M Y') ?? '-' }}</div>
-                                            <div class="text-xs text-base-content/40 flex items-center justify-end gap-1 mt-0.5">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                {{ $item->created_at?->format('H:i') }} WIB
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                @if($item->status==='pending')
-                                                    <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST" class="inline">
-                                                        @csrf @method('PATCH')
-                                                        <button type="submit" class="btn btn-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 rounded-lg font-bold">Konfirmasi</button>
-                                                    </form>
+                                                    <span class="text-xs text-base-content/30">-</span>
                                                 @endif
-                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
-                                                    @csrf @method('DELETE')
-                                                    <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                                                    </button>
-                                                    <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8">
-                                            <div class="py-16 text-center">
+                                            </td>
+                                            <td class="text-center">
+                                                @if($item->status=='success')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        Sukses
+                                                    </span>
+                                                @elseif($item->status=='pending')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                        Tertunda
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-600">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                        Gagal
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-right whitespace-nowrap">
+                                                <div class="text-sm font-semibold text-base-content">{{ $item->created_at?->format('d M Y') ?? '-' }}</div>
+                                                <div class="text-xs text-base-content/40 flex items-center justify-end gap-1 mt-0.5">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    {{ $item->created_at?->format('H:i') }} WIB
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="flex items-center justify-center gap-1">
+                                                    @if($item->status==='pending')
+                                                        <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST" class="inline">
+                                                            @csrf @method('PATCH')
+                                                            <button type="submit" class="btn btn-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 rounded-lg font-bold">Konfirmasi</button>
+                                                        </form>
+                                                        <button type="button" @click="$dispatch('open-reject', { id: '{{ $item->order_id }}', donor: '{{ $item->donor_name }}' })" class="btn btn-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200 rounded-lg font-bold">Tolak</button>
+                                                    @endif
+                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
+                                                        @csrf @method('DELETE')
+                                                        <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                        </button>
+                                                        <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8">
+                                                <div class="py-16 text-center">
                                                 <div class="w-16 h-16 bg-base-200 rounded-full flex items-center justify-center mx-auto mb-4">
                                                     <svg class="w-8 h-8 text-base-content/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                                 </div>
@@ -294,41 +295,71 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="flex items-center justify-center gap-1">
-                                                @if($item->status==='pending')
-                                                    <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST" class="inline">
-                                                        @csrf @method('PATCH')
-                                                        <button type="submit" class="btn btn-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 rounded-lg font-bold">Konfirmasi</button>
+                                                    @if($item->status==='pending')
+                                                        <form action="{{ route('admin.transactions.approve', $item->order_id) }}" method="POST" class="inline">
+                                                            @csrf @method('PATCH')
+                                                            <button type="submit" class="btn btn-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 rounded-lg font-bold">Konfirmasi</button>
+                                                        </form>
+                                                        <button type="button" @click="$dispatch('open-reject', { id: '{{ $item->order_id }}', donor: '{{ $item->donor_name }}' })" class="btn btn-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200 rounded-lg font-bold">Tolak</button>
+                                                    @endif
+                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
+                                                        @csrf @method('DELETE')
+                                                        <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                        </button>
+                                                        <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
                                                     </form>
-                                                @endif
-                                                <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
-                                                    @csrf @method('DELETE')
-                                                    <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                                                    </button>
-                                                    <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="9">
-                                            <div class="py-16 text-center">
-                                                <div class="w-16 h-16 bg-base-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                    <svg class="w-8 h-8 text-base-content/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                                 </div>
-                                                <p class="font-extrabold text-base-content">Belum ada sponsorship</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="9">
+                                                <div class="py-16 text-center">
+                                                    <div class="w-16 h-16 bg-base-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                        <svg class="w-8 h-8 text-base-content/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                                    </div>
+                                                    <p class="font-extrabold text-base-content">Belum ada sponsorship</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    {{ $sponsorships->links() }}
                 </div>
-                {{ $sponsorships->links() }}
             </div>
         </div>
     </div>
+</div>
+
+{{-- REJECT MODAL --}}
+<div x-data="{ open: false, orderId: '', donorName: '', reason: '' }"
+     @open-reject.window="orderId = $event.detail.id; donorName = $event.detail.donor; reason = ''; open = true">
+    <dialog class="modal" :class="{ 'modal-open': open }">
+        <div class="modal-box max-w-md">
+            <div class="text-center mb-4">
+                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-rose-100 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                </div>
+                <h3 class="text-lg font-black text-base-content mb-1">Tolak Transaksi</h3>
+                <p class="text-sm text-base-content/60 mb-4">Berikan alasan penolakan untuk <strong x-text="donorName"></strong></p>
+            </div>
+            <form :action="`{{ url('admin/transactions') }}/${orderId}/reject`" method="POST">
+                @csrf @method('PATCH')
+                <textarea name="rejection_reason" x-model="reason" required maxlength="1000" rows="4"
+                          class="textarea textarea-bordered w-full resize-none text-sm"
+                          placeholder="Masukkan alasan penolakan..."></textarea>
+                <div class="text-xs text-base-content/40 text-right mt-1" x-text="reason.length + '/1000'"></div>
+                <div class="flex gap-2 justify-end mt-4">
+                    <button type="button" @click="open = false" class="btn btn-ghost btn-sm font-bold px-6">Batal</button>
+                    <button type="submit" class="btn bg-rose-600 hover:bg-rose-700 text-white border-0 btn-sm font-bold px-6">Tolak & Kirim Notifikasi</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button @click="open = false">close</button></form>
+    </dialog>
 </div>
 </x-admin-layout>

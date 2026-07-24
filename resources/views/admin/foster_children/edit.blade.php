@@ -34,8 +34,8 @@
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Usia (Tahun)</span>
                             </label>
-                            <input type="number" name="age" class="input input-bordered w-full max-w-[160px]" required
-                                   min="0" max="25"
+                            <input type="text" name="age" class="input input-bordered w-full max-w-[220px]" required
+                                   placeholder="0 atau - jika belum diketahui"
                                    value="{{ old('age', $fosterChild->age) }}">
                             @error('age') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
@@ -104,7 +104,7 @@
                                 </label>
                                 <input type="file" name="photo" id="foto-input" accept="image/*" class="hidden-file">
                             </div>
-                            <p class="text-xs text-emerald-500 mt-1">JPG, PNG, WEBP — Maks 2MB</p>
+                            <p class="text-xs text-emerald-500 mt-1">JPG, PNG, WEBP — Maks 5MB</p>
 
                             @if($fosterChild->photo)
                                 <p class="text-xs text-emerald-500 mt-2">Foto saat ini:</p>

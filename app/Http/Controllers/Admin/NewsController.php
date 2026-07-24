@@ -12,11 +12,28 @@ class NewsController extends Controller
 {
     use HandlesFileUpload;
 
-    // --- DAFTAR BERITA: menampilkan semua berita dengan pagination ---
-    public function index()
+    // --- DAFTAR BERITA: menampilkan semua berita dengan pagination, search & filter kategori ---
+    public function index(Request $request)
     {
-        $newsList = News::latest()->paginate(10);
-        return view('admin.news.index', compact('newsList'));
+        $query = News::latest();
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                  ->orWhere('ringkasan', 'like', "%{$search}%")
+                  ->orWhere('lokasi', 'like', "%{$search}%")
+                  ->orWhere('kategori', 'like', "%{$search}%")
+                  ->orWhere('penyelenggara', 'like', "%{$search}%");
+            });
+        }
+
+        if ($kategori = $request->get('kategori')) {
+            $query->where('kategori', $kategori);
+        }
+
+        $kategoriList = News::select('kategori')->distinct()->whereNotNull('kategori')->pluck('kategori');
+        $newsList = $query->paginate(10)->withQueryString();
+        return view('admin.news.index', compact('newsList', 'kategoriList'));
     }
 
     // --- FORM TAMBAH BERITA: menampilkan halaman tambah berita baru ---
@@ -36,7 +53,7 @@ class NewsController extends Controller
             'penyelenggara'    => 'nullable|string|max:255',
             'ringkasan'        => 'nullable|string|max:500',
             'konten'           => 'required|string',
-            'foto_utama'       => 'nullable|image|max:3072',
+            'foto_utama'       => 'nullable|image|max:5120',
             'status'           => 'required|in:draft,published',
         ]);
 
@@ -75,7 +92,7 @@ class NewsController extends Controller
             'penyelenggara'    => 'nullable|string|max:255',
             'ringkasan'        => 'nullable|string|max:500',
             'konten'           => 'required|string',
-            'foto_utama'       => 'nullable|image|max:3072',
+            'foto_utama'       => 'nullable|image|max:5120',
             'status'           => 'required|in:draft,published',
         ]);
 

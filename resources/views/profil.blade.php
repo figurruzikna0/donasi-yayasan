@@ -12,6 +12,8 @@
     {{-- NAVBAR --}}
     @include('partials.public-navbar')
 
+    <x-breadcrumb :items="['Profil Yayasan' => '']" />
+
     {{-- HERO PROFIL: banner profil yayasan dengan tejudul, tombol Donasi & Orang Tua Asuh --}}
     <section class="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-700 text-white">
         <div class="absolute inset-0 opacity-10">

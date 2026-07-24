@@ -41,7 +41,7 @@ class ChildDevelopmentController extends Controller
             'tanggal'         => 'required|date',
             'judul'           => 'required|string|max:255',
             'deskripsi'       => 'required|string',
-            'foto'            => 'nullable|image|max:3072',
+            'foto'            => 'nullable|image|max:5120',
         ]);
 
         $sponsorship = Sponsorship::where('foster_child_id', $validated['foster_child_id'])

@@ -40,7 +40,7 @@
             </li>
             <li><a href="{{ ($isHome ?? false) ? '#kampanye' : url('/#kampanye') }}" class="font-bold text-emerald-700">Program Donasi</a></li>
             <li><a href="{{ ($isHome ?? false) ? '#program-ota' : url('/#program-ota') }}" class="font-bold text-emerald-700">Orang Tua Asuh</a></li>
-            <li><a href="{{ ($isHome ?? false) ? '#berita-kegiatan' : url('/#berita-kegiatan') }}" class="font-bold text-emerald-700">Berita</a></li>
+            <li><a href="{{ route('news.index') }}" class="font-bold text-emerald-700">Berita</a></li>
         </ul>
     </div>
 
@@ -66,7 +66,7 @@
             <li class="menu-title text-xs"><span>Program</span></li>
             <li><a href="{{ ($isHome ?? false) ? '#kampanye' : url('/#kampanye') }}" class="text-emerald-700">Program Donasi</a></li>
             <li><a href="{{ ($isHome ?? false) ? '#program-ota' : url('/#program-ota') }}" class="text-emerald-700">Orang Tua Asuh</a></li>
-            <li><a href="{{ ($isHome ?? false) ? '#berita-kegiatan' : url('/#berita-kegiatan') }}" class="text-emerald-700">Berita</a></li>
+            <li><a href="{{ route('news.index') }}" class="text-emerald-700">Berita</a></li>
             <li class="menu-divider"></li>
             <li><a href="{{ route('register') }}" class="font-bold text-emerald-700">Daftar Donatur</a></li>
             <li><a href="{{ route('login') }}" class="font-bold text-emerald-700">Masuk</a></li>

@@ -14,6 +14,8 @@
     {{-- NAVBAR --}}
     @include('partials.public-navbar')
 
+    <x-breadcrumb :items="['Profil Yayasan' => route('profil'), 'Legalitas' => '']" />
+
     {{-- LIGHTBOX --}}
     <div x-data="{ open: false, img: '' }">
         <div x-show="open" x-cloak class="fixed inset-0 z-[999] bg-black/80 flex items-center justify-center p-4" @click.self="open = false">

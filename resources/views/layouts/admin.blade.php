@@ -266,6 +266,11 @@
     });
 
     window.addEventListener('resize', handleResize);
+
+    // Cegah browser "Confirm Form Resubmission" saat navigasi balik
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
     </script>
 </body>
 </html>

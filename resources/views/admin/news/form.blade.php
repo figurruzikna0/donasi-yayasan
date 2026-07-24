@@ -98,13 +98,24 @@
                                 <label class="label">
                                     <span class="label-text font-bold text-emerald-700 uppercase">Foto Utama <span class="font-normal normal-case text-emerald-400">(Opsional, maks. 3MB)</span></span>
                                 </label>
-                                <input type="file" name="foto_utama" id="foto-input" accept="image/*" class="file-input file-input-bordered w-full">
+                                <input type="file" name="foto_utama" id="foto-input" accept="image/*" class="file-input file-input-bordered w-full" onchange="previewFoto(event)">
                                 <p class="text-xs text-emerald-500 mt-1">JPG, PNG, WEBP — Landscape lebih baik</p>
-                                @if($news?->foto_utama)
-                                    <img src="{{ asset('storage/' . $news->foto_utama) }}" class="mt-2 max-h-44 rounded-lg border border-emerald-200">
-                                @endif
+                                <div class="mt-2 relative">
+                                    <img id="foto-preview" src="{{ $news?->foto_utama ? asset('storage/' . $news->foto_utama) : '' }}"
+                                         class="max-h-44 rounded-lg border border-emerald-200 {{ $news?->foto_utama ? '' : 'hidden' }}">
+                                </div>
                                 @error('foto_utama') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
+                            <script>
+                            function previewFoto(event) {
+                                const file = event.target.files[0];
+                                const img = document.getElementById('foto-preview');
+                                if (file) {
+                                    img.src = URL.createObjectURL(file);
+                                    img.classList.remove('hidden');
+                                }
+                            }
+                            </script>
 
                             <div class="form-control mb-5">
                                 <label class="label">

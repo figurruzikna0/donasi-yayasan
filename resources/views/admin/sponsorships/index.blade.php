@@ -201,6 +201,7 @@
                                                         <form method="dialog" class="modal-backdrop"><button>close</button></form>
                                                     </dialog>
                                                 </form>
+                                                <button type="button" @click="$dispatch('open-reject-sponsor', { id: '{{ $sponsorship->order_id }}', donor: '{{ $sponsorship->donor_name }}' })" class="btn btn-sm bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200 rounded-lg font-bold">Tolak</button>
                                             @endif
                                             <form action="{{ route('admin.sponsorships.destroy', $sponsorship->order_id) }}" method="POST" x-data="{ open: false }" @submit.prevent="open = true">
                                                 @csrf @method('DELETE')
@@ -239,4 +240,32 @@
 
         </div>
     </div>
+
+{{-- REJECT MODAL --}}
+<div x-data="{ open: false, orderId: '', donorName: '', reason: '' }"
+     @open-reject-sponsor.window="orderId = $event.detail.id; donorName = $event.detail.donor; reason = ''; open = true">
+    <dialog class="modal" :class="{ 'modal-open': open }">
+        <div class="modal-box max-w-md">
+            <div class="text-center mb-4">
+                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-rose-100 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                </div>
+                <h3 class="text-lg font-black text-base-content mb-1">Tolak Sponsorship</h3>
+                <p class="text-sm text-base-content/60 mb-4">Berikan alasan penolakan untuk <strong x-text="donorName"></strong></p>
+            </div>
+            <form :action="`{{ url('admin/sponsorships') }}/${orderId}/reject`" method="POST">
+                @csrf @method('PATCH')
+                <textarea name="rejection_reason" x-model="reason" required maxlength="1000" rows="4"
+                          class="textarea textarea-bordered w-full resize-none text-sm"
+                          placeholder="Masukkan alasan penolakan..."></textarea>
+                <div class="text-xs text-base-content/40 text-right mt-1" x-text="reason.length + '/1000'"></div>
+                <div class="flex gap-2 justify-end mt-4">
+                    <button type="button" @click="open = false" class="btn btn-ghost btn-sm font-bold px-6">Batal</button>
+                    <button type="submit" class="btn bg-rose-600 hover:bg-rose-700 text-white border-0 btn-sm font-bold px-6">Tolak & Kirim Notifikasi</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button @click="open = false">close</button></form>
+    </dialog>
+</div>
 </x-admin-layout>

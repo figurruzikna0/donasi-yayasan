@@ -24,6 +24,7 @@ class Donation extends Model
         'payment_proof',
         'transfer_date',
         'status',
+        'rejection_reason',
     ];
 
     protected $casts = [

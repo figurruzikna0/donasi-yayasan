@@ -30,9 +30,10 @@ class SponsorshipController extends Controller
         }
 
         $sponsorship->update([
-            'status' => 'success',
-            'starts_at' => $sponsorship->starts_at ?? now(),
-            'expires_at' => $sponsorship->expires_at ?? now()->addMonth(),
+            'status'            => 'success',
+            'rejection_reason'  => null,
+            'starts_at'         => $sponsorship->starts_at ?? now(),
+            'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
         ]);
 
         $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
@@ -42,6 +43,33 @@ class SponsorshipController extends Controller
         }
 
         return redirect()->back()->with('success', 'Sponsorship berhasil disetujui!');
+    }
+
+    // --- TOLAK SPONSORSHIP: update status jadi failed, simpan alasan penolakan, kirim WA notifikasi ke donatur ---
+    public function reject(Request $request, $id)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
+        $sponsorship = Sponsorship::with('fosterChild')
+            ->where('order_id', $id)
+            ->first();
+
+        if (!$sponsorship) {
+            return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
+        }
+
+        $sponsorship->update([
+            'status'            => 'failed',
+            'rejection_reason'  => $request->rejection_reason,
+        ]);
+
+        if ($sponsorship->donor_phone) {
+            $this->kirimWaTolakSponsor($sponsorship, $request->rejection_reason);
+        }
+
+        return redirect()->back()->with('success', 'Sponsorship ditolak. Notifikasi telah dikirim ke donatur.');
     }
 
     // --- HAPUS SPONSORSHIP: hapus data sponsorship berdasarkan order_id, redirect back ---
@@ -67,6 +95,25 @@ class SponsorshipController extends Controller
             + Sponsorship::where('status', 'pending')->count();
 
         return view('admin.sponsorships.contacts', compact('children', 'pendingCount'));
+    }
+
+    private function kirimWaTolakSponsor(Sponsorship $sponsorship, string $reason): void
+    {
+        $fonnte  = new FonnteService();
+        $donatur = $sponsorship->donor_name;
+
+        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
+               . "❌ *Sponsorship Anak Asuh Ditolak*\n\n"
+               . "Mohon maaf, pengajuan sponsorship anak asuh Anda belum dapat disetujui dengan alasan berikut:\n\n"
+               . "📝 *Alasan Penolakan:*\n{$reason}\n\n"
+               . "Silakan hubungi admin yayasan untuk informasi lebih lanjut.\n\n"
+               . "━━━━━━━━━━━━━━━━━\n"
+               . "🆔 *ID Transaksi*\n{$sponsorship->order_id}\n"
+               . "━━━━━━━━━━━━━━━━━\n\n"
+               . "Wassalamu'alaikum wr. wb.\n"
+               . "_Baitul Yatim_";
+
+        $fonnte->send($sponsorship->donor_phone, $pesan);
     }
 
     private function kirimWaSponsor(Sponsorship $sponsorship): void

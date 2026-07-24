@@ -57,12 +57,31 @@
 
             {{-- Table Card --}}
             <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
-                <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-lg shrink-0">📰</div>
-                    <div>
-                        <p class="font-extrabold text-sm text-base-content">Daftar Berita & Kegiatan</p>
-                        <p class="text-xs text-base-content/50">Seluruh publikasi kegiatan yayasan</p>
+                <div class="px-6 py-4 border-b border-base-200 flex items-center gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-lg shrink-0">📰</div>
+                        <div>
+                            <p class="font-extrabold text-sm text-base-content">Daftar Berita & Kegiatan</p>
+                            <p class="text-xs text-base-content/50">Seluruh publikasi kegiatan yayasan</p>
+                        </div>
                     </div>
+                    <form method="GET" action="{{ route('admin.news.index') }}" class="flex gap-2 items-center flex-nowrap ml-auto">
+                        <select name="kategori" class="select select-bordered min-w-[14rem]" onchange="this.form.submit()">
+                            <option value="">Semua Kategori</option>
+                            @foreach($kategoriList as $k)
+                                <option value="{{ $k }}" @selected(request('kategori') === $k)>{{ $k }}</option>
+                            @endforeach
+                        </select>
+                        <input type="text" name="search" class="input input-bordered input-sm w-32 md:w-44" placeholder="Cari..." value="{{ request('search') }}">
+                        <button type="submit" class="btn btn-sm btn-ghost px-2">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        </button>
+                        @if(request('search') || request('kategori'))
+                            <a href="{{ route('admin.news.index') }}" class="btn btn-sm btn-ghost px-2 text-base-content/50 hover:text-error" title="Hapus filter">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </a>
+                        @endif
+                    </form>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="table w-full">

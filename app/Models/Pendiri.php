@@ -13,7 +13,7 @@ class Pendiri extends Model
     use HasFactory;
 
     protected $table = 'pendiris';
-    protected $fillable = ['nama', 'jabatan', 'deskripsi', 'foto'];
+    protected $fillable = ['nama', 'jabatan', 'deskripsi', 'foto', 'urutan'];
 
     protected static function booted(): void
     {

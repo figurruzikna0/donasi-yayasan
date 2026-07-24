@@ -12,6 +12,8 @@
     {{-- NAVBAR --}}
     @include('partials.public-navbar')
 
+    <x-breadcrumb :items="['Profil Yayasan' => route('profil'), 'Pengurus' => '']" />
+
     {{-- PENGURUS --}}
     <section class="py-20 lg:py-28 px-4 bg-base-200">
         <div class="max-w-7xl mx-auto">

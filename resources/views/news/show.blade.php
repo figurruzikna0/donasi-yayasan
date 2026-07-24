@@ -18,7 +18,7 @@
             <nav class="text-sm text-gray-400 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-emerald-600 transition-colors">Beranda</a>
                 <span class="mx-1.5">/</span>
-                <a href="{{ url('/#berita-kegiatan') }}" class="hover:text-emerald-600 transition-colors">Berita</a>
+                <a href="{{ route('news.index') }}" class="hover:text-emerald-600 transition-colors">Berita</a>
                 <span class="mx-1.5">/</span>
                 <span class="text-gray-600">{{ Str::limit($news->judul, 40) }}</span>
             </nav>
@@ -68,7 +68,7 @@
                     </div>
 
                     <div class="mt-10 pt-6 border-t border-gray-100">
-                        <a href="{{ url('/#berita-kegiatan') }}" class="text-gray-500 hover:text-emerald-600 transition-colors text-sm flex items-center gap-1.5 font-medium">
+                        <a href="{{ route('news.index') }}" class="text-gray-500 hover:text-emerald-600 transition-colors text-sm flex items-center gap-1.5 font-medium">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                             Kembali ke Berita
                         </a>

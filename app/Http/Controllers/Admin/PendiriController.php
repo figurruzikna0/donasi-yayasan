@@ -13,7 +13,7 @@ class PendiriController extends Controller
     // --- DAFTAR PENDIRI: menampilkan semua data pendiri dengan pagination ---
     public function index()
     {
-        $pendiris = Pendiri::latest()->paginate(10);
+        $pendiris = Pendiri::orderBy('urutan')->latest()->paginate(10);
         return view('admin.pendiri.index', compact('pendiris'));
     }
 
@@ -24,10 +24,11 @@ class PendiriController extends Controller
             'nama' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'urutan' => 'nullable|integer|min:0',
         ]);
 
-        $data = $request->only(['nama', 'jabatan', 'deskripsi']);
+        $data = $request->only(['nama', 'jabatan', 'deskripsi', 'urutan']);
 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('pendiri', 'public');
@@ -36,6 +37,33 @@ class PendiriController extends Controller
         Pendiri::create($data);
 
         return back()->with('success', 'Anggota Pendiri berhasil ditambahkan!');
+    }
+
+    // --- EDIT PENDIRI: validasi input, upload foto baru jika ada, update data, redirect back ---
+    public function update(Request $request, $id)
+    {
+        $pendiri = Pendiri::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'urutan' => 'nullable|integer|min:0',
+        ]);
+
+        $data = $request->only(['nama', 'jabatan', 'deskripsi', 'urutan']);
+
+        if ($request->hasFile('foto')) {
+            if ($pendiri->foto) {
+                Storage::disk('public')->delete($pendiri->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('pendiri', 'public');
+        }
+
+        $pendiri->update($data);
+
+        return back()->with('success', 'Data pendiri berhasil diperbarui!');
     }
 
     // --- HAPUS PENDIRI: hapus foto dari storage, hapus data pendiri, redirect back ---

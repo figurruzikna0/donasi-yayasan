@@ -199,6 +199,11 @@
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                             Gagal
                                         </span>
+                                        @if($s->rejection_reason)
+                                            <div class="mt-1 text-[0.6rem] text-rose-600 bg-rose-50 rounded px-1.5 py-0.5 border border-rose-200 text-left">
+                                                {{ $s->rejection_reason }}
+                                            </div>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

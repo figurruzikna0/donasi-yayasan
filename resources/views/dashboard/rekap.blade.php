@@ -94,6 +94,11 @@
                                                     $bt = $d->status == 'success' ? 'Sukses' : ($d->status == 'pending' ? 'Pending' : 'Gagal');
                                                 @endphp
                                                 <span class="badge {{ $bc }} badge-sm">{{ $bt }}</span>
+                                                @if($d->status === 'failed' && $d->rejection_reason)
+                                                    <div class="mt-1 text-xs text-rose-600 bg-rose-50 rounded-lg px-2 py-1 border border-rose-200">
+                                                        <span class="font-bold">Alasan:</span> {{ $d->rejection_reason }}
+                                                    </div>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if($d->status === 'success')
@@ -148,7 +153,14 @@
                                                 {{ $s->starts_at ? $s->starts_at->format('d/m/Y') : '-' }}
                                                 @if($s->expires_at) – {{ $s->expires_at->format('d/m/Y') }} @endif
                                             </td>
-                                            <td><span class="badge {{ $sClass }} badge-sm">{{ $sText }}</span></td>
+                                            <td>
+                                                <span class="badge {{ $sClass }} badge-sm">{{ $sText }}</span>
+                                                @if($s->status === 'failed' && $s->rejection_reason)
+                                                    <div class="mt-1 text-xs text-rose-600 bg-rose-50 rounded-lg px-2 py-1 border border-rose-200">
+                                                        <span class="font-bold">Alasan:</span> {{ $s->rejection_reason }}
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if($s->status === 'success')
                                                     <a href="{{ route('invoice.sponsorship', $s->id) }}" target="_blank" class="btn btn-ghost btn-xs text-emerald-600 hover:bg-emerald-50">
@@ -190,11 +202,9 @@
                                         <tr class="hover:bg-emerald-50/50 transition-colors">
                                             <td>
                                                 @if($dev->foto)
-                                                    <div class="avatar">
+                                                    <div class="avatar cursor-pointer" @click="lightboxOpen = true; lightboxSrc = '{{ asset('storage/' . $dev->foto) }}'">
                                                         <div class="w-14 rounded-lg ring ring-emerald-100">
-                                                            <a href="{{ asset('storage/' . $dev->foto) }}" target="_blank">
-                                                                <img src="{{ asset('storage/' . $dev->foto) }}" alt="{{ $dev->judul }}" class="object-cover">
-                                                            </a>
+                                                            <img src="{{ asset('storage/' . $dev->foto) }}" alt="{{ $dev->judul }}" class="object-cover">
                                                         </div>
                                                     </div>
                                                 @else
@@ -229,6 +239,19 @@
             </div>
 
         </div>
+    </div>
+
+    {{-- LIGHTBOX — modal foto fullscreen --}}
+    <div x-data="{ lightboxOpen: false, lightboxSrc: '' }"
+         x-show="lightboxOpen"
+         x-cloak
+         @keydown.escape.window="lightboxOpen = false"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+         @click.self="lightboxOpen = false">
+        <button @click="lightboxOpen = false" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <img :src="lightboxSrc" alt="Foto" class="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl">
     </div>
 
     {{-- Fungsi switchTab: toggle tab Donasi / Sponsorship / Perkembangan Anak --}}

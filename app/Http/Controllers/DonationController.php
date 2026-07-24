@@ -39,7 +39,7 @@ class DonationController extends Controller
             'donor_email'    => 'required|email|max:255',
             'donor_phone'    => 'required|string|max:20',
             'amount'         => 'required|numeric|min:1000',
-            'payment_proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'payment_proof'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'transfer_date'  => 'required|date',
         ]);
 
@@ -92,7 +92,7 @@ class DonationController extends Controller
             'amount'         => 'required|numeric|min:100000|max:500000',
             'paket_komitmen' => 'required|string|max:255',
             'description'    => 'nullable|string',
-            'payment_proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'payment_proof'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'transfer_date'  => 'required|date',
         ]);
 

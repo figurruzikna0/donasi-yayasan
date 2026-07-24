@@ -22,10 +22,11 @@
 
         {{-- ══ TAB SWITCHER ══ --}}
         <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-base-300 w-fit">
-            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 bg-primary text-white shadow-sm" id="tab-profil" onclick="switchProfilTab('profil')">
+            @php $tab = request('tab', 'profil'); @endphp
+            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'profil' ? 'bg-primary text-white shadow-sm' : 'text-base-content/50 hover:text-base-content hover:bg-base-200' }}" id="tab-profil" onclick="switchProfilTab('profil')">
                 Profil Yayasan
             </button>
-            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 text-base-content/50 hover:text-base-content hover:bg-base-200" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
+            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'pendiri' ? 'bg-primary text-white shadow-sm' : 'text-base-content/50 hover:text-base-content hover:bg-base-200' }}" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
                 Pendiri & Pengurus
                     <span class="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-base-300">{{ $pendiris->total() }}</span>
             </button>
@@ -34,7 +35,7 @@
         {{-- ══════════════════════════════
              TAB 1: PROFIL YAYASAN
         ══════════════════════════════ --}}
-        <div id="panel-profil" class="tab-panel">
+        <div id="panel-profil" class="tab-panel {{ $tab !== 'profil' ? 'hidden' : '' }}">
             <form action="{{ route('admin.profil.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -190,10 +191,10 @@
         {{-- ══════════════════════════════
              TAB 2: PENDIRI & PENGURUS
         ══════════════════════════════ --}}
-        <div id="panel-pendiri" class="tab-panel hidden">
+        <div id="panel-pendiri" class="tab-panel {{ $tab !== 'pendiri' ? 'hidden' : '' }}">
 
             {{-- Daftar pendiri saat ini --}}
-            <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+            <div id="pendiri-list-wrap" class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
                 <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">👥</div>
                     <div>
@@ -218,14 +219,65 @@
                                                 <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full mt-1">{{ $pendiri->jabatan }}</span>
                                             </div>
                                         </div>
-                                        <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST"
-                                              x-data="{ open: false }" @submit.prevent="open = true">
-                                            @csrf @method('DELETE')
-                                            <button type="button" @click="open = true" class="btn btn-ghost btn-sm btn-circle text-base-content/20 hover:text-error hover:bg-error/5 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                        <div class="flex items-center gap-1" x-data="{ editOpen: false, open: false }">
+                                            <button type="button" @click="editOpen = true" class="btn btn-ghost btn-sm btn-circle text-base-content/20 hover:text-primary hover:bg-primary/5 opacity-0 group-hover:opacity-100 transition-all" title="Edit">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                             </button>
-                                            <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
-                                        </form>
+                                            <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" @submit.prevent="open = true">
+                                                @csrf @method('DELETE')
+                                                <button type="button" @click="deleteOpen = true" class="btn btn-ghost btn-sm btn-circle text-base-content/20 hover:text-error hover:bg-error/5 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
+                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                </button>
+                                                <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
+                                            </form>
+
+                                            {{-- Modal Edit Pendiri --}}
+                                            <dialog class="modal" :class="{ 'modal-open': editOpen }">
+                                                <div class="modal-box max-w-lg p-0 overflow-hidden">
+                                                    <form action="{{ route('admin.pendiri.update', $pendiri->id) }}" method="POST" enctype="multipart/form-data">
+                                                        @csrf @method('PUT')
+                                                        <div class="px-6 pt-6 pb-4 border-b border-base-200 flex items-center justify-between">
+                                                            <div>
+                                                                <h3 class="text-base font-black text-base-content">Edit Pendiri</h3>
+                                                                <p class="text-xs text-base-content/50 mt-0.5">Perbarui data pendiri atau pengurus</p>
+                                                            </div>
+                                                            <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm btn-circle">
+                                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                            </button>
+                                                        </div>
+                                                        <div class="p-6 space-y-4">
+                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                <div class="form-control">
+                                                                    <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Nama Lengkap</span></label>
+                                                                    <input type="text" name="nama" class="input input-bordered w-full input-sm" required value="{{ $pendiri->nama }}">
+                                                                </div>
+                                                                <div class="form-control">
+                                                                    <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Jabatan</span></label>
+                                                                    <input type="text" name="jabatan" class="input input-bordered w-full input-sm" required value="{{ $pendiri->jabatan }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Kata Sambutan</span></label>
+                                                                <textarea name="deskripsi" rows="2" class="textarea textarea-bordered w-full text-sm">{{ $pendiri->deskripsi }}</textarea>
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Urutan Tampil</span></label>
+                                                                <input type="number" name="urutan" class="input input-bordered w-full input-sm" value="{{ $pendiri->urutan ?? 0 }}" min="0">
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Foto <span class="font-normal normal-case text-emerald-400">(biarkan kosong jika tidak diganti)</span></span></label>
+                                                                <input type="file" name="foto" class="file-input file-input-bordered w-full input-sm" accept="image/*">
+                                                            </div>
+                                                        </div>
+                                                        <div class="px-6 py-4 border-t border-base-200 flex items-center justify-end gap-3 bg-base-100">
+                                                            <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm font-semibold">Batal</button>
+                                                            <button type="submit" class="btn btn-primary btn-sm font-semibold text-white">Simpan Perubahan</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <form method="dialog" class="modal-backdrop"><button @click="editOpen = false">close</button></form>
+                                            </dialog>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="px-5 pb-5 pt-3">
@@ -249,7 +301,9 @@
                             </div>
                         @endforelse
                     </div>
-                    {{ $pendiris->links() }}
+                    <div id="pendiri-pagination" class="pendiri-ajax-pagination">
+                        {{ $pendiris->links() }}
+                    </div>
                 </div>
             </div>
 
@@ -322,12 +376,60 @@
         const tabs = ['profil', 'pendiri'];
         tabs.forEach(t => {
             document.getElementById('tab-' + t).classList.toggle('tab-active', t === tab);
+            document.getElementById('tab-' + t).classList.toggle('bg-primary', t === tab);
+            document.getElementById('tab-' + t).classList.toggle('text-white', t === tab);
+            document.getElementById('tab-' + t).classList.toggle('shadow-sm', t === tab);
+            document.getElementById('tab-' + t).classList.toggle('text-base-content/50', t !== tab);
+            document.getElementById('tab-' + t).classList.toggle('hover:text-base-content', t !== tab);
+            document.getElementById('tab-' + t).classList.toggle('hover:bg-base-200', t !== tab);
             document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
         });
+        const url = new URL(window.location);
+        url.searchParams.set('tab', tab);
+        window.history.replaceState({}, '', url);
     }
 
     @if($errors->has('nama') || $errors->has('jabatan') || $errors->has('foto'))
         document.addEventListener('DOMContentLoaded', () => switchProfilTab('pendiri'));
     @endif
+
+    (function() {
+        function initAjaxPagination() {
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('#pendiri-pagination a');
+                if (!link) return;
+                e.preventDefault();
+                const url = link.href;
+                const wrap = document.getElementById('pendiri-list-wrap');
+                if (!wrap) return;
+                wrap.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+                fetch(url)
+                    .then(r => {
+                        if (!r.ok) throw new Error();
+                        return r.text();
+                    })
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newWrap = doc.getElementById('pendiri-list-wrap');
+                        const oldWrap = document.getElementById('pendiri-list-wrap');
+                        if (newWrap && oldWrap) {
+                            const parent = oldWrap.parentNode;
+                            parent.replaceChild(newWrap, oldWrap);
+                            if (window.Alpine) Alpine.initTree(newWrap);
+                            window.history.pushState({}, '', url);
+                        } else {
+                            window.location.href = url;
+                        }
+                    })
+                    .catch(() => { window.location.href = url; });
+            });
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAjaxPagination);
+        } else {
+            initAjaxPagination();
+        }
+    })();
     </script>
 </x-admin-layout>

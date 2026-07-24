@@ -33,7 +33,7 @@ class CampaignController extends Controller
             'title' => 'required|string|max:255|unique:campaigns,title',
             'description' => 'required|string',
             'target_amount' => 'required|numeric|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         Campaign::create([
@@ -68,7 +68,7 @@ class CampaignController extends Controller
             'title' => 'required|string|max:255|unique:campaigns,title,' . $campaign->id,
             'description' => 'required|string',
             'target_amount' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         $data = [

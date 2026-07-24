@@ -31,6 +31,28 @@ use App\Models\Sponsorship;
 use App\Models\ProfilYayasan;
 
 // --- RUTE BERITA PUBLIK ---
+Route::get('/berita', function () {
+    $kategoriList = \App\Models\News::where('status', 'published')
+        ->whereNotNull('kategori')
+        ->distinct()
+        ->pluck('kategori')
+        ->sort();
+
+    $newsList = \App\Models\News::published()
+        ->when(request('search'), fn($q, $s) => $q->where(function($q) use ($s) {
+            $q->where('judul', 'like', "%{$s}%")
+              ->orWhere('ringkasan', 'like', "%{$s}%")
+              ->orWhere('lokasi', 'like', "%{$s}%")
+              ->orWhere('penyelenggara', 'like', "%{$s}%");
+        }))
+        ->when(request('kategori'), fn($q, $k) => $q->where('kategori', $k))
+        ->latest('tanggal_kegiatan')
+        ->paginate(9)
+        ->withQueryString();
+
+    return view('news.index', compact('newsList', 'kategoriList'));
+})->name('news.index');
+
 Route::get('/berita/{slug}', function ($slug) {
     $news = \App\Models\News::where('slug', $slug)->published()->firstOrFail();
     return view('news.show', compact('news'));
@@ -122,6 +144,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::get('/pendiri', [PendiriController::class, 'index'])->name('pendiri.index');
     Route::post('/pendiri', [PendiriController::class, 'store'])->name('pendiri.store');
+    Route::put('/pendiri/{id}', [PendiriController::class, 'update'])->name('pendiri.update');
     Route::delete('/pendiri/{id}', [PendiriController::class, 'destroy'])->name('pendiri.destroy');
 
     // Kelola Data Anak Asuh (CRUD profil anak)
@@ -134,6 +157,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/sponsorships', [SponsorshipController::class, 'index'])->name('sponsorships.index');
     Route::get('/sponsorships/contacts', [SponsorshipController::class, 'contacts'])->name('sponsorships.contacts');
     Route::patch('/sponsorships/{id}/approve', [SponsorshipController::class, 'approve'])->name('sponsorships.approve');
+    Route::patch('/sponsorships/{id}/reject', [SponsorshipController::class, 'reject'])->name('sponsorships.reject');
     Route::delete('/sponsorships/{id}', [SponsorshipController::class, 'destroy'])->name('sponsorships.destroy');
 
     // Kelola Berita Kegiatan
@@ -147,6 +171,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/transactions/sync-all', [TransactionController::class, 'syncAll'])->name('transactions.sync-all');
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
+    Route::patch('/transactions/{id}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');
     Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');
 
     // Kelola Data User

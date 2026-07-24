@@ -54,9 +54,10 @@
                     @if($childDevelopment->foto)
                         <div>
                             <p class="text-xs uppercase tracking-wider text-emerald-500 font-bold mb-2">Foto</p>
-                            <a href="{{ asset('storage/' . $childDevelopment->foto) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $childDevelopment->foto) }}" class="w-full max-h-64 object-cover rounded-xl border border-emerald-200" alt="{{ $childDevelopment->judul }}">
-                            </a>
+                            <img src="{{ asset('storage/' . $childDevelopment->foto) }}"
+                                 class="w-full max-h-64 object-cover rounded-xl border border-emerald-200 cursor-pointer hover:opacity-90 transition-opacity"
+                                 alt="{{ $childDevelopment->judul }}"
+                                 @click="$dispatch('open-lightbox', { src: '{{ asset('storage/' . $childDevelopment->foto) }}' })">
                         </div>
                     @endif
 
@@ -87,4 +88,18 @@
             </div>
         </div>
     </div>
+
+{{-- LIGHTBOX --}}
+<div x-data="{ open: false, src: '' }"
+     @open-lightbox.window="src = $event.detail.src; open = true"
+     @keydown.escape.window="open = false"
+     x-show="open"
+     x-cloak
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+     @click.self="open = false">
+    <button @click="open = false" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors z-10">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <img :src="src" alt="Foto" class="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl">
+</div>
 </x-admin-layout>

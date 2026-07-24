@@ -73,9 +73,10 @@ class TransactionController extends Controller
             }
 
             $sponsorship->update([
-                'status'     => 'success',
-                'starts_at'  => $sponsorship->starts_at  ?? now(),
-                'expires_at' => $sponsorship->expires_at ?? now()->addMonth(),
+                'status'            => 'success',
+                'rejection_reason'  => null,
+                'starts_at'         => $sponsorship->starts_at  ?? now(),
+                'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
             ]);
 
             $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
@@ -94,7 +95,10 @@ class TransactionController extends Controller
             return redirect()->back()->with('error', 'Data transaksi tidak ditemukan.');
         }
 
-        $donation->update(['status' => 'success']);
+        $donation->update([
+            'status'           => 'success',
+            'rejection_reason' => null,
+        ]);
         $donation->campaign?->increment('collected_amount', $donation->amount);
 
         if ($donation->donor_phone) {
@@ -102,6 +106,52 @@ class TransactionController extends Controller
         }
 
         return redirect()->back()->with('success', 'Transaksi berhasil disetujui!');
+    }
+
+    // --- TOLAK TRANSAKSI: update status jadi failed, simpan alasan penolakan, kirim WA notifikasi ke donatur ---
+    public function reject(Request $request, $id)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
+        if (str_starts_with($id, 'SPONSOR-')) {
+            $sponsorship = Sponsorship::with('fosterChild')
+                ->where('order_id', $id)
+                ->first();
+
+            if (!$sponsorship) {
+                return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
+            }
+
+            $sponsorship->update([
+                'status'            => 'failed',
+                'rejection_reason'  => $request->rejection_reason,
+            ]);
+
+            if ($sponsorship->donor_phone) {
+                $this->kirimWaTolakSponsor($sponsorship, $request->rejection_reason);
+            }
+
+            return redirect()->back()->with('success', 'Sponsorship ditolak. Notifikasi telah dikirim ke donatur.');
+        }
+
+        $donation = Donation::where('order_id', $id)->first();
+
+        if (!$donation) {
+            return redirect()->back()->with('error', 'Data donasi tidak ditemukan.');
+        }
+
+        $donation->update([
+            'status'            => 'failed',
+            'rejection_reason'  => $request->rejection_reason,
+        ]);
+
+        if ($donation->donor_phone) {
+            $this->kirimWaTolakDonasi($donation, $request->rejection_reason);
+        }
+
+        return redirect()->back()->with('success', 'Donasi ditolak. Notifikasi telah dikirim ke donatur.');
     }
 
     // --- HAPUS TRANSAKSI: hapus data sponsorship/donasi berdasarkan order_id, redirect back ---
@@ -167,15 +217,16 @@ class TransactionController extends Controller
 
                 if (in_array($midtransStatus, ['settlement', 'capture'])) {
                     $sponsorship->update([
-                        'status'     => 'success',
-                        'starts_at'  => $sponsorship->starts_at ?? now(),
-                        'expires_at' => $sponsorship->expires_at ?? now()->addMonth(),
+                        'status'            => 'success',
+                        'rejection_reason'  => null,
+                        'starts_at'         => $sponsorship->starts_at ?? now(),
+                        'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
                     ]);
                     $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
                     $results['success']++;
                 } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-                    $sponsorship->update(['status' => 'failed']);
+                    $sponsorship->update(['status' => 'failed', 'rejection_reason' => null]);
                     $results['failed']++;
                 } else {
                     $results['pending']++;
@@ -185,12 +236,15 @@ class TransactionController extends Controller
                 if (!$donation) continue;
 
                 if (in_array($midtransStatus, ['settlement', 'capture'])) {
-                    $donation->update(['status' => 'success']);
+                    $donation->update([
+                        'status'           => 'success',
+                        'rejection_reason' => null,
+                    ]);
                     $donation->campaign?->increment('collected_amount', $donation->amount);
 
                     $results['success']++;
                 } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-                    $donation->update(['status' => 'failed']);
+                    $donation->update(['status' => 'failed', 'rejection_reason' => null]);
                     $results['failed']++;
                 } else {
                     $results['pending']++;
@@ -256,15 +310,16 @@ class TransactionController extends Controller
 
             if (in_array($midtransStatus, ['settlement', 'capture'])) {
                 $sponsorship->update([
-                    'status'     => 'success',
-                    'starts_at'  => $sponsorship->starts_at ?? now(),
-                    'expires_at' => $sponsorship->expires_at ?? now()->addMonth(),
+                    'status'            => 'success',
+                    'rejection_reason'  => null,
+                    'starts_at'         => $sponsorship->starts_at ?? now(),
+                    'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
                 ]);
                 $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
                 return redirect()->back()->with('success', 'Sync: Sponsorship sukses (settlement).');
             } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-                $sponsorship->update(['status' => 'failed']);
+                $sponsorship->update(['status' => 'failed', 'rejection_reason' => null]);
                 return redirect()->back()->with('success', 'Sync: Sponsorship gagal (' . $midtransStatus . ').');
             } else {
                 return redirect()->back()->with('info', 'Sync: Status Midtrans = ' . $midtransStatus . ' (pending).');
@@ -278,7 +333,10 @@ class TransactionController extends Controller
         }
 
         if (in_array($midtransStatus, ['settlement', 'capture'])) {
-            $donation->update(['status' => 'success']);
+            $donation->update([
+                'status'           => 'success',
+                'rejection_reason' => null,
+            ]);
             $donation->campaign?->increment('collected_amount', $donation->amount);
 
             if ($donation->donor_phone) {
@@ -287,11 +345,49 @@ class TransactionController extends Controller
 
             return redirect()->back()->with('success', 'Sync: Donasi sukses (settlement).');
         } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-            $donation->update(['status' => 'failed']);
+            $donation->update(['status' => 'failed', 'rejection_reason' => null]);
             return redirect()->back()->with('success', 'Sync: Donasi gagal (' . $midtransStatus . ').');
         } else {
             return redirect()->back()->with('info', 'Sync: Status Midtrans = ' . $midtransStatus . ' (pending).');
         }
+    }
+
+    private function kirimWaTolakSponsor(Sponsorship $sponsorship, string $reason): void
+    {
+        $fonnte  = new FonnteService();
+        $donatur = $sponsorship->donor_name;
+
+        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
+               . "❌ *Sponsorship Anak Asuh Ditolak*\n\n"
+               . "Mohon maaf, pengajuan sponsorship anak asuh Anda belum dapat disetujui dengan alasan berikut:\n\n"
+               . "📝 *Alasan Penolakan:*\n{$reason}\n\n"
+               . "Silakan hubungi admin yayasan untuk informasi lebih lanjut.\n\n"
+               . "━━━━━━━━━━━━━━━━━\n"
+               . "🆔 *ID Transaksi*\n{$sponsorship->order_id}\n"
+               . "━━━━━━━━━━━━━━━━━\n\n"
+               . "Wassalamu'alaikum wr. wb.\n"
+               . "_Baitul Yatim_";
+
+        $fonnte->send($sponsorship->donor_phone, $pesan);
+    }
+
+    private function kirimWaTolakDonasi(Donation $donation, string $reason): void
+    {
+        $fonnte  = new FonnteService();
+        $donatur = $donation->donor_name;
+
+        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
+               . "❌ *Donasi Ditolak*\n\n"
+               . "Mohon maaf, donasi Anda belum dapat disetujui dengan alasan berikut:\n\n"
+               . "📝 *Alasan Penolakan:*\n{$reason}\n\n"
+               . "Silakan hubungi admin yayasan untuk informasi lebih lanjut.\n\n"
+               . "━━━━━━━━━━━━━━━━━\n"
+               . "🆔 *ID Transaksi*\n{$donation->order_id}\n"
+               . "━━━━━━━━━━━━━━━━━\n\n"
+               . "Wassalamu'alaikum wr. wb.\n"
+               . "_Baitul Yatim_";
+
+        $fonnte->send($donation->donor_phone, $pesan);
     }
 
     private function kirimWaSponsor(Sponsorship $sponsorship): void
