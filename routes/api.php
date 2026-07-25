@@ -1,9 +1,9 @@
 <?php
-// === api.php: routes API untuk callback Midtrans ===
+// === api.php: routes API untuk callback Midtrans (nonaktif sementara) ===
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DonationController;
+// use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Route;
+// use App\Http\Controllers\DonationController;
 
-// --- RUTE: POST /midtrans-callback → DonationController@callback (callback Midtrans via API) ---
-Route::post('/midtrans-callback', [DonationController::class, 'callback']);
+// --- RUTE: POST /midtrans-callback → DonationController@callback ---
+// Route::post('/midtrans-callback', [DonationController::class, 'callback']);

@@ -36,9 +36,9 @@
                         </button>
                     </p>
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-success">
-                            Tautan verifikasi baru telah dikirim ke alamat email Anda.
-                        </p>
+                        <div class="mt-3">
+                            <x-alert type="success" message="Tautan verifikasi baru telah dikirim ke alamat email Anda." title="Email Terkirim" />
+                        </div>
                     @endif
                 </div>
             @endif
@@ -48,8 +48,9 @@
             <x-primary-button>Simpan</x-primary-button>
 
             @if (session('status') === 'profile-updated')
-                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                   class="text-sm text-emerald-600 font-medium">Tersimpan.</p>
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)">
+                    <x-alert type="success" message="Data profil berhasil diperbarui." title="Tersimpan" />
+                </div>
             @endif
         </div>
     </form>

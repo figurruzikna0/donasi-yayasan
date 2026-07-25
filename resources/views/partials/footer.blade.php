@@ -109,14 +109,56 @@
             </div>
 
             {{-- Kolom 3 - Kontak: telepon, email, alamat dari $profil --}}
-            <div>
+            <div x-data="{ toast: { show: false, message: '', progress: 100 }, showToast(msg) { this.toast.message = msg; this.toast.progress = 100; this.toast.show = true; setTimeout(() => { this.toast.show = false; }, 5000); let start = Date.now(); let id = setInterval(() => { let elapsed = Date.now() - start; this.toast.progress = Math.max(0, 100 - (elapsed / 5000) * 100); if (elapsed >= 5000) clearInterval(id); }, 50); } }">
                 <p class="text-xs font-bold text-brand-300 uppercase tracking-widest mb-5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
                     Kontak
                 </p>
+
+                {{-- Client-side toast untuk notifikasi salin kontak --}}
+                <div x-cloak
+                     x-show="toast.show"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                     x-transition:leave="transition ease-in duration-250"
+                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                     x-transition:leave-end="opacity-0 -translate-y-3 scale-95"
+                     class="fixed top-2 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-md px-4 pointer-events-none">
+                    <div class="pointer-events-auto relative w-full bg-emerald-50 dark:bg-emerald-950/60 border-2 border-emerald-200 dark:border-emerald-800 shadow-lg shadow-emerald-500/20 dark:shadow-emerald-900/40 rounded-2xl overflow-hidden backdrop-blur-sm">
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
+                        <div class="relative pl-6 pr-4 py-4">
+                            <div class="flex items-start gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center flex-shrink-0 text-emerald-600 dark:text-emerald-300 shadow-sm">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div class="flex-1 min-w-0 pt-0.5">
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-bold text-sm text-emerald-900 dark:text-emerald-100">Berhasil!</p>
+                                    </div>
+                                    <p class="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5 leading-relaxed" x-text="toast.message"></p>
+                                </div>
+                                <button @click="toast.show = false" class="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-all duration-200 -mr-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-black/5 dark:bg-white/5">
+                            <div class="h-full rounded-full bg-emerald-500 transition-all duration-[200ms] ease-linear"
+                                 :style="'width: ' + toast.progress + '%'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <ul class="space-y-4">
                     <li>
-                        <a href="tel:{{ $profil?->no_telp }}" class="group flex items-center gap-3 text-sm text-brand-400 hover:text-brand-200 transition-all duration-200">
+                        <a href="tel:{{ $profil?->no_telp }}"
+                           @click.prevent="
+                               navigator.clipboard.writeText('{{ $profil?->no_telp ?? '0812-3456-7890' }}');
+                               showToast('Nomor telepon berhasil disalin!');
+                           "
+                           class="group flex items-center gap-3 text-sm text-brand-400 hover:text-brand-200 transition-all duration-200 cursor-pointer">
                             <span class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all" style="background-color:rgba(45,125,98,0.15);color:#4a9a7b">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
                             </span>
@@ -127,7 +169,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="mailto:{{ $profil?->email }}" class="group flex items-center gap-3 text-sm text-brand-400 hover:text-brand-200 transition-all duration-200">
+                        <a href="mailto:{{ $profil?->email }}"
+                           @click.prevent="
+                               navigator.clipboard.writeText('{{ $profil?->email ?? 'info@baitulyatim.or.id' }}');
+                               showToast('Alamat email berhasil disalin!');
+                           "
+                           class="group flex items-center gap-3 text-sm text-brand-400 hover:text-brand-200 transition-all duration-200 cursor-pointer">
                             <span class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all" style="background-color:rgba(45,125,98,0.15);color:#4a9a7b">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
                             </span>

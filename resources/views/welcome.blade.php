@@ -1,3 +1,24 @@
+{{--
+    ========================================================
+    HALAMAN DEPAN (resources/views/welcome.blade.php)
+    ========================================================
+    Halaman utama publik. Menampilkan:
+      - Hero section dengan statistik (total campaign, donasi, transaksi)
+      - Daftar campaign aktif (3 kolom grid)
+      - Berita terbaru (6 items)
+      - CTA untuk login/daftar
+
+    Data dikirim dari route '/' di web.php (closure):
+      - $campaigns          → campaign aktif
+      - $newsList           → 9 berita terbaru
+      - $totalCampaigns     → total campaign
+      - $totalDonasi        → total dana terkumpul
+      - $totalTransaksi     → total transaksi sukses
+      - $profil             → data yayasan (via view composer global)
+
+    Jika user sudah login → redirect ke dashboard masing-masing.
+    ========================================================
+--}}
 <!DOCTYPE html>
 <html lang="id" data-theme="baitul">
 <head>
@@ -5,6 +26,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} - Salurkan Kebaikan Anda</title>
+    <link rel="icon" href="{{ $profil?->logo ? asset('storage/' . $profil->logo) : '/favicon.ico' }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
@@ -15,8 +37,8 @@
     {{-- HERO SECTION: banner utama dengan background gambar, teks ajakan donasi & tombol CTA ke #kampanye dan #program-ota --}}
     <header class="relative hero min-h-screen overflow-hidden">
         <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/hero.jpeg') }}'); background-size: cover;">
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/95 via-emerald-900/92 to-emerald-900/88"></div>
-            <div class="absolute inset-0 bg-black/45"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/88 via-emerald-900/85 to-emerald-900/88"></div>
+            <div class="absolute inset-0 bg-black/40"></div>
         </div>
         <div class="hero-content text-center max-w-4xl px-4 pt-8 lg:pt-12 pb-32 lg:pb-40 relative z-10">
             <div>

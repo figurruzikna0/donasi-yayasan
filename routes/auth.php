@@ -1,5 +1,17 @@
 <?php
-// === auth.php: routes autentikasi (login, register, verifikasi email, reset password) ===
+
+/*
+ * auth.php — Route Autentikasi
+ * =============================
+ * Route ini di-include oleh web.php via require __DIR__.'/auth.php'
+ * (Laravel Breeze menggunakan file terpisah untuk route auth).
+ *
+ * Struktur:
+ *   [GUEST] → Login, Register, Lupa Password (hanya untuk user yang belum login)
+ *   [AUTH]  → Verifikasi email, ganti password, logout (user sudah login)
+ *
+ * Semua route menggunakan throttle untuk mencegah brute force.
+ */
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -12,68 +24,50 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-// --- GRUP RUTE: guest (login, register, forgot/reset password) ---
+// ─── RUTE: GUEST (BELUM LOGIN) ────────────────────────────
 Route::middleware('guest')->group(function () {
-    // --- RUTE: GET /register → RegisteredUserController@create ---
     Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    // --- RUTE: POST /register → RegisteredUserController@store ---
+        ->name('register');                               // Form daftar akun baru
     Route::post('register', [RegisteredUserController::class, 'store'])
-        ->middleware('throttle:10,30');
+        ->middleware('throttle:10,30');                    // Proses daftar (max 10x per 30 menit)
 
-    // --- RUTE: GET /login → AuthenticatedSessionController@create ---
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
-
-    // --- RUTE: POST /login → AuthenticatedSessionController@store ---
+        ->name('login');                                  // Form login
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
-        ->middleware('throttle:10,1');
+        ->middleware('throttle:10,1');                     // Proses login (max 10x per menit)
 
-    // --- RUTE: GET /forgot-password → PasswordResetLinkController@create ---
+    // Lupa password & reset
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
-
-    // --- RUTE: POST /forgot-password → PasswordResetLinkController@store ---
+        ->name('password.request');                       // Form lupa password
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
-
-    // --- RUTE: GET /reset-password/{token} → NewPasswordController@create ---
+        ->name('password.email');                         // Kirim link reset via email
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
-
-    // --- RUTE: POST /reset-password → NewPasswordController@store ---
+        ->name('password.reset');                         // Form reset password (dari link email)
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+        ->name('password.store');                         // Proses reset password
 });
 
-// --- GRUP RUTE: auth (verifikasi email, konfirmasi password, logout) ---
+// ─── RUTE: AUTH (SUDAH LOGIN) ────────────────────────────
 Route::middleware('auth')->group(function () {
-    // --- RUTE: GET /verify-email → EmailVerificationPromptController ---
+    // Verifikasi email (wajib sebelum donasi/sponsorship)
     Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice');
-
-    // --- RUTE: GET /verify-email/{id}/{hash} → VerifyEmailController ---
+        ->name('verification.notice');                     // Notifikasi "verifikasi email dulu"
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
-
-    // --- RUTE: POST /email/verification-notification → EmailVerificationNotificationController@store ---
+        ->name('verification.verify');                    // Link verifikasi dari email
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
-        ->name('verification.send');
+        ->name('verification.send');                      // Kirim ulang email verifikasi
 
-    // --- RUTE: GET /confirm-password → ConfirmablePasswordController@show ---
+    // Konfirmasi password (untuk aksi sensitif)
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-        ->name('password.confirm');
+        ->name('password.confirm');                       // Form konfirmasi password
+    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']); // Proses konfirmasi
 
-    // --- RUTE: POST /confirm-password → ConfirmablePasswordController@store ---
-    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
-
-    // --- RUTE: PUT /password → PasswordController@update ---
+    // Ganti password (saat sudah login)
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    // --- RUTE: POST /logout → AuthenticatedSessionController@destroy ---
+    // Logout
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });

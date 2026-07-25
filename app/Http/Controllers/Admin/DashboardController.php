@@ -1,5 +1,17 @@
 <?php
-// === DashboardController (Admin): menampilkan dashboard admin dengan statistik dan grafik ===
+
+/*
+ * DashboardController (Admin) — Dashboard Admin dengan Statistik & Grafik
+ * =========================================================================
+ * Menampilkan halaman utama admin dengan ringkasan data:
+ *   - Total dana terkumpul (donasi sukses)
+ *   - Jumlah campaign aktif
+ *   - Jumlah anak asuh & sebaran status (Tersedia/Diasuh)
+ *   - Donasi hari ini & sponsorship bulan ini
+ *   - 5 campaign dengan donasi terbanyak
+ *   - Transaksi terbaru (4 teratas)
+ *   - Grafik cashflow 12 bulan (dari 1 query GROUP BY)
+ */
 
 namespace App\Http\Controllers\Admin;
 
@@ -11,7 +23,7 @@ use App\Models\Sponsorship;
 
 class DashboardController extends Controller
 {
-    // --- DASHBOARD ADMIN: hitung total dana, campaign aktif, anak asuh, transaksi terbaru, statistik anak, grafik cashflow 12 bulan, tampilkan view ---
+    // --- DASHBOARD ADMIN ---
     public function index()
     {
         $totalFunds = Donation::where('status', 'success')->sum('amount');

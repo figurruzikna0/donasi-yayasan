@@ -1,5 +1,26 @@
 <?php
-// === RekapController (Admin): menampilkan dan mengekspor rekap donasi, donatur, & orang tua asuh ===
+
+/*
+ * RekapController (Admin) — Rekap & Export Data
+ * ==============================================
+ * Controller ADMIN untuk menampilkan tabel rekap dan export (CSV & PDF):
+ *
+ * 1. DONASI     → daftar semua donasi (filter: search, status, tanggal)
+ * 2. DONATUR    → daftar user role donatur dengan jumlah donasi & sponsorship
+ * 3. ORANG TUA ASUH → daftar sponsorship dengan filter status (aktif/pending/kadaluarsa)
+ *
+ * Export:
+ *   - CSV: semua rekap bisa didownload CSV (UTF-8 BOM)
+ *   - PDF: semua rekap bisa didownload PDF landscape
+ *
+ * Fitur filter per halaman:
+ *   - Search (nama, email, order_id)
+ *   - Filter status
+ *   - Filter tanggal (start_date - end_date)
+ *
+ * Catatan ada duplikasi logika filter antar method karena masing-masing
+ * method perlu query sendiri untuk total/summary berbeda dengan data tabel.
+ */
 
 namespace App\Http\Controllers\Admin;
 

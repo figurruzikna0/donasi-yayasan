@@ -1,5 +1,26 @@
 <?php
 
+/*
+ * FonnteService — Layanan WhatsApp Gateway via Fonnte.com
+ * ========================================================
+ * Service ini digunakan oleh berbagai controller untuk mengirim notifikasi WA ke donatur.
+ * Fonnte adalah API gateway WhatsApp yang mengirim pesan ke nomor tujuan.
+ *
+ * Cara pakai:
+ *   $fonnte = new FonnteService();
+ *   $fonnte->send('08123456789', 'Halo, terima kasih!');
+ *   $fonnte->sendWithMedia('08123456789', 'Laporan anak asuh', 'child-developments/foto.jpg');
+ *
+ * Konfigurasi:
+ *   - Token di .env: FONNTE_TOKEN=...
+ *   - Untuk kirim foto (sendWithMedia): APP_URL harus bisa diakses publik
+ *
+ * Normalisasi nomor:
+ *   - Semua nomor otomatis dikonversi ke format 62xxx saat dikirim ke API Fonnte
+ *   - 08123456789 → 628123456789
+ *   - +628123456789 → 628123456789
+ */
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
@@ -21,6 +42,7 @@ class FonnteService
         $this->token = $token;
     }
 
+    // Kirim pesan teks WA biasa
     public function send(string $phone, string $message): bool
     {
         $phone = $this->normalizePhone($phone);
@@ -47,21 +69,13 @@ class FonnteService
         }
     }
 
-    /**
-     * Kirim pesan beserta foto/gambar via Fonnte.
-     * Hanya berhasil kalau:
-     * 1. Paket Fonnte support attachment (super/advanced/ultra, bukan Free)
-     * 2. APP_URL di .env bisa diakses publik dari internet (bukan 127.0.0.1)
-     *
-     * @param string $storagePath Path relatif file di storage/app/public
-     *                            Contoh: 'child-developments/foto.jpg'
-     */
+    // Kirim pesan WA dengan lampiran foto/gambar
+    // Catatan: hanya support paket Fonnte berbayar (bukan Free)
     public function sendWithMedia(string $phone, string $message, string $storagePath): bool
     {
         $phone = $this->normalizePhone($phone);
 
-        // Bangun URL publik dari APP_URL — jangan pakai asset() karena
-        // bisa return localhost yang tidak bisa diakses server Fonnte
+        // Bangun URL publik dari APP_URL
         $publicUrl = rtrim(config('app.url'), '/') . '/storage/' . $storagePath;
 
         try {
@@ -99,10 +113,7 @@ class FonnteService
         }
     }
 
-    /**
-     * Pastikan nomor selalu dalam format internasional (62xxx) tanpa karakter
-     * non-digit, apapun format yang dikirim pemanggil (08xx, +62xx, spasi, strip, dll).
-     */
+    // Normalisasi nomor HP ke format internasional 62xxx
     private function normalizePhone(string $phone): string
     {
         $digits = preg_replace('/\D/', '', $phone);

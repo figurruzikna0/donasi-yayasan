@@ -1,5 +1,22 @@
 <?php
-// === SponsorshipController (Admin): mengelola data sponsorship dan kontak anak asuh ===
+
+/*
+ * SponsorshipController (Admin) — Kelola Sponsorship Anak Asuh
+ * ==============================================================
+ * Controller ADMIN khusus untuk sponsorship (komitmen orang tua asuh).
+ *
+ * Fitur:
+ *   1. index()     → Daftar semua sponsorship (pagination 50)
+ *   2. approve()   → Setujui sponsorship → status success, anak jadi 'Diasuh', kirim WA
+ *   3. reject()    → Tolak sponsorship → status failed, kirim WA alasan penolakan
+ *   4. destroy()   → Hapus data sponsorship
+ *   5. contacts()  → Daftar anak asuh + status sponsorship aktif (untuk admin)
+ *
+ * Catatan:
+ *   - Hampir sama dengan TransactionController (yang menangani donasi + sponsorship).
+ *   - SponsorshipController khusus halaman /admin/sponsorships.
+ *   - TransactionController.approve() juga bisa approve sponsorship dari halaman transaksi.
+ */
 
 namespace App\Http\Controllers\Admin;
 
@@ -12,7 +29,7 @@ use Illuminate\Http\Request;
 
 class SponsorshipController extends Controller
 {
-    // --- DAFTAR SPONSORSHIP: menampilkan semua data sponsorship dengan pagination ---
+    // --- DAFTAR SPONSORSHIP ---
     public function index()
     {
         $sponsorships = Sponsorship::with('fosterChild')->latest()->paginate(50);

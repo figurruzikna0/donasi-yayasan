@@ -1,24 +1,24 @@
 <x-admin-layout>
-    <div class="bg-base-200 min-h-screen">
+<div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
-        {{-- Page header --}}
-        <div class="px-8 pt-8 pb-0">
-            <div class="flex items-end justify-between gap-3 mb-2 flex-wrap">
+    <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <div class="flex items-center gap-2.5 mb-2">
-                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        </span>
-                        <div>
-                            <h1 class="text-2xl font-black text-base-content">Profil & Berkas Yayasan</h1>
-                            <p class="text-sm text-base-content/50">Kelola informasi dasar, visi misi, dokumen resmi, dan data pendiri.</p>
-                        </div>
+                    <div class="flex items-center gap-2.5 mb-1">
+                        <span class="w-8 h-0.5 rounded-full bg-emerald-300/60"></span>
+                        <span class="text-emerald-200/80 text-xs font-bold uppercase tracking-widest">Konten</span>
                     </div>
+                    <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Profil & Berkas Yayasan</h1>
+                    <p class="text-emerald-100/80 text-sm mt-1.5">Kelola informasi dasar, visi misi, dokumen resmi, dan data pendiri.</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="p-8 pt-6 space-y-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12 space-y-6">
 
         {{-- ══ TAB SWITCHER ══ --}}
         <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-base-300 w-fit">
@@ -370,6 +370,7 @@
         </div>
 
     </div>
+</div>
 
     <script>
     function switchProfilTab(tab) {

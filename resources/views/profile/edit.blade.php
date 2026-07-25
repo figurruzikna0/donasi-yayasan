@@ -116,10 +116,7 @@
                                 Simpan Data
                             </button>
                             @if (session('status') === 'profile-updated')
-                                <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold text-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Data berhasil disimpan
-                                </span>
+                                <x-alert type="success" message="Data profil berhasil diperbarui." title="Tersimpan" />
                             @endif
                         </div>
                     </form>
@@ -179,10 +176,7 @@
                                 Ubah Password
                             </button>
                             @if (session('status') === 'password-updated')
-                                <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold text-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Password berhasil diubah
-                                </span>
+                                <x-alert type="success" message="Kata sandi berhasil diperbarui." title="Tersimpan" />
                             @endif
                         </div>
                     </form>

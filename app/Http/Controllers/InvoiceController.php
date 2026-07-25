@@ -1,5 +1,16 @@
 <?php
-// === InvoiceController: menampilkan dan mengunduh invoice donasi, sponsorship, & laporan perkembangan ===
+
+/*
+ * InvoiceController — Invoice & PDF Donasi, Sponsorship, Laporan Perkembangan
+ * =============================================================================
+ * Controller untuk menampilkan dan mendownload dokumen:
+ *   1. Invoice Donasi        → HTML + PDF
+ *   2. Invoice Sponsorship   → HTML + PDF
+ *   3. Laporan Perkembangan  → PDF (dengan foto anak otomatis di-rotate)
+ *
+ * Proteksi: hanya pemilik transaksi (donatur ybs) atau admin yang bisa lihat.
+ * Semua dokumen menampilkan kop surat dari ProfilYayasan.
+ */
 
 namespace App\Http\Controllers;
 
@@ -13,7 +24,7 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
-    // --- TAMPILKAN INVOICE DONASI: menerima $id donasi, cek status success, cek kepemilikan, tampilkan halaman invoice donasi ---
+    // --- TAMPILKAN INVOICE DONASI (HTML) ---
     public function donation($id)
     {
         $donation = Donation::with('campaign')->findOrFail($id);

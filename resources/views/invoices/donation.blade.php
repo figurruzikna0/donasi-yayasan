@@ -1,3 +1,16 @@
+{{--
+    ========================================================
+    INVOICE DONASI HTML (resources/views/invoices/donation.blade.php)
+    ========================================================
+    Halaman invoice donasi yang bisa diprint/dilihat donatur.
+    Data:
+      - $donation (Donation with campaign) — data donasi
+      - $profil (ProfilYayasan) — data yayasan (kop surat)
+      - Di-load via InvoiceController.donation()
+
+    Juga tersedia versi PDF: invoices.donation_pdf
+    ========================================================
+--}}
 <!DOCTYPE html>
 <html lang="id">
 <head>

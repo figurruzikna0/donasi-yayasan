@@ -1,119 +1,137 @@
 <x-admin-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight text-emerald-600">
-            {{ __('Tambah Kampanye Donasi Baru') }}
-        </h2>
-    </x-slot>
+<div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
-    <x-admin-form-card
-        icon='<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>'
-        title="Kampanye Donasi Baru"
-        subtitle="Isi detail di bawah untuk meluncurkan program kebaikan baru"
-    >
+    <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
+        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-1">
+                        <span class="w-8 h-0.5 rounded-full bg-emerald-300/60"></span>
+                        <span class="text-emerald-200/80 text-xs font-bold uppercase tracking-widest">Konten</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Kampanye Donasi Baru</h1>
+                    <p class="text-emerald-100/80 text-sm mt-1.5">Isi detail di bawah untuk meluncurkan program kebaikan baru</p>
+                </div>
+                <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                    Kembali
+                </a>
+            </div>
+        </div>
+    </div>
 
-                    <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12">
 
-                        <div class="form-control mb-5">
-                            <label class="label">
-                                <span class="label-text font-bold text-emerald-700 uppercase tracking-wider">Judul Kampanye</span>
-                            </label>
-                            <input type="text" name="title" class="input input-bordered w-full" required
-                                   placeholder="mis. Bantuan Sembako untuk Yatim Piatu">
-                            @error('title')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+        <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
+            <div class="px-8 py-6">
+                <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-                        <div class="form-control mb-5">
-                            <label class="label">
-                                <span class="label-text font-bold text-emerald-700 uppercase tracking-wider">Deskripsi Lengkap</span>
-                            </label>
-                            <textarea name="description" rows="5" class="textarea textarea-bordered w-full" required
-                                      placeholder="Jelaskan secara detail tujuan kampanye ini..."></textarea>
-                            @error('description')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="form-control mb-5">
+                        <label class="label">
+                            <span class="label-text font-bold text-base-content">Judul Kampanye</span>
+                        </label>
+                        <input type="text" name="title" class="input input-bordered w-full" required
+                               placeholder="mis. Bantuan Sembako untuk Yatim Piatu">
+                        @error('title')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div class="form-control mb-5">
-                            <label class="label">
-                                <span class="label-text font-bold text-emerald-700 uppercase tracking-wider">Target Dana (Rp)</span>
-                            </label>
-                            <input type="number" name="target_amount" class="input input-bordered w-full" min="1" required
-                                   placeholder="5000000">
-                            @error('target_amount')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="form-control mb-5">
+                        <label class="label">
+                            <span class="label-text font-bold text-base-content">Deskripsi Lengkap</span>
+                        </label>
+                        <textarea name="description" rows="5" class="textarea textarea-bordered w-full" required
+                                  placeholder="Jelaskan secara detail tujuan kampanye ini..."></textarea>
+                        @error('description')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div class="divider"></div>
+                    <div class="form-control mb-5">
+                        <label class="label">
+                            <span class="label-text font-bold text-base-content">Target Dana (Rp)</span>
+                        </label>
+                        <input type="number" name="target_amount" class="input input-bordered w-full" min="1" required
+                               placeholder="5000000">
+                        @error('target_amount')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider block mb-3">Foto Kampanye</span>
+                    <div class="divider"></div>
 
-                        <div class="form-control mb-5">
-                            <div class="file-input-wrapper">
-                                <label class="file-input-label" id="image-label">
-                                    <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span id="image-text">Pilih foto kampanye...</span>
-                                </label>
-                                <input type="file" name="image" id="image-input"
-                                       accept="image/*" class="hidden-file" required>
-                            </div>
-                            <p class="text-xs text-emerald-500 mt-1">PNG, JPG, atau WEBP · Maks. 2 MB</p>
-                            @error('image')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <p class="font-bold text-base-content mb-3">Foto Kampanye</p>
 
-                        <div class="divider"></div>
-
-                        <div class="flex items-center justify-end gap-3">
-                            <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M19 12H5M12 5l-7 7 7 7"/>
+                    <div class="form-control mb-5">
+                        <div class="file-input-wrapper">
+                            <label class="file-input-label" id="image-label">
+                                <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-current text-base-content/40">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                                Batal
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                                    <polyline points="17 21 17 13 7 13 7 21"/>
-                                    <polyline points="7 3 7 8 15 8"/>
-                                </svg>
-                                Simpan Kampanye
-                            </button>
+                                <span id="image-text" class="text-base-content/50">Pilih foto kampanye...</span>
+                            </label>
+                            <input type="file" name="image" id="image-input"
+                                   accept="image/*" class="hidden-file" required>
                         </div>
+                        <p class="text-xs text-base-content/40 mt-1">PNG, JPG, atau WEBP · Maks. 2 MB</p>
+                        @error('image')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                    </form>
-    </x-admin-form-card>
+                    <div class="divider"></div>
 
-    <style>
-        .file-input-wrapper { position: relative; }
-        .file-input-label {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 14px;
-            border: 1.5px dashed var(--fallback-bc, oklch(var(--bc)/0.3));
-            border-radius: 10px;
-            background: oklch(var(--b2)/0.5);
-            cursor: pointer;
-            font-size: 0.88rem;
-            font-weight: 600;
-            transition: border-color 0.2s, background 0.2s;
-        }
-        .file-input-label:hover { border-color: oklch(var(--p)); background: oklch(var(--p)/0.1); }
-        input[type="file"].hidden-file {
-            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-        }
-    </style>
+                    <div class="flex items-center justify-end gap-3">
+                        <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                            Batal
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                            Simpan Kampanye
+                        </button>
+                    </div>
 
-    <script>
-        document.getElementById('image-input').addEventListener('change', function () {
-            const span = document.getElementById('image-text');
-            span.textContent = this.files.length > 0 ? this.files[0].name : 'Pilih foto kampanye...';
-        });
-    </script>
+                </form>
+            </div>
+        </div>
 
+    </div>
+</div>
+
+<style>
+    .file-input-wrapper { position: relative; }
+    .file-input-label {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px;
+        border: 1.5px dashed oklch(var(--bc)/0.3);
+        border-radius: 10px;
+        background: oklch(var(--b2)/0.5);
+        cursor: pointer;
+        font-size: 0.88rem;
+        font-weight: 600;
+        transition: border-color 0.2s, background 0.2s;
+    }
+    .file-input-label:hover { border-color: oklch(var(--p)); background: oklch(var(--p)/0.1); }
+    input[type="file"].hidden-file {
+        position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+</style>
+
+<script>
+    document.getElementById('image-input').addEventListener('change', function () {
+        const span = document.getElementById('image-text');
+        span.textContent = this.files.length > 0 ? this.files[0].name : 'Pilih foto kampanye...';
+    });
+</script>
 </x-admin-layout>

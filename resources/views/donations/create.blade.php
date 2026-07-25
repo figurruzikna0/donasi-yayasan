@@ -1,3 +1,20 @@
+{{--
+    ========================================================
+    FORM DONASI KAMPANYE (resources/views/donations/create.blade.php)
+    ========================================================
+    Halaman ini ditampilkan saat donatur ingin donasi ke campaign.
+    Data:
+      - $campaign (Campaign) — campaign yang akan didonasi
+      - $profil (ProfilYayasan) — data yayasan (rekening, dll) — global view composer
+
+    Alur:
+      Donatur lihat campaign → klik "Donasi Sekarang"
+      → Form ini tampil → isi data + upload bukti transfer
+      → Submit → DonationController.store() → simpan status 'pending'
+      → Redirect ke dashboard dengan pesan sukses
+      → Admin approve/tolak lewat TransactionController
+    ========================================================
+--}}
 <x-app-layout>
     <div class="bg-base-200 min-h-0">
 

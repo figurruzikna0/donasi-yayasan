@@ -1,3 +1,21 @@
+{{--
+    ========================================================
+    ADMIN DASHBOARD (resources/views/admin/dashboard.blade.php)
+    ========================================================
+    Halaman utama admin setelah login.
+    Data dikirim dari DashboardController.index():
+      - $totalFunds       → total dana terkumpul (donasi sukses)
+      - $activeCampaigns  → jumlah campaign aktif
+      - $fosterChildren   → total anak asuh
+      - $topCampaigns     → 5 campaign dgn donasi terbanyak
+      - $todayDonasi      → donasi masuk hari ini
+      - $monthSponsor     → sponsorship baru bulan ini
+      - $pendingCount     → transaksi pending (donasi + sponsorship)
+      - $recentDonations  → 4 transaksi terbaru
+      - $totalAnak, $tersedia, $diasuh, $lainnya → statistik anak
+      - $labels12, $cashflow12 → grafik cashflow 12 bulan (Chart.js)
+    ========================================================
+--}}
 <x-admin-layout>
 
     <div class="p-8 space-y-6">

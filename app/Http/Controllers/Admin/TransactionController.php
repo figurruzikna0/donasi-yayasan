@@ -1,5 +1,29 @@
 <?php
-// === TransactionController (Admin): mengelola dan mensinkronkan transaksi donasi & sponsorship ===
+
+/*
+ * TransactionController (Admin) — Kelola Transaksi Donasi & Sponsorship
+ * =======================================================================
+ * Controller ADMIN untuk mengelola semua transaksi (donasi + sponsorship).
+ *
+ * Fitur:
+ *   1. index()       → Daftar semua transaksi dengan statistik & pagination
+ *   2. approve($id)  → Setujui transaksi: status → success, generate invoice_number,
+ *                      increment campaign.collected_amount, kirim WA notifikasi
+ *   3. reject()      → Tolak transaksi: status → failed, simpan rejection_reason, kirim WA
+ *   4. destroy($id)  → Hapus data transaksi
+ *   5. syncAll()     → Sinkron massal status ke Midtrans (NONAKTIF — Midtrans belum terhubung)
+ *   6. sync($id)     → Sinkron satu transaksi ke Midtrans (NONAKTIF)
+ *
+ * Identifikasi jenis transaksi:
+ *   - ORDER ID diawali "SPONSOR-" → sponsorship
+ *   - ORDER ID diawali "DONASI-"  → donasi kampanye
+ *
+ * NOTIFIKASI WA:
+ *   - kirimWaSponsor()   → WA pemberitahuan approve sponsorship
+ *   - kirimWaDonasi()    → WA pemberitahuan approve donasi
+ *   - kirimWaTolakSponsor() → WA pemberitahuan penolakan sponsorship
+ *   - kirimWaTolakDonasi()   → WA pemberitahuan penolakan donasi
+ */
 
 namespace App\Http\Controllers\Admin;
 
@@ -13,7 +37,7 @@ use Midtrans\Transaction;
 
 class TransactionController extends Controller
 {
-    // --- DAFTAR TRANSAKSI: menampilkan statistik & daftar donasi dan sponsorship dengan pagination ---
+    // --- DAFTAR TRANSAKSI ---
     public function index()
     {
         $donationCount = Donation::count();
@@ -95,10 +119,19 @@ class TransactionController extends Controller
             return redirect()->back()->with('error', 'Data transaksi tidak ditemukan.');
         }
 
-        $donation->update([
-            'status'           => 'success',
-            'rejection_reason' => null,
-        ]);
+        // Generate invoice_number jika belum ada
+        if (!$donation->invoice_number) {
+            $month = now()->format('Ym');
+            $count = Donation::where('status', 'success')
+                ->whereNotNull('invoice_number')
+                ->where('invoice_number', 'like', "INV-DN-{$month}-%")
+                ->count();
+            $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+            $donation->invoice_number = "INV-DN-{$month}-{$seq}";
+        }
+
+        $donation->save();
+
         $donation->campaign?->increment('collected_amount', $donation->amount);
 
         if ($donation->donor_phone) {
@@ -181,6 +214,10 @@ class TransactionController extends Controller
     // --- SINKRON SEMUA: cek status semua transaksi pending ke Midtrans, update status otomatis, redirect back dengan ringkasan ---
     public function syncAll()
     {
+        if (!config('midtrans.server_key')) {
+            return redirect()->back()->with('error', 'Midtrans belum diaktifkan. Fitur sinkronasi otomatis nonaktif.');
+        }
+
         $results = ['success' => 0, 'failed' => 0, 'pending' => 0, 'errors' => 0];
 
         $orderIds = Donation::where('status', 'pending')
@@ -236,6 +273,15 @@ class TransactionController extends Controller
                 if (!$donation) continue;
 
                 if (in_array($midtransStatus, ['settlement', 'capture'])) {
+                    if (!$donation->invoice_number) {
+                        $month = now()->format('Ym');
+                        $count = Donation::where('status', 'success')
+                            ->whereNotNull('invoice_number')
+                            ->where('invoice_number', 'like', "INV-DN-{$month}-%")
+                            ->count();
+                        $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+                        $donation->invoice_number = "INV-DN-{$month}-{$seq}";
+                    }
                     $donation->update([
                         'status'           => 'success',
                         'rejection_reason' => null,
@@ -289,6 +335,10 @@ class TransactionController extends Controller
     // --- SINKRON SATU TRANSAKSI: cek status order tertentu ke Midtrans, update status, redirect back ---
     public function sync($id)
     {
+        if (!config('midtrans.server_key')) {
+            return redirect()->back()->with('error', 'Midtrans belum diaktifkan. Sinkronasi manual nonaktif.');
+        }
+
         Config::$serverKey    = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized  = true;
@@ -333,6 +383,15 @@ class TransactionController extends Controller
         }
 
         if (in_array($midtransStatus, ['settlement', 'capture'])) {
+            if (!$donation->invoice_number) {
+                $month = now()->format('Ym');
+                $count = Donation::where('status', 'success')
+                    ->whereNotNull('invoice_number')
+                    ->where('invoice_number', 'like', "INV-DN-{$month}-%")
+                    ->count();
+                $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+                $donation->invoice_number = "INV-DN-{$month}-{$seq}";
+            }
             $donation->update([
                 'status'           => 'success',
                 'rejection_reason' => null,

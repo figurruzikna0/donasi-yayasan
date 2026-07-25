@@ -1,15 +1,31 @@
 <?php
-// === web.php: routes publik, auth, dan admin untuk donasi yayasan ===
+
+/*
+ * web.php — Semua Route HTTP Aplikasi
+ * =====================================
+ * Struktur route dibagi menjadi beberapa grup berdasarkan akses:
+ *
+ * [PUBLIK]    → Tidak perlu login (berita, halaman depan, profil yayasan)
+ * [DONASI]    → Login + verifikasi email + throttle (donasi, sponsorship, invoice)
+ * [DONATUR]   → Login + verifikasi email (dashboard & rekap donatur)
+ * [ADMIN]     → Login + verifikasi email + role admin (kelola semua data)
+ *
+ * Alur akses umum:
+ *   Guest       → Lihat berita, halaman depan, profil yayasan → donasi? login dulu
+ *   Donatur     → Dashboard, donasi, sponsorship, invoice, rekap pribadi
+ *   Admin       → Panel admin: kelola campaign, anak asuh, transaksi, user, berita, rekap
+ */
 
 use Illuminate\Support\Facades\Route;
 
-// Controllers — Publik
+// ─── CONTROLLERS ───────────────────────────────────────────
+// Publik (tidak perlu login)
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
 
-// Controllers — Admin
+// Admin (perlu login + role admin)
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\ChildDevelopmentController;
 use App\Http\Controllers\Admin\FosterChildController;
@@ -22,15 +38,13 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RekapController;
 
-// Models
+// Models (dipakai di route closure)
 use App\Models\Campaign;
 use App\Models\Donation;
-use App\Models\FosterChild;
 use App\Models\News;
-use App\Models\Sponsorship;
-use App\Models\ProfilYayasan;
 
-// --- RUTE BERITA PUBLIK ---
+// ─── RUTE PUBLIK: BERITA ───────────────────────────────────
+// Siapa pun bisa lihat berita tanpa login
 Route::get('/berita', function () {
     $kategoriList = \App\Models\News::where('status', 'published')
         ->whereNotNull('kategori')
@@ -58,7 +72,9 @@ Route::get('/berita/{slug}', function ($slug) {
     return view('news.show', compact('news'));
 })->name('news.show');
 
-// --- RUTE HALAMAN DEPAN ---
+// ─── RUTE PUBLIK: HALAMAN DEPAN ────────────────────────────
+// Jika user sudah login → redirect ke dashboard-nya
+// Jika belum → tampilkan welcome page dengan data campaign & berita
 Route::get('/', function () {
     if (Auth::check()) {
         return Auth::user()->role === 'admin'
@@ -76,7 +92,8 @@ Route::get('/', function () {
     return view('welcome', compact('campaigns', 'newsList', 'totalCampaigns', 'totalDonasi', 'totalTransaksi'));
 });
 
-// --- RUTE HALAMAN PROFIL, PENGURUS, LEGALITAS ---
+// ─── RUTE PUBLIK: PROFIL YAYASAN ───────────────────────────
+// Halaman statis: profil yayasan, daftar pengurus/pendiri, legalitas
 Route::get('/profil', function () {
     return view('profil');
 })->name('profil');
@@ -90,15 +107,22 @@ Route::get('/legalitas', function () {
     return view('legalitas');
 })->name('legalitas');
 
-// --- RUTE DONASI & SPONSOR (wajib login & verifikasi) ---
+// ─── RUTE DONASI & SPONSOR ──────────────────────────────────
+// Wajib: login + verifikasi email + throttle (max 10 request per menit)
+// Donatur harus verifikasi email dulu sebelum bisa donasi
 Route::middleware(['auth', 'verified', 'throttle:10,1'])->group(function () {
+    // Form donasi kampanye
     Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donations.create');
+    // Proses simpan donasi
     Route::post('/campaign/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
+    // Detail anak asuh (lihat profil anak sebelum sponsorship)
     Route::get('/foster-children/{id}', [DonationController::class, 'childDetail'])->name('sponsor.child-detail');
+    // Form sponsorship anak asuh
     Route::get('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorForm'])->name('sponsor.form');
+    // Proses simpan sponsorship
     Route::post('/foster-children/{id}/sponsor', [DonationController::class, 'sponsorStore'])->name('sponsor.store');
 
-    // Invoice
+    // Invoice dan PDF
     Route::get('/donations/{id}/invoice', [InvoiceController::class, 'donation'])->name('invoice.donation');
     Route::get('/sponsorships/{id}/invoice', [InvoiceController::class, 'sponsorship'])->name('invoice.sponsorship');
     Route::get('/donations/{id}/invoice/pdf', [InvoiceController::class, 'donationPdf'])->name('invoice.donation.pdf');
@@ -106,91 +130,103 @@ Route::middleware(['auth', 'verified', 'throttle:10,1'])->group(function () {
     Route::get('/child-developments/{id}/pdf', [InvoiceController::class, 'childDevelopmentPdf'])->name('invoice.child-development.pdf');
 });
 
-// --- RUTE CALLBACK MIDTRANS (dipanggil server Midtrans, bukan user) ---
-Route::post('/midtrans/callback', [DonationController::class, 'callback'])
-    ->name('midtrans.callback')
-    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+// ─── RUTE CALLBACK MIDTRANS ────────────────────────────────
+// NONAKTIF: sistem saat ini pakai upload bukti transfer manual + konfirmasi admin
+// Aktifkan kembali jika integrasi Midtrans sudah terverifikasi
+// Route::post('/midtrans/callback', [DonationController::class, 'callback'])
+//     ->name('midtrans.callback')
+//     ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 
-// --- RUTE AUTH & DASHBOARD DONATUR ---
+// ─── RUTE DASHBOARD DONATUR ────────────────────────────────
+// Wajib: login + verifikasi email
 Route::get('/dashboard', [DonorController::class, 'dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Rekap donasi & sponsorship milik donatur yang login
 Route::get('/dashboard/rekap', [DonorController::class, 'rekap'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard.rekap');
 
-// --- GRUP RUTE: profil donatur (edit/update/hapus akun) ---
+// ─── RUTE PROFIL DONATUR ──────────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {
-    // --- RUTE: GET /profile → ProfileController@edit ---
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    // --- RUTE: PATCH /profile → ProfileController@update ---
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // --- RUTE: DELETE /profile → ProfileController@destroy ---
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');     // Edit profil
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update'); // Update profil
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy'); // Hapus akun
 });
 
-// --- RUTE ADMIN (Terlindungi) ---
+// ─── RUTE ADMIN ──────────────────────────────────────────────
+// Proteksi: auth + verifikasi email + middleware 'admin' (cek role)
+// Semua route di-prefix /admin dan diberi nama admin.*
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard Admin
+    // ── DASHBOARD ADMIN ──
+    // Statistik: total dana, campaign aktif, anak asuh, grafik cashflow
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Profil & Pendiri Yayasan
-    Route::get('/profil', [ProfilYayasanController::class, 'index'])->name('profil.index');
-    Route::get('/profil/edit', [ProfilYayasanController::class, 'edit'])->name('profil.edit');
-    Route::put('/profil/update', [ProfilYayasanController::class, 'update'])->name('profil.update');
+    // ── PROFIL & PENDIRI YAYASAN ──
+    Route::get('/profil', [ProfilYayasanController::class, 'index'])->name('profil.index');     // Lihat profil
+    Route::get('/profil/edit', [ProfilYayasanController::class, 'edit'])->name('profil.edit');   // Form edit profil
+    Route::put('/profil/update', [ProfilYayasanController::class, 'update'])->name('profil.update'); // Simpan perubahan
 
+    // CRUD data pendiri/pengurus yayasan
     Route::get('/pendiri', [PendiriController::class, 'index'])->name('pendiri.index');
     Route::post('/pendiri', [PendiriController::class, 'store'])->name('pendiri.store');
     Route::put('/pendiri/{id}', [PendiriController::class, 'update'])->name('pendiri.update');
     Route::delete('/pendiri/{id}', [PendiriController::class, 'destroy'])->name('pendiri.destroy');
 
-    // Kelola Data Anak Asuh (CRUD profil anak)
+    // ── KELOLA ANAK ASUH ──
+    // CRUD lengkap: index, create, store, show, edit, update, destroy
     Route::resource('foster-children', FosterChildController::class);
 
-    // Kelola Perkembangan Anak Asuh
+    // ── LAPORAN PERKEMBANGAN ANAK ──
     Route::resource('child-developments', ChildDevelopmentController::class);
 
-    // Kelola Sponsorship / Orang Tua Asuh
-    Route::get('/sponsorships', [SponsorshipController::class, 'index'])->name('sponsorships.index');
-    Route::get('/sponsorships/contacts', [SponsorshipController::class, 'contacts'])->name('sponsorships.contacts');
-    Route::patch('/sponsorships/{id}/approve', [SponsorshipController::class, 'approve'])->name('sponsorships.approve');
-    Route::patch('/sponsorships/{id}/reject', [SponsorshipController::class, 'reject'])->name('sponsorships.reject');
-    Route::delete('/sponsorships/{id}', [SponsorshipController::class, 'destroy'])->name('sponsorships.destroy');
+    // ── KELOLA SPONSORSHIP ──
+    Route::get('/sponsorships', [SponsorshipController::class, 'index'])->name('sponsorships.index');   // Daftar semua sponsorship
+    Route::get('/sponsorships/contacts', [SponsorshipController::class, 'contacts'])->name('sponsorships.contacts'); // Kontak anak asuh + status
+    Route::patch('/sponsorships/{id}/approve', [SponsorshipController::class, 'approve'])->name('sponsorships.approve'); // Setujui
+    Route::patch('/sponsorships/{id}/reject', [SponsorshipController::class, 'reject'])->name('sponsorships.reject');   // Tolak
+    Route::delete('/sponsorships/{id}', [SponsorshipController::class, 'destroy'])->name('sponsorships.destroy'); // Hapus
 
-    // Kelola Berita Kegiatan
+    // ── KELOLA BERITA ──
     Route::resource('news', NewsController::class);
 
-    // Kelola Kampanye
+    // ── KELOLA CAMPAIGN ──
     Route::resource('campaigns', CampaignController::class);
 
-    // Kelola Transaksi Donasi Kampanye
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::post('/transactions/sync-all', [TransactionController::class, 'syncAll'])->name('transactions.sync-all');
-    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
-    Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
-    Route::patch('/transactions/{id}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');
-    Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');
+    // ── KELOLA TRANSAKSI ──
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');  // Daftar transaksi
+    Route::post('/transactions/sync-all', [TransactionController::class, 'syncAll'])->name('transactions.sync-all'); // Sync semua ke Midtrans
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');     // Hapus
+    Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve'); // Setujui
+    Route::patch('/transactions/{id}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');   // Tolak dgn alasan
+    Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');   // Sync satu transaksi ke Midtrans
 
-    // Kelola Data User
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    // ── KELOLA USER ──
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');      // Daftar semua user
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');   // Form edit user
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');    // Update user
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy'); // Hapus user
 
-    // --- GRUP RUTE: rekap data donasi, donatur, orang tua asuh ---
+    // ── REKAP & EXPORT ──
+    // Prefix /admin/rekap/... → name admin.rekap.*
+    // Format export: CSV & PDF (landscape)
     Route::prefix('rekap')->name('rekap.')->group(function () {
-        Route::get('/donasi', [RekapController::class, 'donasi'])->name('donasi');
-        Route::get('/donasi/export', [RekapController::class, 'donasiExport'])->name('donasi.export');
-        Route::get('/donasi/export-pdf', [RekapController::class, 'donasiExportPdf'])->name('donasi.export-pdf');
-        Route::get('/donatur', [RekapController::class, 'donatur'])->name('donatur');
-        Route::get('/donatur/export', [RekapController::class, 'donaturExport'])->name('donatur.export');
-        Route::get('/donatur/export-pdf', [RekapController::class, 'donaturExportPdf'])->name('donatur.export-pdf');
-        Route::get('/orang-tua-asuh', [RekapController::class, 'orangTuaAsuh'])->name('orang-tua-asuh');
-        Route::get('/orang-tua-asuh/export', [RekapController::class, 'orangTuaAsuhExport'])->name('orang-tua-asuh.export');
-        Route::get('/orang-tua-asuh/export-pdf', [RekapController::class, 'orangTuaAsuhExportPdf'])->name('orang-tua-asuh.export-pdf');
+        // Donasi
+        Route::get('/donasi', [RekapController::class, 'donasi'])->name('donasi');                // Tabel rekap donasi
+        Route::get('/donasi/export', [RekapController::class, 'donasiExport'])->name('donasi.export');       // CSV
+        Route::get('/donasi/export-pdf', [RekapController::class, 'donasiExportPdf'])->name('donasi.export-pdf'); // PDF
+
+        // Donatur
+        Route::get('/donatur', [RekapController::class, 'donatur'])->name('donatur');               // Tabel rekap donatur
+        Route::get('/donatur/export', [RekapController::class, 'donaturExport'])->name('donatur.export');     // CSV
+        Route::get('/donatur/export-pdf', [RekapController::class, 'donaturExportPdf'])->name('donatur.export-pdf'); // PDF
+
+        // Orang Tua Asuh
+        Route::get('/orang-tua-asuh', [RekapController::class, 'orangTuaAsuh'])->name('orang-tua-asuh');        // Tabel rekap OTA
+        Route::get('/orang-tua-asuh/export', [RekapController::class, 'orangTuaAsuhExport'])->name('orang-tua-asuh.export');   // CSV
+        Route::get('/orang-tua-asuh/export-pdf', [RekapController::class, 'orangTuaAsuhExportPdf'])->name('orang-tua-asuh.export-pdf'); // PDF
     });
 });
 

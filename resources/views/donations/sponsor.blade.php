@@ -1,3 +1,20 @@
+{{--
+    ========================================================
+    FORM SPONSORSHIP (resources/views/donations/sponsor.blade.php)
+    ========================================================
+    Halaman untuk donatur mendaftar sebagai orang tua asuh.
+    Data:
+      - $child (FosterChild) — anak asuh yang akan disponsori
+      - $profil (ProfilYayasan) — data rekening yayasan untuk transfer
+
+    Alur:
+      Donatur lihat anak asuh → klik "Jadi Orang Tua Asuh"
+      → Form ini tampil → pilih paket komitmen + upload bukti transfer
+      → Submit → DonationController.sponsorStore() → simpan status 'pending'
+      → Redirect ke dashboard
+      → Admin approve/tolak lewat SponsorshipController / TransactionController
+    ========================================================
+--}}
 <x-app-layout>
     <div class="bg-base-200 min-h-0">
 
@@ -250,7 +267,7 @@
             const amount = document.getElementById('amount-hidden').value;
             if (!amount) {
                 e.preventDefault();
-                alert('Harap pilih paket komitmen terlebih dahulu.');
+                window.dispatchEvent(new CustomEvent('toast-show', { detail: { message: 'Harap pilih paket komitmen terlebih dahulu.', type: 'warning' } }));
                 document.getElementById('paket_komitmen').focus();
                 return;
             }

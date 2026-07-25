@@ -1,5 +1,29 @@
 <?php
-// === DonationController: menangani proses donasi kampanye dan sponsorship melalui Midtrans ===
+
+/*
+ * DonationController — Proses Donasi & Sponsorship (Sisi Donatur)
+ * ================================================================
+ * Controller ini menangani semua interaksi donatur saat:
+ *   1. Donasi kampanye (form → upload bukti → pending → admin approve)
+ *   2. Sponsorship anak asuh (form → upload bukti → pending → admin approve)
+ *
+ * Alur DONASI:
+ *   Donatur buka /campaign/{id}/donate → create()
+ *   Isi form + upload bukti transfer → store()
+ *   Data tersimpan status 'pending' → admin approve via TransactionController
+ *
+ * Alur SPONSORSHIP:
+ *   Donatur lihat anak asuh → childDetail()
+ *   Klik "Jadi Orang Tua Asuh" → sponsorForm()
+ *   Isi form paket komitmen + upload bukti → sponsorStore()
+ *   Data tersimpan status 'pending' → admin approve via SponsorshipController/TransactionController
+ *
+ * Catatan: Midtrans callback di-nonaktifkan (semua pake bukti transfer manual)
+ *
+ * NOTIFIKASI WA:
+ *   - Saat admin approve → kirim WA via FonnteService
+ *   - Method kirimWaSponsor() & kirimWaDonasi() = format pesan untuk WA
+ */
 
 namespace App\Http\Controllers;
 
@@ -10,20 +34,10 @@ use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\FosterChild;
 use Illuminate\Support\Facades\Storage;
-// use Midtrans\Config;
-// use Midtrans\Snap;
 
 class DonationController extends Controller
 {
-    // private function initMidtrans()
-    // {
-    //     Config::$serverKey    = config('midtrans.server_key');
-    //     Config::$isProduction = config('midtrans.is_production');
-    //     Config::$isSanitized  = config('midtrans.is_sanitized');
-    //     Config::$is3ds        = config('midtrans.is_3ds');
-    // }
-
-    // --- TAMPILKAN FORM DONASI: menerima $campaign, menampilkan halaman donasi dengan data campaign ---
+    // --- TAMPILKAN FORM DONASI ---
     public function create(Campaign $campaign)
     {
         return view('donations.create', compact('campaign'));

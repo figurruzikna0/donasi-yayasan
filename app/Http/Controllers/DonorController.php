@@ -1,5 +1,14 @@
 <?php
-// === DonorController: menampilkan dashboard dan rekap untuk user role donatur ===
+
+/*
+ * DonorController — Dashboard & Rekap Donatur
+ * =============================================
+ * Controller untuk halaman yang dilihat donatur setelah login:
+ *   1. Dashboard   → daftar campaign, anak asuh tersedia, riwayat donasi/sponsorship, statistik
+ *   2. Rekap       → riwayat lengkap donasi & sponsorship milik donatur yg login
+ *
+ * Setiap donatur hanya bisa melihat DATA MILIKNYA SENDIRI (filter by user_id).
+ */
 
 namespace App\Http\Controllers;
 
@@ -14,7 +23,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DonorController extends Controller
 {
-    // --- DASHBOARD DONATUR: menampilkan data campaign, anak asuh, donasi, sponsorship, total donasi, dan statistik ---
+    // --- DASHBOARD DONATUR ---
     public function dashboard()
     {
         $user = Auth::user();

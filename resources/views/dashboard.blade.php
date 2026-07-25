@@ -1,3 +1,19 @@
+{{--
+    ========================================================
+    DASHBOARD DONATUR (resources/views/dashboard.blade.php)
+    ========================================================
+    Halaman utama setelah donatur login.
+    Data dikirim dari DonorController.dashboard():
+      - $campaigns         → daftar campaign aktif
+      - $fosterChildren    → daftar anak asuh (Tersedia + yg sudah diasuh oleh user ini)
+      - $donations         → riwayat donasi user ini
+      - $sponsorships      → riwayat sponsorship user ini
+      - $user              → data user yang login
+      - $pendiris, $newsList → data publik
+      - $totalDonated, $activeSponsorships → statistik
+      - $totalFoster, $tersediaFoster, $diasuhFoster → statistik anak
+    ========================================================
+--}}
 <x-app-layout>
     <div class="bg-base-200 min-h-screen">
 

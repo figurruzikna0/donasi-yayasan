@@ -34,8 +34,9 @@
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             @if (session('status') === 'password-updated')
-                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                   class="text-sm text-emerald-600 font-medium">Saved.</p>
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)">
+                    <x-alert type="success" message="Kata sandi berhasil diperbarui." title="Tersimpan" />
+                </div>
             @endif
         </div>
     </form>
