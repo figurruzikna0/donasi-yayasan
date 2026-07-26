@@ -167,6 +167,15 @@
                                     class="file-input file-input-bordered w-full join-item border-emerald-200 focus:border-emerald-500">
                             </div>
                             <label class="label"><span class="label-text-alt text-emerald-500">Format: JPG/JPEG/PNG, maks 2MB</span></label>
+                            <div class="upload-progress-container" id="upload-progress-donasi">
+                                <div class="upload-progress-bar-bg">
+                                    <div class="upload-progress-bar-fill" id="upload-fill-donasi"></div>
+                                </div>
+                                <div class="upload-progress-text">
+                                    <span id="upload-name-donasi"></span>
+                                    <span id="upload-pct-donasi">0%</span>
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Tanggal Transfer --}}
@@ -229,5 +238,37 @@
                 activeNominal = null;
             }
         }
+
+        document.querySelector('input[name="payment_proof"]').addEventListener('change', function () {
+            const file = this.files[0];
+            const container = document.getElementById('upload-progress-donasi');
+            const fill = document.getElementById('upload-fill-donasi');
+            const nameEl = document.getElementById('upload-name-donasi');
+            const pctEl = document.getElementById('upload-pct-donasi');
+
+            if (!file) { container.classList.remove('active'); return; }
+
+            container.classList.add('active');
+            nameEl.textContent = file.name;
+            fill.style.width = '0%';
+            pctEl.textContent = '0%';
+
+            let pct = 0;
+            if (window._uploadIntervalDonasi) clearInterval(window._uploadIntervalDonasi);
+            window._uploadIntervalDonasi = setInterval(() => {
+                pct += Math.random() * 25;
+                if (pct > 90) pct = 90;
+                fill.style.width = pct + '%';
+                pctEl.textContent = Math.round(pct) + '%';
+            }, 200);
+        });
+
+        document.getElementById('donation-form').addEventListener('submit', function () {
+            if (window._uploadIntervalDonasi) clearInterval(window._uploadIntervalDonasi);
+            const fill = document.getElementById('upload-fill-donasi');
+            const pctEl = document.getElementById('upload-pct-donasi');
+            fill.style.width = '100%';
+            pctEl.textContent = '100%';
+        });
     </script>
 </x-app-layout>

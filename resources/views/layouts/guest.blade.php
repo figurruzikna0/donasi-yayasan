@@ -13,6 +13,8 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <script>window.addEventListener('pageshow',function(e){if(e.persisted)location.reload()});</script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900">

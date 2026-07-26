@@ -1,5 +1,6 @@
-{{-- PARTIALS_PUBLIC_NAVBAR: navigasi utama publik -- logo yayasan, menu desktop & mobile (Beranda, Tentang Kami, Donasi, OTA, Berita), tombol Daftar/Masuk --}}
-<nav id="navbar" class="navbar bg-base-100/90 backdrop-blur-lg sticky top-0 z-50 shadow-sm{{ isset($scrollEffect) && $scrollEffect ? ' transition-all duration-300' : '' }}">
+{{-- PARTIALS_PUBLIC_NAVBAR: navigasi utama publik -- logo yayasan, menu desktop & mobile, tombol Daftar/Masuk --}}
+<nav id="navbar" class="navbar bg-base-100/90 backdrop-blur-lg sticky top-0 z-50 shadow-sm{{ isset($scrollEffect) && $scrollEffect ? ' transition-all duration-300' : '' }}"
+     x-data="{ mobileOpen: false, tentangOpen: false }">
     <div class="navbar-start">
         <a href="/" class="flex items-center gap-3">
             @if($profil && $profil->logo)
@@ -15,7 +16,7 @@
         </a>
     </div>
 
-    {{-- BAGIAN: konfigurasi link dropdown Tentang Kami -- toggle antara route name (internal) atau anchor # (homepage) --}}
+    {{-- BAGIAN: konfigurasi link dropdown Tentang Kami --}}
     @php
         $useRouteLinks = $useRouteLinks ?? true;
         $tentangLinks = $useRouteLinks
@@ -23,18 +24,18 @@
             : [['route' => url('/#tentang-kami'), 'label' => 'Profil Yayasan'], ['route' => url('/#pendiri'), 'label' => 'Pengurus'], ['route' => url('/#legalitas'), 'label' => 'Legalitas & Struktur']];
     @endphp
 
-    {{-- BAGIAN: menu navigasi utama versi desktop --}}
+    {{-- MENU DESKTOP --}}
     <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal gap-1">
             <li><a href="{{ ($isHome ?? false) ? '#' : url('/') }}" class="font-bold text-emerald-700">Beranda</a></li>
-            <li class="dropdown dropdown-hover">
-                <a tabindex="0" class="font-bold text-emerald-700">
+            <li class="dropdown" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                <a @click.prevent="open = !open" :class="open ? 'bg-emerald-50' : ''" class="font-bold text-emerald-700 cursor-pointer flex items-center gap-1">
                     Tentang Kami
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    <svg class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                 </a>
-                <ul tabindex="0" class="dropdown-content menu p-2 shadow-xl bg-base-100 rounded-xl min-w-[200px] z-[100] border border-emerald-200">
+                <ul x-show="open" x-cloak @click.outside="open = false" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="absolute top-full mt-1 menu p-2 shadow-xl bg-base-100 rounded-xl min-w-[200px] z-[100] border border-emerald-200">
                     @foreach($tentangLinks as $link)
-                    <li><a href="{{ $link['route'] }}" class="font-bold text-emerald-700">{{ $link['label'] }}</a></li>
+                    <li><a href="{{ $link['route'] }}" class="font-bold text-emerald-700" @click="open = false">{{ $link['label'] }}</a></li>
                     @endforeach
                 </ul>
             </li>
@@ -44,37 +45,40 @@
         </ul>
     </div>
 
-    {{-- BAGIAN: tombol aksi Daftar / Masuk (desktop) dan tombol hamburger (mobile) --}}
+    {{-- TOMBOL AKSI DESKTOP + HAMBURGER MOBILE --}}
     <div class="navbar-end gap-2">
         <a href="{{ route('register') }}" class="btn btn-outline btn-success btn-sm font-bold hidden sm:inline-flex">Daftar</a>
         <a href="{{ route('login') }}" class="btn btn-success btn-sm font-bold text-white hidden sm:inline-flex">Masuk</a>
-        <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="btn btn-ghost btn-square lg:hidden">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <button @click="mobileOpen = !mobileOpen" class="btn btn-ghost btn-square lg:hidden">
+            <svg x-show="!mobileOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg x-show="mobileOpen" x-cloak width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
     </div>
 
-    {{-- BAGIAN: menu navigasi mobile (hidden default, toggle via tombol hamburger) --}}
-    <div id="mobile-menu" class="hidden absolute top-full left-0 right-0 bg-base-100 border-t border-emerald-100 shadow-lg lg:hidden">
+    {{-- MENU MOBILE --}}
+    <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute top-full left-0 right-0 bg-base-100 border-t border-emerald-100 shadow-lg lg:hidden" @click.outside="mobileOpen = false">
         <ul class="menu menu-md p-4">
-            <li><a href="{{ ($isHome ?? false) ? '#' : url('/') }}" class="font-bold text-emerald-800">Beranda</a></li>
+            <li><a href="{{ ($isHome ?? false) ? '#' : url('/') }}" class="font-bold text-emerald-800" @click="mobileOpen = false">Beranda</a></li>
             <li class="menu-title text-xs"><span>Tentang</span></li>
             @foreach($tentangLinks as $link)
-            <li><a href="{{ $link['route'] }}" class="text-emerald-700">{{ $link['label'] }}</a></li>
+            <li><a href="{{ $link['route'] }}" class="text-emerald-700" @click="mobileOpen = false">{{ $link['label'] }}</a></li>
             @endforeach
             <li class="menu-title text-xs"><span>Program</span></li>
-            <li><a href="{{ ($isHome ?? false) ? '#kampanye' : url('/#kampanye') }}" class="text-emerald-700">Program Donasi</a></li>
-            <li><a href="{{ ($isHome ?? false) ? '#program-ota' : url('/#program-ota') }}" class="text-emerald-700">Orang Tua Asuh</a></li>
-            <li><a href="{{ route('news.index') }}" class="text-emerald-700">Berita</a></li>
+            <li><a href="{{ ($isHome ?? false) ? '#kampanye' : url('/#kampanye') }}" class="text-emerald-700" @click="mobileOpen = false">Program Donasi</a></li>
+            <li><a href="{{ ($isHome ?? false) ? '#program-ota' : url('/#program-ota') }}" class="text-emerald-700" @click="mobileOpen = false">Orang Tua Asuh</a></li>
+            <li><a href="{{ route('news.index') }}" class="text-emerald-700" @click="mobileOpen = false">Berita</a></li>
             <li class="menu-divider"></li>
-            <li><a href="{{ route('register') }}" class="font-bold text-emerald-700">Daftar Donatur</a></li>
-            <li><a href="{{ route('login') }}" class="font-bold text-emerald-700">Masuk</a></li>
+            <li><a href="{{ route('register') }}" class="font-bold text-emerald-700" @click="mobileOpen = false">Daftar Donatur</a></li>
+            <li><a href="{{ route('login') }}" class="font-bold text-emerald-700" @click="mobileOpen = false">Masuk</a></li>
         </ul>
     </div>
 </nav>
 
-{{-- BAGIAN: script untuk menambah shadow & border navbar saat scroll (hanya jika $scrollEffect aktif) --}}
+{{-- SCROLL EFFECT --}}
 @if(isset($scrollEffect) && $scrollEffect)
 <script>
     document.addEventListener('DOMContentLoaded', function () {

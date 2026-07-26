@@ -1,5 +1,11 @@
 <?php
-// === sanctum.php: konfigurasi Sanctum untuk API token dan SPA auth ===
+
+/*
+ * sanctum.php — Konfigurasi Laravel Sanctum
+ * ===========================================
+ * Mengatur domain stateful, guard, masa berlaku token,
+ * prefix token, dan middleware SPA.
+ */
 
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;

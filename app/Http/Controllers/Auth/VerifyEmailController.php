@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * VerifyEmailController — Verifikasi Email User
+ * ===============================================
+ * Menangani verifikasi email user melalui signed URL yang dikirim
+ * via email. User akan otomatis login setelah verifikasi berhasil.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -10,6 +17,7 @@ use Illuminate\Http\Request;
 
 class VerifyEmailController extends Controller
 {
+    // --- VERIFIKASI EMAIL: validasi signed URL (id & hash), tandai email terverifikasi, login & redirect ke dashboard sesuai role ---
     public function __invoke(Request $request): RedirectResponse
     {
         $user = User::findOrFail($request->route('id'));

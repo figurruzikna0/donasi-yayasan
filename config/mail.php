@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * mail.php — Konfigurasi email
+ * ==============================
+ * Mengatur mailer default, transport (smtp, ses, dll.),
+ * dan alamat pengirim global.
+ */
+
 return [
 
     /*

@@ -1,7 +1,7 @@
 <x-admin-layout>
-<div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
+<div class="bg-gradient-to-b from-slate-50 to-slate-100 min-h-0">
 
-    <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
+    <div class="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -21,14 +21,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12 space-y-6">
 
         {{-- ══ TAB SWITCHER ══ --}}
-        <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-sm border border-base-300 w-fit">
+        <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 w-fit">
             @php $tab = request('tab', 'profil'); @endphp
-            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'profil' ? 'bg-primary text-white shadow-sm' : 'text-base-content/50 hover:text-base-content hover:bg-base-200' }}" id="tab-profil" onclick="switchProfilTab('profil')">
+            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'profil' ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' }}" id="tab-profil" onclick="switchProfilTab('profil')">
                 Profil Yayasan
             </button>
-            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'pendiri' ? 'bg-primary text-white shadow-sm' : 'text-base-content/50 hover:text-base-content hover:bg-base-200' }}" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
+            <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'pendiri' ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' }}" id="tab-pendiri" onclick="switchProfilTab('pendiri')">
                 Pendiri & Pengurus
-                    <span class="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-base-300">{{ $pendiris->total() }}</span>
+                    <span class="ml-1.5 px-2 py-0.5 rounded-full text-xs {{ $tab === 'pendiri' ? 'bg-emerald-600 text-emerald-100' : 'bg-slate-200 text-slate-500' }}">{{ $pendiris->total() }}</span>
             </button>
         </div>
 
@@ -41,38 +41,38 @@
                 @method('PUT')
 
                 {{-- CARD 1: Info Dasar --}}
-                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">🏢</div>
+                <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">🏢</div>
                         <div>
-                            <p class="font-extrabold text-sm text-base-content">Informasi Dasar</p>
-                            <p class="text-xs text-base-content/50">Nama, kontak, logo, dan alamat yayasan</p>
+                            <p class="font-extrabold text-sm text-slate-800">Informasi Dasar</p>
+                            <p class="text-xs text-slate-400">Nama, kontak, logo, dan alamat yayasan</p>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Nama Yayasan</span></label>
-                                <input type="text" name="nama_yayasan" class="input input-bordered w-full" required
+                                <input type="text" name="nama_yayasan" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required
                                        value="{{ old('nama_yayasan', $profil?->nama_yayasan) }}" placeholder="Yayasan Baitul Yatim">
                                 @error('nama_yayasan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Email Resmi</span></label>
-                                <input type="email" name="email" class="input input-bordered w-full" required
+                                <input type="email" name="email" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required
                                        value="{{ old('email', $profil?->email) }}" placeholder="info@yayasan.org">
                                 @error('email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">No. Telepon / WhatsApp</span></label>
-                                <input type="text" name="no_telp" class="input input-bordered w-full" required
+                                <input type="text" name="no_telp" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required
                                        value="{{ old('no_telp', $profil?->no_telp) }}" placeholder="08123456789">
                                 @error('no_telp') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Logo Yayasan</span></label>
                                 <div class="relative">
-                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="logo-input">
+                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50/50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="logo-input">
                                         <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span id="logo-label" class="text-sm text-emerald-600 font-semibold">Pilih foto logo…</span>
                                     </label>
@@ -89,36 +89,36 @@
                         </div>
                         <div class="form-control mt-4">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Alamat Lengkap</span></label>
-                            <textarea name="alamat" rows="2" class="textarea textarea-bordered w-full" required placeholder="Jl. Kebaikan No. 1, Kota...">{{ old('alamat', $profil?->alamat) }}</textarea>
+                            <textarea name="alamat" rows="2" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="Jl. Kebaikan No. 1, Kota...">{{ old('alamat', $profil?->alamat) }}</textarea>
                             @error('alamat') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
                 </div>
 
                 {{-- CARD 2: Sejarah, Visi, Misi --}}
-                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">📖</div>
+                <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">📖</div>
                         <div>
-                            <p class="font-extrabold text-sm text-base-content">Sejarah, Visi & Misi</p>
-                            <p class="text-xs text-base-content/50">Narasi dan arah gerak yayasan</p>
+                            <p class="font-extrabold text-sm text-slate-800">Sejarah, Visi & Misi</p>
+                            <p class="text-xs text-slate-400">Narasi dan arah gerak yayasan</p>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <div class="form-control mb-4">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Sejarah / Deskripsi Yayasan</span></label>
-                            <textarea name="sejarah_yayasan" rows="5" class="textarea textarea-bordered w-full" required placeholder="Ceritakan bagaimana yayasan ini berdiri dan berkembang…">{{ old('sejarah_yayasan', $profil?->sejarah_yayasan) }}</textarea>
+                            <textarea name="sejarah_yayasan" rows="5" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="Ceritakan bagaimana yayasan ini berdiri dan berkembang…">{{ old('sejarah_yayasan', $profil?->sejarah_yayasan) }}</textarea>
                             @error('sejarah_yayasan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Visi</span></label>
-                                <textarea name="visi" rows="4" class="textarea textarea-bordered w-full" required placeholder="Menjadi lembaga amanah…">{{ old('visi', $profil?->visi) }}</textarea>
+                                <textarea name="visi" rows="4" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="Menjadi lembaga amanah…">{{ old('visi', $profil?->visi) }}</textarea>
                                 @error('visi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Misi <span class="font-normal normal-case text-emerald-400">(gunakan Enter untuk poin baru)</span></span></label>
-                                <textarea name="misi" rows="4" class="textarea textarea-bordered w-full" required placeholder="• Memberikan pendidikan terbaik&#10;• Mengelola amanah dengan transparan">{{ old('misi', $profil?->misi) }}</textarea>
+                                <textarea name="misi" rows="4" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="• Memberikan pendidikan terbaik&#10;• Mengelola amanah dengan transparan">{{ old('misi', $profil?->misi) }}</textarea>
                                 @error('misi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -126,20 +126,20 @@
                 </div>
 
                 {{-- CARD 4: Berkas Visual --}}
-                <div class="bg-white rounded-xl shadow-sm border border-base-300 mb-5 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">📂</div>
+                <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">📂</div>
                         <div>
-                            <p class="font-extrabold text-sm text-base-content">Berkas Resmi & Transparansi</p>
-                            <p class="text-xs text-base-content/50">Dokumen legalitas dan bagan struktur organisasi</p>
+                            <p class="font-extrabold text-sm text-slate-800">Berkas Resmi & Transparansi</p>
+                            <p class="text-xs text-slate-400">Dokumen legalitas dan bagan struktur organisasi</p>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Surat Legalitas Resmi <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
                                 <div class="relative">
-                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="legalitas-input">
+                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50/50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="legalitas-input">
                                         <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span id="legalitas-label" class="text-sm text-emerald-600 font-semibold">Pilih foto dokumen…</span>
                                     </label>
@@ -157,7 +157,7 @@
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Bagan Struktur Organisasi <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
                                 <div class="relative">
-                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="struktur-input">
+                                    <label class="flex items-center gap-2 p-3 border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50/50 cursor-pointer hover:border-emerald-500 hover:bg-emerald-100 transition-all" for="struktur-input">
                                         <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span id="struktur-label" class="text-sm text-emerald-600 font-semibold">Pilih foto bagan…</span>
                                     </label>
@@ -176,11 +176,11 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-3">
-                    <a href="{{ route('admin.profil.index') }}" class="btn btn-ghost font-bold">
+                    <a href="{{ route('admin.profil.index') }}" class="btn btn-ghost font-bold text-slate-600">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                         Batal
                     </a>
-                    <button type="submit" class="btn bg-primary hover:bg-primary/90 text-white border-0 font-bold rounded-lg">
+                    <button type="submit" class="btn bg-emerald-700 hover:bg-emerald-800 text-white border-0 font-bold rounded-lg shadow-sm">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                         Simpan Perubahan Profil
                     </button>
@@ -194,38 +194,38 @@
         <div id="panel-pendiri" class="tab-panel {{ $tab !== 'pendiri' ? 'hidden' : '' }}">
 
             {{-- Daftar pendiri saat ini --}}
-            <div id="pendiri-list-wrap" class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
-                <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">👥</div>
+            <div id="pendiri-list-wrap" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">👥</div>
                     <div>
-                        <p class="font-extrabold text-sm text-base-content">Daftar Pendiri Saat Ini</p>
-                        <p class="text-xs text-base-content/50">{{ $pendiris->count() }} orang terdaftar dan tampil di halaman publik</p>
+                        <p class="font-extrabold text-sm text-slate-800">Daftar Pendiri Saat Ini</p>
+                        <p class="text-xs text-slate-400">{{ $pendiris->count() }} orang terdaftar dan tampil di halaman publik</p>
                     </div>
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                         @forelse($pendiris as $pendiri)
-                            <div class="group bg-white rounded-xl shadow-sm border border-base-200 overflow-hidden hover:shadow-md transition-all duration-200">
+                            <div class="group bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden hover:shadow-md hover:border-emerald-200 transition-all duration-200">
                                 <div class="px-5 pt-5 pb-0">
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-center gap-4">
                                             @if($pendiri->foto)
-                                                <img src="{{ asset('storage/' . $pendiri->foto) . '?v=' . now()->timestamp }}" class="w-14 h-14 rounded-xl object-cover shadow-sm ring-2 ring-base-300" alt="{{ $pendiri->nama }}">
+                                                <img src="{{ asset('storage/' . $pendiri->foto) . '?v=' . now()->timestamp }}" class="w-14 h-14 rounded-xl object-cover shadow-sm ring-2 ring-emerald-100" alt="{{ $pendiri->nama }}">
                                             @else
-                                                <div class="w-14 h-14 rounded-xl bg-primary text-white font-extrabold text-lg flex items-center justify-center shadow-sm">{{ strtoupper(substr($pendiri->nama, 0, 1)) }}</div>
+                                                <div class="w-14 h-14 rounded-xl bg-emerald-700 text-white font-extrabold text-lg flex items-center justify-center shadow-sm">{{ strtoupper(substr($pendiri->nama, 0, 1)) }}</div>
                                             @endif
                                             <div>
-                                                <p class="font-bold text-sm text-base-content">{{ $pendiri->nama }}</p>
-                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full mt-1">{{ $pendiri->jabatan }}</span>
+                                                <p class="font-bold text-sm text-slate-800">{{ $pendiri->nama }}</p>
+                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 border border-emerald-200">{{ $pendiri->jabatan }}</span>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-1" x-data="{ editOpen: false, open: false }">
-                                            <button type="button" @click="editOpen = true" class="btn btn-ghost btn-sm btn-circle text-base-content/20 hover:text-primary hover:bg-primary/5 opacity-0 group-hover:opacity-100 transition-all" title="Edit">
+                                            <button type="button" @click="editOpen = true" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 opacity-0 group-hover:opacity-100 transition-all" title="Edit">
                                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                             </button>
                                             <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" @submit.prevent="open = true">
                                                 @csrf @method('DELETE')
-                                                <button type="button" @click="deleteOpen = true" class="btn btn-ghost btn-sm btn-circle text-base-content/20 hover:text-error hover:bg-error/5 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
+                                                <button type="button" @click="deleteOpen = true" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
                                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                 </button>
                                                 <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
@@ -236,10 +236,10 @@
                                                 <div class="modal-box max-w-lg p-0 overflow-hidden">
                                                     <form action="{{ route('admin.pendiri.update', $pendiri->id) }}" method="POST" enctype="multipart/form-data">
                                                         @csrf @method('PUT')
-                                                        <div class="px-6 pt-6 pb-4 border-b border-base-200 flex items-center justify-between">
+                                                        <div class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
                                                             <div>
-                                                                <h3 class="text-base font-black text-base-content">Edit Pendiri</h3>
-                                                                <p class="text-xs text-base-content/50 mt-0.5">Perbarui data pendiri atau pengurus</p>
+                                                                <h3 class="text-base font-black text-slate-800">Edit Pendiri</h3>
+                                                                <p class="text-xs text-slate-400 mt-0.5">Perbarui data pendiri atau pengurus</p>
                                                             </div>
                                                             <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm btn-circle">
                                                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -249,29 +249,29 @@
                                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                                 <div class="form-control">
                                                                     <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Nama Lengkap</span></label>
-                                                                    <input type="text" name="nama" class="input input-bordered w-full input-sm" required value="{{ $pendiri->nama }}">
+                                                                    <input type="text" name="nama" class="input input-bordered w-full input-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ $pendiri->nama }}">
                                                                 </div>
                                                                 <div class="form-control">
                                                                     <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Jabatan</span></label>
-                                                                    <input type="text" name="jabatan" class="input input-bordered w-full input-sm" required value="{{ $pendiri->jabatan }}">
+                                                                    <input type="text" name="jabatan" class="input input-bordered w-full input-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ $pendiri->jabatan }}">
                                                                 </div>
                                                             </div>
                                                             <div class="form-control">
                                                                 <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Kata Sambutan</span></label>
-                                                                <textarea name="deskripsi" rows="2" class="textarea textarea-bordered w-full text-sm">{{ $pendiri->deskripsi }}</textarea>
+                                                                <textarea name="deskripsi" rows="2" class="textarea textarea-bordered w-full text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200">{{ $pendiri->deskripsi }}</textarea>
                                                             </div>
                                                             <div class="form-control">
                                                                 <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Urutan Tampil</span></label>
-                                                                <input type="number" name="urutan" class="input input-bordered w-full input-sm" value="{{ $pendiri->urutan ?? 0 }}" min="0">
+                                                                <input type="number" name="urutan" class="input input-bordered w-full input-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" value="{{ $pendiri->urutan ?? 0 }}" min="0">
                                                             </div>
                                                             <div class="form-control">
                                                                 <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Foto <span class="font-normal normal-case text-emerald-400">(biarkan kosong jika tidak diganti)</span></span></label>
                                                                 <input type="file" name="foto" class="file-input file-input-bordered w-full input-sm" accept="image/*">
                                                             </div>
                                                         </div>
-                                                        <div class="px-6 py-4 border-t border-base-200 flex items-center justify-end gap-3 bg-base-100">
-                                                            <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm font-semibold">Batal</button>
-                                                            <button type="submit" class="btn btn-primary btn-sm font-semibold text-white">Simpan Perubahan</button>
+                                                        <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 bg-slate-50">
+                                                            <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm font-semibold text-slate-600">Batal</button>
+                                                            <button type="submit" class="btn bg-emerald-700 text-white hover:bg-emerald-800 btn-sm font-semibold border-0 shadow-sm">Simpan Perubahan</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -282,26 +282,26 @@
                                 </div>
                                 <div class="px-5 pb-5 pt-3">
                                     @if($pendiri->deskripsi)
-                                        <div class="bg-base-200/50 rounded-lg p-3 border border-base-200">
-                                            <svg class="w-3 h-3 text-base-content/30 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11H10v10H0z"/></svg>
-                                            <p class="text-xs text-base-content/60 italic leading-relaxed">"{{ $pendiri->deskripsi }}"</p>
+                                        <div class="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                            <svg class="w-3 h-3 text-slate-400 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11H10v10H0z"/></svg>
+                                            <p class="text-xs text-slate-500 italic leading-relaxed">"{{ $pendiri->deskripsi }}"</p>
                                         </div>
                                     @else
-                                        <div class="bg-base-200/50 rounded-lg p-3 border border-base-200">
-                                            <p class="text-xs text-base-content/40 italic">Tidak ada kata sambutan</p>
+                                        <div class="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                            <p class="text-xs text-slate-400 italic">Tidak ada kata sambutan</p>
                                         </div>
                                     @endif
                                 </div>
                             </div>
                         @empty
-                            <div class="col-span-full text-center py-12 border-2 border-dashed border-base-300 rounded-xl bg-base-100">
+                            <div class="col-span-full text-center py-12 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50">
                                 <div class="text-4xl mb-3">👥</div>
-                                <p class="font-bold text-base-content">Belum Ada Data Pendiri</p>
-                                <p class="text-sm text-base-content/50 mt-1">Tambahkan pendiri pertama lewat form di bawah.</p>
+                                <p class="font-bold text-slate-700">Belum Ada Data Pendiri</p>
+                                <p class="text-sm text-slate-400 mt-1">Tambahkan pendiri pertama lewat form di bawah.</p>
                             </div>
                         @endforelse
                     </div>
-                    <div id="pendiri-pagination" class="pendiri-ajax-pagination">
+                    <div id="pendiri-pagination" class="pendiri-ajax-pagination mt-6">
                         {{ $pendiris->links() }}
                     </div>
                 </div>
@@ -311,30 +311,30 @@
             <form action="{{ route('admin.pendiri.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden mb-10">
-                    <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">➕</div>
+                <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden mb-10">
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">➕</div>
                         <div>
-                            <p class="font-extrabold text-sm text-base-content">Tambah Pendiri Baru</p>
-                            <p class="text-xs text-base-content/50">Lengkapi data berikut untuk menambahkan pendiri atau pengurus baru</p>
+                            <p class="font-extrabold text-sm text-slate-800">Tambah Pendiri Baru</p>
+                            <p class="text-xs text-slate-400">Lengkapi data berikut untuk menambahkan pendiri atau pengurus baru</p>
                         </div>
                     </div>
                     <div class="p-6 space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Nama Lengkap</span></label>
-                                <input type="text" name="nama" class="input input-bordered w-full focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200" required value="{{ old('nama') }}" placeholder="Nama lengkap">
+                                <input type="text" name="nama" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ old('nama') }}" placeholder="Nama lengkap">
                                 @error('nama') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Jabatan</span></label>
-                                <input type="text" name="jabatan" class="input input-bordered w-full focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200" required value="{{ old('jabatan') }}" placeholder="Ketua Yayasan">
+                                <input type="text" name="jabatan" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ old('jabatan') }}" placeholder="Ketua Yayasan">
                                 @error('jabatan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
                         <div class="form-control">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Kata Sambutan <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
-                            <textarea name="deskripsi" rows="3" class="textarea textarea-bordered w-full focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200" placeholder="Kata sambutan singkat…">{{ old('deskripsi') }}</textarea>
+                            <textarea name="deskripsi" rows="3" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" placeholder="Kata sambutan singkat…">{{ old('deskripsi') }}</textarea>
                             @error('deskripsi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="form-control">
@@ -355,11 +355,11 @@
                         </div>
 
                         <div class="flex items-center justify-end gap-3 pt-3 border-t border-emerald-100">
-                            <button type="reset" class="btn btn-outline btn-sm" onclick="document.getElementById('pendiri-foto-label').textContent='Pilih foto pendiri'">
+                            <button type="reset" class="btn btn-outline btn-sm border-slate-300 text-slate-600 hover:bg-slate-100" onclick="document.getElementById('pendiri-foto-label').textContent='Pilih foto pendiri'">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                                 Reset
                             </button>
-                            <button type="submit" class="btn btn-success btn-sm">
+                            <button type="submit" class="btn bg-emerald-700 hover:bg-emerald-800 text-white btn-sm border-0 shadow-sm">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
                                 Tambah Pendiri
                             </button>
@@ -376,13 +376,13 @@
     function switchProfilTab(tab) {
         const tabs = ['profil', 'pendiri'];
         tabs.forEach(t => {
-            document.getElementById('tab-' + t).classList.toggle('tab-active', t === tab);
-            document.getElementById('tab-' + t).classList.toggle('bg-primary', t === tab);
-            document.getElementById('tab-' + t).classList.toggle('text-white', t === tab);
-            document.getElementById('tab-' + t).classList.toggle('shadow-sm', t === tab);
-            document.getElementById('tab-' + t).classList.toggle('text-base-content/50', t !== tab);
-            document.getElementById('tab-' + t).classList.toggle('hover:text-base-content', t !== tab);
-            document.getElementById('tab-' + t).classList.toggle('hover:bg-base-200', t !== tab);
+            const btn = document.getElementById('tab-' + t);
+            btn.classList.toggle('bg-emerald-700', t === tab);
+            btn.classList.toggle('text-white', t === tab);
+            btn.classList.toggle('shadow-sm', t === tab);
+            btn.classList.toggle('text-slate-400', t !== tab);
+            btn.classList.toggle('hover:text-slate-700', t !== tab);
+            btn.classList.toggle('hover:bg-slate-100', t !== tab);
             document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
         });
         const url = new URL(window.location);
@@ -403,7 +403,7 @@
                 const url = link.href;
                 const wrap = document.getElementById('pendiri-list-wrap');
                 if (!wrap) return;
-                wrap.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+                wrap.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-emerald-700"></span></div>';
                 fetch(url)
                     .then(r => {
                         if (!r.ok) throw new Error();

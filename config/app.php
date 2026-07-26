@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * app.php — Konfigurasi utama aplikasi
+ * ======================================
+ * Mengatur nama aplikasi, environment, timezone, locale,
+ * dan penyedia layanan (providers) yang didaftarkan.
+ */
+
 return [
 
     /*
@@ -65,7 +72,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta',
 
     /*
     |--------------------------------------------------------------------------

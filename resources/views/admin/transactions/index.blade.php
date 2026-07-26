@@ -85,13 +85,7 @@
                         <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold" :class="tab === 'sponsor' ? 'bg-white/20' : 'bg-base-300'">{{ $sponsorshipCount }}</span>
                     </button>
                 </div>
-                <form action="{{ route('admin.transactions.sync-all') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-sm bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200 rounded-xl font-bold flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Sync All
-                    </button>
-                </form>
+
             </div>
 
             <div x-show="tab === 'donasi'" x-transition:enter.duration.200ms>
@@ -111,7 +105,7 @@
                                         <th class="py-4 px-6 text-[0.6rem] uppercase tracking-widest font-bold text-base-content/40 text-center">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-base-100">
+                                <tbody class="divide-y divide-base-100 stagger-enter">
                                     @foreach($donations as $item)
                                         <tr class="hover:bg-emerald-50/40 transition-colors duration-150 group">
                                             <td class="py-4 px-6">
@@ -218,7 +212,7 @@
                                         <th class="py-4 px-6 text-[0.6rem] uppercase tracking-widest font-bold text-base-content/40 text-center">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-base-100">
+                                <tbody class="divide-y divide-base-100 stagger-enter">
                                     @foreach($sponsorships as $item)
                                         <tr class="hover:bg-emerald-50/40 transition-colors duration-150 group">
                                             <td class="py-4 px-6">

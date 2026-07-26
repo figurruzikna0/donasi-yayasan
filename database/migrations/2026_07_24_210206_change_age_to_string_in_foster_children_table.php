@@ -1,4 +1,6 @@
 <?php
+// === 2026_07_24_210206_change_age_to_string: mengubah kolom age di tabel foster_children dari integer (angka) menjadi string (teks) ===
+// Supaya bisa diisi "4 tahun" atau "Balita" bukan cuma angka
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;

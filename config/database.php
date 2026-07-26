@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * database.php — Konfigurasi database
+ * =====================================
+ * Mengatur koneksi database default, koneksi per-driver
+ * (sqlite, mysql, pgsql, sqlsrv), migrasi, dan Redis.
+ */
+
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 

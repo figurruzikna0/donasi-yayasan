@@ -31,10 +31,10 @@
 </head>
 <body class="font-sans antialiased">
 
-    {{-- ════════════════════ NAVBAR ════════════════════ --}}
+    {{-- NAVBAR --}}
     @include('partials.public-navbar', ['isHome' => true, 'scrollEffect' => true])
 
-    {{-- HERO SECTION: banner utama dengan background gambar, teks ajakan donasi & tombol CTA ke #kampanye dan #program-ota --}}
+    {{-- HERO SECTION --}}
     <header class="relative hero min-h-screen overflow-hidden">
         <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/hero.jpeg') }}'); background-size: cover;">
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/88 via-emerald-900/85 to-emerald-900/88"></div>
@@ -52,66 +52,81 @@
                     Rezeki Itu <span class="text-emerald-300">Pasti</span>,<br>Kemuliaan Harus <span class="text-emerald-300">Dicari</span>,<br>Berbagi Tidak Akan Membuatmu <span class="text-emerald-300">Rugi</span>.
                 </h1>
                 <div data-aos="fade-up" data-aos-delay="300" class="mt-10 flex flex-wrap justify-center gap-3">
-                    <a href="#kampanye" class="btn btn-success text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide shadow-lg hover:shadow-xl transition-all">Lihat Program Donasi Aktif</a>
+                    <a href="#kampanye" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide shadow-lg hover:shadow-xl transition-all border-0">Lihat Program Donasi Aktif</a>
                     <a href="#program-ota" class="btn btn-outline border-white text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide bg-white/10 hover:bg-white hover:text-emerald-800 hover:border-white transition-all">Jadi Orang Tua Asuh</a>
                 </div>
             </div>
         </div>
     </header>
 
-    {{-- PROGRAM DONASI: daftar campaign aktif dari DB ($campaigns), tiap card menampilkan progress & tombol "Donasi Sekarang" menuju donations.create --}}
+    {{-- PROGRAM DONASI --}}
     <section id="kampanye" class="py-20 lg:py-28 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
             <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
                 <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Donasi</span>
                 <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Program Donasi Pilihan</h2>
-                <p class="text-gray-500 mt-2 text-sm">Pilih dan salurkan donasi terbaik Anda dengan amanah & transparan.</p>
+                <p class="text-slate-500 mt-2 text-sm">Pilih dan salurkan donasi terbaik Anda dengan amanah & transparan.</p>
             </div>
 
             @if($campaigns->isNotEmpty())
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($campaigns as $campaign)
-                        <div data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}" class="card bg-base-100 shadow-md border border-emerald-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+                        <div data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}" class="bg-white rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition-all group border border-slate-200 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:border-emerald-200">
                             @if($campaign->image)
-                                <figure class="h-48 overflow-hidden">
-                                    <img src="{{ asset('storage/' . $campaign->image) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
-                                </figure>
+                                <a href="{{ route('campaign.show', $campaign->id) }}">
+                                    <figure class="h-48 overflow-hidden">
+                                        <img src="{{ asset('storage/' . $campaign->image) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </figure>
+                                </a>
                             @else
-                                <div class="h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
-                                    <svg class="w-12 h-12 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                                </div>
+                                <a href="{{ route('campaign.show', $campaign->id) }}">
+                                    <div class="h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                                        <svg class="w-12 h-12 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                                    </div>
+                                </a>
                             @endif
-                            <div class="card-body p-5 flex flex-col flex-1">
-                                <h3 class="font-bold text-base text-emerald-900 mb-2 line-clamp-2">{{ $campaign->title }}</h3>
-                                <p class="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4 flex-1">{{ $campaign->description }}</p>
+                            <div class="p-5 flex flex-col flex-1">
+                                <a href="{{ route('campaign.show', $campaign->id) }}" class="hover:text-emerald-700 transition-colors">
+                                    <h3 class="font-bold text-base text-slate-800 mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors">{{ $campaign->title }}</h3>
+                                    <p class="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-4 flex-1">{{ $campaign->description }}</p>
+                                </a>
                                 @php $pct = $campaign->target_amount > 0 ? min(($campaign->collected_amount / $campaign->target_amount) * 100, 100) : 0; @endphp
                                 <div class="mb-3">
-                                    <div class="flex justify-between text-xs text-emerald-600 mb-1">
+                                    <div class="flex justify-between text-xs text-slate-500 mb-1">
                                         <span class="font-semibold">{{ number_format($pct, 1) }}%</span>
                                         <span class="font-semibold">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }} / Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}</span>
                                     </div>
-                                    <progress class="progress progress-success w-full h-2" value="{{ $pct }}" max="100"></progress>
+                                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                                    </div>
                                 </div>
-                                <a href="{{ route('donations.create', $campaign->id) }}" class="btn btn-success text-white font-bold w-full mt-1">Donasi Sekarang</a>
+                                <div class="flex gap-2 mt-1">
+                                    <a href="{{ route('campaign.show', $campaign->id) }}" class="btn btn-sm btn-outline border-slate-300 text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-bold flex-1 rounded-xl">Lihat Detail</a>
+                                    @auth
+                                        <a href="{{ route('donations.create', $campaign->id) }}" class="btn btn-sm bg-emerald-700 hover:bg-emerald-800 text-white border-0 font-bold flex-1 rounded-xl shadow-sm">Donasi</a>
+                                    @else
+                                        <a href="{{ route('login') }}" class="btn btn-sm bg-emerald-700 hover:bg-emerald-800 text-white border-0 font-bold flex-1 rounded-xl shadow-sm">Donasi</a>
+                                    @endauth
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-14 text-sm text-gray-400 border border-dashed rounded-xl max-w-md mx-auto">
+                <div class="text-center py-14 text-sm text-slate-400 border border-dashed border-slate-300 rounded-xl max-w-md mx-auto">
                     Saat ini belum ada program donasi aktif yang dirilis.
                 </div>
             @endif
         </div>
     </section>
 
-    {{-- STATS DONASI: menampilkan total campaign, total donasi terkumpul & total transaksi dari controller --}}
+    {{-- STATS DONASI --}}
     <section class="py-16 lg:py-20 px-4 bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
         <div class="max-w-7xl mx-auto" data-aos="fade-up">
             <div class="text-center mb-14">
                 <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Bukti Transparansi</span>
                 <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight mb-2">Pergerakan Donasi <span class="text-emerald-500">Real-Time</span></h2>
-                <p class="text-sm text-gray-500 max-w-xl mx-auto">Setiap rupiah yang disalurkan tercatat dan dapat dipertanggungjawabkan.</p>
+                <p class="text-sm text-slate-500 max-w-xl mx-auto">Setiap rupiah yang disalurkan tercatat dan dapat dipertanggungjawabkan.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-0">
@@ -133,7 +148,7 @@
         </div>
     </section>
 
-    {{-- ORANG TUA ASUH: ajakan menjadi sponsor anak yatim, tombol Daftar/Mengarah ke register/login --}}
+    {{-- ORANG TUA ASUH --}}
     <section id="program-ota" class="py-20 lg:py-28 px-4 bg-emerald-50">
         <div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
             <span class="bg-white/80 border border-emerald-300 text-emerald-700 text-xs uppercase tracking-[0.2em] font-bold px-5 py-2 rounded-full inline-block mb-4 shadow-sm">Program Kebaikan Berkelanjutan</span>
@@ -141,26 +156,26 @@
             <p class="mt-4 text-sm text-emerald-700/70 font-medium max-w-xl mx-auto leading-relaxed">
                 Jadilah orang tua asuh dan berikan masa depan yang lebih cerah bagi anak-anak yatim.
             </p>
-            <div class="mt-8 bg-white/70 border border-emerald-200 rounded-2xl p-8 shadow-sm max-w-lg mx-auto">
+            <div class="mt-8 bg-white border border-slate-200 rounded-2xl p-8 shadow-[0_1px_3px_rgba(0,0,0,0.06)] max-w-lg mx-auto">
                 <svg class="w-10 h-10 text-emerald-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
-                <p class="text-sm text-emerald-700 font-semibold">Data anak asuh dan formulir pendaftaran</p>
-                <p class="text-sm text-emerald-600">hanya tersedia untuk donatur yang sudah login.</p>
+                <p class="text-sm text-slate-700 font-semibold">Data anak asuh dan formulir pendaftaran</p>
+                <p class="text-sm text-slate-500">hanya tersedia untuk donatur yang sudah login.</p>
                 <div class="mt-6 flex flex-wrap justify-center gap-3">
-                    <a href="{{ route('register') }}" class="btn btn-success text-white font-bold px-6">Daftar Sekarang</a>
-                    <a href="{{ route('login') }}" class="btn btn-outline btn-success font-bold px-6">Masuk</a>
+                    <a href="{{ route('register') }}" class="btn bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 border-0 shadow-sm">Daftar Sekarang</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline border-emerald-300 text-emerald-700 hover:bg-emerald-700 hover:text-white font-bold px-6">Masuk</a>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- BERITA KEGIATAN: carousel berita dari DB ($newsList), tiap item mengarah ke news.show --}}
+    {{-- BERITA KEGIATAN --}}
     @if(isset($newsList) && $newsList->count() > 0)
     <section id="berita-kegiatan" class="py-20 lg:py-28 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
             <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-14">
                 <span class="text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 inline-block mb-3 border border-emerald-200">Liputan Terkini</span>
                 <h2 class="text-3xl md:text-4xl font-black text-emerald-900 tracking-tight">Berita & Kegiatan</h2>
-                <p class="text-gray-500 mt-2 text-sm">Ikuti perkembangan program, kegiatan, dan laporan terbaru dari lapangan.</p>
+                <p class="text-slate-500 mt-2 text-sm">Ikuti perkembangan program, kegiatan, dan laporan terbaru dari lapangan.</p>
             </div>
 
             <div data-aos="fade-up" class="news-carousel-outer relative px-6">
@@ -171,7 +186,7 @@
                     <div class="flex gap-6 transition-transform duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform" id="news-track">
                         @foreach($newsList as $item)
                         <div class="news-slide flex-none w-full sm:w-1/2 lg:w-1/3 min-w-0">
-                            <a href="{{ route('news.show', $item->slug) }}" class="card bg-base-100 shadow-md border border-emerald-100 rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-lg transition-all group">
+                            <a href="{{ route('news.show', $item->slug) }}" class="bg-white rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-lg transition-all group border border-slate-200 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:border-emerald-200">
                                 @if($item->foto_utama)
                                     <figure class="h-48 overflow-hidden">
                                         <img src="{{ asset('storage/' . $item->foto_utama) }}" alt="{{ $item->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -182,12 +197,12 @@
                                     </div>
                                 @endif
                                 <div class="p-5 flex flex-col flex-1">
-                                    <span class="badge badge-success badge-sm mb-2">{{ $item->kategori }}</span>
-                                    <h3 class="text-sm font-extrabold text-emerald-900 leading-snug mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">{{ $item->judul }}</h3>
-                                    <p class="text-xs text-gray-500 leading-relaxed flex-1 line-clamp-3 mb-4">
+                                    <span class="inline-flex items-center text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2 w-fit">{{ $item->kategori }}</span>
+                                    <h3 class="text-sm font-extrabold text-slate-800 leading-snug mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors">{{ $item->judul }}</h3>
+                                    <p class="text-xs text-slate-500 leading-relaxed flex-1 line-clamp-3 mb-4">
                                         {{ $item->ringkasan ?: \Illuminate\Support\Str::limit(strip_tags($item->konten), 120) }}
                                     </p>
-                                    <div class="flex items-center justify-between text-[0.65rem] text-emerald-500 font-semibold border-t border-emerald-100 pt-3 mt-auto">
+                                    <div class="flex items-center justify-between text-[0.65rem] text-emerald-600 font-semibold border-t border-slate-100 pt-3 mt-auto">
                                         <span>{{ $item->tanggal_kegiatan->translatedFormat('d M Y') }}</span>
                                         @if($item->lokasi)<span>{{ \Illuminate\Support\Str::limit($item->lokasi, 22) }}</span>@endif
                                     </div>
@@ -207,10 +222,10 @@
     </section>
     @endif
 
-    {{-- FOOTER: partial footer yayasan --}}
+    {{-- FOOTER --}}
     @include('partials.footer')
 
-    {{-- SCRIPTS: AOS animasi + carousel berita dengan auto-slide & touch support --}}
+    {{-- SCRIPTS --}}
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 700, once: true, offset: 40 });</script>
 

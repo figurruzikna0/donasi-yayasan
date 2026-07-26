@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * queue.php — Konfigurasi antrian (queue)
+ * =========================================
+ * Mengatur koneksi queue default, driver antrian
+ * (database, redis, sqs, dll.), batching job,
+ * dan penyimpanan failed job.
+ */
+
 return [
 
     /*

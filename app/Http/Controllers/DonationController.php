@@ -37,6 +37,12 @@ use Illuminate\Support\Facades\Storage;
 
 class DonationController extends Controller
 {
+    // --- DETAIL KAMPANYE: tampilkan info lengkap campaign sebelum donatur memutuskan donasi ---
+    public function show(Campaign $campaign)
+    {
+        return view('donations.campaign_detail', compact('campaign'));
+    }
+
     // --- TAMPILKAN FORM DONASI ---
     public function create(Campaign $campaign)
     {

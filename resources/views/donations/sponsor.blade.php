@@ -190,6 +190,15 @@
                                     class="file-input file-input-bordered w-full join-item border-base-300 focus:border-primary">
                             </div>
                             <label class="label"><span class="label-text-alt text-base-content/50">Format: JPG/JPEG/PNG, maks 2MB</span></label>
+                            <div class="upload-progress-container" id="upload-progress-sponsor">
+                                <div class="upload-progress-bar-bg">
+                                    <div class="upload-progress-bar-fill" id="upload-fill-sponsor"></div>
+                                </div>
+                                <div class="upload-progress-text">
+                                    <span id="upload-name-sponsor"></span>
+                                    <span id="upload-pct-sponsor">0%</span>
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Tanggal Transfer --}}
@@ -209,8 +218,8 @@
                             <p>📌 Komitmen ini berlaku untuk periode <strong>1 bulan</strong> sejak pembayaran berhasil. Kami akan mengirimkan pengingat via WhatsApp sebelum jatuh tempo.</p>
                         </div>
 
-                        <button type="submit" class="btn btn-primary text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base" id="submit-btn">
-                            📤 Kirim Sponsorship
+                        <button type="submit" class="btn btn-primary text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base" id="submit-btn" data-no-loading>
+                            <span class="btn-text">📤 Kirim Sponsorship</span>
                         </button>
                     </form>
                 </div>
@@ -271,8 +280,38 @@
                 document.getElementById('paket_komitmen').focus();
                 return;
             }
-            document.getElementById('submit-btn').disabled = true;
-            document.getElementById('submit-btn').textContent = 'Memproses...';
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="btn-spinner" style="display:flex;align-items:center;justify-content:center;gap:8px"><span class="spinner-ring-sm"></span> Memproses...</span>';
+
+            if (window._uploadIntervalSponsor) clearInterval(window._uploadIntervalSponsor);
+            const fill = document.getElementById('upload-fill-sponsor');
+            const pctEl = document.getElementById('upload-pct-sponsor');
+            if (fill) { fill.style.width = '100%'; pctEl.textContent = '100%'; }
+        });
+
+        document.querySelector('input[name="payment_proof"]').addEventListener('change', function () {
+            const file = this.files[0];
+            const container = document.getElementById('upload-progress-sponsor');
+            const fill = document.getElementById('upload-fill-sponsor');
+            const nameEl = document.getElementById('upload-name-sponsor');
+            const pctEl = document.getElementById('upload-pct-sponsor');
+
+            if (!file) { container.classList.remove('active'); return; }
+
+            container.classList.add('active');
+            nameEl.textContent = file.name;
+            fill.style.width = '0%';
+            pctEl.textContent = '0%';
+
+            let pct = 0;
+            if (window._uploadIntervalSponsor) clearInterval(window._uploadIntervalSponsor);
+            window._uploadIntervalSponsor = setInterval(() => {
+                pct += Math.random() * 25;
+                if (pct > 90) pct = 90;
+                fill.style.width = pct + '%';
+                pctEl.textContent = Math.round(pct) + '%';
+            }, 200);
         });
 
         window.addEventListener('DOMContentLoaded', function () {

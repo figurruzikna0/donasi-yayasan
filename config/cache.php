@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * cache.php — Konfigurasi cache
+ * ===============================
+ * Mengatur driver cache default, penyimpanan cache
+ * (array, database, file, redis, dll.), prefix,
+ * dan kelas yang dapat di-serialize.
+ */
+
 use Illuminate\Support\Str;
 
 return [

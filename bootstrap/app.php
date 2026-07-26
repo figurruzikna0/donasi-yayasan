@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * app.php — Bootstrap aplikasi Laravel
+ * ======================================
+ * Mengkonfigurasi routing, middleware, dan exception
+ * handling untuk aplikasi.
+ */
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

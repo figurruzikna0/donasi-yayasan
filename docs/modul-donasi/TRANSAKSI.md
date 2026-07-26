@@ -1,77 +1,91 @@
-# Modul Donasi — Sistem Transaksi & Integrasi Midtrans
-
-## C. Sistem Transaksi & Integrasi Eksternal
-
-Implementasi interaksi donasi campaign mencakup integrasi pihak ketiga, yaitu **API Midtrans Snap**. Donatur checkout → sistem buat record pending → kirim payload ke Midtrans → Snap pop-up → donatur bayar → webhook validasi → status sukses/gagal.
-
-### Tabel 3.1 — Rincian Alur Integrasi Transaksi dan Webhook
-
-| Tahapan | Eksekusi Sistem & Interaksi Aktor | Status Database |
-|---------|----------------------------------|-----------------|
-| **Inisiasi** | Donatur checkout. Sistem membuat record donasi (pending) → mengirim payload ke API Midtrans → memperoleh Snap Token → menampilkan pop-up pembayaran. | `pending` |
-| **Pemrosesan** | Donatur memilih metode pembayaran pada pop-up Midtrans Snap dan menyelesaikan pembayaran di luar sistem. | `pending` |
-| **Validasi** | Webhook Midtrans mengirim notifikasi ke `/midtrans/callback`. Sistem memperbarui status donasi, increment `collected_amount` campaign, kirim WA & Email. | `success` / `failed` |
+# Modul Donasi — Sistem Transaksi Manual (Transfer Bank)
 
 ## Alur Transaksi Donasi Campaign
 
+Sistem menggunakan **transfer bank manual** (bukan payment gateway). Donatur upload bukti transfer, admin validasi secara manual.
+
 ```
-DONATUR                   SERVER LARAVEL                      MIDTRANS
-   │                            │                                 │
-   │  1. Submit form donasi     │                                 │
-   │  POST /campaign/{id}/donate│                                 │
-   │───────────────────────────>│                                 │
-   │                            │  2. Validasi:                  │
-   │                            │     donor_name, email, phone    │
-   │                            │     amount (min 1000)           │
-   │                            │     payment_method              │
-   │                            │                                 │
-   │                            │  3. Donation::create(          │
-   │                            │     order_id = DONASI-{uniqid}, │
-   │                            │     status = pending            │
-   │                            │   )                             │
-   │                            │                                 │
-   │                            │  4. initMidtrans()             │
-   │                            │     Config::$serverKey          │
-   │                            │                                 │
-   │                            │  5. Snap::getSnapToken({        │
-   │                            │     transaction_details,        │
-   │                            │     customer_details            │
-   │                            │   })                            │
-   │                            │──────────────────────────────> │
-   │                            │                                 │
-   │                            │  6. Snap Token                 │
-   │                            │<────────────────────────────── │
-   │                            │                                 │
-   │  7. View payment.blade.php │                                 │
-   │     (Snap.js + token)     │                                 │
-   │<───────────────────────────│                                 │
-   │                            │                                 │
-   │  8. Klik "Pilih Metode"   │                                 │
-   │     Snap pop-up muncul    │                                 │
-   │                            │                                 │
-   │  9. Pilih channel bayar   │                                 │
-   │     (VA BCA, QRIS, GoPay, │                                 │
-   │      ShopeePay, dll)      │                                 │
-   │───────────────────────────────────────────────────────────> │
-   │                            │                                 │
-   │ 10. Selesaikan pembayaran  │                                 │
-   │     di luar sistem         │                                 │
-   │                            │                                 │
-   │                            │ 11. Webhook POST /midtrans/     │
-   │                            │     callback (bypass CSRF)      │
-   │                            │<────────────────────────────── │
-   │                            │                                 │
-   │                            │ 12. DonationController@callback │
-   │                            │     → baca transaction_status   │
-   │                            │     → settlement/capture        │
-   │                            │       → status = success        │
-   │                            │       → campaign->increment(    │
-   │                            │           collected_amount      │
-   │                            │         )                       │
-   │                            │       → kirim WA + Email        │
-   │                            │     → deny/cancel/expire        │
-   │                            │       → status = failed         │
-   │                            │                                 │
+DONATUR (login)               SERVER LARAVEL                    ADMIN
+      │                             │                             │
+      │  1. Lihat campaign          │                             │
+      │  GET /campaign/{id}        │                             │
+      │────────────────────────────>│                             │
+      │                             │                             │
+      │  2. Klik "Donasi Sekarang" │                             │
+      │  GET /campaign/{id}/donate │                             │
+      │────────────────────────────>│                             │
+      │                             │                             │
+      │  3. Form donasi tampil      │                             │
+      │  - Nama, Email, No. WA     │                             │
+      │  - Nominal (10k/20k/50k/   │                             │
+      │    100k / manual)          │                             │
+      │  - Info rekening BSI       │                             │
+      │    7122-8023-98            │                             │
+      │    a.n. Baitul Yatim       │                             │
+      │  - Upload bukti transfer   │                             │
+      │  - Tanggal transfer        │                             │
+      │<────────────────────────────│                             │
+      │                             │                             │
+      │  4. Submit form             │                             │
+      │  POST /campaign/{id}/donate│                             │
+      │────────────────────────────>│                             │
+      │                             │                             │
+      │  5. Validasi:              │                             │
+      │     donor_name, email,      │                             │
+      │     phone, amount (min1000),│                             │
+      │     payment_proof (file),   │                             │
+      │     transfer_date (date)    │                             │
+      │                             │                             │
+      │  6. Upload payment_proof    │                             │
+      │     ke storage/public/      │                             │
+      │     payment-proofs/         │                             │
+      │                             │                             │
+      │  7. Donation::create(       │                             │
+      │     order_id=DONASI-{uniqid},│                             │
+      │     status=pending,         │                             │
+      │     payment_method=         │                             │
+      │       'Transfer Bank'       │                             │
+      │   )                         │                             │
+      │                             │                             │
+      │  8. Redirect dashboard      │                             │
+      │     + flash success         │                             │
+      │<────────────────────────────│                             │
+      │                             │                             │
+      │                             │  9. Buka Riwayat Transaksi │
+      │                             │  GET /admin/transactions    │
+      │                             │<────────────────────────────│
+      │                             │                             │
+      │                             │  10. Lihat bukti transfer  │
+      │                             │  Klik "Lihat Bukti"        │
+      │                             │                             │
+      │                             │  11. Approve donasi        │
+      │                             │  PATCH /admin/transactions │
+      │                             │  /{id}/approve             │
+      │                             │────────────────────────────>│
+      │                             │                             │
+      │                             │  12. Update status:       │
+      │                             │  → success                 │
+      │                             │  → generate invoice_number │
+      │                             │  → increment               │
+      │                             │    collected_amount        │
+      │                             │                             │
+      │                             │  13. WA via Fonnte         │
+      │                             │  "Donasi RpX untuk         │
+      │                             │   {campaign} telah          │
+      │                             │   dikonfirmasi"             │
+      │<────────────────────────────│                             │
+      │                             │                             │
+      │  14. Donatur buka invoice   │                             │
+      │  GET /donations/{id}/invoice│                             │
+      │────────────────────────────>│                             │
+      │                             │                             │
+      │  15. Invoice HTML           │                             │
+      │  - Logo yayasan             │                             │
+      │  - Invoice kepada           │                             │
+      │  - No. invoice              │                             │
+      │  - Detail donasi            │                             │
+      │  - Status LUNAS             │                             │
+      │<────────────────────────────│                             │
 ```
 
 ## State Transaksi Donasi
@@ -90,39 +104,57 @@ DONATUR                   SERVER LARAVEL                      MIDTRANS
      │
      ▼
  collected_amount += amount
- WA + Email ke donatur
+ generate invoice_number
+ WA ke donatur via Fonnte
 ```
 
-## Detail Parameter Midtrans (Donasi)
+## State Transaksi Donasi (dengan Reject)
 
-```php
-$params = [
-    'transaction_details' => [
-        'order_id'     => 'DONASI-6a564e2597f0d',
-        'gross_amount' => 50000,
-    ],
-    'customer_details' => [
-        'first_name' => 'Figur',
-        'email'      => 'figur@example.com',
-        'phone'      => '6281234567890',
-    ],
-];
+```
+     ┌──────────┐
+     │ PENDING  │
+     └────┬─────┘
+          │
+     ┌────┴────────────┐
+     │                 │
+     ▼                 ▼
+ ┌───────┐     ┌──────────────┐
+ │SUKSES │     │ FAILED       │
+ └───┬───┘     │ (rejection   │
+     │         │  reason)     │
+     ▼         └──────────────┘
+ collected_amount += amount
+ invoice_number generated
+ WA: konfirmasi       WA: tolak + alasan
 ```
 
-## Callback Response Mapping
+## Order ID Format
 
-| `transaction_status` | Aksi Sistem | Status DB |
-|---------------------|-------------|-----------|
-| `settlement` / `capture` | Update success, increment collected_amount, kirim WA + Email | `success` |
-| `pending` | Tidak ada perubahan | `pending` |
-| `deny` / `cancel` / `expire` | Update failed | `failed` |
+| Tipe | Format | Contoh |
+|------|--------|--------|
+| Donasi | `DONASI-{uniqid}` | `DONASI-67c3f8a1b2c3d` |
+| Sponsorship | `SPONSOR-{uniqid}` | `SPONSOR-67c3f8a1b2c3e` |
 
-## Fallback Error Handling
+## Invoice Number Format
+
+| Tipe | Format | Contoh |
+|------|--------|--------|
+| Donasi | `INV-DN-{tahun}{bulan}-{nomor urut}` | `INV-DN-202607-0001` |
+
+## Notifikasi WhatsApp (via Fonnte)
+
+| Event | Template |
+|-------|----------|
+| Donasi di-approve | "✅ *Donasi Berhasil Dikonfirmasi!* Donasi Anda sebesar *Rp{nominal}* untuk campaign *{judul}* telah dikonfirmasi. Terima kasih atas dukungan Anda. — Baitul Yatim Sukabumi" |
+| Donasi ditolak | "✗ *Donasi Ditolak* Donasi Anda sebesar *Rp{nominal}* untuk campaign *{judul}* ditolak. Alasan: {alasan}. Silakan hubungi admin. — Baitul Yatim Sukabumi" |
+| Sponsorship di-approve | Template serupa dengan konteks sponsorship |
+| Laporan perkembangan anak | Teks deskripsi + foto anak asuh via `sendWithMedia()` |
+
+## Error Handling
 
 | Skenario | Penanganan |
 |----------|-----------|
-| Midtrans down (Snap gagal) | Try-catch → log error → redirect back + flash *"Gerbang pembayaran sedang sibuk"* |
-| Callback gagal diproses | Log error → tetap return 200 (biar Midtrans tidak retry) |
-| Sync gagal (order_id tidak ditemukan) | `Transaction::status()` throw exception → flash error ke admin |
-| Email gagal dikirim | Log error → transaksi tetap sukses (WA tetap jalan) |
-| WA gagal dikirim | Log error → transaksi tetap sukses (email tetap jalan) |
+| Upload file gagal | Validasi file: max 5MB, format JPG/PNG/PDF → error flash ke donatur |
+| WA gagal dikirim | Log error → transaksi tetap sukses (WA non-bloking) |
+| Nomor WA tidak valid | Normalisasi ke 62xxx, jika tetap gagal → di-log |
+| Duplikasi order_id | Kolom UNIQUE → exception → redirect back + error flash |

@@ -1,4 +1,13 @@
-<?php return array (
+<?php
+
+/*
+ * services.php — Cache layanan (service providers)
+ * ==================================================
+ * Berisi daftar service provider yang terdaftar,
+ * termasuk provider eager, deferred, dan when.
+ */
+
+return array (
   'providers' => 
   array (
     0 => 'Illuminate\\Auth\\AuthServiceProvider',

@@ -80,6 +80,25 @@ class DonorController extends Controller
         ));
     }
 
+    // --- PROFIL YAYASAN (untuk donatur) ---
+    public function profil()
+    {
+        return view('dashboard.profil');
+    }
+
+    // --- PENGURUS YAYASAN (untuk donatur) ---
+    public function pengurus()
+    {
+        $daftarPendiri = Pendiri::latest()->get();
+        return view('dashboard.pengurus', compact('daftarPendiri'));
+    }
+
+    // --- LEGALITAS & STRUKTUR (untuk donatur) ---
+    public function legalitas()
+    {
+        return view('dashboard.legalitas');
+    }
+
     // --- REKAP DONATUR: menampilkan riwayat donasi, sponsorship, dan laporan perkembangan anak untuk user yang login ---
     public function rekap()
     {

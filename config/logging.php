@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * logging.php — Konfigurasi log
+ * ===============================
+ * Mengatur channel log default, channel deprecation,
+ * dan berbagai driver channel (single, daily, slack, dll.).
+ */
+
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * services.php — Konfigurasi layanan pihak ketiga
+ * =================================================
+ * Menyimpan kredensial untuk layanan eksternal
+ * seperti Fonnte, Postmark, SES, Slack, dll.
+ */
+
 return [
 
     /*

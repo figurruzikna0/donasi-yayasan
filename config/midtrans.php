@@ -1,5 +1,11 @@
 <?php
-// === midtrans.php: konfigurasi Midtrans (merchant_id, client_key, server_key) ===
+
+/*
+ * midtrans.php — Konfigurasi Midtrans
+ * =====================================
+ * Mengatur merchant_id, client_key, server_key,
+ * mode produksi/sandbox, sanitasi, dan 3DS.
+ */
 
 return [
     'merchant_id' => env('MIDTRANS_MERCHANT_ID'),

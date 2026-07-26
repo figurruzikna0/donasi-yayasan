@@ -107,6 +107,10 @@ Route::get('/legalitas', function () {
     return view('legalitas');
 })->name('legalitas');
 
+// ─── RUTE PUBLIK: DETAIL KAMPANYE ──────────────────────────
+// Publik/donatur bisa lihat detail campaign sebelum memutuskan donasi
+Route::get('/campaign/{campaign}', [DonationController::class, 'show'])->name('campaign.show');
+
 // ─── RUTE DONASI & SPONSOR ──────────────────────────────────
 // Wajib: login + verifikasi email + throttle (max 10 request per menit)
 // Donatur harus verifikasi email dulu sebelum bisa donasi
@@ -147,6 +151,17 @@ Route::get('/dashboard', [DonorController::class, 'dashboard'])
 Route::get('/dashboard/rekap', [DonorController::class, 'rekap'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard.rekap');
+
+// Halaman informasi yayasan untuk donatur (stay di layout dashboard)
+Route::get('/dashboard/profil-yayasan', [DonorController::class, 'profil'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.profil');
+Route::get('/dashboard/pengurus', [DonorController::class, 'pengurus'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.pengurus');
+Route::get('/dashboard/legalitas', [DonorController::class, 'legalitas'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.legalitas');
 
 // ─── RUTE PROFIL DONATUR ──────────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {

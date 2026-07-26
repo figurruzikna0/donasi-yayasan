@@ -1,11 +1,11 @@
 {{-- LAYOUTS_NAVIGATION: navigasi utama untuk pengguna non-admin -- logo, tautan dashboard, dropdown profil, dan menu mobile --}}
 @php $navUser = Auth::user(); @endphp
-@if(!$navUser || $navUser->role !== 'admin')
+@if($navUser && $navUser->role !== 'admin')
 {{-- BAGIAN: wrapper navigasi desktop dengan logo, tautan, dan dropdown profil --}}
 <nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200">
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4rem]">
         <div class="flex-1 flex items-center gap-4">
-            <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="shrink-0 flex items-center gap-2">
+            <a href="{{ $navUser?->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="shrink-0 flex items-center gap-2">
                 @php $logoNav = $profil; @endphp
                 @if($logoNav?->logo)
                     <img src="{{ asset('storage/' . $logoNav->logo) . '?v=' . now()->timestamp }}" class="h-8 w-8 rounded-lg object-cover border border-base-300" alt="Logo">
@@ -24,18 +24,31 @@
         {{-- BAGIAN: dropdown profil pengguna untuk layar desktop --}}
         <div class="flex-none hidden sm:flex">
             <div class="dropdown dropdown-end">
-                <button tabindex="0" class="btn btn-ghost btn-sm gap-2">
-                    <div>{{ Auth::user()->name }}</div>
-                    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+                <button tabindex="0" class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-base-200 transition-colors">
+                    @if($navUser->avatar)
+                        <img src="{{ asset('storage/' . $navUser->avatar) }}" class="w-8 h-8 rounded-full object-cover ring-2 ring-base-300">
+                    @else
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-sm flex items-center justify-center ring-2 ring-base-300">
+                            {{ strtoupper(substr($navUser->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <span class="text-sm font-bold text-base-content hidden sm:inline">{{ $navUser->name }}</span>
+                    <svg class="w-3.5 h-3.5 text-base-content/30 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg">
-                    <li><a :href="route('profile.edit')" onclick="event.preventDefault(); window.location.href='{{ route('profile.edit') }}'">Profil</a></li>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-56 p-2 shadow-lg border border-base-200">
+                    <li class="menu-title text-xs"><span>Akun</span></li>
+                    <li><a href="{{ route('profile.edit') }}" class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Edit Profil
+                    </a></li>
+                    <li class="menu-title text-xs mt-2"><span>Sesi</span></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" class="p-0">
                             @csrf
-                            <button type="submit" class="w-full text-left">Keluar</button>
+                            <button type="submit" class="flex items-center gap-2 text-error">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                Keluar
+                            </button>
                         </form>
                     </li>
                 </ul>
@@ -60,11 +73,17 @@
         <ul class="menu menu-md p-4 pt-2">
             <li><a :href="route('dashboard')" wire:navigate>Dashboard</a></li>
             <li class="menu-title text-xs"><span>Akun</span></li>
-            <li><a :href="route('profile.edit')" wire:navigate>Profil</a></li>
+            <li><a :href="route('profile.edit')" class="flex items-center gap-2" wire:navigate>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                Edit Profil
+            </a></li>
             <li>
                 <form method="POST" action="{{ route('logout') }}" class="p-0">
                     @csrf
-                    <button type="submit" class="w-full text-left">Keluar</button>
+                    <button type="submit" class="flex items-center gap-2 text-error w-full">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        Keluar
+                    </button>
                 </form>
             </li>
         </ul>

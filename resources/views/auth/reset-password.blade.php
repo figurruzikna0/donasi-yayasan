@@ -20,7 +20,7 @@
             </label>
             <input id="email" type="email" name="email" placeholder="email@anda.com"
                    class="input input-bordered w-full bg-emerald-50/50 border-emerald-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 rounded-xl px-4 py-3 text-sm transition-all"
-                   :value="old('email', $request->email)" required autocomplete="username" disabled />
+                   value="{{ old('email', $request->email) }}" required autocomplete="username" readonly />
             <x-input-error :messages="$errors->get('email')" class="mt-1.5" />
         </div>
 

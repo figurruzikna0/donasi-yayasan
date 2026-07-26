@@ -13,8 +13,15 @@ class Pendiri extends Model
     use HasFactory;
 
     protected $table = 'pendiris';
-    protected $fillable = ['nama', 'jabatan', 'deskripsi', 'foto', 'urutan'];
+    protected $fillable = [
+        'nama',      // Nama pendiri
+        'jabatan',   // Jabatan di yayasan
+        'deskripsi', // Deskripsi/biografi singkat
+        'foto',      // Foto pendiri (path storage)
+        'urutan',    // Urutan tampil (untuk sorting)
+    ];
 
+    // EVENT: saat data pendiri dihapus, hapus juga foto dari storage
     protected static function booted(): void
     {
         static::deleted(function (Pendiri $pendiri) {

@@ -15,22 +15,23 @@ class News extends Model
     protected $table = 'news';
 
     protected $fillable = [
-        'judul',
-        'slug',
-        'kategori',
-        'tanggal_kegiatan',
-        'lokasi',
-        'penyelenggara',
-        'ringkasan',
-        'konten',
-        'foto_utama',
-        'status',
+        'judul',            // Judul berita
+        'slug',             // URL slug (auto-generated dari judul)
+        'kategori',         // Kategori berita (misal: kegiatan, pengumuman)
+        'tanggal_kegiatan', // Tanggal pelaksanaan kegiatan
+        'lokasi',           // Lokasi kegiatan
+        'penyelenggara',    // Pihak penyelenggara kegiatan
+        'ringkasan',        // Ringkasan singkat berita
+        'konten',           // Isi/konten lengkap berita
+        'foto_utama',       // Foto utama berita (path storage)
+        'status',           // published | draft (status tayang)
     ];
 
     protected $casts = [
         'tanggal_kegiatan' => 'date',
     ];
 
+    // EVENT: saat berita dihapus, hapus juga foto utama dari storage
     protected static function booted(): void
     {
         static::deleted(function (News $news) {

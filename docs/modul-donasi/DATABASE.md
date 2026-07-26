@@ -27,23 +27,27 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
          │
          │  (campaign_id)
          ▼
-┌════════════════════════════════════════════════════════════════════════╗
-║                              donations                                ║
-║════════════════════════════════════════════════════════════════════════║
-║  PK  id                    bigint                                     ║
-║  FK  campaign_id           bigint      ────→ campaigns.id             ║
-║  FK  user_id               bigint(null)───→ users.id                  ║
-║      order_id              varchar(255) unique                        ║
-║      snap_token            varchar(255) nullable                      ║
-║      donor_name            varchar(255)                               ║
-║      donor_email           varchar(255)                               ║
-║      donor_phone           varchar(20)                                ║
-║      amount                decimal(15,2)                              ║
-║      payment_method        varchar(255) nullable                      ║
-║      status                enum(pending/success/failed)               ║
-║      created_at            timestamp                                  ║
-║      updated_at            timestamp                                  ║
-╚════════════════════════════════════════════════════════════════════════╝
+ ┌══════════════════════════════════════════════════════════════════════════════════════╗
+║                              donations                                                ║
+║══════════════════════════════════════════════════════════════════════════════════════║
+║  PK  id                    bigint                                                       ║
+║  FK  campaign_id           bigint      ────→ campaigns.id                               ║
+║  FK  user_id               bigint(null)───→ users.id                                    ║
+║      order_id              varchar(100) unique nullable                                 ║
+║      invoice_number        varchar(50) unique nullable                                  ║
+║      snap_token            varchar(255) nullable    (tidak dipakai — Midtrans nonaktif)║
+║      donor_name            varchar(255)                                                  ║
+║      donor_email           varchar(255)                                                  ║
+║      donor_phone           varchar(255) nullable                                         ║
+║      amount                unsignedBigInteger                                            ║
+║      payment_method        varchar(255) nullable                                         ║
+║      payment_proof         varchar(255) nullable                                         ║
+║      transfer_date         date nullable                                                 ║
+║      status                varchar(255) default 'pending'                                ║
+║      rejection_reason      text nullable                                                 ║
+║      created_at            timestamp                                                     ║
+║      updated_at            timestamp                                                     ║
+╚══════════════════════════════════════════════════════════════════════════════════════╝
          │
          │ M
          │
@@ -99,15 +103,15 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 | donations | user_id | dilakukan oleh → | users (donatur) | id | M to 1 |
 | users (admin) | id | mengelola → | campaigns | — (via panel) | 1 to M |
 | users (admin) | id | mengelola → | profil_yayasan | — (single row) | 1 to 1 |
-| users (admin) | id | menulis → | news | — (tanpa FK) | 1 to M |
+| users (admin) | id | mengelola → | news | — (tanpa FK) | 1 to M |
 
 ### Aturan Bisnis Terkait Data
 
 1. Donasi mengacu ke **satu campaign** (`campaign_id` mandatory).
-2. Donatur **tidak wajib login** — `user_id` boleh null (guest).
-3. Saat donasi sukses, `campaigns.collected_amount` di-increment otomatis.
+2. Donatur **wajib login** untuk donasi — `user_id` selalu terisi (guest tidak bisa donasi).
+3. Saat donasi di-approve admin, `campaigns.collected_amount` di-increment otomatis.
 4. Satu campaign bisa memiliki banyak donasi (termasuk dari donatur yang sama).
-5. `status` donasi hanya berubah via **Midtrans callback** atau **sync manual admin**.
+5. `status` donasi berubah via **approve/reject admin**. Tidak ada callback otomatis (Midtrans nonaktif).
 6. Riwayat donasi tidak bisa dihapus jika sudah sukses (hanya admin yang bisa hapus via panel).
 7. Admin adalah satu-satunya role yang dapat membuat/mengedit campaign, memperbarui profil yayasan, dan menulis berita.
 8. Profil yayasan hanya berisi **1 baris data** — diedit langsung oleh admin; tidak ada operasi hapus.
@@ -123,19 +127,23 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                                                                            │
 │  ┌──────────────────────┐          ┌──────────────────────────┐           │
-│  │      campaigns        │          │        donations         │           │
-│  │──────────────────────│          │──────────────────────────│           │
-│  │ PK id  bigint        │◄─────────│ FK campaign_id           │           │
-│  │    title              │  1    M  │    user_id  (nullable)   │           │
-│  │    slug (unique)      │          │    order_id  (unique)    │           │
-│  │    description        │          │    snap_token            │           │
-│  │    target_amount      │          │    donor_name            │           │
-│  │    collected_amount   │          │    donor_email           │           │
-│  │    image              │          │    donor_phone           │           │
-│  │    status             │          │    amount                │           │
-│  └──────────────────────┘          │    payment_method        │           │
-│                                     │    status                │           │
-│                                     └───────────┬──────────────┘           │
+ │  │      campaigns        │          │        donations                   │           │
+│  │──────────────────────│          │─────────────────────────────────│           │
+│  │ PK id  bigint        │◄─────────│ FK campaign_id                 │           │
+│  │    title              │  1    M  │    user_id  (nullable)         │           │
+│  │    slug (unique)      │          │    order_id  (unique nullable) │           │
+│  │    description        │          │    invoice_number (unique)     │           │
+│  │    target_amount      │          │    snap_token (tidak dipakai)  │           │
+│  │    collected_amount   │          │    donor_name                  │           │
+│  │    image              │          │    donor_email                 │           │
+│  │    status             │          │    donor_phone                 │           │
+│  └──────────────────────┘          │    amount                      │           │
+│                                     │    payment_method              │           │
+│                                     │    payment_proof               │           │
+│                                     │    transfer_date               │           │
+│                                     │    status                      │           │
+│                                     │    rejection_reason            │           │
+│                                     └───────────┬────────────────────┘           │
 │                                                 │                          │
 │                                                 │ M                        │
 │                                                 │                          │
@@ -177,7 +185,8 @@ Notasi:  **PK** = Primary Key,  **FK** = Foreign Key,  `nullable` = boleh kosong
 **Keterangan:**
 - `PK` = Primary Key, `FK` = Foreign Key
 - Tabel `users` menampung **dua role**: `admin` dan `donatur` (dibedakan kolom `role`)
-- `donations.user_id` nullable → donatur boleh guest
+- `donations.user_id` tidak nullable di form (donatur wajib login), namun kolom DB nullable secara struktur
+- `donations.snap_token` tidak dipakai (Midtrans nonaktif) — disimpan untuk kompatibilitas data lama
 - Semua foreign key menggunakan `ON DELETE CASCADE` / `ON DELETE SET NULL`
 
 ### 1. Campaign
@@ -400,24 +409,28 @@ Tabel: `news`
 | Organisasi File | Index Sequential |
 | Akses File | Random |
 | Media | Harddisk |
-| Panjang Record | 1251 karakter |
+| Panjang Record | 1550 karakter |
 | Kunci Field (PK) | id |
 
 | No | Nama Field | Tipe Data | Size | Keterangan |
 |----|-----------|-----------|------|------------|
 | 1 | id | BIGINT | 20 | Primary Key, Auto Increment |
-| 2 | campaign_id | BIGINT | 20 | Foreign Key → campaigns.id |
-| 3 | user_id | BIGINT | 20 | Foreign Key → users.id (nullable) |
-| 4 | order_id | VARCHAR | 255 | ID transaksi (unique) |
-| 5 | snap_token | VARCHAR | 255 | Token Snap Midtrans (nullable) |
-| 6 | donor_name | VARCHAR | 255 | Nama donatur |
-| 7 | donor_email | VARCHAR | 255 | Email donatur |
-| 8 | donor_phone | VARCHAR | 20 | No. HP donatur |
-| 9 | amount | DECIMAL | 15 | Nominal donasi |
-| 10 | payment_method | VARCHAR | 50 | Metode bayar (nullable) |
-| 11 | status | ENUM | 10 | 'pending' / 'success' / 'failed' |
-| 13 | created_at | TIMESTAMP | 19 | |
-| 14 | updated_at | TIMESTAMP | 19 | |
+| 2 | campaign_id | BIGINT | 20 | Foreign Key → campaigns.id (CASCADE) |
+| 3 | user_id | BIGINT | 20 | Foreign Key → users.id (SET NULL) |
+| 4 | order_id | VARCHAR | 100 | ID transaksi (unique, nullable) |
+| 5 | invoice_number | VARCHAR | 50 | No. invoice format INV-DN-{thn}{bln}-{urut} (unique, nullable) |
+| 6 | snap_token | VARCHAR | 255 | Token Snap Midtrans — tidak dipakai, untuk kompatibilitas data lama (nullable) |
+| 7 | donor_name | VARCHAR | 255 | Nama donatur |
+| 8 | donor_email | VARCHAR | 255 | Email donatur |
+| 9 | donor_phone | VARCHAR | 255 | No. HP donatur (nullable) |
+| 10 | amount | BIGINT UNSIGNED | 20 | Nominal donasi (unsigned) |
+| 11 | payment_method | VARCHAR | 255 | Metode bayar (nullable, default 'Transfer Bank') |
+| 12 | payment_proof | VARCHAR | 255 | File bukti transfer (nullable) |
+| 13 | transfer_date | DATE | 10 | Tanggal transfer (nullable) |
+| 14 | status | VARCHAR | 20 | 'pending' / 'success' / 'failed', default 'pending' |
+| 15 | rejection_reason | TEXT | - | Alasan penolakan (nullable) |
+| 16 | created_at | TIMESTAMP | 19 | |
+| 17 | updated_at | TIMESTAMP | 19 | |
 
 ### d. Spesifikasi File Profil Yayasan
 

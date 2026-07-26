@@ -6,13 +6,16 @@
 |---------|----------------|----------|
 | Donasi nominal < Rp 1.000 | Validasi `min:1000` → validation error | Tidak bisa submit |
 | Order ID donasi (`DONASI-{uniqid}`) duplikat | Kolom UNIQUE → duplicate entry error | Sistem tolak |
-| Midtrans Snap gagal generate token | Try-catch → log → redirect back + error flash | Donatur coba lagi |
-| Callback status `settlement` / `capture` | Update `status → success`, `campaign.collected_amount += amount`, kirim WA + Email | Otomatis |
-| Callback status `deny` / `cancel` / `expire` | Update `status → failed` | Otomatis |
-| Admin approve donasi pending | `TransactionController@approve()` — sama seperti callback: success + increment + notifikasi | Admin |
-| Campaign dihapus | Cascade hapus semua donasi terkait + hapus file gambar | Admin |
-| Donatur submit donasi > 10x/menit | `throttle:10,1` → 429 | Diblokir sementara |
-| Campaign status `completed` | Tidak tampil di campaign aktif halaman utama | Admin ubah manual |
+| Donatur belum login akses form donasi | Redirect ke `/login` (middleware `auth`) | Sistem |
+| File bukti > 5MB atau bukan JPG/PNG/PDF | Validasi `max:5120` + `mimes:jpg,jpeg,png,pdf` → error | Tidak bisa submit |
+| Admin approve donasi pending | `TransactionController@approve()` — status→success, increment collected_amount, generate invoice_number, kirim WA via Fonnte | Admin |
+| Admin reject donasi pending | `TransactionController@reject()` — status→failed, isi rejection_reason, kirim WA tolak | Admin |
+| Campaign dihapus (admin) | Cascade hapus donasi terkait + hapus file gambar | Admin |
+| Donatur submit donasi > 10x/menit | `throttle:10,1` → 429 Too Many Requests | Diblokir sementara |
+| Campaign status `completed` (collected >= target) | Tetap tampil di publik dengan label "Tercapai" | Sistem (otomatis) |
+| Invoice diakses bukan pemilik | Cek `user_id` vs `Auth::id()` → 404 | Sistem |
+| Invoice diakses untuk status pending/failed | Cek `status === 'success'` → 404 | Sistem |
+| WA Fonnte gagal | Try-catch → log error → transaksi tetap sukses | Sistem (non-bloking) |
 
 ## Entity Relationship (Donasi)
 
@@ -37,10 +40,11 @@
                    │ order_id   │
                    │ amount     │
                    │ status     │
-                   │ snap_token │
+                   │ payment_prf│
+                   │ trf_date   │
                    └────────────┘
 ```
 
 **Foreign Keys:**
-- `donations.campaign_id` → `campaigns.id` (CASCADE)
-- `donations.user_id` → `users.id` (SET NULL)
+- `donations.campaign_id` → `campaigns.id` (ON DELETE CASCADE)
+- `donations.user_id` → `users.id` (ON DELETE SET NULL)

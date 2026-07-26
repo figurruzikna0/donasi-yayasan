@@ -1,5 +1,11 @@
 <?php
-// === auth.php: konfigurasi autentikasi (guard, provider, reset password) ===
+
+/*
+ * auth.php — Konfigurasi autentikasi
+ * ====================================
+ * Mengatur guard, provider user, reset password,
+ * dan timeout konfirmasi password.
+ */
 
 use App\Models\User;
 

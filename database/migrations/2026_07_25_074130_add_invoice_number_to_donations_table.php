@@ -1,4 +1,6 @@
 <?php
+// === 2026_07_25_074130_add_invoice_number: menambah kolom invoice_number (nomor invoice) ke tabel donations ===
+// Format: INV-DN-{tahunbulan}-{nomor_urut}, dipakai untuk penomoran invoice donasi
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

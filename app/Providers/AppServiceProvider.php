@@ -13,7 +13,9 @@
 
 namespace App\Providers;
 
+use App\Notifications\ResetPasswordNotification;
 use App\View\Composers\ProfilYayasanComposer;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -28,5 +30,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Daftarkan View Composer global — $profil tersedia di semua view
         View::composer('*', ProfilYayasanComposer::class);
+
+        // Ganti notifikasi reset password bawaan Laravel (Inggris) → kustom (Indonesia)
+        ResetPassword::toMailUsing(function ($notifiable, $token) {
+            return (new ResetPasswordNotification($token))->toMail($notifiable);
+        });
     }
 }

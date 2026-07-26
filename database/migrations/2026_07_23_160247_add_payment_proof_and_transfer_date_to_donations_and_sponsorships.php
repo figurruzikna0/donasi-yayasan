@@ -1,4 +1,6 @@
 <?php
+// === 2026_07_23_160247_add_payment_proof_and_transfer_date: menambah ulang kolom payment_proof (bukti transfer) + transfer_date (tanggal transfer) ke tabel donations dan sponsorships ===
+// Sebelumnya kolom payment_proof pernah di-drop (2026_07_17_072125), ditambah lagi karena sistem ganti dari Midtrans ke upload bukti manual
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

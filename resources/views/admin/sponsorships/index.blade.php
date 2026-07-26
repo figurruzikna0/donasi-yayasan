@@ -96,7 +96,7 @@
                             <th class="py-4 px-6 text-[0.6rem] uppercase tracking-widest font-bold text-base-content/40 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-base-100">
+                    <tbody class="divide-y divide-base-100 stagger-enter">
                         @forelse($sponsorships as $sponsorship)
                             @php
                                 $isExpiredPeriod = $sponsorship->expires_at && $sponsorship->expires_at->isPast();

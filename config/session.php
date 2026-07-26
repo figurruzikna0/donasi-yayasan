@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * session.php — Konfigurasi session
+ * ===================================
+ * Mengatur driver session, masa berlaku, enkripsi,
+ * lokasi file, koneksi database, cookie, dan serialisasi.
+ */
+
 use Illuminate\Support\Str;
 
 return [

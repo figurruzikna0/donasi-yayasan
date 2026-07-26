@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * LoginRequest — Validasi & Autentikasi Login
+ * =============================================
+ * Menangani validasi input login (email + password), proses autentikasi
+ * dengan pengecekan rate limiting (max 5 percobaan), serta menyediakan
+ * throttle key untuk mencegah brute force.
+ */
+
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
@@ -12,19 +20,13 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    // --- OTORISASI: semua user diizinkan mengakses form login ---
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    // --- ATURAN VALIDASI: email wajib valid, password wajib diisi ---
     public function rules(): array
     {
         return [
@@ -33,11 +35,7 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @throws ValidationException
-     */
+    // --- AUTENTIKASI: coba login, lempar ValidationException jika gagal, bersihkan rate limiter jika sukses ---
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
@@ -53,11 +51,7 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-    /**
-     * Ensure the login request is not rate limited.
-     *
-     * @throws ValidationException
-     */
+    // --- RATE LIMITER: cek batas percobaan login (max 5), lempar Lockout jika terlau banyak ---
     public function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
@@ -74,9 +68,7 @@ class LoginRequest extends FormRequest
             ]);
     }
 
-    /**
-     * Get the rate limiting throttle key for the request.
-     */
+    // --- THROTTLE KEY: buat key unik berdasarkan email + IP user ---
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());

@@ -696,11 +696,11 @@ Admin membuat berita "Kegiatan Belajar Mengajar TPQ" dengan status Published. Bu
 Admin membuka menu "Riwayat Transaksi". Melihat 4 card statistik: 50 Total Donasi, 10 Sponsorship, 45 Sukses, 15 Tertunda. Tab "Donasi Kampanye" aktif — tabel menampilkan donatur, campaign, nominal, kode donasi, link bukti (klik → buka gambar), status badge, tanggal. Klik "Konfirmasi" pada donasi pending → status berubah jadi Sukses, collected_amount campaign bertambah. Donatur menerima WhatsApp: "✅ Donasi Berhasil Dikonfirmasi! Campaign: ${judul}, Nominal: Rp50.000, Terima kasih!"
 
 **Umpan Balik:**
-> **Pengurus Yayasan:** "Validasi pembayaran dan notifikasi sudah berfungsi dengan baik. Mohon ditambahkan tombol Sync All untuk menyinkronkan status dari Midtrans lama."
+> **Pengurus Yayasan:** "Validasi pembayaran dan notifikasi sudah berfungsi dengan baik. Mohon ditambahkan loading state pada tombol Konfirmasi agar tidak double-click."
 
 **Tindakan:**
-- Menambahkan tombol "Sync All" yang mengecek status transaksi Midtrans (untuk data lama yang masih menggunakan snap_token)
-- Menambahkan indikator loading saat tombol Konfirmasi diklik agar tidak double-click
+- Menambahkan indikator loading (spinner-ring-sm + "Memproses...") saat tombol Konfirmasi diklik agar tidak double-click
+- Loading state sudah otomatis dari global submit listener app.js
 
 #### 4. Sprint Retrospective
 
@@ -710,8 +710,8 @@ Admin membuka menu "Riwayat Transaksi". Melihat 4 card statistik: 50 Total Donas
 - Notifikasi WhatsApp memberikan kepastian kepada donatur
 
 **Hal yang perlu diperbaiki:**
-- Belum ada loading state pada tombol Konfirmasi — risiko double-click
-- Sync Midtrans hanya untuk data lama — perlu dokumentasi bahwa Midtrans sudah non-aktif
+- Loading state pada tombol Konfirmasi sudah ada via global submit listener
+- Midtrans sudah non-aktif — Sync All sudah dihapus dari UI, dokumentasi mencatat bahwa Midtrans non-aktif
 
 ### Sub-sprint 7B — Invoice & Riwayat Donasi (User) [Hari 81–84]
 
@@ -853,7 +853,7 @@ Admin membuka "Rekap Donasi" — filter: status Berhasil, campaign "Bangun Musho
 
 **Hal yang perlu diperbaiki:**
 - Filter tahun pada chart cashflow belum ada — perlu ditambahkan
-- Beberapa data donasi dari Midtrans lama masih ada — perlu dibersihkan
+- Data donasi dari Midtrans lama (snap_token masih terisi) — tidak perlu dibersihkan, hanya kompatibilitas
 
 ### Sub-sprint 8B — Pengujian, UAT, dan Serah Terima [Hari 89–92]
 

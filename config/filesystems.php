@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * filesystems.php — Konfigurasi filesystem
+ * ==========================================
+ * Mengatur disk filesystem default (local, public, s3),
+ * root direktori, dan symbolic links.
+ */
+
 return [
 
     /*

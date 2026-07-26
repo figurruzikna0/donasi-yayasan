@@ -15,6 +15,8 @@
 
         {{-- ASSET: CSS & JS via Vite --}}
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <script>window.addEventListener('pageshow',function(e){if(e.persisted)location.reload()});</script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-base-200">

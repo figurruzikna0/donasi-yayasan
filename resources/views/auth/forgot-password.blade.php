@@ -9,8 +9,6 @@
         <p class="text-sm text-emerald-500">Masukkan email Anda untuk mendapatkan tautan reset</p>
     </div>
 
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 
