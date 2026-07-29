@@ -21,7 +21,7 @@ class DonationFactory extends Factory
             'donor_email' => fake()->email(),
             'donor_phone' => fake()->phoneNumber(),
             'amount' => fake()->numberBetween(10000, 5000000),
-            'payment_method' => 'Midtrans',
+            'payment_method' => 'Transfer Bank',
             'status' => 'pending',
         ];
     }

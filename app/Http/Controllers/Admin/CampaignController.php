@@ -69,6 +69,7 @@ class CampaignController extends Controller
             'description' => 'required|string',
             'target_amount' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'status' => 'required|in:active,completed',
         ]);
 
         $data = [
@@ -76,6 +77,7 @@ class CampaignController extends Controller
             'slug' => Str::slug($validated['title']),
             'description' => $validated['description'],
             'target_amount' => $validated['target_amount'],
+            'status' => $validated['status'],
         ];
 
         if ($request->hasFile('image')) {

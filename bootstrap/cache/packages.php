@@ -1,13 +1,4 @@
-<?php
-
-/*
- * packages.php — Cache paket vendor
- * ===================================
- * Berisi daftar service provider dan alias dari
- * paket vendor yang telah ditemukan (auto-discovery).
- */
-
-return array (
+<?php return array (
   'barryvdh/laravel-dompdf' => 
   array (
     'aliases' => 

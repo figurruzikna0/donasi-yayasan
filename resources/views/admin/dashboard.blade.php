@@ -25,7 +25,9 @@
             <div class="relative rounded-xl p-5 flex items-center gap-4 overflow-hidden group cursor-default" style="background: linear-gradient(135deg, #0f3b2c 0%, #1a6b4a 100%);">
                 <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/5"></div>
                     <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-full bg-white/5"></div>
-                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">💰</div>
+                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
                     <div class="min-w-0 relative">
                         <p class="text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/60">Total Dana Terkumpul</p>
                         <p class="text-lg font-black text-white truncate mt-0.5">Rp {{ number_format($totalFunds ?? 0, 0, ',', '.') }}</p>
@@ -34,7 +36,9 @@
             <div class="relative rounded-xl p-5 flex items-center gap-4 overflow-hidden group cursor-default" style="background: linear-gradient(135deg, #0e5e3a 0%, #1e8b57 100%);">
                 <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/5"></div>
                     <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-full bg-white/5"></div>
-                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">📣</div>
+                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38a.496.496 0 01-.661-.19 12.813 12.813 0 01-1.127-3.626m2.923-2.858a9.292 9.292 0 00-2.923 2.858m2.923-2.858a9.538 9.538 0 012.645-2.077 9.118 9.118 0 013.424-1.003M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
                     <div class="min-w-0 relative">
                         <p class="text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/60">Kampanye Aktif</p>
                         <p class="text-2xl font-black text-white mt-0.5">{{ $activeCampaigns ?? 0 }}</p>
@@ -43,7 +47,9 @@
             <div class="relative rounded-xl p-5 flex items-center gap-4 overflow-hidden group cursor-default" style="background: linear-gradient(135deg, #7c4f1a 0%, #b87d2e 100%);">
                 <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/5"></div>
                     <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-full bg-white/5"></div>
-                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">👦</div>
+                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                        </div>
                     <div class="min-w-0 relative">
                         <p class="text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/60">Total Anak Asuh</p>
                         <p class="text-2xl font-black text-white mt-0.5">{{ $fosterChildren ?? 0 }}</p>
@@ -52,7 +58,9 @@
             <div class="relative rounded-xl p-5 flex items-center gap-4 overflow-hidden group cursor-default" style="background: linear-gradient(135deg, #155e75 0%, #1d8db3 100%);">
                 <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/5"></div>
                     <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-full bg-white/5"></div>
-                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">📥</div>
+                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+                        </div>
                     <div class="min-w-0 relative">
                         <p class="text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/60">Donasi Hari Ini</p>
                         <p class="text-lg font-black text-white truncate mt-0.5">Rp {{ number_format($todayDonasi ?? 0, 0, ',', '.') }}</p>
@@ -61,7 +69,9 @@
             <div class="relative rounded-xl p-5 flex items-center gap-4 overflow-hidden group cursor-default" style="background: linear-gradient(135deg, #4a236e 0%, #7c3aae 100%);">
                 <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/5"></div>
                     <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-full bg-white/5"></div>
-                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">🤝</div>
+                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 backdrop-blur-sm">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
+                        </div>
                     <div class="min-w-0 relative">
                         <p class="text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/60">Sponsor Baru (Bln Ini)</p>
                         <p class="text-2xl font-black text-white mt-0.5">{{ $monthSponsor ?? 0 }}</p>
@@ -77,7 +87,10 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                         <div>
-                            <div class="font-extrabold text-slate-800">📈 Cashflow Donasi</div>
+                            <div class="font-extrabold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+                            Cashflow Donasi
+                        </div>
                             <div class="text-xs text-slate-400 font-semibold mt-0.5">Total dana masuk per bulan (Rp)</div>
                         </div>
                         <div class="flex gap-1 bg-slate-100 rounded-lg p-0.5">
@@ -94,7 +107,10 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                         <div>
-                            <div class="font-extrabold text-slate-800">👦 Status Anak Asuh</div>
+                            <div class="font-extrabold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            Status Anak Asuh
+                        </div>
                             <div class="text-xs text-slate-400 font-semibold mt-0.5">Distribusi status saat ini</div>
                         </div>
                     </div>
@@ -109,7 +125,8 @@
         <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
             <div class="p-5">
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="font-extrabold text-slate-800">🏆 Kampanye Terpopuler</div>
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+                    <div class="font-extrabold text-slate-800">Kampanye Terpopuler</div>
                     <a href="{{ route('admin.campaigns.index') }}" class="link link-hover text-xs font-bold text-emerald-700 ml-auto flex items-center gap-1 hover:gap-1.5 transition-all">
                         Kelola Kampanye
                         <span class="text-xs">→</span>
@@ -130,7 +147,7 @@
                         <div class="flex items-center justify-between mt-1.5">
                             <span class="text-[0.55rem] text-slate-500 font-medium">Rp {{ number_format($camp->collected_amount, 0, ',', '.') }} / Rp {{ number_format($camp->target_amount, 0, ',', '.') }}</span>
                             @if($progress >= 100)
-                            <span class="text-[0.55rem] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">Tercapai ✅</span>
+                            <span class="text-[0.55rem] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Tercapai</span>
                             @endif
                         </div>
                     </div>
@@ -148,7 +165,8 @@
             <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="font-extrabold text-slate-800">🧾 Transaksi Terbaru</div>
+                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                        <div class="font-extrabold text-slate-800">Transaksi Terbaru</div>
                         <a href="{{ route('admin.transactions.index') }}" class="link link-hover text-xs font-bold text-emerald-700 ml-auto flex items-center gap-1 hover:gap-1.5 transition-all">
                             Lihat Semua
                             <span class="text-xs">→</span>
@@ -167,7 +185,7 @@
                                 <div class="font-bold text-emerald-700 text-sm">Rp {{ number_format($txn->amount, 0, ',', '.') }}</div>
                                 @php
                                     $badgeClass = $txn->status === 'success' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : ($txn->status === 'pending' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-rose-50 text-rose-800 border-rose-200');
-                                    $badgeText = $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Gagal');
+                                    $badgeText = $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Ditolak');
                                 @endphp
                                 <span class="inline-block text-[0.55rem] font-bold px-2 py-0.5 rounded-full border {{ $badgeClass }} mt-0.5">{{ $badgeText }}</span>
                             </div>
@@ -182,7 +200,10 @@
             {{-- Child Status Detail --}}
             <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="p-5">
-                    <div class="font-extrabold text-slate-800 mb-4">📊 Rincian Anak Asuh</div>
+                    <div class="font-extrabold text-slate-800 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                            Rincian Anak Asuh
+                        </div>
 
                     <div class="space-y-3">
                         <div class="bg-slate-50 rounded-lg px-4 py-3">
@@ -254,7 +275,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const h = new Date().getHours();
         const g = h < 5 ? 'Selamat Malam' : h < 12 ? 'Selamat Pagi' : h < 15 ? 'Selamat Siang' : h < 18 ? 'Selamat Sore' : 'Selamat Malam';
-        document.getElementById('page-title-text').textContent = g + ' 👋';
+        document.getElementById('page-title-text').textContent = g;
     });
 
     // ── Cashflow data dari backend (PHP → JS) ──

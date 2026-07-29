@@ -143,7 +143,7 @@
                                             <td class="py-4 px-6 text-center">
                                                 @php
                                                     $sIcon = $item->status == 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($item->status == 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z');
-                                                    $sLabel = $item->status == 'success' ? 'Sukses' : ($item->status == 'pending' ? 'Tertunda' : 'Gagal');
+                                                    $sLabel = $item->status == 'success' ? 'Sukses' : ($item->status == 'pending' ? 'Tertunda' : 'Ditolak');
                                                     $sClass = $item->status == 'success' ? 'text-emerald-700 bg-emerald-100 border-emerald-200' : ($item->status == 'pending' ? 'text-amber-700 bg-amber-100 border-amber-200' : 'text-rose-700 bg-rose-100 border-rose-200');
                                                 @endphp
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $sClass }}">
@@ -166,12 +166,11 @@
                                                         </form>
                                                         <button type="button" @click="$dispatch('open-reject', { id: '{{ $item->order_id }}', donor: '{{ $item->donor_name }}' })" class="btn btn-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200 rounded-lg font-bold">Tolak</button>
                                                     @endif
-                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
+                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data>
                                                         @csrf @method('DELETE')
-                                                        <button type="button" @click="open = true" class="btn btn-ghost btn-xs text-base-content/50 hover:text-rose-600 hover:bg-rose-50 rounded-lg font-bold">
+                                                        <button type="button" @click="$dispatch('open-delete', { id: '{{ $item->order_id }}', donor: '{{ $item->donor_name }}' })" class="btn btn-ghost btn-xs text-base-content/50 hover:text-rose-600 hover:bg-rose-50 rounded-lg font-bold">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                         </button>
-                                                        <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
                                                     </form>
                                                 </div>
                                             </td>
@@ -269,7 +268,7 @@
                                             <td class="py-4 px-6 text-center">
                                                 @php
                                                     $sIcon = $item->status == 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($item->status == 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z');
-                                                    $sLabel = $item->status == 'success' ? 'Sukses' : ($item->status == 'pending' ? 'Tertunda' : 'Gagal');
+                                                    $sLabel = $item->status == 'success' ? 'Sukses' : ($item->status == 'pending' ? 'Tertunda' : 'Ditolak');
                                                     $sClass = $item->status == 'success' ? 'text-emerald-700 bg-emerald-100 border-emerald-200' : ($item->status == 'pending' ? 'text-amber-700 bg-amber-100 border-amber-200' : 'text-rose-700 bg-rose-100 border-rose-200');
                                                 @endphp
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $sClass }}">
@@ -292,12 +291,11 @@
                                                         </form>
                                                         <button type="button" @click="$dispatch('open-reject', { id: '{{ $item->order_id }}', donor: '{{ $item->donor_name }}' })" class="btn btn-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200 rounded-lg font-bold">Tolak</button>
                                                     @endif
-                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data="{ open: false }" @submit.prevent="open = true">
+                                                    <form action="{{ route('admin.transactions.destroy', $item->order_id) }}" method="POST" class="inline" x-data>
                                                         @csrf @method('DELETE')
-                                                        <button type="button" @click="open = true" class="btn btn-ghost btn-xs text-base-content/50 hover:text-rose-600 hover:bg-rose-50 rounded-lg font-bold">
+                                                        <button type="button" @click="$dispatch('open-delete', { id: '{{ $item->order_id }}', donor: '{{ $item->donor_name }}' })" class="btn btn-ghost btn-xs text-base-content/50 hover:text-rose-600 hover:bg-rose-50 rounded-lg font-bold">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                         </button>
-                                                        <x-confirm-delete-modal entity-name="{{ $item->donor_name }}" entity-type="transaksi" />
                                                     </form>
                                                 </div>
                                             </td>
@@ -322,6 +320,30 @@
         </div>
 
     </div>
+</div>
+
+{{-- DELETE MODAL --}}
+<div x-data="{ open: false, orderId: '', donorName: '' }"
+     @open-delete.window="orderId = $event.detail.id; donorName = $event.detail.donor; open = true">
+    <dialog class="modal" :class="{ 'modal-open': open }">
+        <div class="modal-box max-w-sm p-0 overflow-hidden">
+            <div class="px-6 pt-8 pb-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-rose-50 flex items-center justify-center shadow-inner">
+                    <svg class="w-8 h-8 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                </div>
+                <h3 class="text-lg font-black text-slate-800 mb-1">Konfirmasi Hapus</h3>
+                <p class="text-sm text-slate-500 mb-6 leading-relaxed">Yakin ingin menghapus transaksi <strong class="text-slate-800" x-text="donorName"></strong>? Tindakan ini tidak bisa dibatalkan.</p>
+                <div class="flex gap-3 justify-center">
+                    <button type="button" @click="open = false" class="btn btn-ghost btn-sm font-semibold px-6 text-slate-600 hover:bg-slate-100">Batal</button>
+                    <form :action="`{{ url('admin/transactions') }}/${orderId}`" method="POST" class="inline">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-sm font-semibold px-6 text-white bg-rose-500 hover:bg-rose-600 border-none" @click="open = false">Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button @click="open = false">close</button></form>
+    </dialog>
 </div>
 
 {{-- REJECT MODAL --}}

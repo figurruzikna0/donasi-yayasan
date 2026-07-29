@@ -144,17 +144,17 @@ class ChildDevelopmentController extends Controller
         $judul     = $development->judul;
         $deskripsi = $development->deskripsi;
 
-        $pesan = "Assalamu'alaikum, *{$namaOTA}* 🌿\n\n"
-               . "📋 *Laporan Perkembangan Anak Asuh Anda*\n\n"
+        $pesan = "Assalamu'alaikum, *{$namaOTA}*\n\n"
+               . "*Laporan Perkembangan Anak Asuh Anda*\n\n"
                . "Alhamdulillah, ada update terbaru tentang anak yang Anda sponsori. Berikut laporannya:\n\n"
                . "━━━━━━━━━━━━━━━━━\n"
-               . "👦 *Nama Anak*    : {$namaAnak}\n"
-               . "⚧  *Jenis Kelamin*: {$kelamin}\n"
-               . "🗓 *Tanggal*      : {$tanggal}\n\n"
-               . "📌 *{$judul}*\n\n"
+               . "*Nama Anak*    : {$namaAnak}\n"
+               . "*Jenis Kelamin*: {$kelamin}\n"
+               . "*Tanggal*      : {$tanggal}\n\n"
+               . "*{$judul}*\n\n"
                . "{$deskripsi}\n"
                . "━━━━━━━━━━━━━━━━━\n\n"
-               . "Terima kasih atas kepedulian dan dukungan Anda yang berkelanjutan. Semoga menjadi amal jariyah yang terus mengalir. 🤲\n\n"
+               . "Terima kasih atas kepedulian dan dukungan Anda yang berkelanjutan. Semoga menjadi amal jariyah yang terus mengalir.\n\n"
                . "_Baitul Yatim_";
 
         // Kirim pesan teks dulu
@@ -165,7 +165,7 @@ class ChildDevelopmentController extends Controller
         if ($development->foto) {
             $fonnte->sendWithMedia(
                 $sponsorship->donor_phone,
-                '📸 Foto perkembangan anak asuh Anda',
+                'Foto perkembangan anak asuh Anda',
                 $development->foto
             );
         }

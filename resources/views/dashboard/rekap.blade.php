@@ -108,7 +108,7 @@
                             <button @click="dFilter = 'all'" :class="dFilter === 'all' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Semua</button>
                             <button @click="dFilter = 'success'" :class="dFilter === 'success' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Berhasil</button>
                             <button @click="dFilter = 'pending'" :class="dFilter === 'pending' ? 'bg-amber-500 text-white shadow-lg shadow-amber-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Menunggu</button>
-                            <button @click="dFilter = 'failed'" :class="dFilter === 'failed' ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Gagal</button>
+                            <button @click="dFilter = 'failed'" :class="dFilter === 'failed' ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Ditolak</button>
                         </div>
                     </div>
 
@@ -154,7 +154,7 @@
                                             <td class="py-4 px-6">
                                                 @php
                                                     $bc = $d->status == 'success' ? 'badge-success text-emerald-700 bg-emerald-100 border-emerald-200' : ($d->status == 'pending' ? 'badge-warning text-amber-700 bg-amber-100 border-amber-200' : 'badge-error text-rose-700 bg-rose-100 border-rose-200');
-                                                    $bt = $d->status == 'success' ? 'Berhasil' : ($d->status == 'pending' ? 'Menunggu' : 'Gagal');
+                                                    $bt = $d->status == 'success' ? 'Berhasil' : ($d->status == 'pending' ? 'Menunggu' : 'Ditolak');
                                                     $icon = $d->status == 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($d->status == 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z');
                                                 @endphp
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $bc }}">
@@ -202,8 +202,8 @@
                             <button @click="sFilter = 'all'" :class="sFilter === 'all' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Semua</button>
                             <button @click="sFilter = 'success'" :class="sFilter === 'success' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Aktif</button>
                             <button @click="sFilter = 'pending'" :class="sFilter === 'pending' ? 'bg-amber-500 text-white shadow-lg shadow-amber-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Pending</button>
-                            <button @click="sFilter = 'failed'" :class="sFilter === 'failed' ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Gagal</button>
-                            <button @click="sFilter = 'expired'" :class="sFilter === 'expired' ? 'bg-slate-600 text-white shadow-lg shadow-slate-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Kadaluarsa</button>
+                            <button @click="sFilter = 'failed'" :class="sFilter === 'failed' ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Ditolak</button>
+                            <button @click="sFilter = 'expired'" :class="sFilter === 'expired' ? 'bg-slate-600 text-white shadow-lg shadow-slate-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80'" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200">Expire</button>
                         </div>
                     </div>
 
@@ -235,11 +235,11 @@
                                                 $sIcon = 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z';
                                             } elseif ($isExpired || $s->status == 'expired') {
                                                 $sClass = 'text-slate-600 bg-slate-100 border-slate-200';
-                                                $sText = 'Kadaluarsa';
+                                                $sText = 'Expire';
                                                 $sIcon = 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z';
                                             } else {
                                                 $sClass = 'text-rose-700 bg-rose-100 border-rose-200';
-                                                $sText = 'Gagal';
+                                                $sText = 'Ditolak';
                                                 $sIcon = 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z';
                                             }
                                         @endphp

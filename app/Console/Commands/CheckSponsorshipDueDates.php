@@ -58,7 +58,7 @@ class CheckSponsorshipDueDates extends Command
                 continue;
             }
 
-            $message = "Halo {$sponsorship->donor_name}, sponsorship Anda untuk {$sponsorship->fosterChild?->name} akan berakhir pada {$sponsorship->expires_at->format('d M Y')}. Mohon lakukan perpanjangan agar dukungan tetap berlanjut. Terima kasih 🙏";
+            $message = "Halo {$sponsorship->donor_name}, sponsorship Anda untuk {$sponsorship->fosterChild?->name} akan berakhir pada {$sponsorship->expires_at->format('d M Y')}. Mohon lakukan perpanjangan agar dukungan tetap berlanjut. Terima kasih";
 
             $this->sendWhatsapp($sponsorship->donor_phone, $message);
             $sponsorship->update(['reminder_sent_at' => now()]);

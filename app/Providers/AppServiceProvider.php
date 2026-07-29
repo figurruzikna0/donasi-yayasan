@@ -14,6 +14,7 @@
 namespace App\Providers;
 
 use App\Notifications\ResetPasswordNotification;
+use App\View\Composers\PendingCountComposer;
 use App\View\Composers\ProfilYayasanComposer;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Daftarkan View Composer global — $profil tersedia di semua view
         View::composer('*', ProfilYayasanComposer::class);
+
+        // Daftarkan View Composer untuk admin layout — $pendingCount tersedia di layouts.admin
+        View::composer('layouts.admin', PendingCountComposer::class);
 
         // Ganti notifikasi reset password bawaan Laravel (Inggris) → kustom (Indonesia)
         ResetPassword::toMailUsing(function ($notifiable, $token) {

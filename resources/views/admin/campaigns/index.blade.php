@@ -59,7 +59,9 @@
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden" x-data="{ cFilter: 'all' }">
             <div class="px-6 py-4 border-b border-base-200 flex items-center justify-between gap-3 flex-wrap">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-lg shrink-0">📢</div>
+                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-lg shrink-0">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38a.496.496 0 01-.661-.19 12.813 12.813 0 01-1.127-3.626m2.923-2.858a9.292 9.292 0 00-2.923 2.858m2.923-2.858a9.538 9.538 0 012.645-2.077 9.118 9.118 0 013.424-1.003M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
                     <div>
                         <p class="font-extrabold text-sm text-base-content">Daftar Kampanye Donasi</p>
                         <p class="text-xs text-base-content/50">Seluruh kampanye donasi yang terdaftar di sistem</p>

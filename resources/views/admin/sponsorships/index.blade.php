@@ -77,7 +77,7 @@
                         <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
                     </div>
                     <div>
-                        <div class="text-base-content/50 text-[0.65rem] uppercase tracking-widest font-bold">Gagal / Kadaluarsa</div>
+                        <div class="text-base-content/50 text-[0.65rem] uppercase tracking-widest font-bold">Ditolak / Expire</div>
                         <div class="text-2xl font-black text-base-content mt-0.5">{{ $failedExpiredCount }}</div>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
                                             @if($statusKey === 'aktif')
                                                 <span class="text-emerald-600 font-semibold">{{ $remainingDays }} hari lagi</span>
                                             @elseif($statusKey === 'kadaluarsa')
-                                                <span class="text-rose-600 font-semibold">{{ $remainingDays > 0 ? 'Lewat ' . $remainingDays . ' hari' : 'Kadaluarsa' }}</span>
+                                                <span class="text-rose-600 font-semibold">{{ $remainingDays > 0 ? 'Lewat ' . $remainingDays . ' hari' : 'Expire' }}</span>
                                             @endif
                                         </div>
                                     @else
@@ -151,7 +151,7 @@
                                 <td class="py-4 px-6 text-center">
                                     @php
                                         $sIcon = $statusKey === 'aktif' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($statusKey === 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : ($statusKey === 'kadaluarsa' ? 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'));
-                                        $sLabel = $statusKey === 'aktif' ? 'Aktif' : ($statusKey === 'pending' ? 'Menunggu' : ($statusKey === 'kadaluarsa' ? 'Kadaluarsa' : 'Gagal'));
+                                        $sLabel = $statusKey === 'aktif' ? 'Aktif' : ($statusKey === 'pending' ? 'Menunggu' : ($statusKey === 'kadaluarsa' ? 'Expire' : 'Ditolak'));
                                         $sClass = $statusKey === 'aktif' ? 'text-emerald-700 bg-emerald-100 border-emerald-200' : ($statusKey === 'pending' ? 'text-amber-700 bg-amber-100 border-amber-200' : ($statusKey === 'kadaluarsa' ? 'text-slate-600 bg-slate-100 border-slate-200' : 'text-rose-700 bg-rose-100 border-rose-200'));
                                     @endphp
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $sClass }}">

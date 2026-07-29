@@ -285,9 +285,9 @@ class RekapController extends Controller
                 $label = match(true) {
                     $s->status == 'pending' => 'Pending',
                     $s->status == 'success' && !$isExpired => 'Aktif',
-                    $s->status == 'success' && $isExpired => 'Kadaluarsa',
-                    $s->status == 'expired' => 'Kadaluarsa',
-                    default => 'Gagal',
+                    $s->status == 'success' && $isExpired => 'Expire',
+$s->status == 'expired' => 'Expire',
+            default => 'Ditolak',
                 };
                 fputcsv($file, [
                     $s->order_id,

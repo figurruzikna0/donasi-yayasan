@@ -99,7 +99,7 @@
                 <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'pending'])) }}"
                    class="px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 {{ $curStatus === 'pending' ? 'bg-amber-500 text-white shadow-lg shadow-amber-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80' }}">Menunggu</a>
                 <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'kadaluarsa'])) }}"
-                   class="px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 {{ $curStatus === 'kadaluarsa' ? 'bg-slate-600 text-white shadow-lg shadow-slate-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80' }}">Kadaluarsa</a>
+                   class="px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 {{ $curStatus === 'kadaluarsa' ? 'bg-slate-600 text-white shadow-lg shadow-slate-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80' }}">Expire</a>
                 <a href="{{ route('admin.rekap.orang-tua-asuh', array_merge(request()->except(['status', 'page']), ['status' => 'gagal'])) }}"
                    class="px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 {{ $curStatus === 'gagal' ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-base-200/70 text-base-content/60 hover:bg-base-200 hover:text-base-content/80' }}">Gagal</a>
             </div>
@@ -201,7 +201,7 @@
                                     <td class="py-4 px-6 text-center">
                                         @php
                                             $sIcon = $statusKey === 'aktif' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($statusKey === 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : ($statusKey === 'kadaluarsa' ? 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'));
-                                            $sLabel = $statusKey === 'aktif' ? 'Aktif' : ($statusKey === 'pending' ? 'Menunggu' : ($statusKey === 'kadaluarsa' ? 'Kadaluarsa' : 'Gagal'));
+                                            $sLabel = $statusKey === 'aktif' ? 'Aktif' : ($statusKey === 'pending' ? 'Menunggu' : ($statusKey === 'kadaluarsa' ? 'Expire' : 'Ditolak'));
                                             $sClass = $statusKey === 'aktif' ? 'text-emerald-700 bg-emerald-100 border-emerald-200' : ($statusKey === 'pending' ? 'text-amber-700 bg-amber-100 border-amber-200' : ($statusKey === 'kadaluarsa' ? 'text-slate-600 bg-slate-100 border-slate-200' : 'text-rose-700 bg-rose-100 border-rose-200'));
                                         @endphp
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $sClass }}">

@@ -6,13 +6,15 @@
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-xl shrink-0">💰</span>
+                        <span class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-xl shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </span>
                         <div>
                             <h1 class="text-2xl sm:text-3xl font-black">Detail Program Donasi</h1>
                             <p class="text-emerald-100/70 text-sm mt-0.5">Informasi lengkap program donasi yayasan</p>
                         </div>
                     </div>
-                    <a href="{{ url()->previous() == url()->current() ? route('dashboard') : url()->previous() }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 btn-sm font-bold rounded-xl backdrop-blur-sm bg-white/5">
+                    <a href="{{ url('/') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 btn-sm font-bold rounded-xl backdrop-blur-sm bg-white/5">
                         ← Kembali
                     </a>
                 </div>
@@ -89,7 +91,7 @@
                                 Login untuk Donasi
                             </a>
                         @endauth
-                        <a href="{{ route('dashboard') }}" class="btn btn-outline border-slate-300 text-slate-600 hover:bg-slate-100 rounded-xl font-bold">
+                        <a href="{{ url('/') }}" class="btn btn-outline border-slate-300 text-slate-600 hover:bg-slate-100 rounded-xl font-bold">
                             ← Kembali
                         </a>
                     </div>
@@ -98,7 +100,7 @@
             </div>
 
             <div class="text-center mt-6 text-xs text-slate-400">
-                <p>🕌 Setiap rupiah donasi Anda akan disalurkan untuk program kebaikan Yayasan Baitul Yatim Sukabumi</p>
+                <p><svg class="w-4 h-4 inline-block -mt-0.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0112 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/></svg> Setiap rupiah donasi Anda akan disalurkan untuk program kebaikan Yayasan Baitul Yatim Sukabumi</p>
             </div>
         </div>
     </div>

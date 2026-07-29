@@ -40,7 +40,7 @@
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/88 via-emerald-900/85 to-emerald-900/88"></div>
             <div class="absolute inset-0 bg-black/40"></div>
         </div>
-        <div class="hero-content text-center max-w-4xl px-4 pt-8 lg:pt-12 pb-32 lg:pb-40 relative z-10">
+        <div class="hero-content text-center max-w-4xl px-4 pt-8 lg:pt-12 pb-16 lg:pb-20 relative z-10">
             <div>
                 <p data-aos="fade-down" class="text-emerald-200 text-lg sm:text-xl md:text-2xl uppercase tracking-[0.4em] font-black mb-5 drop-shadow-lg">
                     PEDULI YATIM
@@ -51,13 +51,38 @@
                 <h1 data-aos="fade-up" data-aos-delay="100" class="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-[1.15] tracking-tight">
                     Rezeki Itu <span class="text-emerald-300">Pasti</span>,<br>Kemuliaan Harus <span class="text-emerald-300">Dicari</span>,<br>Berbagi Tidak Akan Membuatmu <span class="text-emerald-300">Rugi</span>.
                 </h1>
-                <div data-aos="fade-up" data-aos-delay="300" class="mt-10 flex flex-wrap justify-center gap-3">
-                    <a href="#kampanye" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide shadow-lg hover:shadow-xl transition-all border-0">Lihat Program Donasi Aktif</a>
-                    <a href="#program-ota" class="btn btn-outline border-white text-white font-bold px-8 py-3.5 rounded-xl text-sm tracking-wide bg-white/10 hover:bg-white hover:text-emerald-800 hover:border-white transition-all">Jadi Orang Tua Asuh</a>
-                </div>
+
             </div>
         </div>
     </header>
+
+    {{-- SECTION AKSI CEPAT --}}
+    <section id="aksi-cepat" class="py-10 lg:py-12 px-4 bg-emerald-50 border-b border-emerald-100">
+        <div class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a href="#kampanye" class="group bg-white rounded-2xl p-6 sm:p-8 flex items-center gap-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-lg hover:border-emerald-200 transition-all border border-slate-200">
+                    <div class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-200 transition-colors">
+                        <svg class="w-7 h-7 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-bold text-emerald-800 text-lg">Lihat Program Donasi Aktif</p>
+                        <p class="text-sm text-slate-500 mt-0.5">Salurkan donasi terbaik Anda</p>
+                    </div>
+                    <svg class="w-5 h-5 text-emerald-400 ml-auto shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                </a>
+                <a href="#program-ota" class="group bg-white rounded-2xl p-6 sm:p-8 flex items-center gap-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-lg hover:border-emerald-200 transition-all border border-slate-200">
+                    <div class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-200 transition-colors">
+                        <svg class="w-7 h-7 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-bold text-emerald-800 text-lg">Jadi Orang Tua Asuh</p>
+                        <p class="text-sm text-slate-500 mt-0.5">Dukung masa depan anak yatim</p>
+                    </div>
+                    <svg class="w-5 h-5 text-emerald-400 ml-auto shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
 
     {{-- PROGRAM DONASI --}}
     <section id="kampanye" class="py-20 lg:py-28 px-4 bg-white">

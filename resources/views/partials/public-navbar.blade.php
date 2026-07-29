@@ -39,7 +39,7 @@
                     @endforeach
                 </ul>
             </li>
-            <li><a href="{{ ($isHome ?? false) ? '#kampanye' : url('/#kampanye') }}" class="font-bold text-emerald-700">Program Donasi</a></li>
+            <li><a href="{{ ($isHome ?? false) ? '#aksi-cepat' : url('/#aksi-cepat') }}" class="font-bold text-emerald-700">Program Donasi</a></li>
             <li><a href="{{ ($isHome ?? false) ? '#program-ota' : url('/#program-ota') }}" class="font-bold text-emerald-700">Orang Tua Asuh</a></li>
             <li><a href="{{ route('news.index') }}" class="font-bold text-emerald-700">Berita</a></li>
         </ul>
@@ -68,7 +68,7 @@
             <li><a href="{{ $link['route'] }}" class="text-emerald-700" @click="mobileOpen = false">{{ $link['label'] }}</a></li>
             @endforeach
             <li class="menu-title text-xs"><span>Program</span></li>
-            <li><a href="{{ ($isHome ?? false) ? '#kampanye' : url('/#kampanye') }}" class="text-emerald-700" @click="mobileOpen = false">Program Donasi</a></li>
+            <li><a href="{{ ($isHome ?? false) ? '#aksi-cepat' : url('/#aksi-cepat') }}" class="text-emerald-700" @click="mobileOpen = false">Program Donasi</a></li>
             <li><a href="{{ ($isHome ?? false) ? '#program-ota' : url('/#program-ota') }}" class="text-emerald-700" @click="mobileOpen = false">Orang Tua Asuh</a></li>
             <li><a href="{{ route('news.index') }}" class="text-emerald-700" @click="mobileOpen = false">Berita</a></li>
             <li class="menu-divider"></li>

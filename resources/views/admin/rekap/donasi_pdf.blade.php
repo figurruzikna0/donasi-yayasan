@@ -51,7 +51,7 @@ table.data td.right { text-align: right; }
 <td>
 @if($d->status == 'success') <span class="status status-success">Sukses</span>
 @elseif($d->status == 'pending') <span class="status status-pending">Pending</span>
-@else <span class="status status-failed">Gagal</span> @endif
+@else <span class="status status-failed">Ditolak</span> @endif
 </td>
 <td>{{ $d->created_at ? $d->created_at->format('d/m/Y H:i') : '-' }}</td>
 </tr>

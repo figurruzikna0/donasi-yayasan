@@ -130,6 +130,7 @@ class TransactionController extends Controller
             $donation->invoice_number = "INV-DN-{$month}-{$seq}";
         }
 
+        $donation->status = 'success';
         $donation->save();
 
         $donation->campaign?->increment('collected_amount', $donation->amount);
@@ -416,13 +417,13 @@ class TransactionController extends Controller
         $fonnte  = new FonnteService();
         $donatur = $sponsorship->donor_name;
 
-        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
-               . "❌ *Sponsorship Anak Asuh Ditolak*\n\n"
+        $pesan = "Assalamu'alaikum, *{$donatur}*\n\n"
+               . "*Sponsorship Anak Asuh Ditolak*\n\n"
                . "Mohon maaf, pengajuan sponsorship anak asuh Anda belum dapat disetujui dengan alasan berikut:\n\n"
-               . "📝 *Alasan Penolakan:*\n{$reason}\n\n"
+               . "*Alasan Penolakan:*\n{$reason}\n\n"
                . "Silakan hubungi admin yayasan untuk informasi lebih lanjut.\n\n"
                . "━━━━━━━━━━━━━━━━━\n"
-               . "🆔 *ID Transaksi*\n{$sponsorship->order_id}\n"
+               . "*ID Transaksi*\n{$sponsorship->order_id}\n"
                . "━━━━━━━━━━━━━━━━━\n\n"
                . "Wassalamu'alaikum wr. wb.\n"
                . "_Baitul Yatim_";
@@ -435,13 +436,13 @@ class TransactionController extends Controller
         $fonnte  = new FonnteService();
         $donatur = $donation->donor_name;
 
-        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
-               . "❌ *Donasi Ditolak*\n\n"
+        $pesan = "Assalamu'alaikum, *{$donatur}*\n\n"
+               . "*Donasi Ditolak*\n\n"
                . "Mohon maaf, donasi Anda belum dapat disetujui dengan alasan berikut:\n\n"
-               . "📝 *Alasan Penolakan:*\n{$reason}\n\n"
+               . "*Alasan Penolakan:*\n{$reason}\n\n"
                . "Silakan hubungi admin yayasan untuk informasi lebih lanjut.\n\n"
                . "━━━━━━━━━━━━━━━━━\n"
-               . "🆔 *ID Transaksi*\n{$donation->order_id}\n"
+               . "*ID Transaksi*\n{$donation->order_id}\n"
                . "━━━━━━━━━━━━━━━━━\n\n"
                . "Wassalamu'alaikum wr. wb.\n"
                . "_Baitul Yatim_";
@@ -467,21 +468,21 @@ class TransactionController extends Controller
         $orderId     = $sponsorship->order_id;
         $donatur     = $sponsorship->donor_name;
 
-        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
-               . "✅ *Sponsorship Anak Asuh Berhasil Dikonfirmasi!*\n\n"
-               . "Terima kasih telah menjadi Orang Tua Asuh. Kepedulian Anda sangat berarti bagi masa depan anak-anak kami. 🤲\n\n"
+        $pesan = "Assalamu'alaikum, *{$donatur}*\n\n"
+               . "*Sponsorship Anak Asuh Berhasil Dikonfirmasi!*\n\n"
+               . "Terima kasih telah menjadi Orang Tua Asuh. Kepedulian Anda sangat berarti bagi masa depan anak-anak kami.\n\n"
                . "━━━━━━━━━━━━━━━━━\n"
-               . "👦 *Data Anak Asuh*\n"
+               . "*Data Anak Asuh*\n"
                . "Nama   : {$namaAnak}\n"
                . "Usia   : {$usiaAnak}\n\n"
-               . "📦 *Rincian Paket*\n"
+               . "*Rincian Paket*\n"
                . "Paket  : {$paket}\n"
                . "Nominal: {$nominal}\n"
                . "Berlaku: {$mulai} s/d {$berakhir}\n\n"
-               . "🆔 *ID Transaksi*\n"
+               . "*ID Transaksi*\n"
                . "{$orderId}\n"
                . "━━━━━━━━━━━━━━━━━\n\n"
-               . "Semoga Allah SWT membalas kebaikan Anda dengan berlipat ganda. Aamiin 🤍\n\n"
+               . "Semoga Allah SWT membalas kebaikan Anda dengan berlipat ganda. Aamiin\n\n"
                . "_Baitul Yatim_";
 
         $fonnte->send($sponsorship->donor_phone, $pesan);
@@ -498,19 +499,19 @@ class TransactionController extends Controller
         $donatur  = $donation->donor_name;
         $metode   = $donation->payment_method ?? '-';
 
-        $pesan = "Assalamu'alaikum, *{$donatur}* 🌿\n\n"
-               . "✅ *Donasi Berhasil Dikonfirmasi!*\n\n"
-               . "Terima kasih atas donasi Anda. Semoga kebaikan ini menjadi amal jariyah yang tak terputus pahalanya. 🤲\n\n"
+        $pesan = "Assalamu'alaikum, *{$donatur}*\n\n"
+               . "*Donasi Berhasil Dikonfirmasi!*\n\n"
+               . "Terima kasih atas donasi Anda. Semoga kebaikan ini menjadi amal jariyah yang tak terputus pahalanya.\n\n"
                . "━━━━━━━━━━━━━━━━━\n"
-               . "📌 *Detail Donasi*\n"
+               . "*Detail Donasi*\n"
                . "Campaign : {$judul}\n"
                . "Nominal  : {$nominal}\n"
                . "Tanggal  : {$tanggal}\n"
                . "Metode   : {$metode}\n\n"
-               . "🆔 *ID Transaksi*\n"
+               . "*ID Transaksi*\n"
                . "{$donation->order_id}\n"
                . "━━━━━━━━━━━━━━━━━\n\n"
-               . "Semoga Allah SWT menerima amal ibadah Anda dan membalasnya dengan berlipat ganda. Aamiin 🤍\n\n"
+               . "Semoga Allah SWT menerima amal ibadah Anda dan membalasnya dengan berlipat ganda. Aamiin\n\n"
                . "_Baitul Yatim_";
 
         $fonnte->send($donation->donor_phone, $pesan);

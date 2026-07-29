@@ -11,6 +11,9 @@
  *   - sponsorships:check-due → JAM 08:00 setiap hari
  *     a) Kirim WA reminder ke donatur H-3 sebelum sponsorship expired
  *     b) Auto-expire sponsorship yg sudah lewat tanggal berakhir
+ *
+ *   - db:backup → JAM 02:00 setiap hari
+ *     Backup database MySQL ke storage/app/backups/ (disimpan 30 hari)
  */
 
 use Illuminate\Foundation\Inspiring;
@@ -25,3 +28,6 @@ Artisan::command('inspire', function () {
 // ─── SCHEDULE UTAMA ──────────────────────────────────────
 // Setiap hari jam 08:00 WIB, cek & kirim reminder sponsorship
 Schedule::command('sponsorships:check-due')->dailyAt('08:00');
+
+// Setiap hari jam 02:00 WIB, backup database (simpan 30 hari)
+Schedule::command('db:backup')->dailyAt('02:00');

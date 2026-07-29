@@ -136,7 +136,6 @@ Route::middleware(['auth', 'verified', 'throttle:10,1'])->group(function () {
 
 // ─── RUTE CALLBACK MIDTRANS ────────────────────────────────
 // NONAKTIF: sistem saat ini pakai upload bukti transfer manual + konfirmasi admin
-// Aktifkan kembali jika integrasi Midtrans sudah terverifikasi
 // Route::post('/midtrans/callback', [DonationController::class, 'callback'])
 //     ->name('midtrans.callback')
 //     ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);

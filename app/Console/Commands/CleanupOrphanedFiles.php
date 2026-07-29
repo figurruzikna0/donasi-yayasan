@@ -67,9 +67,9 @@ class CleanupOrphanedFiles extends Command
                     $this->line("Folder <comment>{$dir}/</comment>: {$this->countFiles($files)} file (legacy)");
                     if ($this->option('force')) {
                         Storage::disk('public')->deleteDirectory($dir);
-                        $this->info("  ✔ Folder {$dir}/ dihapus");
+                        $this->info("  [OK] Folder {$dir}/ dihapus");
                     } else {
-                        $this->warn("  ⚠ Akan dihapus (pakai --force)");
+$this->warn("  [!] Akan dihapus (pakai --force)");
                     }
                 }
             }
@@ -92,7 +92,7 @@ class CleanupOrphanedFiles extends Command
             $orphaned = array_diff($filesOnDisk, $usedFiles);
 
             if (empty($orphaned)) {
-                $this->line("Folder <comment>{$folder}/</comment>: {$this->countFiles($filesOnDisk)} file — semua terpakai ✅");
+                $this->line("Folder <comment>{$folder}/</comment>: {$this->countFiles($filesOnDisk)} file — semua terpakai");
                 continue;
             }
 
@@ -107,10 +107,10 @@ class CleanupOrphanedFiles extends Command
                 foreach ($orphaned as $file) {
                     Storage::disk('public')->delete($file);
                 }
-                $this->info("  ✔ {$this->countFiles($orphaned)} file dihapus");
+                $this->info("  [OK] {$this->countFiles($orphaned)} file dihapus");
             } else {
                 foreach ($orphaned as $file) {
-                    $this->warn("  ⚠ {$file}");
+                    $this->warn("  [!] {$file}");
                 }
             }
         }
@@ -122,14 +122,14 @@ class CleanupOrphanedFiles extends Command
             $this->line("File <comment>public/images/hero-bg.jpg</comment>: ~{$this->formatBytes($size)} (tidak dipakai)");
             if ($this->option('force')) {
                 @unlink($heroBg);
-                $this->info("  ✔ public/images/hero-bg.jpg dihapus");
+                $this->info("  [OK] public/images/hero-bg.jpg dihapus");
             } else {
-                $this->warn("  ⚠ Akan dihapus (pakai --force)");
+                $this->warn("  [!] Akan dihapus (pakai --force)");
             }
         }
 
         $this->newLine();
-        $mode = $this->option('force') ? 'Penghapusan selesai ✅' : 'Jalankan dengan --force untuk menghapus';
+        $mode = $this->option('force') ? 'Penghapusan selesai' : 'Jalankan dengan --force untuk menghapus';
         $this->info($mode);
     }
 

@@ -23,7 +23,7 @@ class SponsorshipFactory extends Factory
             'amount' => fake()->numberBetween(100000, 1000000),
             'package' => fake()->randomElement(['Reguler', 'Premium', 'Eksekutif']),
             'package_description' => fake()->sentence(),
-            'payment_method' => 'Midtrans',
+            'payment_method' => 'Transfer Bank',
             'status' => 'pending',
         ];
     }

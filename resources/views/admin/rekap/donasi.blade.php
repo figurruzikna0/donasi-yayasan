@@ -145,7 +145,7 @@
                                     <td class="py-4 px-6 text-center">
                                         @php
                                             $icon = $d->status == 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($d->status == 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z');
-                                            $label = $d->status == 'success' ? 'Sukses' : ($d->status == 'pending' ? 'Tertunda' : 'Gagal');
+                                            $label = $d->status == 'success' ? 'Sukses' : ($d->status == 'pending' ? 'Tertunda' : 'Ditolak');
                                             $classes = $d->status == 'success' ? 'text-emerald-700 bg-emerald-100 border-emerald-200' : ($d->status == 'pending' ? 'text-amber-700 bg-amber-100 border-amber-200' : 'text-rose-700 bg-rose-100 border-rose-200');
                                         @endphp
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $classes }}">

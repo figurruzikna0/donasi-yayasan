@@ -50,7 +50,7 @@ $s->status === 'success' && $isExpired => 'kadaluarsa',
 $s->status === 'expired' => 'kadaluarsa',
 default => 'gagal',
 };
-$statusLabel = match($statusKey) { 'aktif' => 'Aktif', 'pending' => 'Pending', 'kadaluarsa' => 'Kadaluarsa', default => 'Gagal' };
+$statusLabel = match($statusKey) { 'aktif' => 'Aktif', 'pending' => 'Pending', 'kadaluarsa' => 'Expire', default => 'Ditolak' };
 @endphp
 <tr>
 <td><strong>{{ $s->donor_name }}</strong></td>

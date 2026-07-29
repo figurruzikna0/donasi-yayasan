@@ -106,6 +106,19 @@
                         @enderror
                     </div>
 
+                    <div class="form-control mb-5">
+                        <label class="label">
+                            <span class="label-text font-bold text-base-content">Status Kampanye</span>
+                        </label>
+                        <select name="status" class="select select-bordered w-full">
+                            <option value="active" {{ old('status', $campaign->status) == 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="completed" {{ old('status', $campaign->status) == 'completed' ? 'selected' : '' }}>Selesai</option>
+                        </select>
+                        @error('status')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div class="divider"></div>
 
                     <div class="flex items-center justify-end gap-3">

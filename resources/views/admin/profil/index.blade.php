@@ -43,7 +43,9 @@
                 {{-- CARD 1: Info Dasar --}}
                 <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">🏢</div>
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">
+                            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+                        </div>
                         <div>
                             <p class="font-extrabold text-sm text-slate-800">Informasi Dasar</p>
                             <p class="text-xs text-slate-400">Nama, kontak, logo, dan alamat yayasan</p>
@@ -98,7 +100,9 @@
                 {{-- CARD 2: Sejarah, Visi, Misi --}}
                 <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">📖</div>
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                                        </div>
                         <div>
                             <p class="font-extrabold text-sm text-slate-800">Sejarah, Visi & Misi</p>
                             <p class="text-xs text-slate-400">Narasi dan arah gerak yayasan</p>
@@ -128,7 +132,9 @@
                 {{-- CARD 4: Berkas Visual --}}
                 <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">📂</div>
+                        <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">
+                            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                        </div>
                         <div>
                             <p class="font-extrabold text-sm text-slate-800">Berkas Resmi & Transparansi</p>
                             <p class="text-xs text-slate-400">Dokumen legalitas dan bagan struktur organisasi</p>
@@ -196,7 +202,9 @@
             {{-- Daftar pendiri saat ini --}}
             <div id="pendiri-list-wrap" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">👥</div>
+                    <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">
+                            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                        </div>
                     <div>
                         <p class="font-extrabold text-sm text-slate-800">Daftar Pendiri Saat Ini</p>
                         <p class="text-xs text-slate-400">{{ $pendiris->count() }} orang terdaftar dan tampil di halaman publik</p>
@@ -295,7 +303,9 @@
                             </div>
                         @empty
                             <div class="col-span-full text-center py-12 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50">
-                                <div class="text-4xl mb-3">👥</div>
+                                <div class="text-4xl mb-3 opacity-30">
+                                    <svg class="w-12 h-12 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                                </div>
                                 <p class="font-bold text-slate-700">Belum Ada Data Pendiri</p>
                                 <p class="text-sm text-slate-400 mt-1">Tambahkan pendiri pertama lewat form di bawah.</p>
                             </div>
