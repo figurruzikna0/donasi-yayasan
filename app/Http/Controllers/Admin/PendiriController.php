@@ -17,6 +17,13 @@ class PendiriController extends Controller
         return view('admin.pendiri.index', compact('pendiris'));
     }
 
+    // --- HALAMAN EDIT: merender form edit untuk satu pendiri ---
+    public function edit($id)
+    {
+        $pendiri = Pendiri::findOrFail($id);
+        return view('admin.pendiri.edit', compact('pendiri'));
+    }
+
     // --- TAMBAH PENDIRI BARU: validasi input, upload foto, simpan ke DB, redirect back dengan pesan sukses ---
     public function store(Request $request)
     {

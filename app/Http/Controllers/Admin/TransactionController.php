@@ -32,6 +32,7 @@ use App\Models\Donation;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Midtrans\Config;
 use Midtrans\Transaction;
 
@@ -84,26 +85,38 @@ class TransactionController extends Controller
     }
 
     // --- SETUJUI TRANSAKSI: update status sponsorship/donasi jadi success, kirim WA notifikasi, redirect back ---
+    // Semua operasi database dibungkus DB::transaction agar atomik
+    // (status berubah DAN dana bertambah bersama, atau dibatalkan bersama).
+    // Notifikasi WA dikirim SETELAH transaksi commit — bukan operasi DB,
+    // sehingga kegagalan kirim WA tidak mem-rollback data yang sudah benar.
     public function approve($id)
     {
         // ── Cek & update sponsorship ──
         if (str_starts_with($id, 'SPONSOR-')) {
-            $sponsorship = Sponsorship::with('fosterChild')
-                ->where('order_id', $id)
-                ->first();
+            $sponsorship = DB::transaction(function () use ($id) {
+                $sponsorship = Sponsorship::with('fosterChild')
+                    ->where('order_id', $id)
+                    ->first();
+
+                if (!$sponsorship) {
+                    return null;
+                }
+
+                $sponsorship->update([
+                    'status'            => 'success',
+                    'rejection_reason'  => null,
+                    'starts_at'         => $sponsorship->starts_at  ?? now(),
+                    'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
+                ]);
+
+                $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
+
+                return $sponsorship;
+            });
 
             if (!$sponsorship) {
                 return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
             }
-
-            $sponsorship->update([
-                'status'            => 'success',
-                'rejection_reason'  => null,
-                'starts_at'         => $sponsorship->starts_at  ?? now(),
-                'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
-            ]);
-
-            $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
             if ($sponsorship->donor_phone) {
                 $this->kirimWaSponsor($sponsorship);
@@ -113,27 +126,35 @@ class TransactionController extends Controller
         }
 
         // ── Cek & update donasi kampanye ──
-        $donation = Donation::where('order_id', $id)->first();
+        $donation = DB::transaction(function () use ($id) {
+            $donation = Donation::where('order_id', $id)->first();
+
+            if (!$donation) {
+                return null;
+            }
+
+            // Generate invoice_number jika belum ada
+            if (!$donation->invoice_number) {
+                $month = now()->format('Ym');
+                $count = Donation::where('status', 'success')
+                    ->whereNotNull('invoice_number')
+                    ->where('invoice_number', 'like', "INV-DN-{$month}-%")
+                    ->count();
+                $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+                $donation->invoice_number = "INV-DN-{$month}-{$seq}";
+            }
+
+            $donation->status = 'success';
+            $donation->save();
+
+            $donation->campaign?->increment('collected_amount', $donation->amount);
+
+            return $donation;
+        });
 
         if (!$donation) {
             return redirect()->back()->with('error', 'Data transaksi tidak ditemukan.');
         }
-
-        // Generate invoice_number jika belum ada
-        if (!$donation->invoice_number) {
-            $month = now()->format('Ym');
-            $count = Donation::where('status', 'success')
-                ->whereNotNull('invoice_number')
-                ->where('invoice_number', 'like', "INV-DN-{$month}-%")
-                ->count();
-            $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
-            $donation->invoice_number = "INV-DN-{$month}-{$seq}";
-        }
-
-        $donation->status = 'success';
-        $donation->save();
-
-        $donation->campaign?->increment('collected_amount', $donation->amount);
 
         if ($donation->donor_phone) {
             $this->kirimWaDonasi($donation);
@@ -150,18 +171,26 @@ class TransactionController extends Controller
         ]);
 
         if (str_starts_with($id, 'SPONSOR-')) {
-            $sponsorship = Sponsorship::with('fosterChild')
-                ->where('order_id', $id)
-                ->first();
+            $sponsorship = DB::transaction(function () use ($id, $request) {
+                $sponsorship = Sponsorship::with('fosterChild')
+                    ->where('order_id', $id)
+                    ->first();
+
+                if (!$sponsorship) {
+                    return null;
+                }
+
+                $sponsorship->update([
+                    'status'            => 'failed',
+                    'rejection_reason'  => $request->rejection_reason,
+                ]);
+
+                return $sponsorship;
+            });
 
             if (!$sponsorship) {
                 return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
             }
-
-            $sponsorship->update([
-                'status'            => 'failed',
-                'rejection_reason'  => $request->rejection_reason,
-            ]);
 
             if ($sponsorship->donor_phone) {
                 $this->kirimWaTolakSponsor($sponsorship, $request->rejection_reason);
@@ -170,16 +199,24 @@ class TransactionController extends Controller
             return redirect()->back()->with('success', 'Sponsorship ditolak. Notifikasi telah dikirim ke donatur.');
         }
 
-        $donation = Donation::where('order_id', $id)->first();
+        $donation = DB::transaction(function () use ($id, $request) {
+            $donation = Donation::where('order_id', $id)->first();
+
+            if (!$donation) {
+                return null;
+            }
+
+            $donation->update([
+                'status'            => 'failed',
+                'rejection_reason'  => $request->rejection_reason,
+            ]);
+
+            return $donation;
+        });
 
         if (!$donation) {
             return redirect()->back()->with('error', 'Data donasi tidak ditemukan.');
         }
-
-        $donation->update([
-            'status'            => 'failed',
-            'rejection_reason'  => $request->rejection_reason,
-        ]);
 
         if ($donation->donor_phone) {
             $this->kirimWaTolakDonasi($donation, $request->rejection_reason);

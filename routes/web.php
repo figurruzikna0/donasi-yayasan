@@ -186,6 +186,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     // CRUD data pendiri/pengurus yayasan
     Route::get('/pendiri', [PendiriController::class, 'index'])->name('pendiri.index');
     Route::post('/pendiri', [PendiriController::class, 'store'])->name('pendiri.store');
+    Route::get('/pendiri/{id}/edit', [PendiriController::class, 'edit'])->name('pendiri.edit');
     Route::put('/pendiri/{id}', [PendiriController::class, 'update'])->name('pendiri.update');
     Route::delete('/pendiri/{id}', [PendiriController::class, 'destroy'])->name('pendiri.destroy');
 

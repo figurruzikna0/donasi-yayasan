@@ -227,64 +227,17 @@
                                                 <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 border border-emerald-200">{{ $pendiri->jabatan }}</span>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-1" x-data="{ editOpen: false, open: false }">
-                                            <button type="button" @click="editOpen = true" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 opacity-0 group-hover:opacity-100 transition-all" title="Edit">
+                                        <div class="flex items-center gap-1" x-data="{ open: false }">
+                                            <a href="{{ route('admin.pendiri.edit', $pendiri->id) }}" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 opacity-0 group-hover:opacity-100 transition-all" title="Edit">
                                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                            </button>
+                                            </a>
                                             <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" @submit.prevent="open = true">
                                                 @csrf @method('DELETE')
-                                                <button type="button" @click="deleteOpen = true" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
+                                                <button type="button" @click="open = true" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
                                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                 </button>
                                                 <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
                                             </form>
-
-                                            {{-- Modal Edit Pendiri --}}
-                                            <dialog class="modal" :class="{ 'modal-open': editOpen }">
-                                                <div class="modal-box max-w-lg p-0 overflow-hidden">
-                                                    <form action="{{ route('admin.pendiri.update', $pendiri->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf @method('PUT')
-                                                        <div class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
-                                                            <div>
-                                                                <h3 class="text-base font-black text-slate-800">Edit Pendiri</h3>
-                                                                <p class="text-xs text-slate-400 mt-0.5">Perbarui data pendiri atau pengurus</p>
-                                                            </div>
-                                                            <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm btn-circle">
-                                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                                            </button>
-                                                        </div>
-                                                        <div class="p-6 space-y-4">
-                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                                <div class="form-control">
-                                                                    <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Nama Lengkap</span></label>
-                                                                    <input type="text" name="nama" class="input input-bordered w-full input-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ $pendiri->nama }}">
-                                                                </div>
-                                                                <div class="form-control">
-                                                                    <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Jabatan</span></label>
-                                                                    <input type="text" name="jabatan" class="input input-bordered w-full input-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ $pendiri->jabatan }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-control">
-                                                                <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Kata Sambutan</span></label>
-                                                                <textarea name="deskripsi" rows="2" class="textarea textarea-bordered w-full text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200">{{ $pendiri->deskripsi }}</textarea>
-                                                            </div>
-                                                            <div class="form-control">
-                                                                <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Urutan Tampil</span></label>
-                                                                <input type="number" name="urutan" class="input input-bordered w-full input-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" value="{{ $pendiri->urutan ?? 0 }}" min="0">
-                                                            </div>
-                                                            <div class="form-control">
-                                                                <label class="label"><span class="label-text font-bold text-emerald-700 text-xs">Foto <span class="font-normal normal-case text-emerald-400">(biarkan kosong jika tidak diganti)</span></span></label>
-                                                                <input type="file" name="foto" class="file-input file-input-bordered w-full input-sm" accept="image/*">
-                                                            </div>
-                                                        </div>
-                                                        <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 bg-slate-50">
-                                                            <button type="button" @click="editOpen = false" class="btn btn-ghost btn-sm font-semibold text-slate-600">Batal</button>
-                                                            <button type="submit" class="btn bg-emerald-700 text-white hover:bg-emerald-800 btn-sm font-semibold border-0 shadow-sm">Simpan Perubahan</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <form method="dialog" class="modal-backdrop"><button @click="editOpen = false">close</button></form>
-                                            </dialog>
                                         </div>
                                     </div>
                                 </div>

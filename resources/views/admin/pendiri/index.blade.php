@@ -118,14 +118,20 @@
                                         </p>
                                     </td>
                                     <td class="text-center">
-                                        <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" x-data="{ open: false }" @submit.prevent="open = true">
-                                            @csrf @method('DELETE')
-                                            <button type="button" @click="open = true" class="btn btn-sm btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold mt-2">
-                                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                                                Hapus
-                                            </button>
-                                            <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
-                                        </form>
+                                        <div class="flex items-center justify-center gap-1 mt-2">
+                                            <a href="{{ route('admin.pendiri.edit', $pendiri->id) }}" class="btn btn-xs btn-ghost text-base-content/50 hover:text-amber-600 hover:bg-amber-50 rounded-lg font-bold gap-1">
+                                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                Ubah
+                                            </a>
+                                            <form action="{{ route('admin.pendiri.destroy', $pendiri->id) }}" method="POST" x-data="{ open: false }" @submit.prevent="open = true">
+                                                @csrf @method('DELETE')
+                                                <button type="button" @click="open = true" class="btn btn-xs btn-ghost text-base-content/50 hover:text-rose-600 hover:bg-rose-50 rounded-lg font-bold gap-1">
+                                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                                                    Hapus
+                                                </button>
+                                                <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -148,6 +154,6 @@
             </div>
 
         </div>
-    </div>
+</div>
 </div>
 </x-admin-layout>

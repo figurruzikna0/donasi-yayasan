@@ -26,6 +26,7 @@ use App\Models\FosterChild;
 use App\Models\Sponsorship;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SponsorshipController extends Controller
 {
@@ -38,22 +39,31 @@ class SponsorshipController extends Controller
     }
 
     // --- SETUJUI SPONSORSHIP: update status jadi success, set starts_at/expires_at, ubah status anak jadi 'Diasuh', kirim WA, redirect back ---
+    // Operasi database dibungkus DB::transaction agar atomik; WA dikirim setelah commit.
     public function approve($id)
     {
-        $sponsorship = Sponsorship::where('order_id', $id)->first();
+        $sponsorship = DB::transaction(function () use ($id) {
+            $sponsorship = Sponsorship::where('order_id', $id)->first();
 
-        if (! $sponsorship) {
+            if (!$sponsorship) {
+                return null;
+            }
+
+            $sponsorship->update([
+                'status'            => 'success',
+                'rejection_reason'  => null,
+                'starts_at'         => $sponsorship->starts_at ?? now(),
+                'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
+            ]);
+
+            $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
+
+            return $sponsorship;
+        });
+
+        if (!$sponsorship) {
             return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
         }
-
-        $sponsorship->update([
-            'status'            => 'success',
-            'rejection_reason'  => null,
-            'starts_at'         => $sponsorship->starts_at ?? now(),
-            'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
-        ]);
-
-        $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
 
         if ($sponsorship->donor_phone) {
             $this->kirimWaSponsor($sponsorship);
@@ -69,18 +79,26 @@ class SponsorshipController extends Controller
             'rejection_reason' => 'required|string|max:1000',
         ]);
 
-        $sponsorship = Sponsorship::with('fosterChild')
-            ->where('order_id', $id)
-            ->first();
+        $sponsorship = DB::transaction(function () use ($id, $request) {
+            $sponsorship = Sponsorship::with('fosterChild')
+                ->where('order_id', $id)
+                ->first();
+
+            if (!$sponsorship) {
+                return null;
+            }
+
+            $sponsorship->update([
+                'status'            => 'failed',
+                'rejection_reason'  => $request->rejection_reason,
+            ]);
+
+            return $sponsorship;
+        });
 
         if (!$sponsorship) {
             return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
         }
-
-        $sponsorship->update([
-            'status'            => 'failed',
-            'rejection_reason'  => $request->rejection_reason,
-        ]);
 
         if ($sponsorship->donor_phone) {
             $this->kirimWaTolakSponsor($sponsorship, $request->rejection_reason);
