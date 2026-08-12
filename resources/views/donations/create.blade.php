@@ -1,3 +1,11 @@
+<!-- ============================================ -->
+<!-- donations\create.blade.php — form donasi (infak) -->
+<!-- ============================================ -->
+<!-- Peran     : form donasi langsung ke program/kampanye yayasan (infak umum). -->
+<!-- Controller: DonationController@store — route('donations.store') metode POST. -->
+<!-- Alur      : isi nama, email, WA, nominal + upload bukti transfer -> POST -> divalidasi -->
+<!--             (amount min 1000, bukti jpg/jpeg/png/pdf maks 5MB) -> disimpan status 'pending' -->
+<!--             -> redirect dashboard -> admin memverifikasi bukti via TransactionController. -->
 {{--
     ========================================================
     FORM DONASI KAMPANYE (resources/views/donations/create.blade.php)
@@ -18,6 +26,7 @@
 <x-app-layout>
     <div class="bg-base-200 min-h-0">
 
+        <!-- BANNER ATAS: judul halaman dan tombol kembali ke dashboard -->
         <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex items-center justify-between flex-wrap gap-4">
@@ -34,6 +43,8 @@
 
         <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+            <!-- KONDISI GAGAL AMAN: bila $campaign tidak ditemukan (id salah/berubah), -->
+            <!-- tampilkan peringatan alih-alih error fatal -->
             @if(!$campaign)
                 <div class="card bg-base-100 shadow-lg border border-red-200">
                     <div class="card-body text-center py-12">
@@ -44,6 +55,7 @@
             @else
 
             {{-- Campaign Info --}}
+            <!-- KARTU INFO CAMPAIGN: ringkasan program donasi tujuan (nama & target dana) -->
             <div class="card bg-emerald-50 border border-emerald-200 shadow-sm mb-6">
                 <div class="card-body p-5 flex flex-row items-center gap-4">
                     <div class="w-12 h-12 bg-emerald-200 rounded-xl flex items-center justify-center shrink-0">
@@ -60,11 +72,13 @@
                 </div>
             </div>
 
+            <!-- ALERT ERROR: menampilkan seluruh pesan validasi yang gagal sekaligus -->
             @if ($errors->any())
                 <x-alert type="error" :errors="$errors->all()" />
             @endif
 
             {{-- Form --}}
+            <!-- FORM DONASI: POST ke route('donations.store'); enctype multipart untuk upload bukti transfer -->
             <div class="card bg-base-100 shadow-md border border-emerald-200">
                 <div class="card-body p-6 sm:p-8">
 
@@ -72,6 +86,7 @@
                         @csrf
 
                         {{-- Nama --}}
+                        <!-- FIELD NAMA LENGKAP: wajib diisi; data donatur yang ditampilkan pada invoice -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700">Nama Lengkap <span class="text-red-500">*</span></span>
@@ -86,6 +101,7 @@
                         </div>
 
                         {{-- Email --}}
+                        <!-- FIELD EMAIL: wajib diisi; dipakai untuk pengiriman invoice & notifikasi -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700">Alamat Email <span class="text-red-500">*</span></span>
@@ -100,6 +116,7 @@
                         </div>
 
                         {{-- Phone --}}
+                        <!-- FIELD NO. WHATSAPP: wajib diisi; dipakai untuk notifikasi donasi via WA -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700">No. WhatsApp Aktif <span class="text-red-500">*</span></span>
@@ -115,10 +132,13 @@
                         </div>
 
                         {{-- Nominal --}}
+                        <!-- FIELD NOMINAL DONASI: tombol cepat + input manual; di sisi server divalidasi -->
+                        <!-- 'amount' => required|numeric|min:1000 (DonationController@store) -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700">Nominal Donasi <span class="text-red-500">*</span></span>
                             </label>
+                            <!-- TOMBOL NOMINAL CEPAT: pilihan Rp10.000, Rp20.000, Rp50.000, Rp100.000 -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                                 @php $nominals = [10000, 20000, 50000, 100000]; @endphp
                                 @foreach($nominals as $nom)
@@ -130,6 +150,7 @@
                                     </button>
                                 @endforeach
                             </div>
+                            <!-- INPUT NOMINAL MANUAL: nilai minimum di form 1000; nilai asli dikirim ke server -->
                             <div class="join w-full">
                                 <span class="join-item btn btn-ghost bg-emerald-50 text-emerald-600 font-bold px-4">Rp</span>
                                 <input type="number" name="amount" id="amount-input" min="1000" required
@@ -140,6 +161,7 @@
                         </div>
 
                         {{-- Info Rekening Tujuan --}}
+                        <!-- INFO REKENING: rekening resmi yayasan untuk transfer manual (bukti diunggah di bawah) -->
                         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 rounded-full bg-emerald-200 flex items-center justify-center shrink-0">
@@ -167,6 +189,8 @@
                         </div>
 
                         {{-- Upload Bukti Transfer --}}
+                        <!-- UPLOAD BUKTI TRANSFER: wajib; format JPG/JPEG/PNG (server juga menerima PDF) -->
+                        <!-- validasi controller: payment_proof required|file|mimes:jpg,jpeg,png,pdf|max:5120 -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700">Upload Bukti Transfer <span class="text-red-500">*</span></span>
@@ -179,6 +203,7 @@
                                     class="file-input file-input-bordered w-full join-item border-emerald-200 focus:border-emerald-500">
                             </div>
                             <label class="label"><span class="label-text-alt text-emerald-500">Format: JPG/JPEG/PNG, maks 2MB</span></label>
+                            <!-- BAR PROGRESS UPLOAD (simulasi): diperbarui oleh JS saat file dipilih -->
                             <div class="upload-progress-container" id="upload-progress-donasi">
                                 <div class="upload-progress-bar-bg">
                                     <div class="upload-progress-bar-fill" id="upload-fill-donasi"></div>
@@ -191,6 +216,7 @@
                         </div>
 
                         {{-- Tanggal Transfer --}}
+                        <!-- FIELD TANGGAL TRANSFER: wajib; nilai default = tanggal hari ini -->
                         <div class="form-control w-full mb-6">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700">Tanggal Transfer <span class="text-red-500">*</span></span>
@@ -204,6 +230,7 @@
                             </div>
                         </div>
 
+                        <!-- TOMBOL SUBMIT: mengirim form donasi ke server -->
                         <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                             Kirim Donasi
@@ -226,9 +253,11 @@
         </div>
     </div>
 
+    <!-- SCRIPT JS FORM DONASI: -->
     <script>
         let activeNominal = null;
 
+        <!-- pilihNominal(): menandai tombol nominal yang dipilih dan mengisi input amount -->
         function pilihNominal(btn, nominal) {
             document.querySelectorAll('.nominal-btn').forEach(b => {
                 b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
@@ -241,6 +270,7 @@
             activeNominal = nominal;
         }
 
+        <!-- resetNominalPills(): bila user mengetik nominal manual, tanda pada tombol cepat dihapus -->
         function resetNominalPills() {
             const input = document.getElementById('amount-input');
             const val = input.value ? parseInt(input.value) : 0;
@@ -254,6 +284,7 @@
             }
         }
 
+        <!-- Saat file bukti transfer dipilih: tampilkan nama file dan simulasi progress upload -->
         document.querySelector('input[name="payment_proof"]').addEventListener('change', function () {
             const file = this.files[0];
             const container = document.getElementById('upload-progress-donasi');
@@ -278,6 +309,7 @@
             }, 200);
         });
 
+        <!-- Saat form disubmit: hentikan simulasi progress dan set bar menjadi 100% -->
         document.getElementById('donation-form').addEventListener('submit', function () {
             if (window._uploadIntervalDonasi) clearInterval(window._uploadIntervalDonasi);
             const fill = document.getElementById('upload-fill-donasi');

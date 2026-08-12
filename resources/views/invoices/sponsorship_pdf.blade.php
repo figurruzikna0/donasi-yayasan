@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<!-- ============================================ -->
+<!-- invoices\sponsorship_pdf.blade.php — template PDF invoice sponsorship -->
+<!-- ============================================ -->
+<!-- Peran     : template cetak (Dompdf) untuk menghasilkan file PDF invoice sponsorship. -->
+<!--             Tidak memakai vite/CSS Tailwind karena Dompdf hanya mendukung CSS lama; -->
+<!--             seluruh gaya ditulis inline di blok <style>. -->
+<!-- Controller: InvoiceController — variabel $sponsorship (Sponsorship), $profil (ProfilYayasan); -->
+<!--             logo dibaca lewat helper public_path() agar bisa diakses oleh Dompdf. -->
+<!-- Alur      : halaman sponsorship.blade.php -> klik Download PDF -> controller merender -->
+<!--             template ini -> Dompdf mengubahnya menjadi PDF -> diunduh pengguna. -->
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -32,6 +42,7 @@
     </style>
 </head>
 <body>
+    <!-- KOP DOKUMEN: judul INVOICE + identitas yayasan (logo & alamat) di sisi kanan -->
     <div class="header">
         <table>
             <tr>
@@ -40,6 +51,7 @@
                     <p>Bukti Sponsorship Orang Tua Asuh</p>
                 </td>
                 <td class="right">
+                    <!-- LOGO: public_path() mengambil path absolut file di folder storage agar bisa dibaca Dompdf -->
                     @if($profil?->logo)
                         <img src="{{ public_path('storage/' . $profil->logo) }}" class="logo" alt="Logo">
                     @endif
@@ -50,6 +62,7 @@
         </table>
     </div>
 
+    <!-- TABEL INFO: pihak penerima (donatur) dan detail invoice (order id, tanggal, status) -->
     <div class="section">
         <table class="info-table">
             <tr>
@@ -69,6 +82,7 @@
                 <td class="value">{{ $sponsorship->donor_phone ?? '' }}</td>
                 <td class="label" style="padding-left:40px;">Status</td>
                 <td>
+                    <!-- LOGIKA STATUS: sama dengan versi web — menentukan label/teks dan warna badge status -->
                     @php
                         $isExpired = $sponsorship->expires_at && $sponsorship->expires_at->isPast();
                         $sLabel = match(true) {
@@ -89,6 +103,7 @@
         </table>
     </div>
 
+    <!-- TABEL RINCIAN: deskripsi sponsorship (nama anak, paket, metode, periode) dan total biaya -->
     <table class="invoice-table">
         <thead>
             <tr>
@@ -102,6 +117,7 @@
                     <strong>Sponsorship {{ $sponsorship->fosterChild?->name ?? 'Anak Asuh' }}</strong><br>
                     <span style="color:#888;font-size:10px;">Paket: {{ $sponsorship->package ?? '-' }}</span><br>
                     <span style="color:#888;font-size:10px;">Metode: {{ $sponsorship->payment_method ?? '-' }}</span><br>
+                    <!-- PERIODE BERLAKU: rentang tanggal aktif sponsorship (bila keduanya terisi) -->
                     @if($sponsorship->starts_at && $sponsorship->expires_at)
                         <span style="color:#888;font-size:10px;">Periode: {{ $sponsorship->starts_at->format('d M Y') }} – {{ $sponsorship->expires_at->format('d M Y') }}</span>
                     @endif
@@ -109,6 +125,7 @@
                 <td class="right">Rp {{ number_format($sponsorship->amount, 0, ',', '.') }}</td>
             </tr>
         </tbody>
+        <!-- BARIS TOTAL -->
         <tfoot>
             <tr>
                 <td>Total</td>
@@ -117,6 +134,7 @@
         </tfoot>
     </table>
 
+    <!-- FOOTER: ucapan terima kasih & identitas yayasan penerbit -->
     <div class="footer">
         <p>Terima kasih telah menjadi Orang Tua Asuh. Keberkahan untuk Anda dan anak asuh.</p>
         <p><strong>— {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} —</strong></p>

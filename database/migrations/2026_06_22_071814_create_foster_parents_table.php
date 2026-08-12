@@ -1,5 +1,11 @@
 <?php
 // === 2026_06_22_071814_create_foster_parents_table: membuat tabel foster_parents dengan kolom user_id, foster_child_id, monthly_amount, status ===
+// ⚠️ MIGRASI LAMA — TIDAK DIPAKAI LAGI.
+// Tabel ini adalah desain AWAL fitur orang tua asuh (relasi langsung
+// donatur-anak). Kemudian desain diganti ke sistem SPONSORSHIP
+// (transaksi berperiode) dan tabel ini DIHAPUS oleh migrasi
+// 2026_07_08_090323_drop_foster_parents_table.
+// Data historis di sini hanya untuk dokumentasi desain awal.
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,13 +22,13 @@ return new class extends Migration
         $table->id();
         // ID Donatur yang jadi orang tua asuh
         $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-        
+
         // ID Anak yang diasuh
         $table->foreignId('foster_child_id')->constrained('foster_children')->cascadeOnDelete();
-        
+
         // Nominal komitmen donasi per bulan (misal Rp 100.000)
         $table->integer('monthly_amount');
-        
+
         // Status komitmen
         $table->enum('status', ['Aktif', 'Berhenti'])->default('Aktif');
         $table->timestamps();

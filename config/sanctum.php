@@ -3,8 +3,16 @@
 /*
  * sanctum.php — Konfigurasi Laravel Sanctum
  * ===========================================
- * Mengatur domain stateful, guard, masa berlaku token,
- * prefix token, dan middleware SPA.
+ * Sanctum = paket autentikasi Laravel untuk SPA (Single Page App)
+ * dan API token. File ini mengatur:
+ *  - stateful domains → domain yang memakai auth berbasis cookie
+ *  - guard            → guard yang dicek saat otentikasi
+ *  - expiration       → masa berlaku token API
+ *  - token_prefix     → awalan token (anti kebocoran ke repo)
+ *  - middleware       → middleware khusus yang dipakai Sanctum
+ *
+ * Catatan sistem: aplikasi ini TIDAK aktif memakai API/SPA — auth utama
+ * memakai session (guard 'web'). Konfigurasi ini bawaan Laravel 11.
  */
 
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -18,43 +26,39 @@ return [
     |--------------------------------------------------------------------------
     | Stateful Domains
     |--------------------------------------------------------------------------
+    | Request dari domain/daftar ini akan menerima autentikasi API "stateful"
+    | berbasis SESSION COOKIE (bukan token). Biasanya berisi domain lokal
+    | dan produksi yang mengakses API lewat frontend SPA.
     |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
-    |
+    | Nilainya: localhost, localhost:3000, 127.0.0.1, 127.0.0.1:8000, ::1
+    | lalu ditambahkan URL aplikasi saat ini beserta port-nya.
     */
 
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
         '%s%s',
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
         Sanctum::currentApplicationUrlWithPort(),
-        // Sanctum::currentRequestHost(),
+        // Sanctum::currentRequestHost(),   // alternatif (dikomentari)
     ))),
 
     /*
     |--------------------------------------------------------------------------
     | Sanctum Guards
     |--------------------------------------------------------------------------
-    |
-    | This array contains the authentication guards that will be checked when
-    | Sanctum is trying to authenticate a request. If none of these guards
-    | are able to authenticate the request, Sanctum will use the bearer
-    | token that's present on an incoming request for authentication.
-    |
+    | Daftar guard yang dicek saat Sanctum mencoba mengotentikasi request.
+    | Jika tidak ada guard yang berhasil, Sanctum akan mencoba memakai
+    | bearer token yang ada pada request masuk.
     */
 
     'guard' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
-    | Expiration Minutes
+    | Masa Berlaku Token (Expiration Minutes)
     |--------------------------------------------------------------------------
-    |
-    | This value controls the number of minutes until an issued token will be
-    | considered expired. This will override any values set in the token's
-    | "expires_at" attribute, but first-party sessions are not affected.
-    |
+    | Jumlah MENIT sampai sebuah token dianggap kadaluarsa.
+    | Nilai ini menimpa atribut expires_at token, tetapi TIDAK memengaruhi
+    | session first-party (login web biasa). null = token tidak pernah kadaluarsa.
     */
 
     'expiration' => null,
@@ -63,13 +67,9 @@ return [
     |--------------------------------------------------------------------------
     | Token Prefix
     |--------------------------------------------------------------------------
-    |
-    | Sanctum can prefix new tokens in order to take advantage of numerous
-    | security scanning initiatives maintained by open source platforms
-    | that notify developers if they commit tokens into repositories.
-    |
-    | See: https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
-    |
+    | Sanctum dapat memberi AWALAN pada token baru, supaya platform
+    | pemindai keamanan (misal GitHub secret scanning) bisa mendeteksi
+    | bila token tanpa sengaja ter-commit ke repository.
     */
 
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
@@ -78,11 +78,11 @@ return [
     |--------------------------------------------------------------------------
     | Sanctum Middleware
     |--------------------------------------------------------------------------
-    |
-    | When authenticating your first-party SPA with Sanctum you may need to
-    | customize some of the middleware Sanctum uses while processing the
-    | request. You may change the middleware listed below as required.
-    |
+    | Saat mengotentikasi SPA dengan Sanctum, Anda bisa menyesuaikan
+    | middleware yang dipakai Sanctum saat memproses request:
+    |  - authenticate_session → aktifkan session auth untuk SPA
+    |  - encrypt_cookies      → enkripsi cookie
+    |  - validate_csrf_token  → validasi token CSRF (keamanan form)
     */
 
     'middleware' => [

@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- profil.blade.php - HALAMAN PROFIL YAYASAN   -->
+<!-- ============================================ -->
+<!-- Peran: halaman publik yang menampilkan sejarah, visi, misi, kontak, dan legalitas yayasan dari database. -->
+<!-- Data berasal dari variabel $profil (model ProfilYayasan) yang disuntik ke semua view lewat view composer global, dan diakses dari route 'profil'. -->
+<!-- Alur: menampilkan navbar publik, breadcrumb, hero profil, seksi sejarah/visi/misi, seksi kontak & legalitas, lalu footer. -->
 <!DOCTYPE html>
 <html lang="id" data-theme="baitul">
 <head>
@@ -10,11 +16,14 @@
 <body class="font-sans antialiased">
 
     {{-- NAVBAR --}}
+    <!-- Navbar publik (partial); tanpa isHome sehingga link menu memakai route halaman publik masing-masing -->
     @include('partials.public-navbar')
 
+    <!-- Komponen breadcrumb: menunjukkan posisi halaman (Beranda > Profil Yayasan) -->
     <x-breadcrumb :items="['Profil Yayasan' => '']" />
 
     {{-- HERO PROFIL: banner profil yayasan dengan tejudul, tombol Donasi & Orang Tua Asuh --}}
+    <!-- Seksi hero profil: latar gradasi hijau dengan dekorasi blur dan pola SVG, memuat judul "Tentang [nama yayasan]" -->
     <section class="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-700 text-white">
         <div class="absolute inset-0 opacity-10">
             <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-300/30 rounded-full blur-3xl"></div>
@@ -25,6 +34,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative">
             <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+                <!-- Bagian kiri: judul, deskripsi, dan tombol CTA menuju seksi kampanye serta program orang tua asuh -->
                 <div class="flex-1 text-center lg:text-left" data-aos="fade-right">
                     <span class="inline-block text-xs uppercase tracking-[0.2em] font-bold px-4 py-1.5 rounded-full bg-white/10 text-white/80 border border-white/20 mb-5">
                         Mengenal Kami
@@ -36,16 +46,19 @@
                         Simak perjalanan, visi, dan misi kami dalam mendampingi generasi penerus bangsa.
                     </p>
                     <div class="flex flex-wrap gap-3 mt-7 justify-center lg:justify-start">
+                        <!-- Tombol CTA "Donasi Sekarang" menuju anchor #kampanye di halaman beranda -->
                         <a href="{{ url('/#kampanye') }}" class="inline-flex items-center gap-2 bg-white text-emerald-800 font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-emerald-50 transition-all text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             Donasi Sekarang
                         </a>
+                        <!-- Tombol CTA "Jadi Orang Tua Asuh" menuju anchor #program-ota di halaman beranda -->
                         <a href="{{ url('/#program-ota') }}" class="inline-flex items-center gap-2 bg-emerald-600/30 text-white border border-white/20 font-bold px-6 py-3 rounded-xl hover:bg-emerald-600/50 transition-all text-sm backdrop-blur-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             Jadi Orang Tua Asuh
                         </a>
                     </div>
                 </div>
+                <!-- Bagian kanan: grid 2x2 statistik singkat yayasan (anak yatim, program aktif, donatur tetap, tahun berdiri) -->
                 <div class="flex-1 w-full max-w-md" data-aos="fade-left">
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 p-5 text-center">
@@ -75,8 +88,10 @@
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
                 {{-- SEJARAH & VISI MISI: konten dari DB ($profil->sejarah_yayasan, visi, misi) --}}
+                <!-- Kolom kiri (3/5 lebar): berisi sejarah yayasan serta kartu visi dan misi -->
                 <div class="lg:col-span-3 flex flex-col gap-8">
                     {{-- Sejarah --}}
+                    <!-- Blok sejarah: menampilkan isi $profil->sejarah_yayasan dari database; jika kosong muncul teks fallback -->
                     <div data-aos="fade-up">
                         <div class="flex items-center gap-3 mb-5">
                             <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -93,6 +108,7 @@
                     </div>
 
                     {{-- Visi & Misi --}}
+                    <!-- Grid visi & misi: visi diambil dari $profil->visi; misi dipecah per baris lewat explode("\n") dan dirender sebagai daftar -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-xl border border-emerald-100/70 p-6">
                             <svg class="w-[18px] h-[18px] text-emerald-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -102,11 +118,13 @@
                         <div data-aos="fade-up" data-aos-delay="150" class="bg-white rounded-xl border border-emerald-100/70 p-6">
                             <svg class="w-[18px] h-[18px] text-emerald-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             <h4 class="text-sm font-bold text-emerald-900 mb-2">Misi</h4>
+                            <!-- php: mengubah teks misi multi-baris menjadi array; foreach merender tiap baris sebagai item daftar dengan ikon centang -->
                             <ul class="text-sm text-gray-600 leading-[1.8] space-y-1.5">
                                 @php $misiList = $profil?->misi ? explode("\n", $profil->misi) : []; @endphp
                                 @foreach($misiList as $m)
                                     <li class="flex items-start gap-2">
                                         <svg class="w-3.5 h-3.5 text-emerald-400 mt-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
+                                        <!-- ltrim menghapus karakter bullet '•' atau spasi di awal baris -->
                                         <span>{{ ltrim($m, '• ') }}</span>
                                     </li>
                                 @endforeach
@@ -116,8 +134,10 @@
                 </div>
 
                 {{-- KONTAK & LEGALITAS: alamat, telepon, email dari DB + link ke halaman legalitas --}}
+                <!-- Kolom kanan (2/5 lebar): kartu kontak (alamat, telepon, email) dan kartu legalitas -->
                 <div data-aos="fade-left" class="lg:col-span-2 flex flex-col gap-6">
                     {{-- Kontak --}}
+                    <!-- Kartu kontak: alamat lengkap (dengan tautan Google Maps), nomor telepon, dan email dari $profil -->
                     <div class="bg-white rounded-xl border border-emerald-100/70 p-6">
                         <h3 class="text-sm font-bold text-emerald-900 mb-5 flex items-center gap-2">
                             <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -129,6 +149,7 @@
                                 <div>
                                     <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Alamat</p>
                                     <p class="text-sm text-gray-600 mt-0.5 leading-relaxed">{{ $profil?->alamat ?? 'Alamat belum diatur' }}</p>
+                                    <!-- Tautan eksternal membuka lokasi yayasan di Google Maps -->
                                     <a href="https://maps.app.goo.gl/FQatKLZU39dm6zNr7?g_st=aw" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         Buka di Google Maps
@@ -155,6 +176,7 @@
                     </div>
 
                     {{-- Legalitas --}}
+                    <!-- Kartu legalitas: teks pengantar plus tautan ke halaman legalitas (route 'legalitas') -->
                     <div class="bg-white rounded-xl border border-emerald-100/70 p-6">
                         <h3 class="text-sm font-bold text-emerald-900 mb-3 flex items-center gap-2">
                             <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
@@ -168,8 +190,10 @@
     </section>
 
     {{-- FOOTER: partial footer yayasan --}}
+    <!-- Footer publik (partial) -->
     @include('partials.footer')
 
+    <!-- Skrip AOS: animasi scroll untuk elemen dengan atribut data-aos -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 700, once: true, offset: 40 });</script>
 </body>

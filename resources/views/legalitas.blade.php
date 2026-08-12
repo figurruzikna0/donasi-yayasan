@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- legalitas.blade.php - HALAMAN LEGALITAS PUBLIK -->
+<!-- ============================================ -->
+<!-- Peran: halaman publik yang menampilkan dokumen legalitas hukum dan bagan struktur organisasi yayasan dari database. -->
+<!-- Data berasal dari variabel $profil (model ProfilYayasan) via view composer global, diakses dari route 'legalitas'. -->
+<!-- Alur: navbar publik, breadcrumb, modal lightbox gambar (Alpine.js), seksi legalitas & struktur dengan fitur klik-untuk-perbesar, lalu footer. -->
 <!DOCTYPE html>
 <html lang="id" data-theme="baitul">
 <head>
@@ -8,21 +14,27 @@
 </head>
 <body class="font-sans antialiased">
 
+    <!-- Navbar publik (partial) -->
     @include('partials.public-navbar')
 
+    <!-- Komponen breadcrumb: Beranda > Profil Yayasan > Legalitas -->
     <x-breadcrumb :items="['Profil Yayasan' => route('profil'), 'Legalitas' => '']" />
 
+    <!-- State Alpine.js: 'open' untuk membuka/menutup modal lightbox dan 'img' untuk menyimpan URL gambar yang diperbesar -->
     <div x-data="{ open: false, img: '' }">
+        <!-- Modal lightbox: menampilkan gambar dokumen/struktur secara fullscreen ketika variabel 'open' bernilai true; klik di luar atau tombol Tutup untuk menutupnya -->
         <div x-show="open" x-cloak class="fixed inset-0 z-[999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4" @click.self="open = false">
             <div class="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
                 <button @click="open = false" class="absolute -top-12 right-0 text-white/50 hover:text-white text-sm font-semibold flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                     Tutup
                 </button>
+                <!-- Atribut :src Alpine mengisi sumber gambar sesuai nilai variabel 'img' -->
                 <img :src="img" class="max-h-[85vh] w-auto object-contain rounded-xl shadow-2xl" @click="open = false">
             </div>
         </div>
 
+        <!-- Seksi utama: header gradasi lalu grid dua kolom (Dokumen Legalitas dan Struktur Organisasi) -->
         <section class="relative py-20 lg:py-28 px-4 bg-gradient-to-b from-base-200 to-base-300/50 overflow-hidden">
             <div class="absolute inset-0 pointer-events-none">
                 <div class="absolute top-20 left-1/4 w-72 h-72 rounded-full bg-primary/5 blur-3xl"></div>
@@ -37,6 +49,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Kartu 1: Dokumen Legalitas -->
                     <div class="group card bg-base-100/80 backdrop-blur-sm shadow-lg hover:shadow-xl border border-base-200 hover:border-primary/20 rounded-2xl p-6 lg:p-8 transition-all duration-300">
                         <h3 class="text-base font-bold text-base-content mb-4 flex items-center gap-2.5">
                             <span class="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-sm border border-primary/10 group-hover:bg-primary/20 transition-colors">
@@ -44,11 +57,13 @@
                             </span>
                             Dokumen Legalitas
                         </h3>
+                        <!-- Kondisi if berlapis: hanya render jika data $profil ada, lalu tampilkan teks legalitas (jika ada) dan foto dokumen legalitas (jika ada) -->
                         @if($profil)
                             @if($profil->legalitas)
                                 <p class="text-sm text-base-content/60 mb-5 leading-relaxed">{{ $profil->legalitas }}</p>
                             @endif
                             @if($profil->foto_legalitas)
+                                <!-- Gambar dokumen legalitas: diklik untuk membuka lightbox; URL memakai query '?v=timestamp' agar cache browser selalu diperbarui -->
                                 <div @click="open = true; img = '{{ asset('storage/' . $profil->foto_legalitas) . '?v=' . now()->timestamp }}'" class="cursor-pointer group/image">
                                     <div class="relative overflow-hidden rounded-xl border border-base-200 shadow-sm">
                                         <img src="{{ asset('storage/' . $profil->foto_legalitas) . '?v=' . now()->timestamp }}" class="w-full h-auto max-h-[400px] object-contain bg-base-100 transition-transform duration-500 group-hover/image:scale-105" alt="Dokumen Legalitas">
@@ -58,11 +73,13 @@
                                     </div>
                                 </div>
                             @else
+                                <!-- Blok else: pesan ketika dokumen legalitas belum diunggah -->
                                 <div class="py-16 text-center text-sm text-base-content/30 border-2 border-dashed border-base-300 rounded-xl bg-base-200/50">Dokumen legalitas belum diupload.</div>
                             @endif
                         @endif
                     </div>
 
+                    <!-- Kartu 2: Struktur Organisasi -->
                     <div class="group card bg-base-100/80 backdrop-blur-sm shadow-lg hover:shadow-xl border border-base-200 hover:border-primary/20 rounded-2xl p-6 lg:p-8 transition-all duration-300">
                         <h3 class="text-base font-bold text-base-content mb-4 flex items-center gap-2.5">
                             <span class="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-sm border border-primary/10 group-hover:bg-primary/20 transition-colors">
@@ -70,6 +87,7 @@
                             </span>
                             Struktur Organisasi
                         </h3>
+                        <!-- Kondisi if: tampilkan bagan struktur organisasi jika $profil->foto_struktur ada; klik membuka lightbox -->
                         @if($profil?->foto_struktur)
                             <div @click="open = true; img = '{{ asset('storage/' . $profil->foto_struktur) . '?v=' . now()->timestamp }}'" class="cursor-pointer group/image">
                                 <div class="relative overflow-hidden rounded-xl border border-base-200 shadow-sm">
@@ -80,6 +98,7 @@
                                 </div>
                             </div>
                         @else
+                            <!-- Blok else: pesan ketika bagan struktur organisasi belum diunggah -->
                             <div class="py-16 text-center text-sm text-base-content/30 border-2 border-dashed border-base-300 rounded-xl bg-base-200/50">Bagan struktur organisasi belum diupload.</div>
                         @endif
                     </div>
@@ -88,6 +107,7 @@
         </section>
     </div>
 
+    <!-- Footer publik (partial) -->
     @include('partials.footer')
 </body>
 </html>

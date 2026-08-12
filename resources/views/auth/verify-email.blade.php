@@ -1,3 +1,11 @@
+<!-- ============================================ -->
+<!-- auth\verify-email.blade.php — halaman verifikasi email -->
+<!-- ============================================ -->
+<!-- Peran     : pemberitahuan agar pengguna memverifikasi email setelah mendaftar. -->
+<!-- Controller: EmailVerificationPromptController (GET) dan -->
+<!--             EmailVerificationNotificationController (POST route('verification.send')). -->
+<!-- Alur      : pengguna baru diarahkan ke sini -> klik kirim ulang verifikasi -> -->
+<!--             email berisi tautan verifikasi dikirim ulang; bisa juga langsung keluar (logout). -->
 <x-guest-layout>
     <div class="text-center mb-6">
         <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner mb-3 mx-auto flex items-center justify-center">
@@ -9,11 +17,13 @@
         <p class="text-sm text-emerald-500">Konfirmasi alamat email Anda</p>
     </div>
 
+    <!-- PESAN INFORMASI: instruksi verifikasi yang tampil setelah pendaftaran akun -->
     <div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
         Terima kasih telah mendaftar! Sebelum memulai, silakan verifikasi alamat email Anda dengan mengklik tautan yang telah kami kirimkan. Jika tidak menerima email, kami akan dengan senang hati mengirimkan ulang.
     </div>
 
     <div class="mt-4 flex items-center justify-between">
+        <!-- FORM KIRIM ULANG VERIFIKASI: mengirim email verifikasi baru ke alamat pengguna -->
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
             <button type="submit" class="btn btn-success text-white font-bold rounded-xl px-6 py-2.5 text-sm shadow-sm hover:shadow-md transition-all">
@@ -21,6 +31,7 @@
             </button>
         </form>
 
+        <!-- FORM LOGOUT: keluar dari sesi saat ini (membatalkan proses verifikasi) -->
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="link link-hover text-sm text-emerald-600 font-semibold">

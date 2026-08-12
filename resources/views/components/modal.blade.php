@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- components/modal.blade.php - MODAL DIALOG (ALPINE.JS) -->
+<!-- ============================================ -->
+<!-- Peran: komponen modal bawaan Breeze yang dipanggil sebagai x-modal, dipakai untuk dialog konfirmasi, form kecil, dll. -->
+<!-- Data: prop 'name' (penanda unik modal), 'show' (default false), 'maxWidth' (sm/md/lg/xl/2xl). -->
+<!-- Alur: modal dikendalikan Alpine.js; terbuka lewat event kustom 'open-modal' (di-dispatch dari tombol pemanggil dengan dispatch('open-modal')) dan tertutup lewat 'close-modal', klik di luar, atau tombol Escape. -->
 @props([
     'name',
     'show' => false,
@@ -5,6 +11,7 @@
 ])
 
 @php
+// Blok PHP: memetakan opsi maxWidth (sm/md/lg/xl/2xl) menjadi class Tailwind 'sm:max-w-...'
 $maxWidth = [
     'sm' => 'sm:max-w-sm',
     'md' => 'sm:max-w-md',
@@ -14,6 +21,7 @@ $maxWidth = [
 ][$maxWidth];
 @endphp
 
+<!-- State & perilaku modal (Alpine.js): x-data menyimpan status buka/tutup dan fungsi navigasi fokus; x-init mengunci scroll body serta memindahkan fokus ke elemen pertama saat modal terbuka -->
 <div
     x-data="{
         show: @js($show),
@@ -47,6 +55,7 @@ $maxWidth = [
     class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50"
     style="display: {{ $show ? 'block' : 'none' }};"
 >
+    <!-- Lapisan backdrop (latar gelap): ditampilkan dengan animasi fade dan diklik untuk menutup modal -->
     <div
         x-show="show"
         class="fixed inset-0 transform transition-all"
@@ -61,6 +70,7 @@ $maxWidth = [
         <div class="absolute inset-0 bg-base-content/20"></div>
     </div>
 
+    <!-- Panel modal: wadah konten utama, lebarnya mengikuti $maxWidth; tampil dengan animasi slide + scale -->
     <div
         x-show="show"
         class="mb-6 bg-base-100 rounded-box shadow-xl transform transition-all sm:w-full {{ $maxWidth }} sm:mx-auto"
@@ -71,6 +81,7 @@ $maxWidth = [
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
     >
+        <!-- $slot: isi modal (judul, teks, dan tombol aksi) yang dikirim pemanggil -->
         {{ $slot }}
     </div>
 </div>

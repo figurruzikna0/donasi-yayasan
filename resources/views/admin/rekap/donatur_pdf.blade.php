@@ -1,6 +1,23 @@
+{{--
+    ============================================================
+    admin\rekap\donatur_pdf.blade.php — Template PDF Rekap Donatur
+    ============================================================
+    Template cetak PDF untuk rekap data donatur. File ini dirender
+    oleh Dompdf melalui RekapController (route admin.rekap.donatur.
+    export-pdf) dengan parameter $donaturs, $totalDonasiAll, dan
+    $totalSponsorshipAll.
+    Alur tampilan: judul + periode cetak → ringkasan (total donatur,
+    total donasi sukses, total sponsorship aktif) → tabel data per
+    donatur (nama, email, no HP, NIK, alamat, donasi, sponsor,
+    verifikasi, terdaftar) → footer yayasan.
+    Catatan: file ini TANPA layout admin (HTML murni) karena
+    hasilnya langsung diunduh sebagai PDF.
+--}}
 <!DOCTYPE html>
 <html lang="id">
 <head><meta charset="UTF-8"><title>Rekap Donatur</title>
+{{-- Gaya CSS cetak: font DejaVu Sans (bawaan Dompdf), warna hijau
+    khas yayasan, dan kelas status untuk badge verifikasi. --}}
 <style>
 body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #333; margin: 20px; }
 h1 { color: #059669; font-size: 18px; margin: 0 0 4px; }
@@ -22,9 +39,11 @@ table.data td.right { text-align: right; }
 </style>
 </head>
 <body>
+{{-- Judul dokumen dan info periode pencetakan (diambil dari query string) --}}
 <h1>Rekap Data Donatur</h1>
 <p class="sub">Periode: {{ request('start_date', 'Awal') }} — {{ request('end_date', 'Sekarang') }} | Dicetak: {{ now()->translatedFormat('d F Y H:i') }}</p>
 
+{{-- Ringkasan: total donatur, total donasi sukses, total sponsorship aktif --}}
 <div class="summary">
 <table>
 <tr><td class="label">Total Donatur Terdaftar</td><td class="value">{{ $donaturs->count() }}</td></tr>
@@ -33,6 +52,7 @@ table.data td.right { text-align: right; }
 </table>
 </div>
 
+{{-- Tabel data donatur --}}
 <table class="data">
 <thead>
 <tr>
@@ -40,6 +60,7 @@ table.data td.right { text-align: right; }
 </tr>
 </thead>
 <tbody>
+{{-- Perulangan setiap donatur --}}
 @forelse($donaturs as $u)
 <tr>
 <td><strong>{{ $u->name }}</strong></td>
@@ -47,9 +68,11 @@ table.data td.right { text-align: right; }
 <td>{{ $u->phone ?? '-' }}</td>
 <td>{{ $u->nik ?? '-' }}</td>
 <td style="max-width:120px;">{{ $u->address ?? '-' }}</td>
+{{-- Jumlah donasi dan sponsorship donatur --}}
 <td class="right">{{ $u->donations_count }}</td>
 <td class="right">{{ $u->sponsorships_count }}</td>
 <td>
+{{-- Badge status verifikasi email: verifikasi (hijau) / belum (kuning) --}}
 @if($u->email_verified_at)
 <span class="status status-verified">Terverifikasi</span>
 @else
@@ -59,11 +82,13 @@ table.data td.right { text-align: right; }
 <td>{{ $u->created_at->format('d/m/Y') }}</td>
 </tr>
 @empty
+{{-- Kondisi saat tidak ada donatur terdaftar --}}
 <tr><td colspan="9" style="text-align:center;padding:30px;color:#888;">Tidak ada donatur terdaftar</td></tr>
 @endforelse
 </tbody>
 </table>
 
+{{-- Footer dokumen PDF --}}
 <div class="footer">
 <p>— Yayasan Baitul Yatim Sukabumi —</p>
 </div>

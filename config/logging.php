@@ -3,8 +3,13 @@
 /*
  * logging.php — Konfigurasi log
  * ===============================
- * Mengatur channel log default, channel deprecation,
- * dan berbagai driver channel (single, daily, slack, dll.).
+ * File ini mengatur SISTEM PENCATATAN (log) aplikasi:
+ *  - default      → channel log default
+ *  - deprecations → channel khusus untuk peringatan fitur PHP/library usang
+ *  - channels     → daftar channel (tujuan penulisan log) yang tersedia
+ *
+ * Konteks sistem: error biasa dicatat ke storage/logs/laravel.log
+ * (channel 'stack' → 'single').
  */
 
 use Monolog\Handler\NullHandler;
@@ -16,26 +21,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Log Channel
+    | Channel Log Default
     |--------------------------------------------------------------------------
-    |
-    | This option defines the default log channel that is utilized to write
-    | messages to your logs. The value provided here should match one of
-    | the channels present in the list of "channels" configured below.
-    |
+    | Channel yang dipakai untuk menulis pesan log bila tidak disebutkan
+    | channel lain secara eksplisit. Nilai harus cocok dengan salah satu
+    | channel di daftar 'channels' di bawah. Default 'stack' (gabungan
+    | beberapa channel sekaligus).
     */
 
     'default' => env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
-    | Deprecations Log Channel
+    | Channel Log Deprecations
     |--------------------------------------------------------------------------
-    |
-    | This option controls the log channel that should be used to log warnings
-    | regarding deprecated PHP and library features. This allows you to get
-    | your application ready for upcoming major versions of dependencies.
-    |
+    | Channel untuk mencatat peringatan fitur PHP/library yang SUDAH USANG
+    | (deprecated). Berguna menyiapkan aplikasi sebelum upgrade besar.
+    |  - channel → 'null' = matikan pencatatan deprecation (default)
+    |  - trace   → sertakan stack trace pada log deprecation?
     */
 
     'deprecations' => [
@@ -47,24 +50,25 @@ return [
     |--------------------------------------------------------------------------
     | Log Channels
     |--------------------------------------------------------------------------
+    | Daftar channel log. Laravel memakai library Monolog yang punya banyak
+    | handler dan formatter.
     |
-    | Here you may configure the log channels for your application. Laravel
-    | utilizes the Monolog PHP logging library, which includes a variety
-    | of powerful log handlers and formatters that you're free to use.
-    |
-    | Available drivers: "single", "daily", "slack", "syslog",
-    |                    "errorlog", "monolog", "custom", "stack"
-    |
+    | Driver yang tersedia: "single", "daily", "slack", "syslog",
+    |                       "errorlog", "monolog", "custom", "stack"
     */
 
     'channels' => [
 
+        // STACK — memanggil BEBERAPA channel sekaligus dalam satu pesan.
+        // 'channels' diisi daftar channel (default: 'single').
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
 
+        // SINGLE — tulis semua log ke SATU file (storage/logs/laravel.log).
+        //  - level → level minimum yang dicatat (debug = semua level)
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -72,6 +76,8 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // DAILY — tulis log per HARI (laravel-YYYY-MM-DD.log), file lama
+        // otomatis dihapus setelah 'days' hari (default 14).
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
@@ -80,6 +86,7 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // SLACK — kirim log ke channel Slack via webhook URL.
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
@@ -89,6 +96,8 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // PAPERTRAIL — kirim log ke layanan Papertrail (aggregator log)
+        // via SyslogUdpHandler (UDP/TLS ke host & port yang diset).
         'papertrail' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -101,6 +110,7 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        // STDERR — tulis log ke stderr (biasa untuk CLI/Docker).
         'stderr' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -112,6 +122,7 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        // SYSLOG — tulis log ke sistem syslog server.
         'syslog' => [
             'driver' => 'syslog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -119,17 +130,21 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // ERRORLOG — tulis log ke error log bawaan PHP.
         'errorlog' => [
             'driver' => 'errorlog',
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
+        // NULL — buang semua pesan log (handler kosong).
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],
 
+        // EMERGENCY — channel khusus untuk error fatal (laravel.log)
+        // dipakai saat sistem log utama gagal.
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

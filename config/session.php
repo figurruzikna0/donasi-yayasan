@@ -3,8 +3,15 @@
 /*
  * session.php — Konfigurasi session
  * ===================================
- * Mengatur driver session, masa berlaku, enkripsi,
- * lokasi file, koneksi database, cookie, dan serialisasi.
+ * Session = cara aplikasi mengingat status pengguna antar request
+ * (misal: status login, data sementara, dll.) melalui cookie + penyimpanan.
+ * File ini mengatur:
+ *  - driver session (di mana data session disimpan)
+ *  - masa berlaku & perilaku cookie session
+ *  - pengaturan keamanan cookie (secure, http_only, same_site)
+ *  - serialisasi data session
+ *
+ * Di sistem ini: driver 'database' → session disimpan di tabel 'sessions'.
  */
 
 use Illuminate\Support\Str;
@@ -15,28 +22,23 @@ return [
     |--------------------------------------------------------------------------
     | Default Session Driver
     |--------------------------------------------------------------------------
+    | Tempat penyimpanan data session. 'database' adalah pilihan default
+    | yang baik (data tersimpan di tabel sessions, tahan restart server).
     |
-    | This option determines the default session driver that is utilized for
-    | incoming requests. Laravel supports a variety of storage options to
-    | persist session data. Database storage is a great default choice.
-    |
-    | Supported: "file", "cookie", "database", "memcached",
-    |            "redis", "dynamodb", "array"
-    |
+    | Driver didukung: "file", "cookie", "database", "memcached",
+    |                  "redis", "dynamodb", "array"
     */
 
     'driver' => env('SESSION_DRIVER', 'database'),
 
     /*
     |--------------------------------------------------------------------------
-    | Session Lifetime
+    | Masa Berlaku Session (Session Lifetime)
     |--------------------------------------------------------------------------
-    |
-    | Here you may specify the number of minutes that you wish the session
-    | to be allowed to remain idle before it expires. If you want them
-    | to expire immediately when the browser is closed then you may
-    | indicate that via the expire_on_close configuration option.
-    |
+    | Berapa MENIT session boleh menganggur (idle) sebelum dianggap
+    | kadaluarsa. Default 120 menit.
+    |  - lifetime         → 120 menit idle
+    |  - expire_on_close  → true = session langsung hilang saat browser ditutup
     */
 
     'lifetime' => (int) env('SESSION_LIFETIME', 120),
@@ -45,67 +47,52 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Session Encryption
+    | Enkripsi Session (Session Encryption)
     |--------------------------------------------------------------------------
-    |
-    | This option allows you to easily specify that all of your session data
-    | should be encrypted before it's stored. All encryption is performed
-    | automatically by Laravel and you may use the session like normal.
-    |
+    | true = semua data session DIENKRIPSI sebelum disimpan.
+    | Enkripsi dilakukan otomatis oleh Laravel; pemakaian session
+    | tidak berubah dari sisi kode aplikasi.
     */
 
     'encrypt' => env('SESSION_ENCRYPT', false),
 
     /*
     |--------------------------------------------------------------------------
-    | Session File Location
+    | Lokasi File Session
     |--------------------------------------------------------------------------
-    |
-    | When utilizing the "file" session driver, the session files are placed
-    | on disk. The default storage location is defined here; however, you
-    | are free to provide another location where they should be stored.
-    |
+    | Saat driver 'file' dipakai, file session diletakkan di sini
+    | (storage/framework/sessions).
     */
 
     'files' => storage_path('framework/sessions'),
 
     /*
     |--------------------------------------------------------------------------
-    | Session Database Connection
+    | Koneksi Database Session
     |--------------------------------------------------------------------------
-    |
-    | When using the "database" or "redis" session drivers, you may specify a
-    | connection that should be used to manage these sessions. This should
-    | correspond to a connection in your database configuration options.
-    |
+    | Saat driver 'database' atau 'redis', tentukan koneksi yang dipakai
+    | untuk mengelola session. Kosong = ikut koneksi database default.
     */
 
     'connection' => env('SESSION_CONNECTION'),
 
     /*
     |--------------------------------------------------------------------------
-    | Session Database Table
+    | Tabel Database Session
     |--------------------------------------------------------------------------
-    |
-    | When using the "database" session driver, you may specify the table to
-    | be used to store sessions. Of course, a sensible default is defined
-    | for you; however, you're welcome to change this to another table.
-    |
+    | Saat driver 'database', session disimpan pada tabel ini
+    | (default 'sessions' — migrasi users membuatinya otomatis).
     */
 
     'table' => env('SESSION_TABLE', 'sessions'),
 
     /*
     |--------------------------------------------------------------------------
-    | Session Cache Store
+    | Cache Store Session
     |--------------------------------------------------------------------------
-    |
-    | When using one of the framework's cache driven session backends, you may
-    | define the cache store which should be used to store the session data
-    | between requests. This must match one of your defined cache stores.
-    |
-    | Affects: "dynamodb", "memcached", "redis"
-    |
+    | Bila memakai backend session berbasis cache (dynamodb, memcached,
+    | redis), tentukan store cache yang dipakai. Harus cocok dengan
+    | salah satu store di config/cache.php.
     */
 
     'store' => env('SESSION_STORE'),
@@ -114,24 +101,20 @@ return [
     |--------------------------------------------------------------------------
     | Session Sweeping Lottery
     |--------------------------------------------------------------------------
-    |
-    | Some session drivers must manually sweep their storage location to get
-    | rid of old sessions from storage. Here are the chances that it will
-    | happen on a given request. By default, the odds are 2 out of 100.
-    |
+    | Beberapa driver session harus "menyapu" file/record session lama
+    | secara manual. Lottery = peluang pembersihan per request.
+    | [2, 100] = peluang 2 dari 100 request dilakukan pembersihan.
     */
 
     'lottery' => [2, 100],
 
     /*
     |--------------------------------------------------------------------------
-    | Session Cookie Name
+    | Nama Cookie Session
     |--------------------------------------------------------------------------
-    |
-    | Here you may change the name of the session cookie that is created by
-    | the framework. Typically, you should not need to change this value
-    | since doing so does not grant a meaningful security improvement.
-    |
+    | Nama cookie session yang dibuat framework. Umumnya TIDAK perlu diubah
+    | (mengubahnya tidak memberi manfaat keamanan berarti).
+    | Nama otomatis: {slug APP_NAME}-session
     */
 
     'cookie' => env(
@@ -141,52 +124,42 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Session Cookie Path
+    | Path Cookie Session
     |--------------------------------------------------------------------------
-    |
-    | The session cookie path determines the path for which the cookie will
-    | be regarded as available. Typically, this will be the root path of
-    | your application, but you're free to change this when necessary.
-    |
+    | Path di mana cookie session dianggap tersedia.
+    | '/' = tersedia di seluruh domain aplikasi.
     */
 
     'path' => env('SESSION_PATH', '/'),
 
     /*
     |--------------------------------------------------------------------------
-    | Session Cookie Domain
+    | Domain Cookie Session
     |--------------------------------------------------------------------------
-    |
-    | This value determines the domain and subdomains the session cookie is
-    | available to. By default, the cookie will be available to the root
-    | domain without subdomains. Typically, this shouldn't be changed.
-    |
+    | Domain dan subdomain tempat cookie session tersedia.
+    | Default kosong = cookie hanya berlaku di domain utama tanpa subdomain.
+    | Umumnya tidak perlu diubah.
     */
 
     'domain' => env('SESSION_DOMAIN'),
 
     /*
     |--------------------------------------------------------------------------
-    | HTTPS Only Cookies
+    | Cookie Hanya HTTPS (secure)
     |--------------------------------------------------------------------------
-    |
-    | By setting this option to true, session cookies will only be sent back
-    | to the server if the browser has a HTTPS connection. This will keep
-    | the cookie from being sent to you when it can't be done securely.
-    |
+    | true = cookie session HANYA dikirim saat koneksi HTTPS.
+    | Mencegah cookie bocor lewat HTTP biasa. Untuk produksi sebaiknya true.
     */
 
     'secure' => env('SESSION_SECURE_COOKIE'),
 
     /*
     |--------------------------------------------------------------------------
-    | HTTP Access Only
+    | HTTP Only
     |--------------------------------------------------------------------------
-    |
-    | Setting this value to true will prevent JavaScript from accessing the
-    | value of the cookie and the cookie will only be accessible through
-    | the HTTP protocol. It's unlikely you should disable this option.
-    |
+    | true = JavaScript TIDAK bisa mengakses nilai cookie — cookie hanya
+    | bisa dibaca lewat protokol HTTP. Melindungi dari serangan XSS.
+    | Sangat disarankan tetap true.
     */
 
     'http_only' => env('SESSION_HTTP_ONLY', true),
@@ -195,15 +168,11 @@ return [
     |--------------------------------------------------------------------------
     | Same-Site Cookies
     |--------------------------------------------------------------------------
-    |
-    | This option determines how your cookies behave when cross-site requests
-    | take place, and can be used to mitigate CSRF attacks. By default, we
-    | will set this value to "lax" to permit secure cross-site requests.
-    |
-    | See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value
-    |
-    | Supported: "lax", "strict", "none", null
-    |
+    | Menentukan perilaku cookie pada request lintas situs; berguna
+    | mengurangi risiko serangan CSRF.
+    |  - 'lax'   → cookie terkirim pada navigasi biasa lintas situs (default)
+    |  - 'strict'→ cookie hanya terkirim ke situs asalnya sendiri
+    |  - 'none'  → cookie selalu terkirim (harus disertai flag secure)
     */
 
     'same_site' => env('SESSION_SAME_SITE', 'lax'),
@@ -212,27 +181,21 @@ return [
     |--------------------------------------------------------------------------
     | Partitioned Cookies
     |--------------------------------------------------------------------------
-    |
-    | Setting this value to true will tie the cookie to the top-level site for
-    | a cross-site context. Partitioned cookies are accepted by the browser
-    | when flagged "secure" and the Same-Site attribute is set to "none".
-    |
+    | true = cookie dikaitkan ke situs top-level untuk konteks lintas situs
+    | (CHIPS). Hanya diterima browser bila cookie ber-flag 'secure'
+    | dan Same-Site diatur 'none'.
     */
 
     'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
 
     /*
     |--------------------------------------------------------------------------
-    | Session Serialization
+    | Serialisasi Session
     |--------------------------------------------------------------------------
-    |
-    | This value controls the serialization strategy for session data, which
-    | is JSON by default. Setting this to "php" allows the storage of PHP
-    | objects in the session but can make an application vulnerable to
-    | "gadget chain" serialization attacks if the APP_KEY is leaked.
-    |
-    | Supported: "json", "php"
-    |
+    | Strategi serialisasi data session.
+    |  - 'json' → data disimpan sebagai JSON (default, lebih aman)
+    |  - 'php'  → bisa menyimpan objek PHP, tapi rentan terhadap serangan
+    |    "gadget chain" bila APP_KEY bocor. Jangan pakai kecuali perlu.
     */
 
     'serialization' => 'json',

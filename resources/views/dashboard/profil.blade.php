@@ -1,5 +1,12 @@
+<!-- ============================================ -->
+<!-- dashboard/profil.blade.php - PROFIL YAYASAN  -->
+<!-- ============================================ -->
+<!-- Peran: halaman versi dashboard donatur yang menampilkan profil lembaga (logo, sejarah, visi, misi, dan kontak yayasan) dari database. -->
+<!-- Data berasal dari variabel $profil (model ProfilYayasan) via view composer global, diakses dari route 'dashboard.profil'. -->
+<!-- Alur: membungkus konten dengan x-app-layout, menampilkan hero info lembaga, kartu sejarah, kartu visi & misi, lalu kartu kontak (alamat/WA/email). -->
 <x-app-layout>
     {{-- HERO --}}
+    <!-- Hero halaman: latar gradasi lembut, logo yayasan (atau ikon fallback), label "Info Lembaga", dan nama yayasan -->
     <div class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-emerald-50 border-b border-slate-200">
         <div class="absolute inset-0">
             <div class="absolute top-10 left-10 w-72 h-72 bg-emerald-200/20 rounded-full blur-3xl"></div>
@@ -7,6 +14,7 @@
         </div>
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 relative">
             <div class="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
+                <!-- Kondisi if: tampilkan logo yayasan dari storage jika ada, jika tidak tampilkan ikon landmark sebagai fallback -->
                 @if($profil?->logo)
                     <div class="w-20 h-20 rounded-2xl bg-white backdrop-blur-sm p-1.5 ring-1 ring-slate-200 shadow-xl shrink-0">
                         <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" class="w-full h-full object-cover rounded-xl" alt="Logo">
@@ -31,6 +39,7 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-3 relative z-10 pb-12 space-y-8">
 
         {{-- SEJARAH --}}
+        <!-- Kartu sejarah: header gradasi hijau berjudul "Sejarah & Rekam Jejak" dan isi teks $profil->sejarah_yayasan -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 lg:px-8 py-4 sm:py-5">
                 <div class="flex items-center gap-3">
@@ -45,10 +54,12 @@
             </div>
             <div class="px-6 lg:px-8 py-6 sm:py-8">
                 <div class="flex gap-5">
+                    <!-- Dekorasi garis waktu vertikal di sisi kiri teks sejarah -->
                     <div class="hidden sm:flex flex-col items-center shrink-0">
                         <div class="w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></div>
                         <div class="w-0.5 flex-1 bg-gradient-to-b from-emerald-200 to-emerald-50"></div>
                     </div>
+                    <!-- php tidak ada di sini: isi sejarah langsung ditampilkan; whitespace-pre-line menjaga format baris baru pada teks -->
                     <div>
                         <p class="text-slate-600 leading-[1.9] whitespace-pre-line text-sm sm:text-base">{{ $profil?->sejarah_yayasan ?? 'Informasi sejarah belum diisi.' }}</p>
                     </div>
@@ -57,8 +68,10 @@
         </div>
 
         {{-- VISI & MISI --}}
+        <!-- Grid dua kolom: kartu Visi dan kartu Misi -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {{-- VISI --}}
+            <!-- Kartu visi: mengutip $profil->visi; jika kosong muncul teks 'Belum diatur' -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden group hover:shadow-md transition-shadow">
                 <div class="h-2 bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
                 <div class="p-6 lg:p-7">
@@ -77,6 +90,7 @@
                 </div>
             </div>
             {{-- MISI --}}
+            <!-- Kartu misi: teks $profil->misi dipecah per baris dengan explode('\n') lalu dirender sebagai daftar bernomor centang -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden group hover:shadow-md transition-shadow">
                 <div class="h-2 bg-gradient-to-r from-emerald-600 to-emerald-500"></div>
                 <div class="p-6 lg:p-7">
@@ -96,6 +110,7 @@
                                 <span class="w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 mt-0.5">
                                     <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
                                 </span>
+                                <!-- ltrim menghapus karakter bullet '•' atau spasi di awal baris misi -->
                                 <span class="leading-relaxed">{{ ltrim($m, '• ') }}</span>
                             </li>
                         @endforeach
@@ -105,6 +120,7 @@
         </div>
 
         {{-- KONTAK --}}
+        <!-- Kartu kontak: tiga pintasan (Alamat ke Google Maps, Telepon/WA ke wa.me, Email ke mailto) yang diambil dari $profil -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 lg:px-8 py-4 sm:py-5">
                 <div class="flex items-center gap-3">
@@ -119,6 +135,7 @@
             </div>
             <div class="p-6 lg:p-8">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <!-- Pintasan alamat: membuka pencarian alamat yayasan di Google Maps -->
                     <a href="https://www.google.com/maps/search/{{ urlencode($profil?->alamat ?? '') }}" target="_blank" class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors group">
                         <span class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 text-base group-hover:scale-110 transition-transform">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
@@ -128,6 +145,7 @@
                             <p class="text-sm text-slate-700 mt-0.5 leading-relaxed break-words">{{ $profil?->alamat ?? 'Alamat belum diatur' }}</p>
                         </div>
                     </a>
+                    <!-- Pintasan telepon/WA: angka non-digit dibersihkan dengan preg_replace lalu dibuka di wa.me -->
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil?->no_telp ?? '') }}" target="_blank" class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors group">
                         <span class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 text-base group-hover:scale-110 transition-transform">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/></svg>
@@ -137,6 +155,7 @@
                             <p class="text-sm text-slate-700 mt-0.5">{{ $profil?->no_telp ?? '-' }}</p>
                         </div>
                     </a>
+                    <!-- Pintasan email: membuka aplikasi email pengguna melalui mailto -->
                     <a href="mailto:{{ $profil?->email ?? '' }}" class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors group">
                         <span class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 text-base group-hover:scale-110 transition-transform">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>

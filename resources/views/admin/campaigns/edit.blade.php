@@ -1,6 +1,15 @@
+<!-- ============================================ -->
+<!-- admin\campaigns\edit.blade.php               -->
+<!-- Halaman form pengubahan kampanye donasi      -->
+<!-- Dipakai oleh Admin\CampaignController@edit   -->
+<!-- Alur: menampilkan error validasi bila ada,   -->
+<!-- form PUT ke route update dengan data lama    -->
+<!-- dari $campaign; termasuk ubah foto & status  -->
+<!-- ============================================ -->
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    <!-- Header halaman edit kampanye -->
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +23,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Edit Kampanye</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Perbarui detail kampanye donasi</p>
                 </div>
+                <!-- Tombol kembali ke daftar kampanye -->
                 <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                     Kembali
@@ -26,14 +36,21 @@
 
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
             <div class="px-8 py-6">
+                <!-- Tampilkan alert error bila validasi server gagal -->
                 @if($errors->any())
                     <x-alert type="error" :errors="$errors->all()" />
                 @endif
 
+                <!-- ============================================ -->
+                <!-- Form edit kampanye: PUT ke route update.     -->
+                <!-- Nilai input diisi data lama dari $campaign    -->
+                <!-- dan old() agar tidak hilang saat gagal        -->
+                <!-- ============================================ -->
                 <form action="{{ route('admin.campaigns.update', $campaign->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
+                    <!-- Input judul kampanye (wajib) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Judul Kampanye</span>
@@ -47,6 +64,7 @@
                         @enderror
                     </div>
 
+                    <!-- Input deskripsi kampanye (wajib) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Deskripsi</span>
@@ -59,6 +77,7 @@
                         @enderror
                     </div>
 
+                    <!-- Input target dana (wajib, minimal 1) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Target Dana (Rp)</span>
@@ -76,6 +95,7 @@
 
                     <p class="font-bold text-base-content mb-3">Foto Kampanye</p>
 
+                    <!-- Menampilkan foto lama bila kampanye punya gambar -->
                     @if($campaign->image)
                         <div class="flex items-start gap-3 p-3 bg-base-200 border border-base-200 rounded-lg mb-4">
                             <img src="{{ asset('storage/' . $campaign->image) }}" alt="Foto saat ini" class="w-24 h-16 object-cover rounded border border-base-300">
@@ -86,6 +106,8 @@
                         </div>
                     @endif
 
+                    <!-- Upload foto baru (opsional saat edit); -->
+                    <!-- kosongkan bila tidak ingin mengganti     -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Ganti Foto <span class="font-normal normal-case text-base-content/40">(Opsional)</span></span>
@@ -106,6 +128,7 @@
                         @enderror
                     </div>
 
+                    <!-- Dropdown status kampanye: Aktif atau Selesai -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Status Kampanye</span>
@@ -121,6 +144,7 @@
 
                     <div class="divider"></div>
 
+                    <!-- Tombol aksi bawah: Batal dan Simpan Perubahan -->
                     <div class="flex items-center justify-end gap-3">
                         <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -145,6 +169,7 @@
     </div>
 </div>
 
+<!-- CSS khusus untuk area upload file bergaya kotak putus-putus -->
 <style>
     .file-input-wrapper { position: relative; }
     .file-input-label {
@@ -164,6 +189,7 @@
     }
 </style>
 
+<!-- Skrip JS: menampilkan nama file foto baru yang dipilih -->
 <script>
     document.getElementById('image-input').addEventListener('change', function () {
         const span = document.getElementById('image-text');

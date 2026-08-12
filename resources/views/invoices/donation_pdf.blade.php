@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<!-- ============================================ -->
+<!-- invoices\donation_pdf.blade.php — template PDF invoice donasi -->
+<!-- ============================================ -->
+<!-- Peran     : template cetak (Dompdf) untuk menghasilkan file PDF invoice donasi. -->
+<!--             Tidak memakai vite/CSS Tailwind karena Dompdf hanya mendukung CSS lama; -->
+<!--             seluruh gaya ditulis inline di blok <style>. -->
+<!-- Controller: InvoiceController — variabel $donation (Donation), $profil (ProfilYayasan); -->
+<!--             logo dibaca lewat helper public_path() agar bisa diakses oleh Dompdf. -->
+<!-- Alur      : halaman donation.blade.php -> klik Download PDF -> controller merender -->
+<!--             template ini -> Dompdf mengubahnya menjadi PDF -> diunduh pengguna. -->
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -33,6 +43,7 @@
     </style>
 </head>
 <body>
+    <!-- KOP DOKUMEN: judul INVOICE + identitas yayasan (logo & alamat) di sisi kanan -->
     <div class="header">
         <table>
             <tr>
@@ -41,6 +52,7 @@
                     <p>Bukti Donasi</p>
                 </td>
                 <td class="right">
+                    <!-- LOGO: public_path() mengambil path absolut file di folder storage agar bisa dibaca Dompdf -->
                     @if($profil?->logo)
                         <img src="{{ public_path('storage/' . $profil->logo) }}" class="logo" alt="Logo">
                     @endif
@@ -51,6 +63,7 @@
         </table>
     </div>
 
+    <!-- TABEL INFO: pihak penerima (donatur) dan detail invoice (order id, tanggal, status) -->
     <div class="section">
         <table class="info-table">
             <tr>
@@ -70,6 +83,7 @@
                 <td class="value">{{ $donation->donor_phone ?? '' }}</td>
                 <td class="label" style="padding-left:40px;">Status</td>
                 <td>
+                    <!-- BADGE STATUS DONASI: success = LUNAS, pending = TERTUNDA, lainnya = GAGAL -->
                     @if($donation->status === 'success')
                         <span class="status status-success">LUNAS</span>
                     @elseif($donation->status === 'pending')
@@ -82,6 +96,7 @@
         </table>
     </div>
 
+    <!-- TABEL RINCIAN: deskripsi donasi (nama program + metode pembayaran) dan total biaya -->
     <table class="invoice-table">
         <thead>
             <tr>
@@ -98,6 +113,7 @@
                 <td class="right">Rp {{ number_format($donation->amount, 0, ',', '.') }}</td>
             </tr>
         </tbody>
+        <!-- BARIS TOTAL -->
         <tfoot>
             <tr>
                 <td>Total</td>
@@ -106,6 +122,7 @@
         </tfoot>
     </table>
 
+    <!-- FOOTER: ucapan terima kasih & identitas yayasan penerbit -->
     <div class="footer">
         <p>Terima kasih atas donasi Anda. Setiap rupiah berarti bagi mereka yang membutuhkan.</p>
         <p><strong>— {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} —</strong></p>

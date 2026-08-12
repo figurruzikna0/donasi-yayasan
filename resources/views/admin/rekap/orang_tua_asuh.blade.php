@@ -1,6 +1,22 @@
+{{--
+    ============================================================
+    admin\rekap\orang_tua_asuh.blade.php — Rekap Orang Tua Asuh
+    ============================================================
+    Halaman rekap lengkap data sponsorship (orang tua asuh) untuk
+    admin. Data dikirim dari RekapController (rekap orang tua asuh):
+      - $sponsorships (paginate) → daftar sponsorship
+      - $totalCount, $activeCount, $totalAmount → kartu statistik
+    Alur halaman: header + tombol export CSV/PDF → kartu statistik
+    (total, aktif, total dana) → form filter tanggal & kata kunci →
+    filter status (Semua/Aktif/Menunggu/Expire/Gagal) → tabel rinci
+    (nama, email, no telp, anak asuh, paket, nominal, kode donasi,
+    metode, periode, status + alasan penolakan) → paginasi.
+    Export memakai parameter query saat ini (request()->getQueryString()).
+--}}
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    {{-- Header halaman: judul + tombol export CSV dan PDF --}}
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +30,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Data Seluruh Sponsorship</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Rekap lengkap data orang tua asuh (sponsorship)</p>
                 </div>
+                {{-- Tombol export: menyertakan query string filter saat ini --}}
                 <div class="flex gap-2">
                     <a href="{{ route('admin.rekap.orang-tua-asuh.export') }}?{{ request()->getQueryString() }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 btn-sm font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
@@ -30,12 +47,14 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 pb-12 space-y-6">
 
+        {{-- Kartu statistik rekap: total sponsorship, jumlah aktif, total dana --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {{-- Kartu 1: Total sponsorship --}}
             <div class="relative bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-6 overflow-hidden group hover:-translate-y-0.5 transition-all duration-300">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[4rem] -mr-8 -mt-8 group-hover:scale-110 transition-transform duration-500"></div>
                 <div class="relative flex items-center gap-4">
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-200 shrink-0">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <div>
                         <div class="text-base-content/50 text-[0.65rem] uppercase tracking-widest font-bold">Total Sponsorship</div>
@@ -43,6 +62,7 @@
                     </div>
                 </div>
             </div>
+            {{-- Kartu 2: Jumlah sponsorship aktif --}}
             <div class="relative bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-6 overflow-hidden group hover:-translate-y-0.5 transition-all duration-300">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-sky-50 rounded-bl-[4rem] -mr-8 -mt-8 group-hover:scale-110 transition-transform duration-500"></div>
                 <div class="relative flex items-center gap-4">
@@ -55,6 +75,7 @@
                     </div>
                 </div>
             </div>
+            {{-- Kartu 3: Total dana sponsorship (format rupiah) --}}
             <div class="relative bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-6 overflow-hidden group hover:-translate-y-0.5 transition-all duration-300">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-[4rem] -mr-8 -mt-8 group-hover:scale-110 transition-transform duration-500"></div>
                 <div class="relative flex items-center gap-4">
@@ -70,25 +91,33 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
+            {{-- Form filter: rentang tanggal (start_date s/d end_date) dan kata kunci pencarian --}}
             <div class="px-4 sm:px-6 py-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-3 bg-base-50/30">
                 <form method="GET" class="flex flex-wrap items-end gap-x-3 gap-y-2">
                     <div>
+                        {{-- Input tanggal awal periode --}}
                         <label class="text-[11px] font-semibold text-base-content/50 block mb-0.5">Dari Tanggal</label>
                         <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered input-sm rounded-xl w-40">
                     </div>
                     <div>
+                        {{-- Input tanggal akhir periode --}}
                         <label class="text-[11px] font-semibold text-base-content/50 block mb-0.5">Sampai</label>
                         <input type="date" name="end_date" value="{{ request('end_date') }}" class="input input-bordered input-sm rounded-xl w-40">
                     </div>
                     <div>
+                        {{-- Kata kunci pencarian: donor/email/order/anak --}}
                         <label class="text-[11px] font-semibold text-base-content/50 block mb-0.5">Cari</label>
                         <input type="text" name="search" placeholder="Cari donor/email/order/anak..." class="input input-bordered input-sm rounded-xl w-40" value="{{ request('search') }}">
                     </div>
+                    {{-- Tombol terapkan filter dan reset --}}
                     <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white border-0 btn-sm font-bold rounded-xl">Filter</button>
                     <a href="{{ route('admin.rekap.orang-tua-asuh') }}" class="btn btn-ghost btn-sm font-bold rounded-xl">Reset</a>
                 </form>
             </div>
 
+            {{-- Filter status sponsorship: Semua / Aktif / Menunggu / Expire / Gagal.
+                Setiap tautan mempertahankan parameter lain (array_merge) dan
+                menandai status aktif dengan warna berbeda (baca request('status')). --}}
             <div class="px-4 sm:px-6 py-3 border-b border-base-200 bg-base-50/30 flex flex-wrap items-center gap-1.5">
                 <span class="text-[11px] font-semibold text-base-content/50 mr-1">Status:</span>
                 @php $curStatus = request('status'); @endphp
@@ -107,6 +136,8 @@
             @if($sponsorships->isNotEmpty())
                 <div class="overflow-x-auto">
                     <table class="table w-full">
+                        {{-- Kolom tabel rekap: Nama, Email, No. Telepon, Anak Asuh, Paket,
+                            Nominal, Kode Donasi, Metode, Periode, Status --}}
                         <thead>
                             <tr class="bg-base-50/80 border-b border-base-200">
                                 <th class="py-4 px-6 text-[0.6rem] uppercase tracking-widest font-bold text-base-content/40">Nama</th>
@@ -122,7 +153,14 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-base-100">
+                            {{-- Perulangan setiap data sponsorship --}}
                             @foreach($sponsorships as $s)
+                                {{-- ------------------------------------------------------------------
+                                    LOGIKA STATUS & WARNA METODE BAYAR PER BARIS:
+                                    - $statusKey: pending / aktif / kadaluarsa / gagal
+                                    - $pmClass: warna badge berdasarkan nama bank/metode
+                                      (BRI biru, BCA merah, Mandiri kuning, BNI oranye)
+                                ------------------------------------------------------------------ --}}
                                 @php
                                     $isExpiredPeriod = $s->expires_at && $s->expires_at->isPast();
                                     $remainingDays = $s->expires_at ? (int) now()->diffInDays($s->expires_at) : null;
@@ -146,6 +184,7 @@
                                 @endphp
                                 <tr class="hover:bg-emerald-50/40 transition-colors duration-150 group">
                                     <td class="py-4 px-6">
+                                        {{-- Nama donatur dengan avatar inisial --}}
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center uppercase shrink-0">{{ substr($s->donor_name, 0, 1) }}</div>
                                             <span class="text-sm font-bold text-base-content">{{ $s->donor_name }}</span>
@@ -153,27 +192,33 @@
                                     </td>
                                     <td class="py-4 px-6 text-sm text-base-content/60">{{ $s->donor_email }}</td>
                                     <td class="py-4 px-6">
+                                        {{-- Nomor telepon donatur (format 62xxx untuk WA) --}}
                                         <span class="inline-flex items-center gap-1.5 text-sm text-base-content/60">
                                             <svg class="w-3.5 h-3.5 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                                             {{ $s->donor_phone ?? '-' }}
                                         </span>
                                     </td>
                                     <td class="py-4 px-6">
+                                        {{-- Nama anak asuh yang disponsori (fallback jika anak dihapus) --}}
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.6rem] font-bold bg-emerald-100 text-emerald-700">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                             {{ $s->fosterChild?->name ?? 'Anak Dihapus' }}
                                         </span>
                                     </td>
                                     <td class="py-4 px-6">
+                                        {{-- Badge paket sponsorship (Bronze/Silver/Gold) --}}
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.6rem] font-bold bg-amber-50 text-amber-700 border border-amber-200">{{ $s->package ?? '-' }}</span>
                                     </td>
                                     <td class="py-4 px-6 text-right">
+                                        {{-- Nominal sponsorship dengan format rupiah --}}
                                         <span class="font-black text-base-content">Rp {{ number_format($s->amount, 0, ',', '.') }}</span>
                                     </td>
                                     <td class="py-4 px-6">
+                                        {{-- Kode/order id transaksi dari Midtrans --}}
                                         <span class="font-mono text-[0.6rem] text-base-content/40 bg-base-100 px-1.5 py-0.5 rounded">{{ $s->order_id }}</span>
                                     </td>
                                     <td class="py-4 px-6">
+                                        {{-- Badge metode pembayaran dengan warna sesuai bank --}}
                                         @if($pmt)
                                             <span class="inline-flex items-center gap-1 text-[0.6rem] font-bold px-2 py-0.5 rounded-full border {{ $pmClass }}">
                                                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -184,6 +229,7 @@
                                         @endif
                                     </td>
                                     <td class="py-4 px-6">
+                                        {{-- Periode masa aktif + keterangan sisa/lewat hari --}}
                                         @if($s->starts_at && $s->expires_at)
                                             <div class="text-sm font-bold text-base-content whitespace-nowrap">{{ $s->starts_at->format('d M Y') }} – {{ $s->expires_at->format('d M Y') }}</div>
                                             <div class="text-xs mt-0.5">
@@ -199,6 +245,7 @@
                                         @endif
                                     </td>
                                     <td class="py-4 px-6 text-center">
+                                        {{-- Badge status sponsorship (Aktif/Menunggu/Expire/Ditolak) --}}
                                         @php
                                             $sIcon = $statusKey === 'aktif' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : ($statusKey === 'pending' ? 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' : ($statusKey === 'kadaluarsa' ? 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z' : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'));
                                             $sLabel = $statusKey === 'aktif' ? 'Aktif' : ($statusKey === 'pending' ? 'Menunggu' : ($statusKey === 'kadaluarsa' ? 'Expire' : 'Ditolak'));
@@ -208,6 +255,7 @@
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $sIcon }}"/></svg>
                                             {{ $sLabel }}
                                         </span>
+                                        {{-- Alasan penolakan hanya ditampilkan untuk status gagal --}}
                                         @if($statusKey === 'gagal' && $s->rejection_reason)
                                             <div class="mt-1.5 text-[0.6rem] text-rose-600 bg-rose-50 rounded-lg px-2.5 py-1.5 border border-rose-200 leading-relaxed max-w-[200px]">
                                                 <span class="font-bold">Alasan:</span> {{ $s->rejection_reason }}
@@ -220,15 +268,17 @@
                     </table>
                 </div>
             @else
+                {{-- Kondisi saat tidak ada data sponsorship --}}
                 <div class="py-16 text-center">
                     <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center mx-auto mb-4 shadow-inner">
-                        <svg class="w-9 h-9 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <svg class="w-9 h-9 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <p class="font-black text-base-content text-lg">Belum ada sponsorship</p>
                 </div>
             @endif
         </div>
 
+        {{-- Paginasi tabel rekap --}}
         <div class="flex justify-center">
             {{ $sponsorships->links() }}
         </div>

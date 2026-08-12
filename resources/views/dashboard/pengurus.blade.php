@@ -1,4 +1,11 @@
+<!-- ============================================ -->
+<!-- dashboard/pengurus.blade.php - PENGURUS      -->
+<!-- ============================================ -->
+<!-- Peran: halaman versi dashboard donatur yang menampilkan grid kartu pengurus yayasan. -->
+<!-- Data berasal dari variabel $daftarPendiri (koleksi pengurus) yang dikirim controller route 'dashboard.pengurus', dan $profil via view composer. -->
+<!-- Alur: membungkus konten dengan x-app-layout, menampilkan header gradasi, lalu grid kartu pengurus (foto atau inisial nama) beserta jabatan dan deskripsi. -->
 <x-app-layout>
+    <!-- Header halaman: latar gradasi warna primary dan judul "Pengurus Yayasan" -->
     <div class="bg-gradient-to-r from-primary via-primary to-secondary text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 class="text-2xl sm:text-3xl font-black">Pengurus Yayasan</h1>
@@ -7,17 +14,22 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Kondisi if: jika daftar pengurus tidak kosong tampilkan grid kartu; jika kosong tampilkan pesan "Belum ada data pengurus" -->
         @if($daftarPendiri->isNotEmpty())
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- foreach: setiap pengurus dirender menjadi satu kartu -->
                 @foreach($daftarPendiri as $person)
+                    <!-- php: membuat inisial dari huruf pertama setiap kata nama (maksimal 2 huruf) sebagai pengganti foto -->
                     @php
                         $words = explode(' ', $person->nama);
                         $initials = '';
                         foreach ($words as $w) { $initials .= strtoupper(substr($w, 0, 1)); if (strlen($initials) >= 2) break; }
                     @endphp
+                    <!-- Kartu pengurus: avatar bulat (foto dari storage atau inisial), nama, jabatan, dan deskripsi singkat -->
                     <div class="card bg-base-100 shadow-md border border-base-200 rounded-2xl p-5 text-center hover:shadow-lg hover:border-primary/20 transition-all duration-300">
                         <div class="avatar mx-auto mb-3">
                             <div class="w-20 rounded-full ring-2 ring-primary/20 ring-offset-2">
+                                <!-- Kondisi if: tampilkan foto pengurus jika ada, jika tidak tampilkan inisial nama -->
                                 @if($person->foto)
                                     <img src="{{ asset('storage/' . $person->foto) . '?v=' . now()->timestamp }}" alt="{{ $person->nama }}" class="object-cover">
                                 @else
@@ -27,6 +39,7 @@
                         </div>
                         <h3 class="font-bold text-sm text-base-content">{{ $person->nama }}</h3>
                         <p class="text-xs text-primary font-semibold mt-0.5">{{ $person->jabatan ?? 'Pengurus' }}</p>
+                        <!-- Kondisi if: deskripsi pengurus (dipotong 80 karakter) hanya dirender jika terisi -->
                         @if($person->deskripsi)
                             <p class="text-xs text-base-content/50 mt-2 leading-relaxed">{{ Str::limit($person->deskripsi, 80) }}</p>
                         @endif
@@ -34,6 +47,7 @@
                 @endforeach
             </div>
         @else
+            <!-- Blok else: state kosong ketika belum ada data pengurus -->
             <div class="text-center py-16 text-sm text-base-content/40 border-2 border-dashed border-base-300 rounded-xl bg-base-200/50">
                 Belum ada data pengurus.
             </div>

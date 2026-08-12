@@ -1,6 +1,15 @@
+<!-- ============================================ -->
+<!-- admin\campaigns\index.blade.php              -->
+<!-- Halaman daftar kampanye donasi (CRUD)        -->
+<!-- Dipakai oleh Admin\CampaignController@index  -->
+<!-- Alur: menampilkan statistik kampanye, filter -->
+<!-- status (Semua/Aktif/Selesai) via Alpine,     -->
+<!-- dan tabel kampanye dengan aksi per baris     -->
+<!-- ============================================ -->
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    <!-- Header halaman: judul dan tombol tambah kampanye -->
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +23,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Daftar Kampanye Donasi</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Kelola program donasi untuk memberikan dampak lebih luas.</p>
                 </div>
+                <!-- Tombol menuju halaman create kampanye -->
                 <a href="{{ route('admin.campaigns.create') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M12 4v16m8-8H4"/></svg>
                     Tambah Kampanye
@@ -25,6 +35,12 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12 space-y-6">
 
         {{-- Summary Cards --}}
+        <!-- ============================================ -->
+        <!-- Kartu ringkasan statistik kampanye:          -->
+        <!-- 1. Total kampanye (semua data $campaigns)    -->
+        <!-- 2. Kampanye aktif (status 'active')          -->
+        <!-- 3. Kampanye tidak aktif (status selain active)-->
+        <!-- ============================================ -->
         <div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
             <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                 <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -56,6 +72,12 @@
         </div>
 
         {{-- Table Card --}}
+        <!-- ============================================ -->
+        <!-- Kartu tabel daftar kampanye. Memakai Alpine   -->
+        <!-- x-data { cFilter: 'all' } untuk filter tab    -->
+        <!-- status tanpa reload (baris disaring via       -->
+        <!-- x-show berdasarkan nilai cFilter)             -->
+        <!-- ============================================ -->
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden" x-data="{ cFilter: 'all' }">
             <div class="px-6 py-4 border-b border-base-200 flex items-center justify-between gap-3 flex-wrap">
                 <div class="flex items-center gap-3">
@@ -68,6 +90,8 @@
                     </div>
                 </div>
                 {{-- Filter tabs --}}
+                <!-- Tab filter status: mengubah nilai cFilter pada -->
+                <!-- klik; baris tabel disaring otomatis oleh x-show -->
                 <div class="flex gap-1 flex-wrap">
                     <button @click="cFilter = 'all'" :class="cFilter === 'all' ? 'bg-primary text-white shadow-sm' : 'bg-base-200 text-base-content/60 hover:bg-base-300'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">Semua</button>
                     <button @click="cFilter = 'active'" :class="cFilter === 'active' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">Aktif</button>
@@ -77,6 +101,7 @@
             <div class="overflow-x-auto">
                 <table class="table w-full">
                     <thead>
+                        <!-- Header kolom: Gambar, Detail Kampanye, Status, Aksi -->
                         <tr class="bg-base-200/50">
                             <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40 whitespace-nowrap">Gambar</th>
                             <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40 whitespace-nowrap">Detail Kampanye</th>
@@ -85,9 +110,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- forelse: tampilkan baris tiap kampanye; baris -->
+                        <!-- disaring oleh x-show sesuai nilai cFilter -->
                         @forelse($campaigns as $campaign)
                             <tr x-show="cFilter === 'all' || cFilter === '{{ $campaign->status }}'" x-transition:enter.duration.200ms class="hover:bg-base-200/30 transition-colors">
                                 <td>
+                                    <!-- Gambar kampanye dari folder storage -->
                                     <div class="avatar">
                                         <div class="w-16 h-12 rounded-lg ring ring-base-300 ring-offset-1">
                                             <img src="{{ asset('storage/' . $campaign->image) }}" alt="{{ $campaign->title }}" class="object-cover">
@@ -95,6 +123,7 @@
                                     </div>
                                 </td>
                                 <td>
+                                    <!-- Judul kampanye dan target dana (diformat ribuan) -->
                                     <span class="font-bold text-sm text-base-content whitespace-nowrap">{{ $campaign->title }}</span>
                                     <div class="flex items-center gap-1.5 text-sm font-semibold text-base-content/60 mt-1 whitespace-nowrap">
                                         <svg class="w-3.5 h-3.5 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -102,6 +131,7 @@
                                     </div>
                                 </td>
                                 <td class="text-center whitespace-nowrap">
+                                    <!-- Badge status: hijau "Aktif" bila active, merah "Tidak Aktif" bila lainnya -->
                                     @if($campaign->status == 'active')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -115,24 +145,31 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- Tombol aksi per baris: Detail, Edit, Hapus -->
                                     <div class="flex items-center justify-center gap-1 whitespace-nowrap">
+                                        <!-- Tombol melihat detail kampanye -->
                                         <a href="{{ route('admin.campaigns.show', $campaign->id) }}" class="btn btn-sm btn-ghost text-base-content/50 hover:text-primary hover:bg-primary/5 rounded-lg font-bold">
                                             Detail
                                         </a>
+                                        <!-- Tombol mengubah kampanye -->
                                         <a href="{{ route('admin.campaigns.edit', $campaign->id) }}" class="btn btn-sm btn-ghost text-base-content/50 hover:text-warning hover:bg-warning/5 rounded-lg font-bold">
                                             Edit
                                         </a>
+                                        <!-- Form hapus kampanye: method DELETE; submit dicegah -->
+                                        <!-- lalu memunculkan modal konfirmasi (Alpine x-data 'open') -->
                                         <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST" x-data="{ open: false }" @submit.prevent="open = true">
                                             @csrf @method('DELETE')
                                             <button type="button" @click="open = true" class="btn btn-sm btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold">
                                                 Hapus
                                             </button>
+                                            <!-- Modal konfirmasi hapus kampanye (komponen reusable) -->
                                             <x-confirm-delete-modal entity-name="{{ $campaign->title }}" entity-type="kampanye" />
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
+                            <!-- Kondisi daftar kosong: baris tetap tampil saat filter "Semua" -->
                             <tr x-show="cFilter === 'all'">
                                 <td colspan="4">
                                     <div class="py-16 text-center">

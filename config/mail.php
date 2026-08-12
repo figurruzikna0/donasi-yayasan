@@ -3,8 +3,13 @@
 /*
  * mail.php — Konfigurasi email
  * ==============================
- * Mengatur mailer default, transport (smtp, ses, dll.),
- * dan alamat pengirim global.
+ * File ini mengatur PENGIRIMAN EMAIL aplikasi:
+ *  - default → mailer default yang dipakai
+ *  - mailers → daftar mailer (sarana pengiriman email) yang tersedia
+ *  - from    → alamat pengirim global untuk semua email
+ *
+ * Catatan sistem: aplikasi ini lebih banyak memakai WhatsApp (Fonnte)
+ * daripada email, sehingga mailer default 'log' (email "dikirim" ke file log).
  */
 
 return [
@@ -13,12 +18,9 @@ return [
     |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
-    |
-    | This option controls the default mailer that is used to send all email
-    | messages unless another mailer is explicitly specified when sending
-    | the message. All additional mailers can be configured within the
-    | "mailers" array. Examples of each type of mailer are provided.
-    |
+    | Mailer yang dipakai mengirim semua email bila tidak ada mailer lain
+    | yang disebutkan eksplisit. Di sini default 'log' (email ditulis ke log,
+    | tidak benar-benar terkirim — cocok saat pengembangan).
     */
 
     'default' => env('MAIL_MAILER', 'log'),
@@ -27,23 +29,20 @@ return [
     |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
+    | Daftar mailer beserta pengaturannya. Bisa menambah mailer sendiri
+    | sesuai kebutuhan aplikasi.
     |
-    | Here you may configure all of the mailers used by your application plus
-    | their respective settings. Several examples have been configured for
-    | you and you are free to add your own as your application requires.
-    |
-    | Laravel supports a variety of mail "transport" drivers that can be used
-    | when delivering an email. You may specify which one you're using for
-    | your mailers below. You may also add additional mailers if needed.
-    |
-    | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
-    |            "postmark", "resend", "log", "array",
-    |            "failover", "roundrobin"
-    |
+    | Transport yang didukung: "smtp", "sendmail", "mailgun", "ses",
+    |   "ses-v2", "postmark", "resend", "log", "array", "failover", "roundrobin"
     */
 
     'mailers' => [
 
+        // SMTP — kirim email lewat server SMTP standar.
+        //  - host / port   → server SMTP (default 127.0.0.1:2525 = Mailpit lokal)
+        //  - username / password → kredensial akun SMTP
+        //  - encryption    → 'tls' atau 'ssl' untuk koneksi aman
+        //  - local_domain  → domain EHLO (diambil dari host APP_URL)
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),
@@ -57,10 +56,12 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        // SES — email via Amazon SES (cloud). Kredensial di config/services.php.
         'ses' => [
             'transport' => 'ses',
         ],
 
+        // POSTMARK — email via Postmark (cloud).
         'postmark' => [
             'transport' => 'postmark',
             // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
@@ -69,24 +70,32 @@ return [
             // ],
         ],
 
+        // RESEND — email via Resend (cloud).
         'resend' => [
             'transport' => 'resend',
         ],
 
+        // SENDMAIL — pakai binary sendmail di server (Linux).
+        //  - path → lokasi binary sendmail
         'sendmail' => [
             'transport' => 'sendmail',
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
         ],
 
+        // LOG — email TIDAK dikirim sungguhan, hanya ditulis ke channel log.
+        // Sangat berguna di lingkungan pengembangan.
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
         ],
 
+        // ARRAY — email disimpan dalam array PHP (untuk testing).
         'array' => [
             'transport' => 'array',
         ],
 
+        // FAILOVER — coba mailer pertama; BILA GAGAL, coba mailer berikutnya.
+        // retry_after = jeda detik sebelum percobaan ulang.
         'failover' => [
             'transport' => 'failover',
             'mailers' => [
@@ -96,6 +105,7 @@ return [
             'retry_after' => 60,
         ],
 
+        // ROUNDROBIN — gilir-giliran memakai mailer di daftar secara merata.
         'roundrobin' => [
             'transport' => 'roundrobin',
             'mailers' => [
@@ -109,13 +119,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global "From" Address
+    | Alamat Pengirim Global ("From" Address)
     |--------------------------------------------------------------------------
-    |
-    | You may wish for all emails sent by your application to be sent from
-    | the same address. Here you may specify a name and address that is
-    | used globally for all emails that are sent by your application.
-    |
+    | Nama & alamat yang dipakai sebagai PENGIRIM semua email bila email
+    | tidak menentukan alamat From sendiri.
+    |  - address → alamat email pengirim (default hello@example.com)
+    |  - name    → nama pengirim (default nama aplikasi)
     */
 
     'from' => [

@@ -1,6 +1,18 @@
+<!-- ============================================ -->
+<!-- admin\news\index.blade.php                   -->
+<!-- Halaman daftar berita & kegiatan (CRUD)      -->
+<!-- Dipakai oleh Admin\NewsController@index      -->
+<!-- Alur: menampilkan ringkasan statistik, filter -->
+<!-- kategori & pencarian, lalu tabel daftar      -->
+<!-- berita dengan aksi Detail/Edit/Hapus         -->
+<!-- ============================================ -->
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    <!-- ============================================ -->
+    <!-- Header halaman: judul "Berita & Kegiatan"    -->
+    <!-- dan tombol menuju form tambah berita         -->
+    <!-- ============================================ -->
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +26,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Berita & Kegiatan</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Publikasikan narasi kegiatan, press release, dan laporan acara yayasan.</p>
                 </div>
+                <!-- Tombol menuju halaman create berita baru -->
                 <a href="{{ route('admin.news.create') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M12 4v16m8-8H4"/></svg>
                     Tambah Berita
@@ -25,7 +38,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12 space-y-6">
 
         {{-- Summary Cards --}}
+        <!-- ============================================ -->
+        <!-- Kartu ringkasan statistik berita:            -->
+        <!-- 1. Total berita (jumlah semua data)          -->
+        <!-- 2. Berita status "published" (tayang)        -->
+        <!-- 3. Berita status "draft"                     -->
+        <!-- ============================================ -->
         <div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
+            <!-- Kartu total berita: menghitung jumlah seluruh item dari $newsList -->
             <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                 <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-primary" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"/></svg>
@@ -35,6 +55,7 @@
                     <div class="text-2xl font-black text-base-content mt-0.5">{{ $newsList->total() }}</div>
                 </div>
             </div>
+            <!-- Kartu berita tayang: menghitung item dengan status 'published' pada halaman ini -->
             <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                 <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-emerald-700" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -44,6 +65,7 @@
                     <div class="text-2xl font-black text-base-content mt-0.5">{{ $newsList->getCollection()->where('status', 'published')->count() }}</div>
                 </div>
             </div>
+            <!-- Kartu berita draft: menghitung item dengan status 'draft' pada halaman ini -->
             <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                 <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-amber-700" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -56,6 +78,12 @@
         </div>
 
         {{-- Table Card --}}
+        <!-- ============================================ -->
+        <!-- Kartu tabel daftar berita: berisi filter     -->
+        <!-- (dropdown kategori + pencarian teks) dan     -->
+        <!-- tabel kolom: Foto, Judul & Kategori, Tanggal,-->
+        <!-- Lokasi, Status, Aksi                         -->
+        <!-- ============================================ -->
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-base-200 flex items-center gap-4 flex-wrap">
                 <div class="flex items-center gap-3">
@@ -67,17 +95,24 @@
                         <p class="text-xs text-base-content/50">Seluruh publikasi kegiatan yayasan</p>
                     </div>
                 </div>
+                <!-- Form filter: metode GET dikirim ke route admin.news.index -->
+                <!-- sehingga nilai kategori & search terbaca via request() -->
                 <form method="GET" action="{{ route('admin.news.index') }}" class="flex gap-2 items-center flex-nowrap ml-auto">
+                    <!-- Dropdown filter kategori: otomatis submit saat berubah -->
                     <select name="kategori" class="select select-bordered min-w-[14rem]" onchange="this.form.submit()">
                         <option value="">Semua Kategori</option>
+                        <!-- Looping daftar kategori unik; selected menandai kategori aktif -->
                         @foreach($kategoriList as $k)
                             <option value="{{ $k }}" @selected(request('kategori') === $k)>{{ $k }}</option>
                         @endforeach
                     </select>
+                    <!-- Input pencarian berdasarkan judul/konten -->
                     <input type="text" name="search" class="input input-bordered input-sm w-32 md:w-44" placeholder="Cari..." value="{{ request('search') }}">
+                    <!-- Tombol submit pencarian -->
                     <button type="submit" class="btn btn-sm btn-ghost px-2">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     </button>
+                    <!-- Jika sedang ada filter aktif, tampilkan tombol hapus filter -->
                     @if(request('search') || request('kategori'))
                         <a href="{{ route('admin.news.index') }}" class="btn btn-sm btn-ghost px-2 text-base-content/50 hover:text-error" title="Hapus filter">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -88,6 +123,7 @@
             <div class="overflow-x-auto">
                 <table class="table w-full">
                     <thead>
+                        <!-- Header kolom tabel: Foto, Judul & Kategori, Tanggal, Lokasi, Status, Aksi -->
                         <tr class="bg-base-200/50">
                             <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40 whitespace-nowrap">Foto</th>
                             <th class="text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40 whitespace-nowrap">Judul & Kategori</th>
@@ -98,9 +134,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- forelse: jika $newsList berisi data, tampilkan tiap baris; -->
+                        <!-- jika kosong, tampilkan pesan "Belum ada berita kegiatan" -->
                         @forelse($newsList as $item)
                             <tr class="hover:bg-base-200/30 transition-colors">
                                 <td>
+                                    <!-- Jika berita punya foto utama, tampilkan gambar; jika tidak, tampilkan ikon placeholder -->
                                     @if($item->foto_utama)
                                         <div class="avatar">
                                             <div class="w-14 h-10 rounded-lg ring ring-base-300 ring-offset-1">
@@ -118,6 +157,7 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- Judul berita (dipotong 40 karakter) dan badge kategori -->
                                     <span class="font-bold text-sm text-base-content whitespace-nowrap">{{ Str::limit($item->judul, 40) }}</span>
                                     <div class="mt-1">
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-bold bg-primary/5 text-primary border border-primary/20 whitespace-nowrap">
@@ -126,12 +166,15 @@
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap">
+                                    <!-- Tanggal kegiatan dalam format Indonesia (mis. 12 Agu 2026) -->
                                     <div class="text-sm font-semibold text-base-content">{{ $item->tanggal_kegiatan->translatedFormat('d M Y') }}</div>
+                                    <!-- Jika ada data created_at, tampilkan waktu relatif pembuatan -->
                                     @if($item->created_at)
                                         <div class="text-xs text-base-content/40 mt-0.5">Dibuat {{ $item->created_at->diffForHumans() }}</div>
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- Kolom lokasi: tampilkan nama lokasi jika terisi, selain itu tanda strip -->
                                     @if($item->lokasi)
                                         <span class="inline-flex items-center gap-1.5 text-sm text-base-content/60 whitespace-nowrap">
                                             <svg class="w-3.5 h-3.5 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -142,6 +185,7 @@
                                     @endif
                                 </td>
                                 <td class="text-center whitespace-nowrap">
+                                    <!-- Badge status: hijau "Tayang" bila published, kuning "Draft" bila belum -->
                                     @if($item->status === 'published')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -155,24 +199,31 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- Tombol aksi per baris: Detail, Edit, dan Hapus -->
                                     <div class="flex items-center justify-center gap-1 whitespace-nowrap">
+                                        <!-- Tombol melihat detail berita -->
                                         <a href="{{ route('admin.news.show', $item->id) }}" class="btn btn-sm btn-ghost text-base-content/50 hover:text-primary hover:bg-primary/5 rounded-lg font-bold">
                                             Detail
                                         </a>
+                                        <!-- Tombol mengubah berita -->
                                         <a href="{{ route('admin.news.edit', $item->id) }}" class="btn btn-sm btn-ghost text-base-content/50 hover:text-warning hover:bg-warning/5 rounded-lg font-bold">
                                             Edit
                                         </a>
+                                        <!-- Form hapus berita: method DELETE; saat submit di-cegah lalu -->
+                                        <!-- memunculkan modal konfirmasi (Alpine x-data 'open') -->
                                         <form action="{{ route('admin.news.destroy', $item->id) }}" method="POST" x-data="{ open: false }" @submit.prevent="open = true">
                                             @csrf @method('DELETE')
                                             <button type="button" @click="open = true" class="btn btn-sm btn-ghost text-base-content/50 hover:text-error hover:bg-error/5 rounded-lg font-bold">
                                                 Hapus
                                             </button>
+                                            <!-- Modal konfirmasi hapus berita (komponen reusable x-confirm-delete-modal) -->
                                             <x-confirm-delete-modal entity-name="{{ $item->judul }}" entity-type="berita" />
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
+                            <!-- Kondisi saat daftar berita kosong: tampilkan pesan dan ikon -->
                             <tr>
                                 <td colspan="6">
                                     <div class="py-16 text-center">
@@ -189,6 +240,7 @@
                 </table>
             </div>
 
+            <!-- Paginasi: tampil hanya jika jumlah data melebihi satu halaman -->
             @if($newsList->hasPages())
                 <div class="p-4 border-t border-base-200">
                     {{ $newsList->links() }}

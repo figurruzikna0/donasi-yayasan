@@ -1,7 +1,17 @@
+<!-- ============================================ -->
+<!-- profile\edit.blade.php — halaman edit profil pengguna -->
+<!-- ============================================ -->
+<!-- Peran     : halaman kelola data diri (nama, email, WA, NIK, alamat, foto avatar) -->
+<!--             serta penggantian password akun. -->
+<!-- Controller: ProfileController@edit (GET) — variabel $user berasal dari pengguna yang login; -->
+<!--             form data diri ke route('profile.update') PATCH, form password ke route('password.update') PUT. -->
+<!-- Alur      : ubah data -> Simpan Data -> alert sukses; ganti password diverifikasi dulu via JS -->
+<!--             (kesamaan password baru & konfirmasi) lalu disimpan ke database. -->
 <x-app-layout>
     <div class="bg-slate-50 min-h-screen">
 
         {{-- Header --}}
+        <!-- BANNER ATAS: judul halaman dan tombol kembali sesuai peran pengguna (admin/donatur) -->
         <div class="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-500">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -16,6 +26,7 @@
                             <p class="text-emerald-100/60 text-xs sm:text-sm mt-0.5">Kelola data diri dan pengaturan akun</p>
                         </div>
                     </div>
+                    <!-- TOMBOL KEMBALI: arah dashboard berbeda untuk admin dan donatur -->
                     <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="btn btn-sm bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm rounded-lg font-bold flex items-center gap-1.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                         Kembali
@@ -27,6 +38,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 space-y-5 pb-8">
 
             {{-- DATA DIRI --}}
+            <!-- KARTU DATA DIRI: form utama untuk memperbarui informasi profil -->
             <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">
@@ -38,14 +50,17 @@
                     </div>
                 </div>
                 <div class="p-6">
+                    <!-- FORM DATA DIRI: PATCH ke route('profile.update'); enctype multipart karena mengunggah file avatar -->
                     <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('patch')
 
                         <div class="flex flex-col sm:flex-row gap-6 items-start">
+                            <!-- BAGIAN FOTO AVATAR: tampilkan foto; bila tidak ada, tampil inisial nama -->
                             <div class="flex-shrink-0 text-center w-full sm:w-auto">
                                 <div class="avatar">
                                     <div class="w-24 h-24 rounded-full ring ring-emerald-100 ring-offset-2 ring-offset-white mx-auto">
+                                        <!-- KONDISI: user punya avatar -> tampil gambar; jika tidak -> inisial nama -->
                                         @if($user->avatar)
                                             <img src="{{ asset('storage/' . $user->avatar) . '?v=' . now()->timestamp }}" id="preview-avatar" alt="Avatar" class="object-cover">
                                         @else
@@ -54,10 +69,12 @@
                                     </div>
                                 </div>
                                 <div class="flex gap-2 justify-center mt-3">
+                                    <!-- LABEL "GANTI": membuka dialog pilih file avatar (input type file tersembunyi) -->
                                     <label for="avatar" class="btn btn-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 border-0 rounded-lg font-bold cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                         Ganti
                                     </label>
+                                    <!-- TOMBOL HAPUS FOTO: hanya tampil bila user saat ini punya avatar -->
                                     @if($user->avatar)
                                         <button type="button" id="btn-hapus-foto" class="btn btn-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border-0 rounded-lg font-bold">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -65,7 +82,9 @@
                                         </button>
                                     @endif
                                 </div>
+                                <!-- INPUT FILE AVATAR (tersembunyi): menerima file gambar; JS mengganti pratinjau secara realtime -->
                                 <input type="file" id="avatar" name="avatar" accept="image/*" class="hidden">
+                                <!-- INPUT HIDDEN remove_avatar: nilai 1 menandakan avatar lama harus dihapus -->
                                 <input type="hidden" name="remove_avatar" id="remove_avatar" value="0">
                                 @error('avatar')
                                     <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
@@ -73,25 +92,30 @@
                             </div>
 
                             <div class="flex-1 space-y-4 w-full">
+                                <!-- FIELD NAMA LENGKAP: wajib diisi; error validasi ditampilkan di bawah input -->
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Nama Lengkap</label>
                                     <input type="text" name="name" value="{{ old('name', $user->name) }}" class="input input-bordered w-full border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-lg text-sm" required>
                                     @error('name')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                                 </div>
 
+                                <!-- FIELD EMAIL: wajib diisi; dijadikan identitas login pengguna -->
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Email</label>
                                     <input type="email" name="email" value="{{ old('email', $user->email) }}" class="input input-bordered w-full border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-lg text-sm" required>
                                     @error('email')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                                 </div>
 
+                                <!-- KONDISI: data tambahan (WA, NIK, alamat) hanya untuk pengguna NON-admin -->
                                 @if($user->role !== 'admin')
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <!-- FIELD NO. WHATSAPP: dipakai untuk notifikasi donasi/sponsorship -->
                                     <div>
                                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">No. WhatsApp</label>
                                         <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input input-bordered w-full border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-lg text-sm" placeholder="08xxxx">
                                         @error('phone')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                                     </div>
+                                    <!-- KONDISI: NIK hanya untuk pengguna berperan donatur -->
                                     @if($user->role === 'donatur')
                                     <div>
                                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">NIK</label>
@@ -101,6 +125,7 @@
                                     @endif
                                 </div>
 
+                                <!-- FIELD ALAMAT: alamat lengkap donatur -->
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Alamat</label>
                                     <textarea name="address" rows="3" class="textarea textarea-bordered w-full border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-lg text-sm" placeholder="Alamat lengkap">{{ old('address', $user->address) }}</textarea>
@@ -111,10 +136,12 @@
                         </div>
 
                         <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                            <!-- TOMBOL SIMPAN DATA: mengirim form data diri -->
                             <button type="submit" class="btn btn-sm bg-emerald-700 hover:bg-emerald-800 text-white border-0 rounded-lg font-bold px-6 shadow-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 Simpan Data
                             </button>
+                            <!-- ALERT SUKSES: tampil bila session status = profile-updated -->
                             @if (session('status') === 'profile-updated')
                                 <x-alert type="success" message="Data profil berhasil diperbarui." title="Tersimpan" />
                             @endif
@@ -124,6 +151,7 @@
             </div>
 
             {{-- UBAH PASSWORD --}}
+            <!-- KARTU UBAH PASSWORD: form penggantian password dengan verifikasi kesamaan via JS -->
             <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-base shrink-0">
@@ -135,14 +163,17 @@
                     </div>
                 </div>
                 <div class="p-6">
+                    <!-- FORM GANTI PASSWORD: PUT ke route('password.update') -->
                     <form method="post" action="{{ route('password.update') }}" class="space-y-4 max-w-lg">
                         @csrf
                         @method('put')
 
+                        <!-- FIELD PASSWORD SAAT INI: wajib cocok dengan password lama yang dipakai -->
                         <div>
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Password Saat Ini</label>
                             <div class="flex w-full">
                                 <input type="password" name="current_password" id="current_password" class="input input-bordered w-full border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-l-lg text-sm" required>
+                                <!-- TOMBOL MATA: menampilkan/menyembunyikan password (class toggle-pw di JS) -->
                                 <button type="button" class="btn btn-outline border-slate-300 border-l-0 rounded-r-lg toggle-pw" data-target="current_password">
                                     <svg class="w-4 h-4 text-slate-400 toggle-eye" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </button>
@@ -151,6 +182,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- FIELD PASSWORD BARU: password pengganti yang akan disimpan -->
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Password Baru</label>
                                 <div class="flex w-full">
@@ -161,6 +193,7 @@
                                 </div>
                                 @error('password', 'updatePassword')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                             </div>
+                            <!-- FIELD KONFIRMASI PASSWORD: harus sama dengan password baru (dicek oleh JS saat submit) -->
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Konfirmasi Password</label>
                                 <div class="flex w-full">
@@ -173,10 +206,12 @@
                         </div>
 
                         <div class="flex items-center gap-3 pt-2">
+                            <!-- TOMBOL UBAH PASSWORD: submit form (dicek kesamaan password oleh JS terlebih dahulu) -->
                             <button type="submit" class="btn btn-sm bg-emerald-700 hover:bg-emerald-800 text-white border-0 rounded-lg font-bold px-6 shadow-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                 Ubah Password
                             </button>
+                            <!-- ALERT SUKSES: tampil bila session status = password-updated -->
                             @if (session('status') === 'password-updated')
                                 <x-alert type="success" message="Kata sandi berhasil diperbarui." title="Tersimpan" />
                             @endif
@@ -188,7 +223,9 @@
         </div>
     </div>
 
+    <!-- SCRIPT JS HALAMAN EDIT PROFIL: -->
     <script>
+        <!-- Pratinjau avatar: saat memilih file baru, gambar pratinjau langsung diperbarui tanpa reload -->
         document.getElementById('avatar')?.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 var el = document.getElementById('preview-avatar');
@@ -205,6 +242,7 @@
             }
         });
 
+        <!-- Tombol hapus foto: mengembalikan pratinjau ke inisial nama dan menandai remove_avatar = 1 -->
         document.getElementById('btn-hapus-foto')?.addEventListener('click', function() {
             var container = document.getElementById('preview-avatar').parentNode;
             var existing = document.getElementById('preview-avatar');
@@ -219,6 +257,7 @@
             document.getElementById('avatar').value = '';
         });
 
+        <!-- Tombol mata: menampilkan/menyembunyikan isi kolom password beserta ikonnya -->
         document.querySelectorAll('.toggle-pw').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var input = document.getElementById(this.dataset.target);
@@ -233,6 +272,7 @@
             });
         });
 
+        <!-- Validasi submit: password baru dan konfirmasi harus sama, jika tidak form dibatalkan + pesan error -->
         document.querySelector('form[action="{{ route('password.update') }}"]')?.addEventListener('submit', function(e) {
             var pw = document.getElementById('new_password');
             var confirm = document.getElementById('password_confirmation');

@@ -1,3 +1,12 @@
+<!-- ============================================ -->
+<!-- admin\foster_children\create.blade.php       -->
+<!-- Halaman form tambah anak asuh baru           -->
+<!-- Dipakai oleh Admin\FosterChildController@create -->
+<!-- Alur: form POST ke route store dengan field  -->
+<!-- nama, umur, jenis kelamin, cerita, foto;     -->
+<!-- status default otomatis 'Tersedia' diisi     -->
+<!-- controller. Ada CSS & JS upload file         -->
+<!-- ============================================ -->
 <x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
@@ -5,14 +14,20 @@
         </h2>
     </x-slot>
 
+    <!-- Komponen kartu form admin (judul + subtitle) -->
     <x-admin-form-card
         icon='<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.5 2 5 4.5 5 9c0 3.5 2 6.5 5.5 8L12 22l1.5-5C17 15.5 19 12.5 19 9c0-4.5-3.5-7-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>'
         title="Tambah Anak Asuh Baru"
         subtitle="Lengkapi informasi di bawah dengan teliti"
     >
+        <!-- ============================================ -->
+        <!-- Form tambah anak asuh: POST ke route store,  -->
+        <!-- enctype multipart karena ada upload foto.    -->
+        <!-- ============================================ -->
                     <form action="{{ route('admin.foster-children.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
+                        <!-- Input nama lengkap anak (wajib) -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Nama Lengkap Anak</span>
@@ -23,6 +38,8 @@
                             @enderror
                         </div>
 
+                        <!-- Input umur anak (wajib); berupa teks bebas -->
+                        <!-- misal "4 tahun" atau "0" / "-" jika belum tahu -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Umur (Tahun)</span>
@@ -33,6 +50,7 @@
                             @enderror
                         </div>
 
+                        <!-- Dropdown jenis kelamin: Laki-laki / Perempuan (wajib) -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Jenis Kelamin</span>
@@ -49,6 +67,7 @@
 
                         <div class="divider"></div>
 
+                        <!-- Textarea cerita / latar belakang anak -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Cerita / Latar Belakang</span>
@@ -59,6 +78,8 @@
                             @enderror
                         </div>
 
+                        <!-- Upload foto anak (opsional); label bergaya dashed -->
+                        <!-- menampilkan nama file terpilih via JS -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Foto Anak <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span>
@@ -80,6 +101,7 @@
 
                         <div class="divider"></div>
 
+                        <!-- Tombol aksi bawah: Batal dan Simpan Data -->
                         <div class="flex items-center justify-end gap-3">
                             <a href="{{ route('admin.foster-children.index') }}" class="btn btn-outline">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -100,6 +122,7 @@
                     </form>
     </x-admin-form-card>
 
+    <!-- CSS khusus area upload file bergaya kotak putus-putus -->
     <style>
         .file-input-wrapper { position: relative; }
         .file-input-label {
@@ -119,6 +142,7 @@
         }
     </style>
 
+    <!-- Skrip JS: menampilkan nama file foto yang dipilih ke label upload -->
     <script>
         document.getElementById('photo-input').addEventListener('change', function () {
             const labelText = document.getElementById('file-label-text');

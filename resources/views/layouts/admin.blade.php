@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- layouts/admin.blade.php - LAYOUT PANEL ADMIN -->
+<!-- ============================================ -->
+<!-- Peran: layout utama untuk semua halaman panel admin, dipakai lewat komponen x-admin-layout (atau extends pada view admin). -->
+<!-- Data: $profil (logo & nama yayasan) dari view composer, $pendingCount (jumlah transaksi menunggu, badge di menu), $slot (konten halaman), dan yield('page_title') untuk judul header. -->
+<!-- Alur: render head (CSRF, font, Vite), sidebar navigasi kiri (Menu Utama, Konten, Program, Rekap Data, Keluar), top navbar (tanggal, dropdown akun), konten $slot, lalu skrip toggle sidebar mobile. -->
 {{-- LAYOUTS_ADMIN: layout utama panel admin -- sidebar navigasi kiri, top navbar, konten halaman, dan notifikasi toast --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="baitul">
@@ -11,13 +17,16 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Muat ulang halaman saat kembali lewat cache bfcache agar data selalu segar -->
     <script>window.addEventListener('pageshow',function(e){if(e.persisted)location.reload()});</script>
 </head>
     <body class="font-sans antialiased">
         <div class="flex bg-base-200 min-h-screen">
+            <!-- php: mengambil data user admin yang sedang login untuk ditampilkan di top navbar dan dropdown akun -->
             @php $adminUser = Auth::user(); @endphp
 
             {{-- ══ GLOBAL TOAST NOTIFICATIONS ══ --}}
+            <!-- Notifikasi global dari session: menampilkan komponen x-alert sesuai flash data success/error/warning/info/status -->
             <div class="fixed top-2 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 max-w-lg w-full px-4 pointer-events-none">
                 <div class="pointer-events-auto space-y-3">
                     @if(session('success'))
@@ -39,18 +48,22 @@
             </div>
 
         {{-- ══ SIDEBAR BACKDROP (mobile only) ══ --}}
+        <!-- Backdrop gelap di belakang sidebar ketika terbuka di layar mobile; diklik untuk menutup sidebar -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden transition-opacity duration-300" onclick="closeSidebar()"></div>
 
         {{-- BAGIAN: sidebar kiri navigasi dengan menu utama, konten, program, dan rekap data --}}
         {{-- ══ SIDEBAR ══ --}}
+        <!-- Sidebar kiri: pada desktop sticky penuh (w-60), pada mobile menjadi fixed dan digeser oleh skrip toggleSidebar() -->
         <aside id="admin-sidebar"
                class="w-60 shrink-0 bg-primary flex flex-col h-screen overflow-y-auto
                       sticky top-0
                       max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:z-40">
             <div class="px-8 py-9 border-b border-white/10">
+                <!-- Tombol tutup sidebar khusus mobile (hanya tampil di layar kecil) -->
                 <button onclick="closeSidebar()" class="lg:hidden float-right text-white/50 hover:text-white mb-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
+                <!-- Logo & nama aplikasi: menuju dashboard admin; logo yayasan atau fallback inisial 'BY' -->
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
                     @if($profil && $profil->logo)
                         <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" alt="Logo" class="h-9 w-9 rounded-lg object-cover ring-2 ring-white/30">
@@ -64,6 +77,7 @@
                 </a>
             </div>
 
+            <!-- Grup menu "Menu Utama": tautan Dashboard; item aktif ditandai dengan kelas request()->routeIs() -->
             <div class="px-4 pt-6 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1.5">Menu Utama</div>
                 <a href="{{ route('admin.dashboard') }}" onclick="closeSidebar()" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white transition-all duration-150 relative mb-0.5 {{ request()->routeIs('admin.dashboard') ? 'bg-white/13 before:absolute before:left-0 before:top-[22%] before:bottom-[22%] before:w-[3px] before:bg-brand-300 before:rounded-r-sm' : 'text-white/62 hover:bg-white/10 hover:text-white' }}">
@@ -72,6 +86,7 @@
                 </a>
             </div>
 
+            <!-- Grup menu "Konten": Profil Yayasan, Berita Kegiatan, Kelola Kampanye, Kelola User -->
             <div class="px-4 pt-5 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Konten</div>
                 <a href="{{ route('admin.profil.index') }}" onclick="closeSidebar()" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
@@ -92,6 +107,7 @@
                 </a>
             </div>
 
+            <!-- Grup menu "Program": Data Anak Asuh, Orang Tua Asuh, Isi Perkembangan Anak, Riwayat Transaksi (dengan badge jumlah pending) -->
             <div class="px-4 pt-5 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Program</div>
                 <a href="{{ route('admin.foster-children.index') }}" onclick="closeSidebar()" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
@@ -109,12 +125,14 @@
                 <a href="{{ route('admin.transactions.index') }}" onclick="closeSidebar()" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
                     <svg class="w-4 h-4 shrink-0 opacity-65" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Riwayat Transaksi
+                    <!-- Badge jumlah transaksi pending (dari $pendingCount); hanya tampil jika lebih dari 0 -->
                     @if($pendingCount > 0)
                         <span class="ml-auto bg-brand-300 text-brand-800 text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full">{{ $pendingCount }}</span>
                     @endif
                 </a>
             </div>
 
+            <!-- Grup menu "Rekap Data": Data Donasi, Data Donatur, Data Orang Tua Asuh -->
             <div class="px-4 pt-5 pb-1">
                 <div class="text-[0.62rem] font-extrabold uppercase tracking-widest text-white/38 px-2 mb-1">Rekap Data</div>
                 <a href="{{ route('admin.rekap.donasi') }}" onclick="closeSidebar()" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-white/62 hover:bg-white/10 hover:text-white transition-all duration-150 relative mb-0.5">
@@ -131,6 +149,7 @@
                 </a>
             </div>
 
+            <!-- Form logout: tombol Keluar di bagian bawah sidebar -->
             <div class="mt-auto px-4 py-4 border-t border-white/10">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -148,17 +167,21 @@
 
             {{-- BAGIAN: header top navbar dengan judul halaman, tanggal, dan menu dropdown akun --}}
             {{-- ══ TOP NAVBAR ══ --}}
+            <!-- Top navbar: tombol hamburger (mobile), logo & judul halaman (yield page_title), tanggal hari ini, dan dropdown akun admin -->
             <header class="bg-base-100 border-b border-base-200 sticky top-0 z-40">
                 <div class="px-6 lg:px-8 h-16 flex items-center justify-between">
                     <div class="flex items-center gap-4">
+                        <!-- Tombol buka/tutup sidebar pada layar mobile -->
                         <button id="sidebar-toggle" class="btn btn-ghost btn-square lg:hidden" onclick="toggleSidebar()">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                         </button>
                         <div class="flex items-center gap-3">
+                            <!-- Logo yayasan kecil (hanya mobile) -->
                             @if($profil && $profil->logo)
                                 <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" alt="Logo" class="h-8 w-8 rounded-lg object-cover ring-2 ring-base-200 lg:hidden">
                             @endif
                             <div id="page-title-area">
+                                <!-- Judul halaman diambil dari yield('page_title') pada view admin, default 'Dashboard' -->
                                 <h1 id="page-title-text" class="text-lg font-black text-base-content truncate max-w-[200px] sm:max-w-none">
                                     @yield('page_title', 'Dashboard')
                                 </h1>
@@ -167,11 +190,13 @@
                     </div>
 
                     <div class="flex items-center gap-3">
+                        <!-- Tanggal hari ini: diisi oleh skrip JavaScript saat halaman dimuat -->
                         <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-base-200 rounded-lg border border-base-300">
                             <svg class="w-3.5 h-3.5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             <span id="topbar-date" class="text-xs font-bold text-base-content/50">—</span>
                         </div>
 
+                        <!-- Dropdown akun admin: avatar (foto atau inisial), nama admin, dan menu Edit Profil / Keluar -->
                         <div class="dropdown dropdown-end">
                             <button tabindex="0" class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-base-200 transition-colors">
                                 @if($adminUser->avatar)
@@ -192,6 +217,7 @@
                                 </a></li>
                                 <li class="menu-title text-xs mt-2"><span>Sesi</span></li>
                                 <li>
+                                    <!-- Form logout admin -->
                                     <form method="POST" action="{{ route('logout') }}" class="p-0">
                                         @csrf
                                         <button type="submit" class="flex items-center gap-2 text-error">
@@ -207,19 +233,25 @@
             </header>
 
                 {{-- BAGIAN: konten utama halaman yang di-inject dari child view melalui $slot --}}
+            <!-- Slot utama: seluruh isi halaman admin dirender di sini -->
             {{ $slot }}
         </main>
     </div>
 
     {{-- BAGIAN: script JavaScript untuk toggle sidebar pada mobile --}}
+    <!-- ========================================================== -->
+    <!-- SKRIP SIDEBAR: membuka/menutup sidebar di layar mobile (geser transform), menampilkan tanggal hari ini, dan mencegah peringatan resubmission form -->
+    <!-- ========================================================== -->
     <script>
     const sidebar = document.getElementById('admin-sidebar');
     const overlay = document.getElementById('sidebar-overlay');
 
+    <!-- Fungsi isMobile: mendeteksi apakah layar berukuran mobile (< 1024px) -->
     function isMobile() {
         return window.innerWidth < 1024;
     }
 
+    <!-- Fungsi setSidebarOpen: menggeser sidebar masuk/keluar layar dan mengatur overlay + kunci scroll body -->
     function setSidebarOpen(open) {
         if (!isMobile()) return;
         if (open) {
@@ -234,16 +266,19 @@
         }
     }
 
+    <!-- Fungsi toggleSidebar: membalik status buka/tutup sesuai posisi transform saat ini -->
     function toggleSidebar() {
         if (!isMobile()) return;
         const isOpen = sidebar.style.transform === 'translateX(0px)';
         setSidebarOpen(!isOpen);
     }
 
+    <!-- Fungsi closeSidebar: menutup sidebar (dipanggil tombol tutup, overlay, dan link menu) -->
     function closeSidebar() {
         setSidebarOpen(false);
     }
 
+    <!-- Fungsi handleResize: memastikan sidebar kembali normal saat layar diubah ukurannya ke desktop -->
     function handleResize() {
         if (isMobile()) {
             sidebar.style.transform = sidebar.style.transform || 'translateX(-100%)';
@@ -256,6 +291,7 @@
         }
     }
 
+    <!-- Saat dokumen siap: atur posisi sidebar awal dan isi elemen tanggal dengan format tanggal bahasa Indonesia -->
     document.addEventListener('DOMContentLoaded', function () {
         handleResize();
         const now = new Date();
@@ -264,6 +300,7 @@
         if (el) el.textContent = now.toLocaleDateString('id-ID', opts);
     });
 
+    <!-- Pantau perubahan ukuran jendela -->
     window.addEventListener('resize', handleResize);
 
     // Cegah browser "Confirm Form Resubmission" saat navigasi balik

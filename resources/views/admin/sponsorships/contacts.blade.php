@@ -1,3 +1,16 @@
+{{--
+    ============================================================
+    admin\sponsorships\contacts.blade.php — Kontak Orang Tua Asuh
+    ============================================================
+    Halaman daftar kontak orang tua asuh per anak untuk keperluan
+    broadcast WhatsApp / notifikasi langsung.
+    Data $children dikirim dari AdminSponsorshipController.contacts().
+    Alur halaman: header + tombol pintasan (kelola anak & riwayat
+    transaksi) → kartu statistik (total anak, sudah disponsori,
+    sponsorship tertunda) → panel pencarian & filter status →
+    tabel anak asuh (nama, foto, usia, kontak donatur, paket,
+    masa aktif) → skrip JavaScript filter & pencarian klien-side.
+--}}
 <x-admin-layout>
     <div class="bg-base-200 min-h-screen">
 
@@ -15,6 +28,7 @@
                         </div>
                     </div>
                 </div>
+                {{-- Tombol pintasan: kelola data anak asuh & riwayat transaksi --}}
                 <div class="flex gap-2">
                     <a href="{{ route('admin.foster-children.index') }}" class="btn btn-sm bg-primary/10 hover:bg-primary/20 text-primary border-0 font-bold rounded-lg">Kelola Data Anak Asuh</a>
                     <a href="{{ route('admin.transactions.index') }}" class="btn btn-sm bg-primary/10 hover:bg-primary/20 text-primary border-0 font-bold rounded-lg">Riwayat Transaksi</a>
@@ -25,6 +39,10 @@
         <div class="p-8 pt-6 space-y-6">
 
             {{-- Hitung total anak, sudah disponsori, & sponsorship tertunda dari $children --}}
+            {{-- ------------------------------------------------------------------
+                BLOK PHP statistik: dihitung dari relasi activeSponsorship
+                masing-masing anak ($c->activeSponsorship), bukan query terpisah.
+            ------------------------------------------------------------------ --}}
             @php
                 $totalChildren = $children->count();
                 $sponsoredCount = $children->filter(fn($c) => $c->activeSponsorship)->count();
@@ -33,6 +51,7 @@
 
             {{-- Kartu statistik: Total Anak, Sudah Disponsori, Sponsorship Tertunda --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {{-- Kartu 1: Total anak asuh --}}
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                     <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m4-4a4 4 0 100-8 4 4 0 000 8z"/></svg>
@@ -42,6 +61,7 @@
                         <p class="text-2xl font-black text-base-content">{{ $totalChildren }}</p>
                     </div>
                 </div>
+                {{-- Kartu 2: Jumlah anak yang sudah disponsori --}}
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                     <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -51,6 +71,7 @@
                         <p class="text-2xl font-black text-base-content">{{ $sponsoredCount }}</p>
                     </div>
                 </div>
+                {{-- Kartu 3: Jumlah sponsorship berstatus pending --}}
                 <div class="bg-white rounded-xl shadow-sm border border-base-300 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
                     <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -64,14 +85,17 @@
 
             {{-- Panel pencarian & filter: cari nama anak/ortu asuh & filter status sponsorship --}}
             <div class="bg-white rounded-xl shadow-sm border border-base-300 overflow-hidden">
+                {{-- Input pencarian teks + dropdown filter status (diproses oleh JS di bawah) --}}
                 <div class="px-6 py-4 border-b border-base-200 flex flex-wrap gap-3 items-center justify-between">
                     <div class="relative w-full max-w-[300px]">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-base-content/30">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
+                        {{-- Kotak pencarian: mencocokkan nama anak / nama orang tua asuh --}}
                         <input type="text" id="tableSearch" class="input input-bordered input-sm w-full pl-8" placeholder="Cari nama anak atau orang tua asuh…">
                     </div>
                     <div>
+                        {{-- Filter status: Semua / Sudah Disponsori / Belum Disponsori --}}
                         <select id="statusFilter" class="select select-bordered select-sm">
                             <option value="all">Semua</option>
                             <option value="disponsori">Sudah Disponsori</option>
@@ -91,16 +115,20 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-base-200/60">
+                            {{-- Perulangan setiap anak asuh beserta sponsorship aktifnya --}}
                             @forelse($children as $child)
+                                {{-- Ambil sponsorship aktif anak, cek masa expired & sisa hari --}}
                                 @php
                                     $sponsorship = $child->activeSponsorship;
                                     $isExpiredPeriod = $sponsorship?->expires_at?->isPast();
                                     $remainingDays = $sponsorship?->expires_at ? now()->diffInDays($sponsorship->expires_at) : null;
                                 @endphp
+                                {{-- Atribut data-search & data-status dipakai oleh JavaScript filter di bawah --}}
                                 <tr class="data-row hover:bg-base-200/30 transition-colors"
                                     data-search="{{ strtolower($child->name . ' ' . ($sponsorship->donor_name ?? '')) }}"
                                     data-status="{{ $sponsorship ? 'disponsori' : 'belum' }}">
                                     <td>
+                                        {{-- Info anak: foto/placeholder, nama, usia, dan badge status Diasuh/Tersedia --}}
                                         <div class="flex items-center gap-3">
                                             <div class="avatar">
                                                 <div class="w-9 h-9 rounded-full ring ring-base-300 ring-offset-1">
@@ -110,6 +138,7 @@
                                             <div>
                                                 <div class="font-bold text-sm text-base-content">{{ $child->name }}</div>
                                                 <div class="text-xs text-base-content/40">{{ $child->age }} Tahun</div>
+                                                {{-- Badge status anak: Diasuh (hijau) jika status anak 'Diasuh', selain itu Tersedia --}}
                                                 @if($child->status === 'Diasuh')
                                                     <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[0.6rem] font-bold bg-emerald-100 text-emerald-700 mt-1">Diasuh</span>
                                                 @else
@@ -119,24 +148,30 @@
                                         </div>
                                     </td>
                                     <td>
+                                        {{-- Data kontak orang tua asuh (donatur): nama, email, WA, paket, metode bayar --}}
                                         @if($sponsorship)
                                             <div class="font-bold text-sm text-base-content">{{ $sponsorship->donor_name }}</div>
+                                            {{-- Email donatur sebagai tautan mailto --}}
                                             <a href="mailto:{{ $sponsorship->donor_email }}" class="link link-hover text-primary text-xs">{{ $sponsorship->donor_email }}</a>
                                             @if($sponsorship->donor_phone)
+                                                {{-- Nomor WhatsApp donatur (format 62xxx) untuk keperluan broadcast --}}
                                                 <div class="text-xs text-base-content/40">
                                                     <svg class="w-3.5 h-3.5 inline-block align-text-bottom" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-1.5 16.5h.01"/></svg>
                                                     {{ $sponsorship->donor_phone }}
                                                 </div>
                                             @endif
+                                            {{-- Badge paket sponsorship yang diambil --}}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-bold bg-amber-50 text-amber-700 border border-amber-200 mt-1">{{ $sponsorship->package ?? '-' }}</span>
                                             @if($sponsorship->payment_method)
                                                 <div class="text-xs text-base-content/40 mt-1">via {{ $sponsorship->payment_method }}</div>
                                             @endif
                                         @else
+                                            {{-- Anak tanpa sponsorship aktif --}}
                                             <span class="text-base-content/30 text-sm italic">Belum ada orang tua asuh</span>
                                         @endif
                                     </td>
                                     <td>
+                                        {{-- Periode masa aktif sponsorship + sisa hari / keterangan lewat --}}
                                         @if($sponsorship && $sponsorship->starts_at && $sponsorship->expires_at)
                                             <div class="text-sm font-bold text-base-content whitespace-nowrap">{{ $sponsorship->starts_at->format('d M Y') }} – {{ $sponsorship->expires_at->format('d M Y') }}</div>
                                             <div class="text-xs mt-1">
@@ -152,6 +187,7 @@
                                     </td>
                                 </tr>
                             @empty
+                                {{-- Kondisi saat belum ada data anak asuh --}}
                                 <tr>
                                     <td colspan="3">
                                         <div class="py-16 text-center">
@@ -164,6 +200,7 @@
                                     </td>
                                 </tr>
                             @endforelse
+                            {{-- Baris "Tidak Ditemukan": tampil ketika hasil filter kosong (class hidden) --}}
                             <tr id="noResultRow" class="hidden">
                                 <td colspan="3">
                                     <div class="py-16 text-center">
@@ -181,6 +218,13 @@
     </div>
 
     {{-- Script filter & pencarian tabel: filter berdasarkan input teks dan dropdown status --}}
+    {{-- ------------------------------------------------------------------
+        SEKSI JAVASCRIPT FILTER TABEL (client-side, tanpa reload):
+        - Mendengarkan input di #tableSearch dan perubahan #statusFilter.
+        - Setiap baris .data-row dicocokkan dengan kata kunci (data-search)
+          dan status (data-status).
+        - Jika tidak ada baris yang cocok, baris #noResultRow ditampilkan.
+    ------------------------------------------------------------------ --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput  = document.getElementById('tableSearch');
@@ -188,20 +232,25 @@
             const allRows      = Array.from(document.querySelectorAll('.data-row'));
             const noResultRow  = document.getElementById('noResultRow');
 
+            // Fungsi utama filter: gabungkan kata kunci teks + pilihan status
             function filter() {
                 const q    = searchInput.value.toLowerCase().trim();
                 const stat = statusFilter.value;
                 let visibleCount = 0;
 
+                // Periksa setiap baris: cocok dengan teks DAN status terpilih
                 allRows.forEach(row => {
                     const match = row.dataset.search.includes(q) && (stat === 'all' || row.dataset.status === stat);
                     row.classList.toggle('hidden', !match);
                     if (match) visibleCount++;
                 });
 
+                // Tampilkan baris "Tidak Ditemukan" jika tidak ada hasil,
+                // kecuali memang tidak ada baris data sama sekali
                 noResultRow.classList.toggle('hidden', visibleCount !== 0 || allRows.length === 0);
             }
 
+            // Pemicu filter: setiap kali pengguna mengetik atau mengubah dropdown
             searchInput.addEventListener('input', filter);
             statusFilter.addEventListener('change', filter);
         });

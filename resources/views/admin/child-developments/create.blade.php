@@ -1,6 +1,17 @@
+<!-- ============================================ -->
+<!-- admin\child-developments\create.blade.php    -->
+<!-- Halaman form tambah laporan perkembangan     -->
+<!-- anak (modul Orang Tua Asuh); diinput admin    -->
+<!-- Dipakai oleh Admin\ChildDevelopmentController@create -->
+<!-- Alur: form POST ke route store; field anak   -->
+<!-- asuh (dropdown), tanggal, judul, deskripsi,  -->
+<!-- foto; admin yang login otomatis tercatat     -->
+<!-- sebagai pembuat laporan di controller        -->
+<!-- ============================================ -->
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    <!-- Header halaman tambah laporan -->
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +25,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Tambah Laporan Perkembangan</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Catat perkembangan terbaru anak asuh untuk orang tua asuh</p>
                 </div>
+                <!-- Tombol kembali ke daftar laporan -->
                 <a href="{{ route('admin.child-developments.index') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                     Kembali
@@ -26,15 +38,22 @@
 
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
             <div class="px-8 py-6">
+                <!-- ============================================ -->
+                <!-- Form tambah laporan: POST ke route store,    -->
+                <!-- enctype multipart karena ada upload foto.    -->
+                <!-- ============================================ -->
                 <form action="{{ route('admin.child-developments.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
+                    <!-- Dropdown pilih anak asuh (wajib); data $children -->
+                    <!-- dikirim controller, berisi anak ber-sponsorship aktif -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Pilih Anak Asuh</span>
                         </label>
                         <select name="foster_child_id" class="select select-bordered w-full" required>
                             <option value="">— Pilih anak asuh yang sedang disponsori —</option>
+                            <!-- Looping daftar anak asuh; selected menandai pilihan lama -->
                             @foreach($children as $child)
                                 <option value="{{ $child->id }}" @selected(old('foster_child_id') == $child->id)>
                                     {{ $child->name }} ({{ $child->age }} tahun)
@@ -45,7 +64,9 @@
                         <p class="text-xs text-base-content/40 mt-1">Hanya anak yang memiliki sponsorship aktif yang muncul di daftar ini.</p>
                     </div>
 
+                    <!-- Baris dua kolom: Tanggal Laporan dan Judul Laporan -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Input tanggal laporan (wajib); default hari ini -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-base-content">Tanggal Laporan</span>
@@ -55,6 +76,7 @@
                             @error('tanggal') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <!-- Input judul laporan (wajib) -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-base-content">Judul Laporan</span>
@@ -68,6 +90,7 @@
 
                     <div class="divider"></div>
 
+                    <!-- Textarea deskripsi perkembangan anak (wajib) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Deskripsi Perkembangan</span>
@@ -77,6 +100,8 @@
                         @error('deskripsi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- Upload foto perkembangan (opsional, maks 3MB); -->
+                    <!-- label menampilkan nama file terpilih via JS   -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Foto <span class="font-normal normal-case text-base-content/40">(Opsional, Maks. 3MB)</span></span>
@@ -96,6 +121,7 @@
 
                     <div class="divider"></div>
 
+                    <!-- Tombol aksi bawah: Batal dan Simpan Laporan -->
                     <div class="flex items-center justify-end gap-3">
                         <a href="{{ route('admin.child-developments.index') }}" class="btn btn-outline">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -120,6 +146,7 @@
     </div>
 </div>
 
+<!-- CSS khusus area upload file bergaya kotak putus-putus -->
 <style>
     .file-input-wrapper { position: relative; }
     .file-input-label {
@@ -139,6 +166,7 @@
     }
 </style>
 
+<!-- Skrip JS: menampilkan nama file foto yang dipilih ke label upload -->
 <script>
     document.getElementById('photo-input').addEventListener('change', function () {
         const labelText = document.getElementById('file-label-text');

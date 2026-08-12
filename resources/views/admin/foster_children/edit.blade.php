@@ -1,3 +1,12 @@
+<!-- ============================================ -->
+<!-- admin\foster_children\edit.blade.php         -->
+<!-- Halaman form pengubahan data anak asuh       -->
+<!-- Dipakai oleh Admin\FosterChildController@edit -->
+<!-- Alur: menampilkan alert error bila ada,      -->
+<!-- form PUT ke route update dengan data lama    -->
+<!-- dari $fosterChild (nama, umur, JK, cerita,   -->
+<!-- status Tersedia/Diasuh, foto)                -->
+<!-- ============================================ -->
 <x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-emerald-600">
@@ -5,21 +14,28 @@
         </h2>
     </x-slot>
 
+    <!-- Komponen kartu form admin (judul + subtitle) -->
     <x-admin-form-card
         icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>'
         title="Edit Data Anak Asuh"
         subtitle="Perbarui informasi profil anak asuh"
     >
 
+                    <!-- Tampilkan alert error bila validasi server gagal -->
                     @if($errors->any())
                         <x-alert type="error" :errors="$errors->all()" />
                     @endif
 
+                    <!-- ============================================ -->
+                    <!-- Form edit anak: PUT ke route update. Nilai   -->
+                    <!-- input memakai data $fosterChild + old().     -->
+                    <!-- ============================================ -->
                     <form action="{{ route('admin.foster-children.update', $fosterChild->id) }}"
                           method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
+                        <!-- Input nama lengkap anak (wajib) -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Nama Lengkap</span>
@@ -30,6 +46,7 @@
                             @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <!-- Input umur anak (teks bebas, mis. "4 tahun") -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Usia (Tahun)</span>
@@ -40,17 +57,20 @@
                             @error('age') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <!-- Pilihan jenis kelamin memakai radio button -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Jenis Kelamin</span>
                             </label>
                             <div class="flex gap-3 flex-wrap">
+                                <!-- Radio Laki-laki; checked menandai nilai tersimpan -->
                                 <label class="flex items-center gap-2 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-700 cursor-pointer transition-all">
                                     <input type="radio" name="jenis_kelamin" value="Laki-laki" class="radio radio-sm"
                                            @checked(old('jenis_kelamin', $fosterChild->jenis_kelamin) === 'Laki-laki')>
                                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 3h5m0 0v5m0-5l-6 6M12 12a5 5 0 100-10 5 5 0 000 10zm0 0v9"/></svg>
                                     Laki-laki
                                 </label>
+                                <!-- Radio Perempuan; checked menandai nilai tersimpan -->
                                 <label class="flex items-center gap-2 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-pink-50 has-[:checked]:text-pink-700 cursor-pointer transition-all">
                                     <input type="radio" name="jenis_kelamin" value="Perempuan" class="radio radio-sm"
                                            @checked(old('jenis_kelamin', $fosterChild->jenis_kelamin) === 'Perempuan')>
@@ -61,6 +81,7 @@
                             @error('jenis_kelamin') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <!-- Textarea cerita / deskripsi singkat anak -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Cerita / Deskripsi Singkat</span>
@@ -72,16 +93,19 @@
 
                         <div class="divider"></div>
 
+                        <!-- Pilihan status anak: 'Tersedia' atau 'Diasuh' -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Status</span>
                             </label>
                             <div class="flex gap-3 flex-wrap">
+                                <!-- Radio status Tersedia (default bila belum ada nilai) -->
                                 <label class="flex items-center gap-2 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-100 has-[:checked]:text-emerald-700 cursor-pointer transition-all">
                                     <input type="radio" name="status" value="Tersedia" class="radio radio-sm"
                                            @checked(old('status', $fosterChild->status ?? 'Tersedia') === 'Tersedia')>
                                     ● Tersedia
                                 </label>
+                                <!-- Radio status Sedang Diasuh -->
                                 <label class="flex items-center gap-2 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-gray-100 cursor-pointer transition-all">
                                     <input type="radio" name="status" value="Diasuh" class="radio radio-sm"
                                            @checked(old('status', $fosterChild->status) === 'Diasuh')>
@@ -91,6 +115,7 @@
                             @error('status') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <!-- Upload foto profil baru (opsional saat edit) -->
                         <div class="form-control mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-emerald-700 uppercase">Foto Profil <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span>
@@ -106,6 +131,7 @@
                             </div>
                             <p class="text-xs text-emerald-500 mt-1">JPG, PNG, WEBP — Maks 5MB</p>
 
+                            <!-- Tampilkan foto lama bila ada; lalu elemen pratinjau foto baru -->
                             @if($fosterChild->photo)
                                 <p class="text-xs text-emerald-500 mt-2">Foto saat ini:</p>
                                 <img src="{{ asset('storage/' . $fosterChild->photo) }}"
@@ -117,6 +143,7 @@
 
                         <div class="divider"></div>
 
+                        <!-- Tombol aksi bawah: Batal dan Simpan Perubahan -->
                         <div class="flex items-center justify-end gap-3">
                             <a href="{{ route('admin.foster-children.index') }}" class="btn btn-outline">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -137,6 +164,7 @@
                     </form>
     </x-admin-form-card>
 
+    <!-- CSS khusus area upload file & pratinjau gambar -->
     <style>
         .file-input-wrapper { position: relative; }
         .file-input-label {
@@ -163,6 +191,8 @@
         }
     </style>
 
+    <!-- Skrip JS: menampilkan pratinjau foto baru yang dipilih -->
+    <!-- dengan FileReader; foto lama disembunyikan sementara -->
     <script>
         document.getElementById('foto-input').addEventListener('change', function () {
             const span      = document.getElementById('foto-label-text');

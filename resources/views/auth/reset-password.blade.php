@@ -1,3 +1,10 @@
+<!-- ============================================ -->
+<!-- auth\reset-password.blade.php — halaman set ulang password -->
+<!-- ============================================ -->
+<!-- Peran     : form untuk membuat password baru setelah membuka tautan reset dari email. -->
+<!-- Controller: NewPasswordController — route('password.reset') GET dan route('password.store') POST. -->
+<!-- Alur      : tautan email membawa token -> form menampilkan email (readonly) + token hidden -->
+<!--             -> isi password baru & konfirmasi -> POST -> password diperbarui -> login. -->
 <x-guest-layout>
     <div class="text-center mb-6">
         <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner mb-3 mx-auto flex items-center justify-center">
@@ -9,11 +16,14 @@
         <p class="text-sm text-emerald-500">Buat password baru Anda</p>
     </div>
 
+    <!-- FORM RESET PASSWORD: mengirim ke route('password.store') dengan csrf -->
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 
+        <!-- TOKEN RESET (hidden): token unik dari tautan email, wajib dikirim bersama form -->
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
+        <!-- FIELD EMAIL: readonly karena diambil dari tautan reset; hanya untuk konfirmasi identitas -->
         <div class="form-control">
             <label class="label" for="email">
                 <span class="label-text font-bold text-emerald-700 uppercase text-xs tracking-wider">Email</span>
@@ -24,6 +34,7 @@
             <x-input-error :messages="$errors->get('email')" class="mt-1.5" />
         </div>
 
+        <!-- FIELD PASSWORD BARU: wajib diisi minimal 8 karakter; tombol mata untuk lihat/sembunyikan -->
         <div class="form-control mt-4">
             <label class="label" for="password">
                 <span class="label-text font-bold text-emerald-700 uppercase text-xs tracking-wider">Password Baru</span>
@@ -42,6 +53,7 @@
             <x-input-error :messages="$errors->get('password')" class="mt-1.5" />
         </div>
 
+        <!-- FIELD KONFIRMASI PASSWORD: wajib sama dengan password baru -->
         <div class="form-control mt-4">
             <label class="label" for="password_confirmation">
                 <span class="label-text font-bold text-emerald-700 uppercase text-xs tracking-wider">Konfirmasi Password</span>
@@ -61,12 +73,14 @@
         </div>
 
         <div class="flex items-center justify-end mt-6">
+            <!-- TOMBOL SUBMIT: menyimpan password baru ke database -->
             <button type="submit" class="btn btn-success text-white font-bold rounded-xl px-6 py-2.5 text-sm shadow-sm hover:shadow-md transition-all">
                 Reset Password
             </button>
         </div>
     </form>
 
+    <!-- SCRIPT JS: fungsi togglePassword() untuk menampilkan/menyembunyikan isi kolom password -->
     <script>
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);

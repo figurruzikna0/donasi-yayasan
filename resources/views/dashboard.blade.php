@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- dashboard.blade.php - DASHBOARD DONATUR      -->
+<!-- ============================================ -->
+<!-- Peran: halaman utama setelah donatur login, menampilkan sapaan, statistik pribadi, pintasan aksi, berita, kampanye donasi, dan daftar anak asuh (Orang Tua Asuh) dengan filter usia & jenis kelamin. -->
+<!-- Data dikirim dari DonorController.dashboard(): $campaigns, $fosterChildren, $donations, $sponsorships, $user, $newsList, $totalDonated, $activeSponsorships, $totalFoster, $tersediaFoster, $diasuhFoster, dan $profil. -->
+<!-- Alur: membungkus konten dengan layout x-app-layout, menampilkan header gradasi + statistik, quick actions, link yayasan, berita, kampanye, lalu daftar anak asuh yang bisa difilter dan digeser per halaman (slider Alpine). -->
 {{--
     ========================================================
     DASHBOARD DONATUR (resources/views/dashboard.blade.php)
@@ -18,14 +24,17 @@
     <div class="bg-slate-50 min-h-screen">
 
         {{-- HEADER DASHBOARD --}}
+        <!-- Header dashboard: gradasi hijau berisi avatar, nama user, kontak (telepon, email, alamat), logo yayasan, dan 4 kartu statistik -->
         <div class="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-500">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
                 <div class="flex items-start justify-between flex-wrap gap-4">
+                    <!-- Blok identitas user: avatar (foto atau inisial nama) dan sapaan -->
                     <div class="flex items-center gap-4">
                         <div class="avatar">
                             <div class="w-16 h-16 rounded-full ring ring-white/30 ring-offset-2 ring-offset-emerald-700">
+                                <!-- Kondisi if: tampilkan foto avatar user jika ada, jika tidak tampilkan inisial huruf pertama nama -->
                                 @if($user->avatar)
                                     <img src="{{ asset('storage/' . $user->avatar) . '?v=' . now()->timestamp }}" alt="{{ $user->name }}">
                                 @else
@@ -36,6 +45,7 @@
                         <div>
                             <h1 class="text-xl sm:text-2xl font-bold text-white">Selamat Datang</h1>
                             <p class="text-emerald-100/60 text-xs sm:text-sm mt-0.5">{{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} — Dashboard Donatur</p>
+                            <!-- Informasi kontak user; setiap kolom hanya dirender jika datanya terisi (if berlapis) -->
                             <div class="flex flex-wrap gap-3 mt-2 text-xs text-emerald-100/50">
                                 @if($user->phone)
                                 <span class="flex items-center gap-1">
@@ -58,11 +68,13 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Logo yayasan di pojok kanan header (jika tersedia) -->
                     @if($profil?->logo)
                         <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" class="h-14 w-14 rounded-xl object-cover border-2 border-white/20 hidden sm:block" alt="Logo">
                     @endif
                 </div>
 
+                <!-- Grid 4 kartu statistik donatur: total donasi, sponsorship aktif, jumlah transaksi, dan tombol menuju halaman rekap -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/5">
                         <div class="text-emerald-100/50 text-[0.6rem] font-bold uppercase tracking-wider">Total Donasi</div>
@@ -77,6 +89,7 @@
                         <div class="text-lg sm:text-xl font-black text-white mt-1">{{ $donations->count() }}</div>
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex flex-col justify-center border border-white/5">
+                        <!-- Tombol "Lihat Rekap" membuka halaman rekap transaksi donatur -->
                         <a href="{{ route('dashboard.rekap') }}" class="btn btn-xs bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm rounded-lg font-bold w-full">Lihat Rekap →</a>
                     </div>
                 </div>
@@ -86,7 +99,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 space-y-6 pb-8">
 
             {{-- QUICK ACTIONS --}}
+            <!-- Quick actions: 4 pintasan cepat (Donasi, Orang Tua Asuh, Berita, Edit Profil) yang melompat ke seksi terkait atau halaman profil -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <!-- Pintasan ke seksi kampanye donasi pada halaman ini -->
                 <a href="#kampanye-donasi" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-emerald-200 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
                     <div class="w-11 h-11 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
@@ -96,6 +111,7 @@
                         <p class="text-xs text-slate-400">Salurkan ke program pilihan</p>
                     </div>
                 </a>
+                <!-- Pintasan ke seksi program orang tua asuh pada halaman ini -->
                 <a href="#program-ota" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-emerald-200 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
                     <div class="w-11 h-11 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -105,6 +121,7 @@
                         <p class="text-xs text-slate-400">Sponsorship anak asuh</p>
                     </div>
                 </a>
+                <!-- Pintasan ke seksi berita & kegiatan pada halaman ini -->
                 <a href="#berita-kegiatan" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-emerald-200 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
                     <div class="w-11 h-11 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-6 h-6 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/></svg>
@@ -114,6 +131,7 @@
                         <p class="text-xs text-slate-400">Liputan terkini yayasan</p>
                     </div>
                 </a>
+                <!-- Pintasan ke halaman edit profil user -->
                 <a href="{{ route('profile.edit') }}" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-amber-200 transition-all p-4 sm:p-5 flex items-center gap-3 sm:gap-4 group">
                     <div class="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-6 h-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -126,7 +144,9 @@
             </div>
 
             {{-- LINK YAYASAN --}}
+            <!-- Link yayasan: pintasan 3 halaman (Profil, Pengurus, Legalitas) versi dashboard -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Link ke halaman profil yayasan versi dashboard -->
                 <a href="{{ route('dashboard.profil') }}" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-emerald-200 transition-all p-4 flex items-center gap-3 group">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
@@ -136,6 +156,7 @@
                         <p class="text-xs text-slate-400">Sejarah, visi & misi</p>
                     </div>
                 </a>
+                <!-- Link ke halaman pengurus yayasan versi dashboard -->
                 <a href="{{ route('dashboard.pengurus') }}" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-emerald-200 transition-all p-4 flex items-center gap-3 group">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -145,6 +166,7 @@
                         <p class="text-xs text-slate-400">Struktur manajemen</p>
                     </div>
                 </a>
+                <!-- Link ke halaman legalitas & struktur versi dashboard -->
                 <a href="{{ route('dashboard.legalitas') }}" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 hover:shadow-md hover:border-amber-200 transition-all p-4 flex items-center gap-3 group">
                     <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
@@ -157,6 +179,7 @@
             </div>
 
             {{-- BERITA KEGIATAN --}}
+            <!-- Seksi berita: kartu-kartu berita terbaru untuk donatur -->
             <div id="berita-kegiatan" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-sky-100 flex items-center justify-center">
@@ -168,8 +191,10 @@
                     </div>
                 </div>
                 <div class="p-6">
+                    <!-- Kondisi if: tampilkan grid berita jika data ada, jika tidak tampilkan pesan kosong -->
                     @if($newsList->isNotEmpty())
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- foreach: setiap berita dirender sebagai kartu dengan foto, kategori, tanggal, judul, ringkasan, dan lokasi -->
                             @foreach($newsList as $news)
                                 <a href="{{ route('news.show', $news->slug) }}" class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all group overflow-hidden">
                                     @if($news->foto_utama)
@@ -196,6 +221,7 @@
             </div>
 
             {{-- KAMPANYE DONASI --}}
+            <!-- Seksi kampanye donasi: daftar program donasi aktif yang sedang berjalan -->
             <div id="kampanye-donasi" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
@@ -207,8 +233,10 @@
                     </div>
                 </div>
                 <div class="p-6">
+                    <!-- Kondisi if: tampilkan grid kampanye jika ada data, jika tidak tampilkan state kosong -->
                     @if($campaigns->isNotEmpty())
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- foreach: setiap kampanye dirender sebagai kartu dengan gambar, judul, deskripsi, progress bar, dan tombol aksi -->
                             @foreach($campaigns as $camp)
                                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all group">
                                     @if($camp->image)
@@ -223,15 +251,18 @@
                                             <h3 class="font-bold text-sm text-slate-800 group-hover:text-emerald-700 transition-colors">{{ $camp->title }}</h3>
                                             <p class="text-xs text-slate-400 mt-1 line-clamp-2">{{ Str::limit($camp->description, 80) }}</p>
                                         </a>
+                                        <!-- Blok progress: nominal terkumpul vs target dan progress bar persentase -->
                                         <div class="mt-3">
                                             <div class="flex justify-between text-xs text-slate-400 mb-1.5">
                                                 <span>Terkumpul</span>
                                                 <span class="font-bold text-emerald-700">Rp {{ number_format($camp->collected_amount, 0, ',', '.') }} / Rp {{ number_format($camp->target_amount, 0, ',', '.') }}</span>
                                             </div>
+                                            <!-- Lebar progress bar dihitung dari collected_amount dibagi target_amount (maksimal 100%) -->
                                             <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                                                 <div class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all" style="width: {{ $camp->target_amount > 0 ? min(($camp->collected_amount / $camp->target_amount) * 100, 100) : 0 }}%"></div>
                                             </div>
                                         </div>
+                                        <!-- Tombol aksi: lihat detail kampanye dan mulai donasi -->
                                         <div class="flex gap-2 mt-3">
                                             <a href="{{ route('campaign.show', $camp->id) }}" class="btn btn-sm btn-outline border-slate-300 text-slate-500 hover:bg-slate-100 hover:text-slate-700 rounded-lg font-bold flex-1">Lihat Detail</a>
                                             <a href="{{ route('donations.create', $camp->id) }}" class="btn btn-sm bg-emerald-700 hover:bg-emerald-800 text-white border-0 rounded-lg font-bold flex-1 shadow-sm">Donasi Sekarang</a>
@@ -250,6 +281,7 @@
             </div>
 
             {{-- PROGRAM ORANG TUA ASUH --}}
+            <!-- Seksi program orang tua asuh: statistik anak, form filter (usia & jenis kelamin), dan slider kartu anak asuh -->
             <div id="program-ota" class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
@@ -261,6 +293,7 @@
                     </div>
                 </div>
                 <div class="p-6">
+                    <!-- Statistik anak asuh: total, tersedia, dan jumlah yang diasuh oleh donatur ini -->
                     <div class="grid grid-cols-3 gap-3 mb-6">
                         <div class="bg-slate-50 rounded-xl p-4 text-center border border-slate-200">
                             <div class="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">Total</div>
@@ -276,8 +309,10 @@
                         </div>
                     </div>
 
+                    <!-- Form filter: mengirim parameter GET 'usia' dan 'jenis_kelamin' ke route dashboard lalu melompat ke seksi #program-ota -->
                     <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 mb-6">
                         <form method="GET" action="{{ route('dashboard') }}#program-ota" class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <!-- Input hidden yang nilainya diisi oleh fungsi setFilter() sebelum form dikirim -->
                             <input type="hidden" name="usia" id="usia-input" value="{{ request('usia') }}">
                             <input type="hidden" name="jenis_kelamin" id="jenis_kelamin-input" value="{{ request('jenis_kelamin') }}">
 
@@ -286,12 +321,14 @@
                                 Filter
                             </span>
 
+                            <!-- Dropdown filter usia (Semua, 0-5, 6-10, 11-15, 16-20 tahun); nilai query 'usia' menentukan pilihan aktif -->
                             <div class="dropdown dropdown-bottom">
                                 <button type="button" class="btn btn-xs border-emerald-200 rounded-lg font-bold transition-all duration-200 {{ request('usia') ? 'bg-emerald-700 text-white shadow-sm shadow-emerald-200 border-emerald-700' : 'bg-white text-slate-500 hover:border-emerald-400 hover:text-slate-700' }}" onclick="this.closest('.dropdown').classList.toggle('dropdown-open')">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     {{ request('usia') ? 'Usia ' . request('usia') . ' Thn' : 'Usia' }}
                                     <svg class="w-3 h-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
+                                <!-- Menu pilihan usia; tiap opsi memanggil setFilter('usia', nilai) lalu form tersubmit -->
                                 <ul class="dropdown-content menu bg-white rounded-xl shadow-xl border border-slate-200 p-1.5 w-44 z-10">
                                     <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ !request('usia') ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:bg-slate-50' }}" onclick="setFilter('usia', '')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ !request('usia') ? 'border-emerald-700 bg-emerald-700' : 'border-slate-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ !request('usia') ? 'bg-white' : '' }}"></span></span>Semua Usia</button></li>
                                     <li><button type="button" class="flex items-center gap-2 text-sm rounded-lg {{ request('usia') == '0-5' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-500 hover:bg-slate-50' }}" onclick="setFilter('usia', '0-5')"><span class="w-4 h-4 rounded-full border-2 flex items-center justify-center {{ request('usia') == '0-5' ? 'border-emerald-700 bg-emerald-700' : 'border-slate-300' }}"><span class="w-1.5 h-1.5 rounded-full {{ request('usia') == '0-5' ? 'bg-white' : '' }}"></span></span>0 - 5 Tahun</button></li>
@@ -301,6 +338,7 @@
                                 </ul>
                             </div>
 
+                            <!-- Dropdown filter jenis kelamin (Semua, Laki-laki, Perempuan) -->
                             <div class="dropdown dropdown-bottom">
                                 <button type="button" class="btn btn-xs border-emerald-200 rounded-lg font-bold transition-all duration-200 {{ request('jenis_kelamin') ? 'bg-emerald-700 text-white shadow-sm shadow-emerald-200 border-emerald-700' : 'bg-white text-slate-500 hover:border-emerald-400 hover:text-slate-700' }}" onclick="this.closest('.dropdown').classList.toggle('dropdown-open')">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -314,6 +352,7 @@
                                 </ul>
                             </div>
 
+                            <!-- Kondisi if: tombol "Reset Filter" hanya muncul jika salah satu filter aktif, untuk mengosongkan semua filter -->
                             @if(request('usia') || request('jenis_kelamin'))
                                 <a href="{{ route('dashboard') }}#program-ota" class="btn btn-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border-0 rounded-lg font-bold transition-all duration-200">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -323,12 +362,14 @@
                         </form>
                     </div>
 
+                    <!-- Keterangan jumlah anak yang ditampilkan dari total anak yang tersedia -->
                     <div class="flex items-center gap-1.5 mb-3">
                         <p class="text-xs text-slate-400">
                             Menampilkan <span class="font-bold text-slate-600">{{ $fosterChildren->count() }}</span> dari <span class="font-bold text-slate-600">{{ $totalVisible }}</span> anak
                         </p>
                     </div>
 
+                    <!-- Skrip JavaScript: mengisi nilai input hidden sesuai filter yang dipilih lalu men-submit form -->
                     <script>
                         function setFilter(key, value) {
                             if (key === 'usia') {
@@ -340,18 +381,24 @@
                         }
                     </script>
 
+                    <!-- Kondisi if: tampilkan slider kartu anak asuh jika ada data, jika tidak tampilkan pesan kosong -->
                     @if($fosterChildren->isNotEmpty())
+                        <!-- php: membagi daftar anak menjadi potongan 3 kartu per halaman slider -->
                         @php
                             $chunks = $fosterChildren->chunk(3);
                         @endphp
+                        <!-- State Alpine.js slider: 'slide' menunjuk halaman aktif, 'total' jumlah halaman; hanya halaman dengan indeks 'slide' yang tampil -->
                         <div class="relative" x-data="{ slide: 0, total: {{ $chunks->count() }} }">
                             <div class="overflow-hidden">
+                                <!-- foreach: setiap potongan/chunk dirender sebagai satu halaman slider berisi 3 kartu anak -->
                                 @foreach($chunks as $i => $chunk)
                                     <div x-show="slide === {{ $i }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-8" x-transition:enter-end="opacity-100 translate-x-0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <!-- foreach: setiap anak dalam satu halaman dirender sebagai kartu -->
                                         @foreach($chunk as $child)
                                             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all">
                                                 <div class="p-4">
                                                     <div class="flex items-center gap-3 mb-3">
+                                                        <!-- Avatar anak: foto jika ada, jika tidak inisial huruf pertama nama -->
                                                         <div class="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden ring-2 ring-emerald-100">
                                                             @if($child->photo)
                                                                 <img src="{{ asset('storage/' . $child->photo) }}" alt="{{ $child->name }}" class="w-full h-full object-cover">
@@ -369,9 +416,11 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <!-- Deskripsi singkat anak (dipotong 100 karakter) jika ada -->
                                                     @if($child->description)
                                                         <p class="text-xs text-slate-400 mb-3 line-clamp-2">{{ Str::limit($child->description, 100) }}</p>
                                                     @endif
+                                                    <!-- Kondisi if: anak berstatus 'Tersedia' diberi tombol Lihat Profil & Asuh Sekarang; selain itu ditandai "Anak Asuh Anda" -->
                                                     @if($child->status == 'Tersedia')
                                                         <div class="flex gap-2">
                                                             <a href="{{ route('sponsor.child-detail', $child->id) }}" class="btn btn-sm btn-outline border-slate-300 text-slate-500 hover:bg-slate-100 hover:text-slate-700 rounded-lg font-bold flex-1">
@@ -394,9 +443,11 @@
                                 @endforeach
                             </div>
 
+                            <!-- Kontrol slider: tombol panah kiri/kanan dan titik halaman; hanya dirender jika halaman lebih dari satu -->
                             @if($chunks->count() > 1)
                             <div class="flex items-center justify-center gap-3 mt-5">
                                 <button @click="slide = slide > 0 ? slide - 1 : total - 1" class="w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 flex items-center justify-center transition-colors text-sm font-bold">‹</button>
+                                <!-- Titik navigasi dibuat dinamis dengan x-for; titik aktif menyala emerald -->
                                 <template x-for="i in total" :key="i">
                                     <button @click="slide = i - 1" class="w-2 h-2 rounded-full transition-all duration-200" :class="slide === i - 1 ? 'bg-emerald-700 scale-125' : 'bg-slate-300 hover:bg-emerald-300'" :aria-label="'Halaman ' + i"></button>
                                 </template>

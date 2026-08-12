@@ -1,6 +1,13 @@
+<!-- ============================================ -->
+<!-- components/alert.blade.php - NOTIFIKASI ALERT -->
+<!-- ============================================ -->
+<!-- Peran: komponen notifikasi global yang dipanggil sebagai x-alert pada semua layout, menampilkan pesan flash session (success/error/warning/info) maupun daftar error validasi. -->
+<!-- Data: prop 'type' (success/error/warning/info), 'message' (teks pesan), 'title' (judul opsional), 'errors' (array error validasi opsional). -->
+<!-- Alur: php memilih konfigurasi warna/ikon per tipe; notifikasi tampil dengan animasi Alpine dan otomatis hilang setelah 5 detik (kecuali berisi daftar error yang harus diperbaiki). -->
 @props(['type' => 'success', 'message' => '', 'title' => '', 'errors' => null])
 
 @php
+    // Blok PHP: memilih konfigurasi tampilan (warna, ikon, judul, shadow) sesuai tipe alert lewat match expression
     $config = match($type) {
         'success' => [
             'bg' => 'bg-emerald-50 dark:bg-emerald-950/60',
@@ -53,6 +60,7 @@
         default => [],
     };
 
+    // Menandai apakah alert menyertakan daftar error validasi (jika ya, notifikasi tidak hilang otomatis)
     $hasErrors = $errors && count($errors) > 0;
 @endphp
 

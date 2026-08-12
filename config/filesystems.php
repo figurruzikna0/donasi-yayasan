@@ -3,21 +3,24 @@
 /*
  * filesystems.php — Konfigurasi filesystem
  * ==========================================
- * Mengatur disk filesystem default (local, public, s3),
- * root direktori, dan symbolic links.
+ * File ini mengatur tempat penyimpanan FILE aplikasi:
+ *  - default → disk filesystem default yang dipakai
+ *  - disks   → daftar disk (lokasi penyimpanan) yang tersedia
+ *  - links   → daftar symbolic link yang dibuat perintah `php artisan storage:link`
+ *
+ * Konteks sistem ini: semua foto/bukti transfer disimpan di disk 'public'
+ * (storage/app/public), lalu diakses publik lewat folder public/storage.
  */
 
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Filesystem Disk
+    | Disk Filesystem Default
     |--------------------------------------------------------------------------
-    |
-    | Here you may specify the default filesystem disk that should be used
-    | by the framework. The "local" disk, as well as a variety of cloud
-    | based disks are available to your application for file storage.
-    |
+    | Disk yang dipakai framework bila tidak ada disk lain yang disebutkan.
+    | Di sini default 'local' (storage/app/private).
+    | Namun di sistem ini, upload umumnya memakai disk 'public' secara eksplisit.
     */
 
     'default' => env('FILESYSTEM_DISK', 'local'),
@@ -26,34 +29,39 @@ return [
     |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
+    | Daftar "disk" penyimpanan yang tersedia. Bisa memakai driver yang sama
+    | dengan root berbeda, atau driver cloud (S3).
     |
-    | Below you may configure as many filesystem disks as necessary, and you
-    | may even configure multiple disks for the same driver. Examples for
-    | most supported storage drivers are configured here for reference.
-    |
-    | Supported drivers: "local", "ftp", "sftp", "s3"
-    |
+    | Driver yang didukung: "local", "ftp", "sftp", "s3"
     */
 
     'disks' => [
 
+        // LOCAL — penyimpanan PRIVAT (tidak bisa diakses publik).
+        // Root: storage/app/private. Untuk file internal aplikasi.
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
-            'throw' => false,
-            'report' => false,
+            'serve' => true,      // izinkan Laravel menyajikan file ini bila perlu
+            'throw' => false,     // false = error operasi file tidak dilempar sebagai exception
+            'report' => false,    // false = error tidak dilaporkan ke error handler
         ],
 
+        // PUBLIC — penyimpanan PUBLIK (bisa diakses lewat URL /storage/...).
+        // Root: storage/app/public.
+        // URL: APP_URL + '/storage' (contoh: https://site.com/storage).
+        // Inilah disk yang dipakai upload foto anak, bukti transfer, dll.
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
-            'visibility' => 'public',
+            'visibility' => 'public',   // file yang disimpan otomatis berstatus publik
             'throw' => false,
             'report' => false,
         ],
 
+        // S3 — penyimpanan cloud Amazon S3 (opsional, tidak dipakai sistem).
+        // Butuh kredensial AWS (key, secret, region, bucket).
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -73,11 +81,11 @@ return [
     |--------------------------------------------------------------------------
     | Symbolic Links
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure the symbolic links that will be created when the
-    | `storage:link` Artisan command is executed. The array keys should be
-    | the locations of the links and the values should be their targets.
-    |
+    | Daftar symbolic link yang dibuat saat menjalankan perintah:
+    |   php artisan storage:link
+    | Format: 'lokasi_link' => 'target'.
+    | Di sini: folder public/storage → storage/app/public.
+    | Artinya file upload bisa diakses publik lewat URL /storage/nama_file.jpg.
     */
 
     'links' => [

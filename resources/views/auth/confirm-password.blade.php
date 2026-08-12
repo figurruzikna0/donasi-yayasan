@@ -1,3 +1,10 @@
+<!-- ============================================ -->
+<!-- auth\confirm-password.blade.php — halaman konfirmasi password -->
+<!-- ============================================ -->
+<!-- Peran     : verifikasi ulang password sebelum mengakses area sensitif akun. -->
+<!-- Controller: ConfirmablePasswordController — route('password.confirm') untuk GET dan POST. -->
+<!-- Alur      : isi password saat ini -> POST -> diverifikasi -> sesi ditandai aman -->
+<!--             (password_confirmed_at) -> lanjut ke halaman yang dituju. -->
 <x-guest-layout>
     <div class="text-center mb-6">
         <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner mb-3 mx-auto flex items-center justify-center">
@@ -9,13 +16,16 @@
         <p class="text-sm text-emerald-500">Ini adalah area aman</p>
     </div>
 
+    <!-- PESAN INFORMASI: penjelasan bahwa halaman ini meminta konfirmasi identitas -->
     <div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
         Ini adalah area aman. Harap konfirmasi password Anda sebelum melanjutkan.
     </div>
 
+    <!-- FORM KONFIRMASI PASSWORD: mengirim password saat ini ke route('password.confirm') -->
     <form method="POST" action="{{ route('password.confirm') }}">
         @csrf
 
+        <!-- FIELD PASSWORD: wajib diisi (required); tombol mata untuk lihat/sembunyikan -->
         <div class="form-control">
             <label class="label" for="password">
                 <span class="label-text font-bold text-emerald-700 uppercase text-xs tracking-wider">Password</span>
@@ -35,12 +45,14 @@
         </div>
 
         <div class="flex justify-end mt-6">
+            <!-- TOMBOL SUBMIT: mengirim password untuk diverifikasi -->
             <button type="submit" class="btn btn-success text-white font-bold rounded-xl px-6 py-2.5 text-sm shadow-sm hover:shadow-md transition-all">
                 Konfirmasi
             </button>
         </div>
     </form>
 
+    <!-- SCRIPT JS: fungsi togglePassword() untuk menampilkan/menyembunyikan isi kolom password -->
     <script>
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);

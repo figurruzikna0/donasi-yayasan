@@ -1,6 +1,16 @@
+<!-- ============================================ -->
+<!-- admin\campaigns\create.blade.php             -->
+<!-- Halaman form pembuatan kampanye donasi baru  -->
+<!-- Dipakai oleh Admin\CampaignController@create -->
+<!-- Alur: form POST ke route store; field:       -->
+<!-- judul, deskripsi, target dana, foto, status  -->
+<!-- (default aktif). Ada CSS & JS khusus untuk   -->
+<!-- tampilan upload file yang menarik            -->
+<!-- ============================================ -->
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    <!-- Header halaman tambah kampanye -->
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +24,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Kampanye Donasi Baru</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Isi detail di bawah untuk meluncurkan program kebaikan baru</p>
                 </div>
+                <!-- Tombol kembali ke daftar kampanye -->
                 <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                     Kembali
@@ -26,9 +37,14 @@
 
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
             <div class="px-8 py-6">
+                <!-- ============================================ -->
+                <!-- Form tambah kampanye: POST ke store dengan    -->
+                <!-- enctype multipart karena ada upload gambar.    -->
+                <!-- ============================================ -->
                 <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
+                    <!-- Input judul kampanye (wajib) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Judul Kampanye</span>
@@ -40,6 +56,7 @@
                         @enderror
                     </div>
 
+                    <!-- Input deskripsi lengkap kampanye (wajib) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Deskripsi Lengkap</span>
@@ -51,6 +68,7 @@
                         @enderror
                     </div>
 
+                    <!-- Input target dana dalam Rupiah (wajib, minimal 1) -->
                     <div class="form-control mb-5">
                         <label class="label">
                             <span class="label-text font-bold text-base-content">Target Dana (Rp)</span>
@@ -66,6 +84,8 @@
 
                     <p class="font-bold text-base-content mb-3">Foto Kampanye</p>
 
+                    <!-- Upload foto kampanye (wajib); label bergaya dashed -->
+                    <!-- yang menampilkan nama file terpilih via JS -->
                     <div class="form-control mb-5">
                         <div class="file-input-wrapper">
                             <label class="file-input-label" id="image-label">
@@ -85,6 +105,7 @@
 
                     <div class="divider"></div>
 
+                    <!-- Tombol aksi bawah: Batal dan Simpan Kampanye -->
                     <div class="flex items-center justify-end gap-3">
                         <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -109,6 +130,8 @@
     </div>
 </div>
 
+<!-- CSS khusus: membuat area upload file bergaya -->
+<!-- kotak putus-putus (dashed) yang responsif   -->
 <style>
     .file-input-wrapper { position: relative; }
     .file-input-label {
@@ -128,6 +151,8 @@
     }
 </style>
 
+<!-- Skrip JS: menampilkan nama file yang dipilih -->
+<!-- ke dalam teks label upload                 -->
 <script>
     document.getElementById('image-input').addEventListener('change', function () {
         const span = document.getElementById('image-text');

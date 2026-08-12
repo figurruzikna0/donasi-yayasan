@@ -1,5 +1,8 @@
 <?php
 // === 2026_06_27_202323_create_news_table: membuat tabel news dengan kolom judul, slug, kategori, tanggal_kegiatan, lokasi, penyelenggara, ringkasan, konten, foto_utama, status ===
+// Migrasi CUSTOM untuk fitur BERITA/KEGIATAN yayasan.
+// Data berita ditampilkan di halaman publik; status membedakan
+// berita draf (belum tampil) vs published (sudah tampil).
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,16 +14,16 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
-            $table->string('judul');
-            $table->string('slug')->unique();
-            $table->string('kategori')->default('Kegiatan Umum');
-            $table->date('tanggal_kegiatan');
-            $table->string('lokasi')->nullable();
-            $table->string('penyelenggara')->nullable();
-            $table->text('ringkasan')->nullable();
-            $table->longText('konten');
-            $table->string('foto_utama')->nullable();
-            $table->string('status')->default('draft');
+            $table->string('judul');                     // judul berita
+            $table->string('slug')->unique();            // slug URL, UNIK
+            $table->string('kategori')->default('Kegiatan Umum');  // kategori berita, default 'Kegiatan Umum'
+            $table->date('tanggal_kegiatan');            // tanggal pelaksanaan kegiatan
+            $table->string('lokasi')->nullable();        // tempat kegiatan
+            $table->string('penyelenggara')->nullable(); // pihak penyelenggara
+            $table->text('ringkasan')->nullable();       // cuplikan singkat
+            $table->longText('konten');                  // isi berita lengkap (LONGTEXT = muat konten panjang)
+            $table->string('foto_utama')->nullable();    // gambar sampul
+            $table->string('status')->default('draft');  // status: 'draft' (default) / 'published'
             $table->timestamps();
         });
     }

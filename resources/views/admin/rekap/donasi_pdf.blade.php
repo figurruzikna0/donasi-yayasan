@@ -1,6 +1,23 @@
+{{--
+    ============================================================
+    admin\rekap\donasi_pdf.blade.php — Template PDF Rekap Donasi
+    ============================================================
+    Template cetak PDF untuk rekap transaksi donasi kampanye.
+    File ini dirender oleh Dompdf melalui RekapController (route
+    admin.rekap.donasi.export-pdf) dengan parameter $donations
+    dan $totalAmount.
+    Alur tampilan: judul + periode cetak → ringkasan (total dana
+    & jumlah transaksi) → tabel data per donasi (order id, donatur,
+    email, kampanye, nominal, metode, status, tanggal) → footer
+    yayasan.
+    Catatan: file ini TANPA layout admin (HTML murni) karena
+    hasilnya langsung diunduh sebagai PDF.
+--}}
 <!DOCTYPE html>
 <html lang="id">
 <head><meta charset="UTF-8"><title>Rekap Donasi</title>
+{{-- Gaya CSS cetak: font DejaVu Sans (bawaan Dompdf), warna hijau
+    khas yayasan, dan kelas status untuk badge warna. --}}
 <style>
 body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #333; margin: 20px; }
 h1 { color: #059669; font-size: 18px; margin: 0 0 4px; }
@@ -23,9 +40,11 @@ table.data td.right { text-align: right; }
 </style>
 </head>
 <body>
+{{-- Judul dokumen dan info periode pencetakan (diambil dari query string) --}}
 <h1>Rekap Data Donasi</h1>
 <p class="sub">Periode: {{ request('start_date', 'Awal') }} — {{ request('end_date', 'Sekarang') }} | Dicetak: {{ now()->translatedFormat('d F Y H:i') }}</p>
 
+{{-- Ringkasan: total dana terkumpul dan jumlah transaksi --}}
 <div class="summary">
 <table>
 <tr><td class="label">Total Dana Terkumpul</td><td class="value">Rp {{ number_format($totalAmount, 0, ',', '.') }}</td></tr>
@@ -33,6 +52,7 @@ table.data td.right { text-align: right; }
 </table>
 </div>
 
+{{-- Tabel data donasi --}}
 <table class="data">
 <thead>
 <tr>
@@ -40,6 +60,7 @@ table.data td.right { text-align: right; }
 </tr>
 </thead>
 <tbody>
+{{-- Perulangan setiap transaksi donasi --}}
 @forelse($donations as $d)
 <tr>
 <td style="font-family:monospace;font-size:8px;">{{ $d->order_id ?? '-' }}</td>
@@ -49,6 +70,7 @@ table.data td.right { text-align: right; }
 <td class="right">Rp {{ number_format($d->amount, 0, ',', '.') }}</td>
 <td>{{ $d->payment_method ?? '-' }}</td>
 <td>
+{{-- Badge status donasi: Sukses (hijau) / Pending (kuning) / Ditolak (merah) --}}
 @if($d->status == 'success') <span class="status status-success">Sukses</span>
 @elseif($d->status == 'pending') <span class="status status-pending">Pending</span>
 @else <span class="status status-failed">Ditolak</span> @endif
@@ -56,11 +78,13 @@ table.data td.right { text-align: right; }
 <td>{{ $d->created_at ? $d->created_at->format('d/m/Y H:i') : '-' }}</td>
 </tr>
 @empty
+{{-- Kondisi saat tidak ada data donasi --}}
 <tr><td colspan="8" style="text-align:center;padding:30px;color:#888;">Tidak ada data donasi</td></tr>
 @endforelse
 </tbody>
 </table>
 
+{{-- Footer dokumen PDF --}}
 <div class="footer">
 <p>— Yayasan Baitul Yatim Sukabumi —</p>
 </div>

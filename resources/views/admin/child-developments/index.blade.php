@@ -1,6 +1,16 @@
+<!-- ============================================ -->
+<!-- admin\child-developments\index.blade.php     -->
+<!-- Halaman daftar laporan perkembangan anak     -->
+<!-- (modul Orang Tua Asuh); yang menginput admin  -->
+<!-- Dipakai oleh Admin\ChildDevelopmentController@index -->
+<!-- Alur: menampilkan tabel laporan dengan kolom -->
+<!-- Foto, Judul & Anak Asuh, Tanggal, Dibuat     -->
+<!-- Oleh, Aksi; paginasi via $developments->links() -->
+<!-- ============================================ -->
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    <!-- Header halaman: judul dan tombol tambah laporan -->
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -14,6 +24,7 @@
                     <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Laporan Perkembangan Anak Asuh</h1>
                     <p class="text-emerald-100/80 text-sm mt-1.5">Catat update berkala untuk anak yang sedang disponsori orang tua asuh</p>
                 </div>
+                <!-- Tombol menuju halaman create laporan -->
                 <a href="{{ route('admin.child-developments.create') }}" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-emerald-700 font-bold rounded-xl gap-2 backdrop-blur-sm bg-white/5">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-4 h-4"><path d="M12 4v16m8-8H4"/></svg>
                     Tambah Laporan
@@ -24,10 +35,12 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12 space-y-6">
 
+        <!-- Kartu tabel daftar laporan perkembangan -->
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="table w-full">
                     <thead>
+                        <!-- Header kolom: Foto, Judul & Anak Asuh, Tanggal, Dibuat Oleh, Aksi -->
                         <tr class="bg-base-50/80 border-b border-base-200">
                             <th class="py-3 px-4 text-[0.6rem] uppercase tracking-widest font-bold text-base-content/40 whitespace-nowrap">Foto</th>
                             <th class="py-3 px-4 text-[0.6rem] uppercase tracking-widest font-bold text-base-content/40 whitespace-nowrap">Judul &amp; Anak Asuh</th>
@@ -37,9 +50,11 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-base-100">
+                        <!-- forelse: tampilkan tiap baris laporan, atau pesan kosong -->
                         @forelse($developments as $item)
                             <tr class="hover:bg-emerald-50/40 transition-colors duration-150">
                                 <td class="py-3 px-4 whitespace-nowrap">
+                                    <!-- Jika laporan punya foto, tampilkan; jika tidak, ikon placeholder -->
                                     @if($item->foto)
                                         <div class="avatar">
                                             <div class="w-10 h-10 rounded-xl ring-2 ring-base-200">
@@ -53,6 +68,8 @@
                                     @endif
                                 </td>
                                 <td class="py-3 px-4">
+                                    <!-- Judul laporan (dipotong 40 karakter) dan nama anak -->
+                                    <!-- asuh terkait lewat relasi fosterChild -->
                                     <span class="font-bold text-sm text-base-content whitespace-nowrap">{{ Str::limit($item->judul, 40) }}</span>
                                     <div class="mt-1">
                                         <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[0.6rem] font-bold bg-emerald-100 text-emerald-700 whitespace-nowrap">
@@ -62,39 +79,48 @@
                                     </div>
                                 </td>
                                 <td class="py-3 px-4 whitespace-nowrap">
+                                    <!-- Tanggal laporan dalam format Indonesia -->
                                     <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-base-content/60">
                                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-base-content/30" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                         {{ $item->tanggal->translatedFormat('d M Y') }}
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 whitespace-nowrap">
+                                    <!-- Nama admin/user yang membuat laporan lewat relasi user -->
                                     <span class="text-sm font-semibold text-base-content/60 flex items-center gap-1.5">
                                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-base-content/30" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                         {{ $item->user->name ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 whitespace-nowrap">
+                                    <!-- Tombol aksi: Detail, Edit, Hapus -->
                                     <div class="flex items-center justify-center gap-1">
+                                        <!-- Tombol melihat detail laporan -->
                                         <a href="{{ route('admin.child-developments.show', $item->id) }}" class="btn btn-ghost btn-xs text-base-content/50 hover:text-primary hover:bg-primary/5 rounded-lg font-bold gap-1">
                                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
                                             Detail
                                         </a>
+                                        <!-- Tombol mengubah laporan -->
                                         <a href="{{ route('admin.child-developments.edit', $item->id) }}" class="btn btn-ghost btn-xs text-base-content/50 hover:text-amber-600 hover:bg-amber-50 rounded-lg font-bold gap-1">
                                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                             Edit
                                         </a>
+                                        <!-- Form hapus laporan: method DELETE; submit dicegah lalu -->
+                                        <!-- memunculkan modal konfirmasi (Alpine x-data 'open') -->
                                         <form action="{{ route('admin.child-developments.destroy', $item->id) }}" method="POST" x-data="{ open: false }" @submit.prevent="open = true">
                                             @csrf @method('DELETE')
                                             <button type="button" @click="open = true" class="btn btn-ghost btn-xs text-base-content/50 hover:text-rose-600 hover:bg-rose-50 rounded-lg font-bold gap-1">
                                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                 Hapus
                                             </button>
+                                            <!-- Modal konfirmasi hapus laporan (komponen reusable) -->
                                             <x-confirm-delete-modal entity-name="{{ $item->judul }}" entity-type="laporan perkembangan" />
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
+                            <!-- Kondisi daftar kosong: tampilkan pesan "Belum ada laporan" -->
                             <tr>
                                 <td colspan="5">
                                     <div class="py-16 text-center">
@@ -110,6 +136,7 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Paginasi: tampil bila data lebih dari satu halaman -->
             @if($developments->hasPages())
                 <div class="p-4 border-t border-base-200 flex justify-center">
                     {{ $developments->links() }}

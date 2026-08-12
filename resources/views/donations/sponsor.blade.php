@@ -1,3 +1,11 @@
+<!-- ============================================ -->
+<!-- donations\sponsor.blade.php — form sponsorship anak asuh -->
+<!-- ============================================ -->
+<!-- Peran     : form pendaftaran orang tua asuh (sponsorship) untuk anak yatim tertentu. -->
+<!-- Controller: DonationController@sponsorStore — route('sponsor.store') metode POST. -->
+<!-- Alur      : pilih paket komitmen bulanan (Bronze/Silver/Gold) -> isi data diri -> -->
+<!--             upload bukti transfer -> POST -> divalidasi (amount min 100000 max 500000 + -->
+<!--             paket_komitmen wajib) -> disimpan status 'pending' -> admin memverifikasi. -->
 {{--
     ========================================================
     FORM SPONSORSHIP (resources/views/donations/sponsor.blade.php)
@@ -18,6 +26,7 @@
 <x-app-layout>
     <div class="bg-base-200 min-h-0">
 
+        <!-- BANNER ATAS: judul halaman dan tombol kembali ke dashboard -->
         <div class="bg-gradient-to-r from-primary via-primary to-secondary text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex items-center justify-between flex-wrap gap-4">
@@ -35,10 +44,12 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             {{-- Anak Info --}}
+            <!-- KARTU INFO ANAK: foto, nama, usia, jenis kelamin, dan deskripsi singkat anak yang diasuh -->
             <div class="card bg-primary/10 border border-base-300 shadow-sm mb-6">
                 <div class="card-body p-5 flex flex-row items-center gap-4">
                     <div class="avatar">
                         <div class="w-16 rounded-full ring ring-base-300">
+                            <!-- KONDISI: tampil foto anak dari storage; bila tidak ada, gunakan avatar cari (ui-avatars.com) -->
                             @if($child->photo)
                                 <img src="{{ asset('storage/' . $child->photo) }}" alt="{{ $child->name }}">
                             @else
@@ -51,6 +62,7 @@
                         <h3 class="font-bold text-primary text-lg">{{ $child->name }}</h3>
                         <p class="text-sm text-base-content/60">{{ $child->age }} Tahun{{ $child->jenis_kelamin ? ' · ' . $child->jenis_kelamin : '' }}</p>
                     </div>
+                    <!-- KONDISI: tampilkan cuplikan deskripsi anak di samping (hanya layar besar) -->
                     @if($child->description)
                         <div class="ml-auto max-w-xs hidden sm:block">
                             <p class="text-xs text-base-content/50 italic">"{{ Str::limit($child->description, 80) }}"</p>
@@ -59,11 +71,13 @@
                 </div>
             </div>
 
+            <!-- ALERT ERROR: menampilkan seluruh pesan validasi bila ada yang gagal -->
             @if($errors->any())
                 <x-alert type="error" :errors="$errors->all()" />
             @endif
 
             {{-- Form --}}
+            <!-- FORM SPONSORSHIP: POST ke route('sponsor.store'); enctype multipart untuk upload bukti transfer -->
             <div class="card bg-base-100 shadow-md border border-base-300">
                 <div class="card-body p-6 sm:p-8">
 
@@ -71,6 +85,7 @@
                         @csrf
 
                         {{-- Nama & Email --}}
+                        <!-- FIELD NAMA & EMAIL DONATUR: wajib diisi, menjadi identitas pada invoice/notifikasi -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                             <div class="form-control w-full">
                                 <label class="label">
@@ -99,6 +114,7 @@
                         </div>
 
                         {{-- Phone --}}
+                        <!-- FIELD NO. WHATSAPP: wajib diisi; dipakai untuk notifikasi jatuh tempo perpanjangan sponsorship -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-primary">No. WhatsApp Aktif <span class="text-red-500">*</span></span>
@@ -114,11 +130,14 @@
                         </div>
 
                         {{-- Paket --}}
+                        <!-- PEMILIHAN PAKET KOMITMEN BULANAN: Bronze/Silver/Gold; -->
+                        <!-- pilihan tersimpan ke select tersembunyi 'paket_komitmen' dan hidden input amount + description -->
                         <div class="form-control w-full mb-6">
                             <label class="label">
                                 <span class="label-text font-bold text-primary">Pilih Paket Komitmen Bulanan <span class="text-red-500">*</span></span>
                             </label>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                                <!-- DEKLARASI PAKET: daftar paket beserta nominal masing-masing -->
                                 @php
                                     $pakets = [
                                         'Bronze' => ['label' => 'Bronze', 'sub' => 'Buku & Alat Tulis', 'nominal' => 100000, 'color' => 'amber'],
@@ -126,12 +145,14 @@
                                         'Gold' => ['label' => 'Gold', 'sub' => 'Pendidikan, Buku & Alat Tulis', 'nominal' => 500000, 'color' => 'yellow'],
                                     ];
                                 @endphp
+                                <!-- LOOPING PAKET: render satu kartu tombol untuk setiap paket -->
                                 @foreach($pakets as $key => $p)
                                     <button type="button"
                                             class="paket-btn border-2 border-base-300 rounded-xl p-4 text-center hover:border-primary hover:bg-primary/5 transition-all cursor-pointer @if(old('paket_komitmen') == $key) border-primary bg-primary/10 @endif"
                                             data-paket="{{ $key }}"
                                             onclick="pilihPaket(this, '{{ $key }}')">
                                         <div class="mb-2">
+                                            <!-- IKON PAKET: warna ikon berbeda untuk tiap paket (amber/slate/yellow) -->
                                             @if($p['label'] == 'Bronze')
                                                 <svg class="w-8 h-8 mx-auto text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
                                             @elseif($p['label'] == 'Silver')
@@ -146,6 +167,7 @@
                                     </button>
                                 @endforeach
                             </div>
+                            <!-- SELECT TERSEMBUNYI: menyimpan pilihan paket; value diisi otomatis oleh JS pilihPaket() -->
                             <select name="paket_komitmen" id="paket_komitmen" class="select select-bordered w-full border-base-300 focus:border-primary hidden" required onchange="updatePaketDetail()">
                                 <option value="" disabled {{ old('paket_komitmen') ? '' : 'selected' }}>-- Pilih Paket --</option>
                                 <option value="Bronze" {{ old('paket_komitmen') == 'Bronze' ? 'selected' : '' }}>Paket Bronze</option>
@@ -153,9 +175,11 @@
                                 <option value="Gold"   {{ old('paket_komitmen') == 'Gold'   ? 'selected' : '' }}>Paket Gold</option>
                             </select>
 
+                            <!-- INPUT HIDDEN: nominal & keterangan paket terpilih, dikirim bersama form -->
                             <input type="hidden" name="amount" id="amount-hidden">
                             <input type="hidden" name="description" id="description-hidden">
 
+                            <!-- RINGKASAN PAKET TERPILIH: tampilan nominal & peruntukan dana yang diperbarui JS -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                                 <div class="bg-base-200 rounded-xl p-4 border border-base-300">
                                     <p class="text-xs text-base-content/50 font-bold uppercase tracking-wider mb-1">Nominal Komitmen</p>
@@ -169,6 +193,7 @@
                         </div>
 
                         {{-- Info Rekening Tujuan --}}
+                        <!-- INFO REKENING: rekening resmi yayasan untuk transfer pembayaran sponsorship -->
                         <div class="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-6">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
@@ -196,6 +221,7 @@
                         </div>
 
                         {{-- Upload Bukti Transfer --}}
+                        <!-- UPLOAD BUKTI TRANSFER: wajib; format JPG/JPEG/PNG (server menerima jpg/jpeg/png/pdf, maks 5MB) -->
                         <div class="form-control w-full mb-5">
                             <label class="label">
                                 <span class="label-text font-bold text-primary">Upload Bukti Transfer <span class="text-red-500">*</span></span>
@@ -208,6 +234,7 @@
                                     class="file-input file-input-bordered w-full join-item border-base-300 focus:border-primary">
                             </div>
                             <label class="label"><span class="label-text-alt text-base-content/50">Format: JPG/JPEG/PNG, maks 2MB</span></label>
+                            <!-- BAR PROGRESS UPLOAD (simulasi): diperbarui oleh JS saat file dipilih -->
                             <div class="upload-progress-container" id="upload-progress-sponsor">
                                 <div class="upload-progress-bar-bg">
                                     <div class="upload-progress-bar-fill" id="upload-fill-sponsor"></div>
@@ -220,6 +247,7 @@
                         </div>
 
                         {{-- Tanggal Transfer --}}
+                        <!-- FIELD TANGGAL TRANSFER: wajib; nilai default = tanggal hari ini -->
                         <div class="form-control w-full mb-6">
                             <label class="label">
                                 <span class="label-text font-bold text-primary">Tanggal Transfer <span class="text-red-500">*</span></span>
@@ -234,10 +262,12 @@
                         </div>
 
                         {{-- Info Commitment --}}
+                        <!-- INFO KOMITMEN: penjelasan periode berlaku sponsorship (1 bulan) -->
                         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
                             <p>Komitmen ini berlaku untuk periode <strong>1 bulan</strong> sejak pembayaran berhasil. Kami akan mengirimkan pengingat via WhatsApp sebelum jatuh tempo.</p>
                         </div>
 
+                        <!-- TOMBOL SUBMIT: mengirim form sponsorship -->
                         <button type="submit" class="btn btn-primary text-white font-bold w-full shadow-lg border-0 py-3 h-auto text-base" id="submit-btn" data-no-loading>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                             <span class="btn-text">Kirim Sponsorship</span>
@@ -253,13 +283,16 @@
         </div>
     </div>
 
+    <!-- SCRIPT JS FORM SPONSORSHIP: -->
     <script>
+        <!-- DATA PAKET di sisi klien: nominal & keterangan untuk tiap paket (dipakai fungsi updatePaketDetail) -->
         const dataPaket = {
             'Bronze': { nominal: 100000, keterangan: 'Paket buku pelajaran dan alat tulis sekolah bulanan.' },
             'Silver': { nominal: 250000, keterangan: 'Biaya SPP pendidikan dan uang saku harian.' },
             'Gold':   { nominal: 500000, keterangan: 'Pembiayaan penuh: SPP pendidikan, uang saku, buku pelajaran, dan alat tulis sekolah.' }
         };
 
+        <!-- pilihPaket(): menandai kartu paket yang diklik dan menyimpan pilihan ke select tersembunyi -->
         function pilihPaket(btn, key) {
             document.querySelectorAll('.paket-btn').forEach(b => {
                 b.classList.remove('border-primary', 'bg-primary/10');
@@ -272,6 +305,7 @@
             updatePaketDetail();
         }
 
+        <!-- updatePaketDetail(): mengisi hidden input amount/description dan memperbarui tampilan ringkasan -->
         function updatePaketDetail() {
             const pilihan       = document.getElementById('paket_komitmen').value;
             const hiddenAmount  = document.getElementById('amount-hidden');
@@ -293,6 +327,8 @@
             }
         }
 
+        <!-- Validasi submit: form ditolak bila paket belum dipilih; jika valid, tombol dinonaktifkan -->
+        <!-- dan progress upload diset 100% sebelum form dikirim -->
         document.getElementById('sponsor-form').addEventListener('submit', function (e) {
             const amount = document.getElementById('amount-hidden').value;
             if (!amount) {
@@ -311,6 +347,7 @@
             if (fill) { fill.style.width = '100%'; pctEl.textContent = '100%'; }
         });
 
+        <!-- Saat file bukti transfer dipilih: tampilkan nama file dan simulasi progress upload -->
         document.querySelector('input[name="payment_proof"]').addEventListener('change', function () {
             const file = this.files[0];
             const container = document.getElementById('upload-progress-sponsor');
@@ -335,6 +372,7 @@
             }, 200);
         });
 
+        <!-- Saat halaman dimuat: pulihkan pilihan paket bila sebelumnya ada error validasi (old('paket_komitmen')) -->
         window.addEventListener('DOMContentLoaded', function () {
             const select = document.getElementById('paket_komitmen');
             if (select.value) {

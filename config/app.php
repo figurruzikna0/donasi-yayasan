@@ -3,86 +3,89 @@
 /*
  * app.php — Konfigurasi utama aplikasi
  * ======================================
- * Mengatur nama aplikasi, environment, timezone, locale,
- * dan penyedia layanan (providers) yang didaftarkan.
+ * File ini mengembalikan ARRAY konfigurasi yang dibaca Laravel melalui
+ * config('app.nama_key'). Nilai-nilainya diambil dari file .env
+ * (fungsi env('NAMA_VARIABEL', 'nilai_default')).
+ *
+ * Isi inti:
+ *  - nama aplikasi (APP_NAME)
+ *  - environment / lingkungan aplikasi (development / production)
+ *  - mode debug (tampilkan detail error atau tidak)
+ *  - URL aplikasi
+ *  - timezone (zona waktu) — dipakai fungsi date PHP
+ *  - kunci enkripsi (APP_KEY)
+ *  - mode maintenance (perawatan aplikasi)
  */
 
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Application Name
+    | Nama Aplikasi (Application Name)
     |--------------------------------------------------------------------------
-    |
-    | This value is the name of your application, which will be used when the
-    | framework needs to place the application's name in a notification or
-    | other UI elements where an application name needs to be displayed.
-    |
+    | Nama ini dipakai framework saat perlu menampilkan nama aplikasi,
+    | misalnya pada notifikasi email atau elemen UI lain.
+    | Diambil dari APP_NAME di .env, default-nya 'Laravel'.
     */
 
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
-    | Application Environment
+    | Environment / Lingkungan Aplikasi
     |--------------------------------------------------------------------------
-    |
-    | This value determines the "environment" your application is currently
-    | running in. This may determine how you prefer to configure various
-    | services the application utilizes. Set this in your ".env" file.
-    |
+    | Menentukan "lingkungan" tempat aplikasi berjalan, misalnya:
+    |  - local  → pengembangan di komputer sendiri
+    |  - production → server/hosting asli
+    | Nilainya diset di file .env melalui APP_ENV.
     */
 
     'env' => env('APP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
-    | Application Debug Mode
+    | Mode Debug (Application Debug Mode)
     |--------------------------------------------------------------------------
-    |
-    | When your application is in debug mode, detailed error messages with
-    | stack traces will be shown on every error that occurs within your
-    | application. If disabled, a simple generic error page is shown.
-    |
+    | - Jika TRUE: setiap error menampilkan pesan detail + stack trace
+    |   (berbahaya di production karena bisa membocorkan informasi).
+    | - Jika FALSE: hanya halaman error generik yang ditampilkan.
+    | Dipaksa ke tipe boolean via (bool).
     */
 
     'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
-    | Application URL
+    | URL Aplikasi
     |--------------------------------------------------------------------------
-    |
-    | This URL is used by the console to properly generate URLs when using
-    | the Artisan command line tool. You should set this to the root of
-    | the application so that it's available within Artisan commands.
-    |
+    | URL dasar aplikasi. Dipakai oleh Artisan (CLI) saat membuat URL
+    | yang benar, misalnya untuk link di email atau notifikasi.
+    | Sebaiknya diisi dengan domain root aplikasi.
     */
 
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
-    | Application Timezone
+    | Timezone / Zona Waktu
     |--------------------------------------------------------------------------
-    |
-    | Here you may specify the default timezone for your application, which
-    | will be used by the PHP date and date-time functions. The timezone
-    | is set to "UTC" by default as it is suitable for most use cases.
-    |
+    | Zona waktu default untuk aplikasi yang dipakai fungsi date dan
+    | date-time PHP (termasuk atribut created_at/updated_at Eloquent).
+    | Sistem ini memakai 'Asia/Jakarta' (WIB) — sudah dikustomisasi
+    | dari default bawaan Laravel yang 'UTC'.
     */
 
     'timezone' => 'Asia/Jakarta',
 
     /*
     |--------------------------------------------------------------------------
-    | Application Locale Configuration
+    | Konfigurasi Locale / Bahasa
     |--------------------------------------------------------------------------
-    |
-    | The application locale determines the default locale that will be used
-    | by Laravel's translation / localization methods. This option can be
-    | set to any locale for which you plan to have translation strings.
-    |
+    | Locale default menentukan bahasa yang dipakai Laravel untuk
+    | terjemahan (translation). Bisa diubah sesuai kebutuhan.
+    |  - locale          → bahasa utama aplikasi (default 'en')
+    |  - fallback_locale → bahasa cadangan bila terjemahan tidak ditemukan
+    |  - faker_locale    → bahasa data dummy (untuk seeding/tes)
     */
 
     'locale' => env('APP_LOCALE', 'en'),
@@ -93,19 +96,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Encryption Key
+    | Kunci Enkripsi (Encryption Key)
     |--------------------------------------------------------------------------
-    |
-    | This key is utilized by Laravel's encryption services and should be set
-    | to a random, 32 character string to ensure that all encrypted values
-    | are secure. You should do this prior to deploying the application.
-    |
+    | Kunci ini dipakai layanan enkripsi Laravel dan HARUS berupa
+    | 32 karakter acak agar semua nilai terenkripsi aman.
+    |  - cipher        → algoritma enkripsi yang dipakai (AES-256-CBC)
+    |  - key           → kunci utama, DIBUAT saat install via `php artisan key:generate`
+    |  - previous_keys → daftar kunci lama (untuk rotasi kunci).
+    |    Dipecah dari APP_PREVIOUS_KEYS (format dipisah koma),
+    |    lalu array_filter menghapus elemen kosong dari hasil explode.
     */
 
     'cipher' => 'AES-256-CBC',
 
     'key' => env('APP_KEY'),
 
+    // previous_keys: rotasi kunci — aplikasi masih bisa membaca data
+    // yang dienkripsi dengan kunci lama selama kunci lama ada di daftar ini.
     'previous_keys' => [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
@@ -114,15 +121,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Maintenance Mode Driver
+    | Driver Mode Maintenance
     |--------------------------------------------------------------------------
-    |
-    | These configuration options determine the driver used to determine and
-    | manage Laravel's "maintenance mode" status. The "cache" driver will
-    | allow maintenance mode to be controlled across multiple machines.
-    |
-    | Supported drivers: "file", "cache"
-    |
+    | Menentukan cara Laravel menyimpan status "maintenance mode"
+    | (saat aplikasi ditutup sementara untuk perawatan).
+    |  - driver: 'file'   → status disimpan sebagai file
+    |           'cache'   → status dikelola lewat cache (bisa lintas server)
+    |  - store:  penyimpanan yang dipakai bila driver = cache
     */
 
     'maintenance' => [

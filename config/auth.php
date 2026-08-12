@@ -3,8 +3,13 @@
 /*
  * auth.php — Konfigurasi autentikasi
  * ====================================
- * Mengatur guard, provider user, reset password,
- * dan timeout konfirmasi password.
+ * File ini mengatur cara aplikasi mengelola LOGIN pengguna:
+ *  - defaults  → guard & password reset default yang dipakai
+ *  - guards    → cara request diotentikasi (misal: session berbasis cookie)
+ *  - providers → sumber data pengguna (dari tabel mana / model mana)
+ *  - passwords → pengaturan reset password (tabel token, masa berlaku, throttle)
+ *  - password_timeout → berapa detik pengguna harus memasukkan ulang password
+ *    saat membuka halaman sensitif (konfirmasi password).
  */
 
 use App\Models\User;
@@ -13,13 +18,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Defaults
+    | Default Autentikasi (Authentication Defaults)
     |--------------------------------------------------------------------------
-    |
-    | This option defines the default authentication "guard" and password
-    | reset "broker" for your application. You may change these values
-    | as required, but they're a perfect start for most applications.
-    |
+    | Menentukan guard dan password reset "broker" DEFAULT yang dipakai aplikasi.
+    |  - 'guard'     → metode otentikasi default (di sini: 'web' = session cookie)
+    |  - 'passwords' → broker reset password default (di sini: 'users')
+    | Nilai bisa diubah sesuai kebutuhan, tetapi nilai ini standar paling aman.
     */
 
     'defaults' => [
@@ -31,17 +35,11 @@ return [
     |--------------------------------------------------------------------------
     | Authentication Guards
     |--------------------------------------------------------------------------
-    |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | Supported: "session"
-    |
+    | Setiap guard = cara otentikasi. Setiap guard WAJIB punya user provider
+    | yang menentukan bagaimana pengguna diambil dari database.
+    |  - driver: 'session' → status login disimpan dalam session/cookie
+    |    (cocok untuk aplikasi web klasik seperti ini)
+    |  - provider: 'users' → memakai provider bernama 'users' di bawah
     */
 
     'guards' => [
@@ -55,17 +53,11 @@ return [
     |--------------------------------------------------------------------------
     | User Providers
     |--------------------------------------------------------------------------
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
-    |
-    | Supported: "database", "eloquent"
-    |
+    | Provider menentukan bagaimana pengguna diambil dari penyimpanan.
+    |  - driver 'eloquent' → memakai Model Eloquent (di sini: App\Models\User)
+    |  - driver 'database' → memakai query langsung ke tabel (tanpa model)
+    | Model ditentukan dari env AUTH_MODEL, default User::class
+    | (tabel users milik aplikasi — berisi admin & donatur, dibedakan role).
     */
 
     'providers' => [
@@ -74,6 +66,7 @@ return [
             'model' => env('AUTH_MODEL', User::class),
         ],
 
+        // Contoh alternatif jika ingin memakai query langsung ke tabel:
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -82,21 +75,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Resetting Passwords
+    | Reset Password (Resetting Passwords)
     |--------------------------------------------------------------------------
-    |
-    | These configuration options specify the behavior of Laravel's password
-    | reset functionality, including the table utilized for token storage
-    | and the user provider that is invoked to actually retrieve users.
-    |
-    | The expiry time is the number of minutes that each reset token will be
-    | considered valid. This security feature keeps tokens short-lived so
-    | they have less time to be guessed. You may change this as needed.
-    |
-    | The throttle setting is the number of seconds a user must wait before
-    | generating more password reset tokens. This prevents the user from
-    | quickly generating a very large amount of password reset tokens.
-    |
+    | Konfigurasi fitur lupa password:
+    |  - provider  → provider pengguna yang dipakai proses reset
+    |  - table     → tabel penyimpan token reset (default: password_reset_tokens)
+    |  - expire    → masa berlaku token reset (MENIT). Keamanan: token berumur
+    |    pendek supaya sulit ditebak (di sini 60 menit).
+    |  - throttle  → jeda DETIK sebelum pengguna bisa generate token baru
+    |    (anti-spam: mencegah pembuatan token reset berlebihan dalam waktu singkat)
     */
 
     'passwords' => [
@@ -112,11 +99,9 @@ return [
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
-    |
-    | Here you may define the number of seconds before a password confirmation
-    | window expires and users are asked to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
-    |
+    | Berapa DETIK batas waktu sebelum pengguna diminta memasukkan ulang
+    | passwordnya saat mengakses halaman yang butuh konfirmasi password
+    | (misal: form sensitif). Default 10800 detik = 3 jam.
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),

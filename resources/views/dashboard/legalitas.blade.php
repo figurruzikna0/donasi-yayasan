@@ -1,14 +1,24 @@
+<!-- ============================================ -->
+<!-- dashboard/legalitas.blade.php - LEGALITAS    -->
+<!-- ============================================ -->
+<!-- Peran: halaman versi dashboard donatur yang menampilkan dokumen legalitas dan bagan struktur organisasi yayasan dari database. -->
+<!-- Data berasal dari variabel $profil (model ProfilYayasan) via view composer global, diakses dari route 'dashboard.legalitas'. -->
+<!-- Alur: membungkus konten dengan x-app-layout, modal lightbox (Alpine.js), header gradasi, lalu grid dua kartu (Dokumen Legalitas dan Struktur Organisasi) dengan fitur klik-untuk-perbesar. -->
 <x-app-layout>
+    <!-- State Alpine.js: 'open' untuk modal lightbox dan 'img' untuk URL gambar yang diperbesar -->
     <div x-data="{ open: false, img: '' }">
+        <!-- Modal lightbox: menampilkan gambar secara fullscreen saat 'open' true; ditutup lewat tombol Tutup atau klik di luar -->
         <div x-show="open" x-cloak class="fixed inset-0 z-[999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4" @click.self="open = false">
             <div class="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
                 <button @click="open = false" class="absolute -top-12 right-0 text-white/50 hover:text-white text-sm font-semibold flex items-center gap-2 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Tutup
                 </button>
+                <!-- Atribut :src Alpine mengisi sumber gambar sesuai nilai 'img' -->
                 <img :src="img" class="max-h-[85vh] w-auto object-contain rounded-xl shadow-2xl" @click="open = false">
             </div>
         </div>
 
+        <!-- Header halaman: latar gradasi warna primary dan judul "Legalitas & Struktur Organisasi" -->
         <div class="bg-gradient-to-r from-primary via-primary to-secondary text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <span class="text-xs uppercase tracking-[0.2em] font-bold px-3 py-1 rounded-full bg-white/10 inline-block mb-3">Transparansi</span>
@@ -19,6 +29,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Kartu 1: Dokumen Legalitas -->
                 <div class="card bg-base-100 shadow-md border border-base-200 rounded-2xl p-6 lg:p-8">
                     <h3 class="text-base font-bold text-base-content mb-4 flex items-center gap-2">
                         <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-sm">
@@ -26,11 +37,13 @@
                             </span>
                         Dokumen Legalitas
                     </h3>
+                    <!-- Kondisi if berlapis: hanya render jika $profil ada, lalu tampilkan teks legalitas dan foto dokumen (jika masing-masing tersedia) -->
                     @if($profil)
                         @if($profil->legalitas)
                             <p class="text-sm text-base-content/60 mb-4 leading-relaxed">{{ $profil->legalitas }}</p>
                         @endif
                         @if($profil->foto_legalitas)
+                            <!-- Gambar dokumen: diklik untuk membuka lightbox; query '?v=timestamp' menghindari cache gambar lama -->
                             <div @click="open = true; img = '{{ asset('storage/' . $profil->foto_legalitas) . '?v=' . now()->timestamp }}'" class="cursor-pointer group">
                                 <div class="relative overflow-hidden rounded-xl border border-base-200">
                                     <img src="{{ asset('storage/' . $profil->foto_legalitas) . '?v=' . now()->timestamp }}" class="w-full h-auto max-h-[400px] object-contain bg-base-100 transition-transform duration-500 group-hover:scale-105" alt="Dokumen Legalitas">
@@ -40,11 +53,13 @@
                                 </div>
                             </div>
                         @else
+                            <!-- Blok else: pesan ketika dokumen legalitas belum diunggah -->
                             <div class="py-14 text-center text-sm text-base-content/30 border-2 border-dashed border-base-300 rounded-xl bg-base-200/50">Dokumen legalitas belum diupload.</div>
                         @endif
                     @endif
                 </div>
 
+                <!-- Kartu 2: Struktur Organisasi -->
                 <div class="card bg-base-100 shadow-md border border-base-200 rounded-2xl p-6 lg:p-8">
                     <h3 class="text-base font-bold text-base-content mb-4 flex items-center gap-2">
                         <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-sm">
@@ -52,6 +67,7 @@
                             </span>
                         Struktur Organisasi
                     </h3>
+                    <!-- Kondisi if: tampilkan bagan struktur jika $profil->foto_struktur tersedia; klik membuka lightbox -->
                     @if($profil?->foto_struktur)
                         <div @click="open = true; img = '{{ asset('storage/' . $profil->foto_struktur) . '?v=' . now()->timestamp }}'" class="cursor-pointer group">
                             <div class="relative overflow-hidden rounded-xl border border-base-200">
@@ -62,6 +78,7 @@
                             </div>
                         </div>
                     @else
+                        <!-- Blok else: pesan ketika bagan struktur organisasi belum diunggah -->
                         <div class="py-14 text-center text-sm text-base-content/30 border-2 border-dashed border-base-300 rounded-xl bg-base-200/50">Bagan struktur organisasi belum diupload.</div>
                     @endif
                 </div>

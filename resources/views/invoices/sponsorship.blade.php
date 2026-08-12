@@ -1,10 +1,19 @@
 <!DOCTYPE html>
+<!-- ============================================ -->
+<!-- invoices\sponsorship.blade.php — invoice sponsorship (web) -->
+<!-- ============================================ -->
+<!-- Peran     : halaman invoice (bukti) sponsorship orang tua asuh yang tampil di browser -->
+<!--             dan bisa dicetak langsung (terminal print), berisi tombol Download PDF. -->
+<!-- Controller: InvoiceController — variabel $sponsorship (Sponsorship), $profil (ProfilYayasan). -->
+<!-- Alur      : donatur/admin melihat detail sponsorship -> klik lihat invoice -> halaman ini ->
+<!--             klik Download PDF untuk versi cetak (invoices\sponsorship_pdf.blade.php). -->
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Sponsorship - {{ $sponsorship->order_id }}</title>
     @vite(['resources/css/app.css'])
+    <!-- CSS CETAK: saat print, area tombol (no-print) disembunyikan dan konten dicetak bersih -->
     <style>
         @media print {
             body { background: white !important; }
@@ -16,6 +25,7 @@
 </head>
 <body class="bg-base-200 font-sans antialiased">
     <div class="max-w-3xl mx-auto p-6">
+        <!-- TOMBOL AKSI (tidak ikut tercetak): download PDF & kembali ke dashboard -->
         <div class="no-print flex justify-end mb-4 gap-2">
             <a href="{{ route('invoice.sponsorship.pdf', $sponsorship->id) }}" class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold border-0 gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
@@ -26,15 +36,18 @@
             </a>
         </div>
 
+        <!-- KARTU INVOICE: isi dokumen bukti pembayaran sponsorship -->
         <div class="card bg-base-100 shadow-lg border border-emerald-200">
             <div class="card-body p-8">
                 {{-- Header --}}
+                <!-- KOP INVOICE: judul INVOICE + identitas yayasan (logo, nama, alamat) -->
                 <div class="flex items-start justify-between border-b border-emerald-100 pb-6 mb-6">
                     <div>
                         <h1 class="text-2xl font-black text-emerald-700">INVOICE</h1>
                         <p class="text-sm text-emerald-500 mt-1">Bukti Sponsorship Orang Tua Asuh</p>
                     </div>
                     <div class="text-right">
+                        <!-- LOGO YAYASAN: tampil bila logo diisi pada ProfilYayasan -->
                         @if($profil?->logo)
                             <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" class="h-12 w-12 rounded-full object-cover border border-emerald-200 ml-auto mb-2" alt="Logo">
                         @endif
@@ -44,11 +57,13 @@
                 </div>
 
                 {{-- Info --}}
+                <!-- BAGIAN INFO: pihak penerima (donatur) dan detail invoice (order id, tanggal, status) -->
                 <div class="grid grid-cols-2 gap-6 mb-6">
                     <div>
                         <p class="text-xs text-emerald-600 font-bold uppercase tracking-wider mb-1">Invoice Kepada</p>
                         <p class="font-bold text-emerald-700">{{ $sponsorship->donor_name }}</p>
                         <p class="text-sm text-emerald-500">{{ $sponsorship->donor_email }}</p>
+                        <!-- NOMOR WA: hanya tampil bila data no. WA terisi -->
                         @if($sponsorship->donor_phone)
                             <p class="text-sm text-emerald-500">{{ $sponsorship->donor_phone }}</p>
                         @endif
@@ -57,6 +72,9 @@
                         <p class="text-xs text-emerald-600 font-bold uppercase tracking-wider mb-1">Detail Invoice</p>
                         <p class="text-sm"><span class="text-emerald-500">Order ID:</span> <span class="font-mono font-bold text-emerald-700">{{ $sponsorship->order_id }}</span></p>
                         <p class="text-sm"><span class="text-emerald-500">Tanggal:</span> <span class="font-bold text-emerald-700">{{ $sponsorship->created_at ? $sponsorship->created_at->format('d M Y H:i') : '-' }}</span></p>
+                        <!-- LOGIKA STATUS: menentukan label & warna badge berdasarkan status sponsorship -->
+                        <!-- success + belum lewat expires_at = AKTIF; pending = TERTUNDA; -->
+                        <!-- success + sudah lewat masa berlaku = KADALUARSA; selain itu = GAGAL -->
                         <p class="text-sm"><span class="text-emerald-500">Status:</span>
                             @php
                                 $isExpired = $sponsorship->expires_at && $sponsorship->expires_at->isPast();
@@ -78,6 +96,7 @@
                 </div>
 
                 {{-- Table --}}
+                <!-- TABEL RINCIAN: deskripsi item sponsorship (paket, metode, periode) dan jumlah -->
                 <table class="table w-full border border-emerald-100 mb-6">
                     <thead>
                         <tr class="bg-emerald-50">
@@ -91,6 +110,7 @@
                                 <p class="font-bold text-emerald-700">Sponsorship {{ $sponsorship->fosterChild?->name ?? 'Anak Asuh' }}</p>
                                 <p class="text-xs text-emerald-400">Paket: {{ $sponsorship->package ?? '-' }}</p>
                                 <p class="text-xs text-emerald-400">Metode Pembayaran: {{ $sponsorship->payment_method ?? '-' }}</p>
+                                <!-- PERIODE BERLAKU: rentang tanggal aktif sponsorship (bila keduanya terisi) -->
                                 @if($sponsorship->starts_at && $sponsorship->expires_at)
                                     <p class="text-xs text-emerald-400">Periode: {{ $sponsorship->starts_at->format('d M Y') }} – {{ $sponsorship->expires_at->format('d M Y') }}</p>
                                 @endif
@@ -100,6 +120,7 @@
                             </td>
                         </tr>
                     </tbody>
+                    <!-- BARIS TOTAL: penjumlahan biaya sponsorship -->
                     <tfoot>
                         <tr class="bg-emerald-50">
                             <th class="text-emerald-700">Total</th>
@@ -111,6 +132,7 @@
                 </table>
 
                 {{-- Footer --}}
+                <!-- FOOTER: ucapan terima kasih & identitas yayasan penerbit invoice -->
                 <div class="border-t border-emerald-100 pt-6 text-center text-sm text-emerald-400">
                     <p>Terima kasih telah menjadi Orang Tua Asuh. Keberkahan untuk Anda dan anak asuh.</p>
                     <p class="mt-1 font-semibold text-emerald-600">— {{ $profil?->nama_yayasan ?? 'Baitul Yatim' }} —</p>

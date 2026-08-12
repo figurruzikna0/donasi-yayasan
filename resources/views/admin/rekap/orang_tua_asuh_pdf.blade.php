@@ -1,6 +1,24 @@
+{{--
+    ============================================================
+    admin\rekap\orang_tua_asuh_pdf.blade.php — Template PDF
+    Rekap Sponsorship (Orang Tua Asuh)
+    ============================================================
+    Template cetak PDF untuk rekap data sponsorship. File ini
+    dirender oleh Dompdf melalui RekapController (route
+    admin.rekap.orang-tua-asuh.export-pdf) dengan parameter
+    $sponsorships dan $totalAmount.
+    Alur tampilan: judul + periode cetak → ringkasan (total dana
+    & jumlah sponsorship) → tabel data per sponsorship (donatur,
+    email, no HP, anak asuh, paket, nominal, metode, periode
+    mulai/berakhir, status) → footer yayasan.
+    Catatan: file ini TANPA layout admin (HTML murni) karena
+    hasilnya langsung diunduh sebagai PDF.
+--}}
 <!DOCTYPE html>
 <html lang="id">
 <head><meta charset="UTF-8"><title>Rekap Sponsorship</title>
+{{-- Gaya CSS cetak: font DejaVu Sans (bawaan Dompdf), warna hijau
+    khas yayasan, dan kelas status untuk badge warna. --}}
 <style>
 body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #333; margin: 20px; }
 h1 { color: #059669; font-size: 18px; margin: 0 0 4px; }
@@ -23,9 +41,11 @@ table.data td.right { text-align: right; }
 </style>
 </head>
 <body>
+{{-- Judul dokumen dan info periode pencetakan (diambil dari query string) --}}
 <h1>Rekap Data Sponsorship (Orang Tua Asuh)</h1>
 <p class="sub">Periode: {{ request('start_date', 'Awal') }} — {{ request('end_date', 'Sekarang') }} | Dicetak: {{ now()->translatedFormat('d F Y H:i') }}</p>
 
+{{-- Ringkasan: total dana terkumpul dan jumlah sponsorship --}}
 <div class="summary">
 <table>
 <tr><td class="label">Total Dana Terkumpul</td><td class="value">Rp {{ number_format($totalAmount, 0, ',', '.') }}</td></tr>
@@ -33,6 +53,7 @@ table.data td.right { text-align: right; }
 </table>
 </div>
 
+{{-- Tabel data sponsorship --}}
 <table class="data">
 <thead>
 <tr>
@@ -40,8 +61,11 @@ table.data td.right { text-align: right; }
 </tr>
 </thead>
 <tbody>
+{{-- Perulangan setiap sponsorship; status dihitung ulang per baris --}}
 @forelse($sponsorships as $s)
 @php
+/* Logika status: pending / aktif / kadaluarsa (success tapi lewat masa aktif
+    atau status expired) / gagal (selain itu) */
 $isExpired = $s->expires_at && $s->expires_at->isPast();
 $statusKey = match(true) {
 $s->status === 'pending' => 'pending',
@@ -62,14 +86,17 @@ $statusLabel = match($statusKey) { 'aktif' => 'Aktif', 'pending' => 'Pending', '
 <td>{{ $s->payment_method ?? '-' }}</td>
 <td>{{ $s->starts_at ? $s->starts_at->format('d/m/Y') : '-' }}</td>
 <td>{{ $s->expires_at ? $s->expires_at->format('d/m/Y') : '-' }}</td>
+{{-- Badge status berwarna sesuai kelas CSS status-* --}}
 <td><span class="status status-{{ $statusKey }}">{{ $statusLabel }}</span></td>
 </tr>
 @empty
+{{-- Kondisi saat tidak ada data sponsorship --}}
 <tr><td colspan="10" style="text-align:center;padding:30px;color:#888;">Tidak ada data sponsorship</td></tr>
 @endforelse
 </tbody>
 </table>
 
+{{-- Footer dokumen PDF --}}
 <div class="footer">
 <p>— Yayasan Baitul Yatim Sukabumi —</p>
 </div>

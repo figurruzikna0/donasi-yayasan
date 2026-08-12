@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- auth\forgot-password.blade.php — halaman lupa password -->
+<!-- ============================================ -->
+<!-- Peran     : form pengiriman tautan reset password ke email pengguna. -->
+<!-- Controller: PasswordResetLinkController — route('password.request') GET dan route('password.email') POST. -->
+<!-- Alur      : isi email -> POST -> sistem mengirim email berisi tautan reset. -->
 <x-guest-layout>
     <div class="text-center mb-6">
         <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner mb-3 mx-auto flex items-center justify-center">
@@ -9,9 +15,11 @@
         <p class="text-sm text-emerald-500">Masukkan email Anda untuk mendapatkan tautan reset</p>
     </div>
 
+    <!-- FORM LUPA PASSWORD: mengirim email ke route('password.email'); csrf wajib untuk keamanan -->
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 
+        <!-- FIELD EMAIL: wajib diisi (required); bila email terdaftar, tautan reset dikirim ke alamat tersebut -->
         <div class="form-control">
             <label class="label" for="email">
                 <span class="label-text font-bold text-emerald-700 uppercase text-xs tracking-wider">Email</span>
@@ -23,9 +31,11 @@
         </div>
 
         <div class="flex items-center justify-between mt-6">
+            <!-- TAUTAN KEMBALI: ke halaman login -->
             <a class="link link-hover text-sm text-emerald-600 font-semibold" href="{{ route('login') }}">
                 Kembali ke halaman masuk
             </a>
+            <!-- TOMBOL SUBMIT: mengirim permintaan reset password -->
             <button type="submit" class="btn btn-success text-white font-bold rounded-xl px-6 py-2.5 text-sm shadow-sm hover:shadow-md transition-all">
                 Kirim Tautan Reset
             </button>

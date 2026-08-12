@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- auth\register.blade.php — halaman pendaftaran akun -->
+<!-- ============================================ -->
+<!-- Peran     : form pembuatan akun baru donatur (nama, email, WA, NIK, alamat, password). -->
+<!-- Controller: RegisteredUserController — route('register') untuk GET dan POST. -->
+<!-- Alur      : isi form -> POST -> validasi -> akun dibuat -> kirim email verifikasi. -->
 <x-guest-layout>
     <div class="text-center mb-6">
         <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 shadow-inner mb-3 mx-auto flex items-center justify-center">
@@ -9,9 +15,11 @@
         <p class="text-sm text-slate-500">Daftar untuk menjadi donatur</p>
     </div>
 
+    <!-- FORM REGISTRASI: mengirim data ke route('register') metode POST; csrf wajib untuk keamanan -->
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
+        <!-- FIELD NAMA LENGKAP: wajib diisi (required); nilai lama dipertahankan bila validasi gagal -->
         <div class="form-control">
             <label class="label" for="name">
                 <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Nama Lengkap</span>
@@ -22,6 +30,7 @@
             <x-input-error :messages="$errors->get('name')" class="mt-1.5" />
         </div>
 
+        <!-- FIELD EMAIL: wajib diisi dan harus unik (divalidasi di RegisteredUserController, lowercase) -->
         <div class="form-control mt-4">
             <label class="label" for="email">
                 <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Email</span>
@@ -33,6 +42,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <!-- FIELD NO. WHATSAPP: wajib diisi, dipakai untuk notifikasi donasi via WhatsApp -->
             <div class="form-control">
                 <label class="label" for="phone">
                     <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">No. WhatsApp</span>
@@ -42,6 +52,7 @@
                        :value="old('phone')" required />
                 <x-input-error :messages="$errors->get('phone')" class="mt-1.5" />
             </div>
+            <!-- FIELD NIK: wajib diisi, maksimal 16 digit sesuai NIK asli di Indonesia -->
             <div class="form-control">
                 <label class="label" for="nik">
                     <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">NIK</span>
@@ -53,6 +64,7 @@
             </div>
         </div>
 
+        <!-- FIELD ALAMAT: wajib diisi, disimpan untuk data profil donatur -->
         <div class="form-control mt-4">
             <label class="label" for="address">
                 <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Alamat Lengkap</span>
@@ -63,6 +75,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <!-- FIELD PASSWORD: wajib diisi minimal 8 karakter (validasi di RegisteredUserController) -->
             <div class="form-control">
                 <label class="label" for="password">
                     <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Password</span>
@@ -81,6 +94,7 @@
                 <x-input-error :messages="$errors->get('password')" class="mt-1.5" />
             </div>
 
+            <!-- FIELD KONFIRMASI PASSWORD: wajib sama dengan password baru (password_confirmation) -->
             <div class="form-control">
                 <label class="label" for="password_confirmation">
                     <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Konfirmasi</span>
@@ -101,15 +115,18 @@
         </div>
 
         <div class="flex items-center justify-between mt-6">
+            <!-- TAUTAN LOGIN: pengguna yang sudah punya akun langsung menuju halaman masuk -->
             <a class="link link-hover text-sm text-emerald-700 font-semibold" href="{{ route('login') }}">
                 Sudah punya akun? Masuk
             </a>
+            <!-- TOMBOL SUBMIT: mendaftarkan akun baru ke database -->
             <button type="submit" class="btn bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg px-6 py-2.5 text-sm shadow-sm hover:shadow-md transition-all border-0">
                 Daftar
             </button>
         </div>
     </form>
 
+    <!-- SCRIPT JS: fungsi togglePassword() untuk menampilkan/menyembunyikan isi kolom password -->
     <script>
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);

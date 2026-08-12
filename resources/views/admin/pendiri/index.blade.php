@@ -1,6 +1,19 @@
+{{--
+    ============================================================
+    admin\pendiri\index.blade.php — Kelola Data Pendiri Yayasan
+    ============================================================
+    Halaman pengelolaan data pendiri yayasan (tambah + daftar).
+    Data $pendiris (paginate) dikirim dari PendiriController.index().
+    Alur halaman: header → grid dua kolom (form tambah pendiri di
+    kiri, daftar pendiri di kanan) → tabel pendiri (foto, profil,
+    aksi ubah/hapus) → paginasi.
+    Form tambah dikirim ke PendiriController.store() via
+    route admin.pendiri.store (multipart, foto wajib diisi).
+--}}
 <x-admin-layout>
 <div class="bg-gradient-to-b from-base-200 to-base-300 min-h-0">
 
+    {{-- Header halaman --}}
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-600 to-teal-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -23,6 +36,12 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- Add form card --}}
+            {{-- ------------------------------------------------------------------
+                FORM TAMBAH PENDIRI (kartu kiri):
+                Field: Nama Lengkap, Jabatan, Kata Sambutan/Deskripsi,
+                Foto Pendiri (wajib), dan Urutan Tampil.
+                Dikirim dengan metode POST + enctype multipart/form-data.
+            ------------------------------------------------------------------ --}}
             <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 p-6 h-fit">
                 <div class="flex items-center gap-3 mb-5">
                     <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">
@@ -35,6 +54,7 @@
 
                 <form action="{{ route('admin.pendiri.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    {{-- Field: Nama Lengkap (wajib) --}}
                     <div class="form-control mb-4">
                         <label class="label">
                             <span class="label-text font-bold text-base-content/70 text-xs">Nama Lengkap</span>
@@ -42,6 +62,7 @@
                         <input type="text" name="nama" class="input input-bordered w-full input-sm" required>
                     </div>
 
+                    {{-- Field: Jabatan (wajib), contoh: Ketua Yayasan --}}
                     <div class="form-control mb-4">
                         <label class="label">
                             <span class="label-text font-bold text-base-content/70 text-xs">Jabatan</span>
@@ -49,6 +70,7 @@
                         <input type="text" name="jabatan" class="input input-bordered w-full input-sm" required>
                     </div>
 
+                    {{-- Field: Kata Sambutan / Deskripsi (opsional) --}}
                     <div class="form-control mb-4">
                         <label class="label">
                             <span class="label-text font-bold text-base-content/70 text-xs">Kata Sambutan / Deskripsi</span>
@@ -56,6 +78,7 @@
                         <textarea name="deskripsi" rows="3" class="textarea textarea-bordered w-full text-sm" placeholder="Tulis visi atau kata sambutan pendiri..."></textarea>
                     </div>
 
+                    {{-- Field: Foto Pendiri (wajib diisi saat menambah) --}}
                     <div class="form-control mb-4">
                         <label class="label">
                             <span class="label-text font-bold text-base-content/70 text-xs">Foto Pendiri</span>
@@ -63,6 +86,7 @@
                         <input type="file" name="foto" class="file-input file-input-bordered w-full input-sm" required>
                     </div>
 
+                    {{-- Field: Urutan Tampil (angka, default 0) --}}
                     <div class="form-control mb-4">
                         <label class="label">
                             <span class="label-text font-bold text-base-content/70 text-xs">Urutan Tampil</span>
@@ -70,6 +94,7 @@
                         <input type="number" name="urutan" class="input input-bordered w-full input-sm" value="0" min="0">
                     </div>
 
+                    {{-- Tombol submit form --}}
                     <button type="submit" class="btn bg-primary hover:bg-primary/90 text-white border-0 w-full font-bold rounded-lg">
                         Simpan Data Pendiri
                     </button>
@@ -77,6 +102,12 @@
             </div>
 
             {{-- List card --}}
+            {{-- ------------------------------------------------------------------
+                TABEL DAFTAR PENDIRI (kartu kanan):
+                Kolom: Foto, Profil (nama + jabatan + kata sambutan),
+                dan Aksi (Ubah ke halaman edit / Hapus dengan modal konfirmasi).
+                forelse: perulangan data pendiri; kosong → pesan khusus.
+            ------------------------------------------------------------------ --}}
             <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-base-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-base-200 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-base shrink-0">
@@ -97,9 +128,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{-- Perulangan setiap pendiri yayasan --}}
                             @forelse($pendiris as $pendiri)
                                 <tr class="hover:bg-base-200/30 transition-colors">
                                     <td>
+                                        {{-- Foto pendiri atau placeholder inisial nama --}}
                                         @if($pendiri->foto)
                                             <div class="avatar">
                                                 <div class="w-12 h-12 rounded-lg ring ring-base-300 ring-offset-1">
@@ -111,6 +144,7 @@
                                         @endif
                                     </td>
                                     <td>
+                                        {{-- Profil: nama, badge jabatan, dan kata sambutan --}}
                                         <div class="font-bold text-sm text-base-content">{{ $pendiri->nama }}</div>
                                         <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[0.6rem] font-bold bg-primary/5 text-primary border border-primary/20 mt-1">{{ $pendiri->jabatan }}</span>
                                         <p class="text-sm text-base-content/50 mt-2 italic line-clamp-3">
@@ -118,6 +152,7 @@
                                         </p>
                                     </td>
                                     <td class="text-center">
+                                        {{-- Tombol aksi: Ubah (ke halaman edit pendiri) dan Hapus (modal konfirmasi) --}}
                                         <div class="flex items-center justify-center gap-1 mt-2">
                                             <a href="{{ route('admin.pendiri.edit', $pendiri->id) }}" class="btn btn-xs btn-ghost text-base-content/50 hover:text-amber-600 hover:bg-amber-50 rounded-lg font-bold gap-1">
                                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -129,12 +164,14 @@
                                                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                     Hapus
                                                 </button>
+                                                {{-- Modal konfirmasi hapus pendiri (komponen Alpine) --}}
                                                 <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
+                                {{-- Kondisi saat belum ada data pendiri --}}
                                 <tr>
                                     <td colspan="3">
                                         <div class="py-16 text-center">
@@ -149,6 +186,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{-- Paginasi tabel pendiri --}}
                     {{ $pendiris->links() }}
                 </div>
             </div>

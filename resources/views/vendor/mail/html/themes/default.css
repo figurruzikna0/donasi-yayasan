@@ -1,5 +1,16 @@
-/* Base */
+/* =====================================================================
+   default.css - Tema default email HTML bawaan Laravel
+   ---------------------------------------------------------------------
+   Berasal dari "php artisan vendor:publish --tag=laravel-mail".
+   Dipakai oleh Markdown mail renderer untuk memberi gaya pada email
+   (verifikasi email, reset password, dll). Properti "-premailer-*"
+   adalah petunjuk untuk tool Premailer yang mengubah CSS menjadi
+   gaya inline saat email dikirim.
+   ===================================================================== */
 
+/* Base */
+/* Gaya dasar: semua elemen email memakai font sistem modern dan
+   box-sizing border-box agar ukuran elemen konsisten. */
 body,
 body *:not(html):not(style):not(br):not(tr):not(code) {
     box-sizing: border-box;
@@ -8,6 +19,7 @@ body *:not(html):not(style):not(br):not(tr):not(code) {
     position: relative;
 }
 
+/* Latar halaman email: putih dengan teks abu-abu, selebar penuh. */
 body {
     -webkit-text-size-adjust: none;
     background-color: #ffffff;
@@ -19,6 +31,7 @@ body {
     width: 100% !important;
 }
 
+/* Paragraf dan elemen blok lainnya rata kiri dengan jarak baris nyaman. */
 p,
 ul,
 ol,
@@ -27,16 +40,19 @@ blockquote {
     text-align: start;
 }
 
+/* Warna tautan: hitam pekat, selaras dengan tema email. */
 a {
     color: #18181b;
 }
 
+/* Hilangkan bingkai pada gambar yang dibungkus tautan. */
 a img {
     border: none;
 }
 
 /* Typography */
-
+/* Tipografi judul (h1-h3) dan paragraf, ukuran disesuaikan agar
+   mudah dibaca di layar ponsel. */
 h1 {
     color: #18181b;
     font-size: 18px;
@@ -66,16 +82,18 @@ p {
     text-align: left;
 }
 
+/* Paragraf kecil (sub), misal untuk keterangan tambahan. */
 p.sub {
     font-size: 12px;
 }
 
+/* Gambar tidak pernah lebih lebar dari layar email. */
 img {
     max-width: 100%;
 }
 
 /* Layout */
-
+/* Pembungkus email (wrapper) dan konten: selebar penuh, berlatang abu-abu. */
 .wrapper {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
@@ -96,7 +114,7 @@ img {
 }
 
 /* Header */
-
+/* Bagian kepala email: berjarak 25px dan berada di tengah. */
 .header {
     padding: 25px 0;
     text-align: center;
@@ -110,7 +128,7 @@ img {
 }
 
 /* Logo */
-
+/* Ukuran logo yayasan pada header email (75x75 piksel). */
 .logo {
     height: 75px;
     margin-top: 15px;
@@ -120,7 +138,8 @@ img {
 }
 
 /* Body */
-
+/* Area badan email: kartu putih dengan bingkai halus dan bayangan,
+   ditengah-tengah latar abu-abu (lebar 570px). */
 .body {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
@@ -147,12 +166,14 @@ img {
     width: 570px;
 }
 
+/* Tautan panjang di dalam badan email dibungkus agar tidak melebihi kolom. */
 .inner-body a {
     word-break: break-all;
 }
 
 /* Subcopy */
-
+/* Teks kecil di bawah isi email (misal petunjuk bila tombol tidak
+   berfungsi): dipisahkan garis tipis di bagian atasnya. */
 .subcopy {
     border-top: 1px solid #e4e4e7;
     margin-top: 25px;
@@ -164,7 +185,7 @@ img {
 }
 
 /* Footer */
-
+/* Kaki email: di tengah, selebar 570px, teks berukuran kecil berwarna abu. */
 .footer {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
@@ -187,7 +208,8 @@ img {
 }
 
 /* Tables */
-
+/* Gaya tabel (misal laporan donasi): selebar penuh, judul kolom
+   diberi garis bawah, sel diberi jarak 10px vertikal. */
 .table table {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
@@ -210,13 +232,14 @@ img {
     padding: 10px 0;
 }
 
+/* Sel konten utama email dengan padding 32px. */
 .content-cell {
     max-width: 100vw;
     padding: 32px;
 }
 
 /* Buttons */
-
+/* Wadah tombol aksi email, rata tengah dengan jarak atas-bawah 30px. */
 .action {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
@@ -228,6 +251,7 @@ img {
     float: unset;
 }
 
+/* Gaya dasar tombol: putih, sudut membulat, tanpa dekorasi tautan. */
 .button {
     -webkit-text-size-adjust: none;
     border-radius: 4px;
@@ -237,6 +261,8 @@ img {
     text-decoration: none;
 }
 
+/* Varian warna tombol: hitam (primary/blue), hijau (success), merah (error).
+   Border sengaja dipertebal agar tampak seperti bantalan tombol di email. */
 .button-blue,
 .button-primary {
     background-color: #18181b;
@@ -265,7 +291,8 @@ img {
 }
 
 /* Panels */
-
+/* Panel: kotak sorotan dengan garis tebal di sisi kiri dan latar abu
+   terang, untuk menonjolkan informasi penting (misal rincian donasi). */
 .panel {
     border-left: #18181b solid 4px;
     margin: 21px 0;
@@ -285,13 +312,14 @@ img {
     padding: 0;
 }
 
+/* Hilangkan jarak bawah pada paragraf terakhir di dalam panel. */
 .panel-item p:last-of-type {
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
 /* Utilities */
-
+/* Kelas bantu: memaksa tautan panjang dibungkus per kata. */
 .break-all {
     word-break: break-all;
 }

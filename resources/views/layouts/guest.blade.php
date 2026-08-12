@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- layouts/guest.blade.php - LAYOUT HALAMAN LOGIN/REGISTER -->
+<!-- ============================================ -->
+<!-- Peran: layout untuk halaman publik tanpa navbar (login, register, lupa password, dll), dipakai lewat komponen x-guest-layout. -->
+<!-- Data: $profil (logo & nama yayasan) dari view composer global; $slot berisi konten form dari halaman auth. -->
+<!-- Alur: render head (CSRF, font, Vite), latar gradasi hijau dengan dekorasi, notifikasi toast session, logo yayasan, kartu putih berisi $slot, lalu footer copyright. -->
 {{-- LAYOUTS_GUEST: layout halaman publik/guest -- background gradasi hijau, logo yayasan, card form, dekorasi geometris --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="baitul">
@@ -14,12 +20,14 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Muat ulang halaman saat kembali lewat cache bfcache agar data selalu segar -->
         <script>window.addEventListener('pageshow',function(e){if(e.persisted)location.reload()});</script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900">
 
             {{-- ══ GLOBAL TOAST NOTIFICATIONS ══ --}}
+            <!-- Notifikasi global dari session: menampilkan komponen x-alert sesuai flash data success/error/warning/info/status -->
             <div class="fixed top-2 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 max-w-lg w-full px-4 pointer-events-none">
                 <div class="pointer-events-auto space-y-3">
                     @if(session('success'))
@@ -41,12 +49,14 @@
             </div>
 
             {{-- BAGIAN: elemen dekoratif latar belakang (lingkaran gradasi, pola geometris, garis) --}}
+            <!-- Dekorasi latar: lingkaran blur gradasi, pola titik SVG, dan dua garis vertikal tipis di tepi kiri-kanan -->
             <div class="absolute inset-0 pointer-events-none overflow-hidden">
                 <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
                 <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl"></div>
                 <div class="absolute top-1/3 left-1/4 w-64 h-64 rounded-full bg-white/5 blur-2xl"></div>
 
                 {{-- Geometric pattern overlay --}}
+                <!-- Pola geometris: pattern titik-titik putih dengan opacity sangat rendah -->
                 <svg class="absolute inset-0 w-full h-full opacity-[0.04]" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -57,11 +67,13 @@
                 </svg>
 
                 {{-- Decorative lines --}}
+                <!-- Garis dekoratif gradasi vertikal di tepi kiri dan kanan layar -->
                 <div class="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-emerald-400/20 to-transparent"></div>
                 <div class="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-emerald-400/20 to-transparent"></div>
             </div>
 
             {{-- BAGIAN: logo dan nama yayasan sebagai branding header --}}
+            <!-- Branding: logo yayasan (dari storage) atau ikon fallback, ditautkan ke beranda -->
             <div class="relative z-10">
                 <a href="/" class="flex flex-col items-center gap-3">
                     @php $logoProfil = $profil; @endphp
@@ -79,11 +91,13 @@
             </div>
 
             {{-- BAGIAN: card putih transparan sebagai wadah konten form --}}
+            <!-- Kartu utama: wadah $slot (form login/register) dengan latar putih transparan dan sudut membulat -->
             <div class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-5 bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden sm:rounded-2xl ring-1 ring-white/20">
                 {{ $slot }}
             </div>
 
             {{-- BAGIAN: teks hak cipta footer --}}
+            <!-- Footer copyright dengan tahun otomatis dan nama yayasan -->
             <p class="relative z-10 mt-6 text-xs text-white/40 font-semibold tracking-wider">© {{ date('Y') }} {{ $logoProfil?->nama_yayasan ?? 'Yayasan Baitul Yatim' }}. All rights reserved.</p>
         </div>
     </body>

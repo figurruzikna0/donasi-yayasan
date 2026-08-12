@@ -1,6 +1,23 @@
+{{--
+    ============================================================
+    admin\profil\index.blade.php — Profil & Berkas Yayasan
+    ============================================================
+    Halaman pengelolaan profil yayasan dan data pendiri dalam satu
+    halaman dengan dua tab (Alpine/JS):
+      - Tab "Profil Yayasan": form multi-seksi (identitas, sejarah/
+        visi/misi, berkas legalitas) dikirim ke ProfilController
+        (route admin.profil.update, metode PUT, multipart).
+      - Tab "Pendiri & Pengurus": daftar pendiri ($pendiris,
+        paginate via AJAX) + form tambah pendiri (route
+        admin.pendiri.store).
+    Alur: tab switcher → panel profil (3 kartu) → panel pendiri
+    (daftar kartu + form tambah) → skrip JS (switch tab, paginasi
+    AJAX, otomatis buka tab pendiri jika ada error validasi).
+--}}
 <x-admin-layout>
 <div class="bg-gradient-to-b from-slate-50 to-slate-100 min-h-0">
 
+    {{-- Header halaman --}}
     <div class="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-500">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.12),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.2),transparent_60%)]"></div>
@@ -21,6 +38,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pb-12 space-y-6">
 
         {{-- ══ TAB SWITCHER ══ --}}
+        {{-- Tombol pindah tab antara "Profil Yayasan" dan "Pendiri & Pengurus".
+            Tab aktif dibaca dari query string ?tab= (default 'profil').
+            Jumlah pendiri ditampilkan di badge tab pendiri. --}}
         <div class="flex gap-1 bg-white rounded-xl p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 w-fit">
             @php $tab = request('tab', 'profil'); @endphp
             <button class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {{ $tab === 'profil' ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' }}" id="tab-profil" onclick="switchProfilTab('profil')">
@@ -35,12 +55,17 @@
         {{-- ══════════════════════════════
              TAB 1: PROFIL YAYASAN
         ══════════════════════════════ --}}
+        {{-- Panel profil: form utama multi-seksi untuk memperbarui
+            data yayasan. Memakai enctype multipart/form-data karena
+            ada upload logo & berkas gambar. --}}
         <div id="panel-profil" class="tab-panel {{ $tab !== 'profil' ? 'hidden' : '' }}">
             <form action="{{ route('admin.profil.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 {{-- CARD 1: Info Dasar --}}
+                {{-- Seksi identitas yayasan: nama, email, telepon/WA,
+                    logo, dan alamat lengkap. --}}
                 <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">
@@ -53,24 +78,29 @@
                     </div>
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Kolom: Nama Yayasan --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Nama Yayasan</span></label>
                                 <input type="text" name="nama_yayasan" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required
                                        value="{{ old('nama_yayasan', $profil?->nama_yayasan) }}" placeholder="Yayasan Baitul Yatim">
+                                {{-- Pesan error validasi per field --}}
                                 @error('nama_yayasan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
+                            {{-- Kolom: Email Resmi --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Email Resmi</span></label>
                                 <input type="email" name="email" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required
                                        value="{{ old('email', $profil?->email) }}" placeholder="info@yayasan.org">
                                 @error('email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
+                            {{-- Kolom: No. Telepon / WhatsApp --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">No. Telepon / WhatsApp</span></label>
                                 <input type="text" name="no_telp" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required
                                        value="{{ old('no_telp', $profil?->no_telp) }}" placeholder="08123456789">
                                 @error('no_telp') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
+                            {{-- Kolom: Logo Yayasan (upload file dengan label bergaya drag-drop) --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Logo Yayasan</span></label>
                                 <div class="relative">
@@ -78,9 +108,11 @@
                                         <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 stroke-emerald-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span id="logo-label" class="text-sm text-emerald-600 font-semibold">Pilih foto logo…</span>
                                     </label>
+                                    {{-- Input file tersembunyi; nama file ditampilkan via onchange JavaScript --}}
                                     <input type="file" name="logo" id="logo-input" accept="image/*" class="hidden" onchange="document.getElementById('logo-label').textContent=this.files[0]?.name||'Pilih foto logo…'">
                                 </div>
                                 <p class="text-xs text-emerald-400 mt-1">JPG/PNG · Maks 2MB</p>
+                                {{-- Pratinjau logo yayasan saat ini (cache-busting pakai timestamp) --}}
                                 @if($profil?->logo)
                                     <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50 inline-block">
                                         <img src="{{ asset('storage/' . $profil->logo) . '?v=' . now()->timestamp }}" class="max-h-16 rounded-lg" alt="Logo saat ini">
@@ -89,6 +121,7 @@
                                 @error('logo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
+                        {{-- Kolom: Alamat Lengkap --}}
                         <div class="form-control mt-4">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Alamat Lengkap</span></label>
                             <textarea name="alamat" rows="2" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="Jl. Kebaikan No. 1, Kota...">{{ old('alamat', $profil?->alamat) }}</textarea>
@@ -98,6 +131,7 @@
                 </div>
 
                 {{-- CARD 2: Sejarah, Visi, Misi --}}
+                {{-- Seksi narasi yayasan: sejarah/deskripsi, visi, dan misi --}}
                 <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
@@ -109,17 +143,20 @@
                         </div>
                     </div>
                     <div class="p-6">
+                        {{-- Kolom: Sejarah / Deskripsi Yayasan --}}
                         <div class="form-control mb-4">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Sejarah / Deskripsi Yayasan</span></label>
                             <textarea name="sejarah_yayasan" rows="5" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="Ceritakan bagaimana yayasan ini berdiri dan berkembang…">{{ old('sejarah_yayasan', $profil?->sejarah_yayasan) }}</textarea>
                             @error('sejarah_yayasan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Kolom: Visi --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Visi</span></label>
                                 <textarea name="visi" rows="4" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="Menjadi lembaga amanah…">{{ old('visi', $profil?->visi) }}</textarea>
                                 @error('visi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
+                            {{-- Kolom: Misi (poin baru dipisahkan dengan Enter) --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Misi <span class="font-normal normal-case text-emerald-400">(gunakan Enter untuk poin baru)</span></span></label>
                                 <textarea name="misi" rows="4" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required placeholder="• Memberikan pendidikan terbaik&#10;• Mengelola amanah dengan transparan">{{ old('misi', $profil?->misi) }}</textarea>
@@ -130,6 +167,8 @@
                 </div>
 
                 {{-- CARD 4: Berkas Visual --}}
+                {{-- Seksi transparansi: upload surat legalitas resmi dan
+                    bagan struktur organisasi (keduanya opsional). --}}
                 <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 mb-5 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-base shrink-0">
@@ -142,6 +181,7 @@
                     </div>
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Kolom: Surat Legalitas Resmi (upload opsional) --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Surat Legalitas Resmi <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
                                 <div class="relative">
@@ -152,6 +192,7 @@
                                     <input type="file" name="foto_legalitas" id="legalitas-input" accept="image/*" class="hidden" onchange="document.getElementById('legalitas-label').textContent=this.files[0]?.name||'Pilih foto dokumen…'">
                                 </div>
                                 <p class="text-xs text-emerald-400 mt-1">JPG / PNG · Maks 2MB</p>
+                                {{-- Pratinjau dokumen legalitas saat ini --}}
                                 @if($profil?->foto_legalitas)
                                     <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50">
                                         <p class="text-xs text-emerald-400 font-semibold text-center mb-1">Berkas saat ini</p>
@@ -160,6 +201,7 @@
                                 @endif
                             </div>
 
+                            {{-- Kolom: Bagan Struktur Organisasi (upload opsional) --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Bagan Struktur Organisasi <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
                                 <div class="relative">
@@ -170,6 +212,7 @@
                                     <input type="file" name="foto_struktur" id="struktur-input" accept="image/*" class="hidden" onchange="document.getElementById('struktur-label').textContent=this.files[0]?.name||'Pilih foto bagan…'">
                                 </div>
                                 <p class="text-xs text-emerald-400 mt-1">JPG / PNG · Maks 2MB</p>
+                                {{-- Pratinjau bagan struktur saat ini --}}
                                 @if($profil?->foto_struktur)
                                     <div class="mt-2 p-2 border border-emerald-200 rounded-xl bg-emerald-50">
                                         <p class="text-xs text-emerald-400 font-semibold text-center mb-1">Berkas saat ini</p>
@@ -181,6 +224,7 @@
                     </div>
                 </div>
 
+                {{-- Tombol aksi simpan/batal profil --}}
                 <div class="flex items-center justify-end gap-3">
                     <a href="{{ route('admin.profil.index') }}" class="btn btn-ghost font-bold text-slate-600">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
@@ -197,6 +241,8 @@
         {{-- ══════════════════════════════
              TAB 2: PENDIRI & PENGURUS
         ══════════════════════════════ --}}
+        {{-- Panel pendiri: daftar pendiri dalam bentuk kartu grid
+            beserta form tambah pendiri baru. --}}
         <div id="panel-pendiri" class="tab-panel {{ $tab !== 'pendiri' ? 'hidden' : '' }}">
 
             {{-- Daftar pendiri saat ini --}}
@@ -211,22 +257,27 @@
                     </div>
                 </div>
                 <div class="p-6">
+                    {{-- Grid kartu pendiri: foto/avatar, nama, jabatan, kata sambutan,
+                        dan tombol aksi Edit/Hapus (muncul saat hover) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                         @forelse($pendiris as $pendiri)
                             <div class="group bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200 overflow-hidden hover:shadow-md hover:border-emerald-200 transition-all duration-200">
                                 <div class="px-5 pt-5 pb-0">
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-center gap-4">
+                                            {{-- Foto pendiri atau placeholder inisial nama --}}
                                             @if($pendiri->foto)
                                                 <img src="{{ asset('storage/' . $pendiri->foto) . '?v=' . now()->timestamp }}" class="w-14 h-14 rounded-xl object-cover shadow-sm ring-2 ring-emerald-100" alt="{{ $pendiri->nama }}">
                                             @else
                                                 <div class="w-14 h-14 rounded-xl bg-emerald-700 text-white font-extrabold text-lg flex items-center justify-center shadow-sm">{{ strtoupper(substr($pendiri->nama, 0, 1)) }}</div>
                                             @endif
                                             <div>
+                                                {{-- Nama dan jabatan pendiri --}}
                                                 <p class="font-bold text-sm text-slate-800">{{ $pendiri->nama }}</p>
                                                 <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 border border-emerald-200">{{ $pendiri->jabatan }}</span>
                                             </div>
                                         </div>
+                                        {{-- Tombol aksi edit & hapus pendiri (Alpine modal konfirmasi) --}}
                                         <div class="flex items-center gap-1" x-data="{ open: false }">
                                             <a href="{{ route('admin.pendiri.edit', $pendiri->id) }}" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 opacity-0 group-hover:opacity-100 transition-all" title="Edit">
                                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -236,12 +287,14 @@
                                                 <button type="button" @click="open = true" class="btn btn-ghost btn-sm btn-circle text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all" title="Hapus">
                                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
                                                 </button>
+                                                {{-- Modal konfirmasi hapus pendiri (komponen Alpine) --}}
                                                 <x-confirm-delete-modal entity-name="{{ $pendiri->nama }}" entity-type="pengurus" />
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="px-5 pb-5 pt-3">
+                                    {{-- Kata sambutan pendiri (atau placeholder jika kosong) --}}
                                     @if($pendiri->deskripsi)
                                         <div class="bg-slate-50 rounded-lg p-3 border border-slate-200">
                                             <svg class="w-3 h-3 text-slate-400 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11H10v10H0z"/></svg>
@@ -255,6 +308,7 @@
                                 </div>
                             </div>
                         @empty
+                            {{-- Kondisi saat belum ada data pendiri --}}
                             <div class="col-span-full text-center py-12 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50">
                                 <div class="text-4xl mb-3 opacity-30">
                                     <svg class="w-12 h-12 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
@@ -264,6 +318,7 @@
                             </div>
                         @endforelse
                     </div>
+                    {{-- Paginasi pendiri (diprocess AJAX oleh skrip di bawah) --}}
                     <div id="pendiri-pagination" class="pendiri-ajax-pagination mt-6">
                         {{ $pendiris->links() }}
                     </div>
@@ -271,6 +326,8 @@
             </div>
 
             {{-- Form tambah pendiri --}}
+            {{-- Form untuk menambahkan pendiri/pengurus baru: nama, jabatan,
+                kata sambutan, dan foto (wajib saat tambah). --}}
             <form action="{{ route('admin.pendiri.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
@@ -284,22 +341,26 @@
                     </div>
                     <div class="p-6 space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {{-- Kolom: Nama Lengkap --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Nama Lengkap</span></label>
                                 <input type="text" name="nama" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ old('nama') }}" placeholder="Nama lengkap">
                                 @error('nama') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
+                            {{-- Kolom: Jabatan --}}
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-bold text-emerald-700">Jabatan</span></label>
                                 <input type="text" name="jabatan" class="input input-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" required value="{{ old('jabatan') }}" placeholder="Ketua Yayasan">
                                 @error('jabatan') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
+                        {{-- Kolom: Kata Sambutan / Deskripsi (opsional) --}}
                         <div class="form-control">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Kata Sambutan <span class="font-normal normal-case text-emerald-400">(Opsional)</span></span></label>
                             <textarea name="deskripsi" rows="3" class="textarea textarea-bordered w-full focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200" placeholder="Kata sambutan singkat…">{{ old('deskripsi') }}</textarea>
                             @error('deskripsi') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
+                        {{-- Kolom: Foto pendiri (upload wajib saat menambah) --}}
                         <div class="form-control">
                             <label class="label"><span class="label-text font-bold text-emerald-700">Foto</span></label>
                             <div class="relative">
@@ -312,12 +373,15 @@
                                         <p class="text-xs text-emerald-400">JPG/PNG · Maks 1MB</p>
                                     </div>
                                 </label>
+                                {{-- Input file tersembunyi; nama file tampil via onchange --}}
                                 <input type="file" name="foto" id="pendiri-foto-input" accept="image/*" class="hidden" onchange="document.getElementById('pendiri-foto-label').textContent=this.files[0]?.name||'Pilih foto pendiri'">
                             </div>
                             @error('foto') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        {{-- Tombol aksi: Reset dan Tambah Pendiri --}}
                         <div class="flex items-center justify-end gap-3 pt-3 border-t border-emerald-100">
+                            {{-- Tombol reset form + kembalikan label foto --}}
                             <button type="reset" class="btn btn-outline btn-sm border-slate-300 text-slate-600 hover:bg-slate-100" onclick="document.getElementById('pendiri-foto-label').textContent='Pilih foto pendiri'">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                                 Reset
@@ -335,7 +399,17 @@
     </div>
 </div>
 
+    {{-- ------------------------------------------------------------------
+        SEKSI JAVASCRIPT HALAMAN PROFIL:
+        1. switchProfilTab() — pindah tab profil/pendiri & perbarui URL
+           query string (?tab=...).
+        2. Auto-buka tab pendiri jika error validasi form pendiri (nama,
+           jabatan, foto) ditemukan.
+        3. initAjaxPagination() — paginasi daftar pendiri via AJAX (fetch)
+           lalu ganti konten #pendiri-list-wrap tanpa reload halaman.
+    ------------------------------------------------------------------ --}}
     <script>
+    // Fungsi pindah tab: toggel kelas aktif pada tombol & visibilitas panel
     function switchProfilTab(tab) {
         const tabs = ['profil', 'pendiri'];
         tabs.forEach(t => {
@@ -348,16 +422,21 @@
             btn.classList.toggle('hover:bg-slate-100', t !== tab);
             document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
         });
+        // Simpan pilihan tab ke URL agar bertahan saat refresh
         const url = new URL(window.location);
         url.searchParams.set('tab', tab);
         window.history.replaceState({}, '', url);
     }
 
+    // Jika form pendiri gagal validasi, buka tab pendiri secara otomatis
+    // agar pesan error langsung terlihat oleh admin
     @if($errors->has('nama') || $errors->has('jabatan') || $errors->has('foto'))
         document.addEventListener('DOMContentLoaded', () => switchProfilTab('pendiri'));
     @endif
 
     (function() {
+        // Paginasi AJAX untuk daftar pendiri: klik link halaman berikutnya
+        // dimuat lewat fetch dan mengganti isi #pendiri-list-wrap
         function initAjaxPagination() {
             document.addEventListener('click', function(e) {
                 const link = e.target.closest('#pendiri-pagination a');
@@ -366,6 +445,7 @@
                 const url = link.href;
                 const wrap = document.getElementById('pendiri-list-wrap');
                 if (!wrap) return;
+                // Tampilkan spinner selama proses pemuatan
                 wrap.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-emerald-700"></span></div>';
                 fetch(url)
                     .then(r => {
@@ -373,6 +453,7 @@
                         return r.text();
                     })
                     .then(html => {
+                        // Ambil elemen #pendiri-list-wrap dari HTML hasil fetch
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
                         const newWrap = doc.getElementById('pendiri-list-wrap');
@@ -380,6 +461,7 @@
                         if (newWrap && oldWrap) {
                             const parent = oldWrap.parentNode;
                             parent.replaceChild(newWrap, oldWrap);
+                            // Inisialisasi ulang komponen Alpine pada konten baru
                             if (window.Alpine) Alpine.initTree(newWrap);
                             window.history.pushState({}, '', url);
                         } else {
@@ -389,6 +471,7 @@
                     .catch(() => { window.location.href = url; });
             });
         }
+        // Jalankan init setelah DOM siap
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initAjaxPagination);
         } else {

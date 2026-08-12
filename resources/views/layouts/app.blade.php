@@ -1,9 +1,16 @@
+<!-- ============================================ -->
+<!-- layouts/app.blade.php - LAYOUT UTAMA USER   -->
+<!-- ============================================ -->
+<!-- Peran: layout utama untuk semua halaman donatur yang sudah login (dashboard, rekap, profil, pengurus, legalitas, dll), dipakai lewat komponen x-app-layout. -->
+<!-- Data: $profil (nama yayasan & logo) dari view composer global; $slot berisi konten halaman child; $header opsional untuk judul halaman. -->
+<!-- Alur: render DOCTYPE + head (CSRF, font, Vite), navbar (layouts.navigation), notifikasi toast session & client-side (Alpine.js), header opsional, lalu konten $slot ke dalam <main>. -->
 {{-- LAYOUTS_APP: layout utama untuk halaman user setelah login -- menyertakan navbar, notifikasi, header opsional, dan konten utama --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="baitul">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Token CSRF disuntikkan ke meta untuk dipakai fetch/axios pada permintaan POST ajax -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ $profil?->nama_yayasan ?? 'Yayasan Baitul Yatim Sukabumi' }}</title>
@@ -16,13 +23,16 @@
         {{-- ASSET: CSS & JS via Vite --}}
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Muat ulang halaman saat kembali lewat cache bfcache agar data selalu segar -->
         <script>window.addEventListener('pageshow',function(e){if(e.persisted)location.reload()});</script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-base-200">
+            <!-- Navbar utama donatur (partial layouts.navigation); hanya tampil untuk user non-admin -->
             @include('layouts.navigation')
 
             {{-- ══ GLOBAL TOAST NOTIFICATIONS ══ --}}
+            <!-- Notifikasi global dari session: menampilkan komponen x-alert sesuai flash data success/error/warning/info/status -->
             <div class="fixed top-2 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 max-w-lg w-full px-4 pointer-events-none">
                 <div class="pointer-events-auto space-y-3">
                     @if(session('success'))
@@ -44,6 +54,7 @@
             </div>
 
             {{-- ══ CLIENT-SIDE TOAST (dipicu oleh JavaScript, bukan session) ══ --}}
+            <!-- Toast sisi klien: mendengarkan event kustom 'toast-show' lewat Alpine.js, menampilkan pesan + progress bar yang menyusut selama 5 detik -->
             <div x-data="{ toast: { show: false, message: '', type: 'warning', progress: 100 } }"
                  @toast-show.window="
                     toast.message = $event.detail.message;
@@ -80,11 +91,13 @@
                                 </div>
                                 <p class="text-xs text-amber-700 dark:text-amber-300 mt-0.5 leading-relaxed" x-text="toast.message"></p>
                             </div>
+                            <!-- Tombol tutup toast -->
                             <button @click="toast.show = false" class="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-all duration-200 -mr-1">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
                     </div>
+                    <!-- Progress bar bawah: lebarnya mengikuti nilai toast.progress yang menyusut otomatis -->
                     <div class="absolute bottom-0 left-0 right-0 h-1 bg-black/5 dark:bg-white/5">
                         <div class="h-full rounded-full bg-amber-500 transition-all duration-[200ms] ease-linear"
                              :style="'width: ' + toast.progress + '%'">
@@ -94,6 +107,7 @@
             </div>
 
             {{-- BAGIAN: header halaman opsional (hanya muncul jika child view mendefinisikan $header) --}}
+            <!-- isset: jika child view mengirim blok $header, tampilkan sebagai header halaman berpita putih -->
             @isset($header)
                 <header class="bg-base-100 shadow-sm">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -103,6 +117,7 @@
             @endisset
 
             {{-- BAGIAN: konten utama halaman dari child view --}}
+            <!-- Slot utama: seluruh isi halaman child view dirender di dalam <main> -->
             <main>
                 {{ $slot }}
             </main>

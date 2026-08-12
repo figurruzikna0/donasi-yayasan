@@ -1,3 +1,9 @@
+<!-- ============================================ -->
+<!-- auth\login.blade.php — halaman login pengguna -->
+<!-- ============================================ -->
+<!-- Peran     : form masuk akun (email, password, ingat saya, lupa password, daftar). -->
+<!-- Controller: AuthenticatedSessionController — route('login') untuk GET dan POST. -->
+<!-- Alur      : isi email + password -> POST -> validasi -> redirect ke dashboard. -->
 {{-- AUTH_LOGIN: halaman masuk (login) pengguna -- form email, password, checkbox ingat saya, tautan lupa password & daftar --}}
 <x-guest-layout>
     <div class="text-center mb-6">
@@ -10,9 +16,11 @@
         <p class="text-sm text-slate-500">Silakan masuk untuk melanjutkan</p>
     </div>
 
+    <!-- FORM LOGIN: mengirim data ke route('login') metode POST; csrf wajib untuk keamanan -->
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
+        <!-- FIELD EMAIL: wajib diisi (required), format email; nilai old('email') dipertahankan bila validasi gagal -->
         <div class="form-control">
             <label class="label" for="email">
                 <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Email</span>
@@ -23,6 +31,7 @@
             <x-input-error :messages="$errors->get('email')" class="mt-1.5" />
         </div>
 
+        <!-- FIELD PASSWORD: wajib diisi (required); tombol mata (JS togglePassword) untuk lihat/sembunyikan isi password -->
         <div class="form-control mt-4">
             <label class="label" for="password">
                 <span class="label-text font-bold text-slate-600 uppercase text-xs tracking-wider">Password</span>
@@ -41,6 +50,7 @@
             <x-input-error :messages="$errors->get('password')" class="mt-1.5" />
         </div>
 
+        <!-- CHECKBOX "INGAT SAYA": bila dicentang, sesi login diperpanjang memakai remember token -->
         <div class="form-control mt-4">
             <label class="label cursor-pointer justify-start gap-2" for="remember_me">
                 <input id="remember_me" type="checkbox" name="remember" class="checkbox checkbox-sm rounded border-slate-300 text-emerald-700 focus:ring-emerald-500" />
@@ -49,22 +59,26 @@
         </div>
 
         <div class="flex items-center justify-between mt-6">
+            <!-- TAUTAN "LUPA PASSWORD": hanya dirender jika route password.request terdaftar di sistem -->
             @if (Route::has('password.request'))
                 <a class="link link-hover text-sm text-emerald-700 font-semibold" href="{{ route('password.request') }}">
                     Lupa password?
                 </a>
             @endif
+            <!-- TOMBOL SUBMIT: mengirim form login ke server -->
             <button type="submit" class="btn bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg px-6 py-2.5 text-sm shadow-sm hover:shadow-md transition-all border-0">
                 Masuk
             </button>
         </div>
     </form>
 
+    <!-- TAUTAN DAFTAR: mengarahkan pengguna yang belum punya akun ke halaman registrasi -->
     <div class="mt-6 pt-5 border-t border-slate-200 text-center text-sm text-slate-500">
         Belum punya akun?
         <a href="{{ route('register') }}" class="font-bold text-emerald-700 hover:text-emerald-800 transition-colors">Daftar</a>
     </div>
 
+    <!-- SCRIPT JS: fungsi togglePassword() menampilkan/menyembunyikan isi kolom password beserta ikon mata -->
     <script>
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);

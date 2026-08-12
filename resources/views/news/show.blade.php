@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!-- ============================================ -->
+<!-- news\show.blade.php — halaman detail berita -->
+<!-- ============================================ -->
+<!-- Peran     : halaman publik menampilkan isi lengkap satu berita/kegiatan. -->
+<!-- Controller: NewsControllershow — variabel $news (News), $profil (ProfilYayasan). -->
+<!-- Alur      : dari daftar berita klik judul -> halaman ini tampil (foto, judul, ringkasan, -->
+<!--             konten penuh, info kegiatan di sidebar) -> kembali ke daftar berita. -->
 <html lang="id" data-theme="baitul">
 <head>
     <meta charset="UTF-8">
@@ -9,12 +16,14 @@
 <body class="font-sans antialiased">
 
     {{-- NAVBAR --}}
+    <!-- NAVBAR PUBLIK: useRouteLinks false artinya menu navigasi tidak berubah jadi tautan halaman -->
     @include('partials.public-navbar', ['useRouteLinks' => false, 'scrollEffect' => true])
 
     <div class="bg-gradient-to-b from-emerald-50 to-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
             {{-- BREADCRUMB: navigasi Beranda / Berita / Judul Artikel --}}
+            <!-- BREADCRUMB: menunjukkan posisi halaman saat ini -->
             <nav class="text-sm text-gray-400 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-emerald-600 transition-colors">Beranda</a>
                 <span class="mx-1.5">/</span>
@@ -24,6 +33,7 @@
             </nav>
 
             {{-- HERO IMAGE: foto utama berita dari storage --}}
+            <!-- FOTO UTAMA BERITA: tampil bila ada foto (diunggah admin melalui storage) -->
             @if($news->foto_utama)
             <div class="rounded-2xl overflow-hidden shadow-lg mb-8 max-h-80">
                 <img src="{{ asset('storage/' . $news->foto_utama) }}" alt="{{ $news->judul }}" class="w-full h-56 sm:h-72 object-cover">
@@ -31,6 +41,7 @@
             @endif
 
             {{-- HEADER INFO: kategori, tanggal, lokasi kegiatan --}}
+            <!-- HEADER INFO: badge kategori + tanggal kegiatan + lokasi (masing-masing opsional) -->
             <div class="flex flex-wrap items-center gap-3 mb-4">
                 @if($news->kategori)
                     <span class="text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">{{ $news->kategori }}</span>
@@ -49,24 +60,31 @@
                 @endif
             </div>
 
+            <!-- JUDUL BERITA -->
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-emerald-800 leading-tight mb-8">{{ $news->judul }}</h1>
 
             {{-- Grid --}}
+            <!-- GRID UTAMA: 2/3 lebar untuk konten artikel, 1/3 untuk sidebar -->
             <div class="lg:grid lg:grid-cols-3 lg:gap-12">
 
                 {{-- MAIN KONTEN: ringkasan + konten berita dari DB, tombol kembali ke beranda --}}
+                <!-- KONTEN UTAMA ARTIKEL: -->
                 <article class="lg:col-span-2">
 
+                    <!-- RINGKASAN: cuplikan penting dengan latar hijau (bila diisi) -->
                     @if($news->ringkasan)
                         <div class="text-base text-emerald-700 font-medium mb-8 p-5 bg-emerald-50 rounded-xl border-l-4 border-emerald-500 leading-relaxed text-justify">
                             {{ $news->ringkasan }}
                         </div>
                     @endif
 
+                    <!-- KONTEN PENUH: ditampilkan dengan nl2br(e(...)) artinya baris baru diubah -->
+                    <!-- menjadi <br> dan karakter HTML di-escape agar aman (anti XSS) -->
                     <div class="text-gray-700 leading-relaxed text-base space-y-4 text-justify">
                         {!! nl2br(e($news->konten)) !!}
                     </div>
 
+                    <!-- TOMBOL KEMBALI KE DAFTAR BERITA -->
                     <div class="mt-10 pt-6 border-t border-gray-100">
                         <a href="{{ route('news.index') }}" class="text-gray-500 hover:text-emerald-600 transition-colors text-sm flex items-center gap-1.5 font-medium">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
@@ -76,10 +94,12 @@
                 </article>
 
                 {{-- SIDEBAR: info detail kegiatan & CTA donasi --}}
+                <!-- SIDEBAR: posisi mengambang (sticky) saat halaman digulir -->
                 <aside class="mt-10 lg:mt-0">
                     <div class="sticky top-24 space-y-6">
 
                         {{-- INFO KEGIATAN: tanggal, lokasi, penyelenggara, kategori --}}
+                        <!-- KARTU INFORMASI KEGIATAN: ringkasan detail kegiatan -->
                         <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
                             <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 py-4">
                                 <h3 class="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
@@ -88,6 +108,7 @@
                                 </h3>
                             </div>
                             <div class="p-5 space-y-4">
+                                <!-- BARIS TANGGAL: hanya tampil bila tanggal kegiatan terisi -->
                                 @if($news->tanggal_kegiatan)
                                 <div class="flex items-start gap-3">
                                     <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -99,6 +120,7 @@
                                     </div>
                                 </div>
                                 @endif
+                                <!-- BARIS LOKASI: hanya tampil bila lokasi terisi -->
                                 @if($news->lokasi)
                                 <div class="flex items-start gap-3">
                                     <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -110,6 +132,7 @@
                                     </div>
                                 </div>
                                 @endif
+                                <!-- BARIS PENYELENGGARA: hanya tampil bila penyelenggara terisi -->
                                 @if($news->penyelenggara)
                                 <div class="flex items-start gap-3">
                                     <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -121,6 +144,7 @@
                                     </div>
                                 </div>
                                 @endif
+                                <!-- BARIS KATEGORI: hanya tampil bila kategori terisi -->
                                 @if($news->kategori)
                                 <div class="flex items-start gap-3">
                                     <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -136,6 +160,7 @@
                         </div>
 
                         {{-- CTA DONASI: card ajakan donasi, tombol mengarah ke #kampanye di halaman utama --}}
+                        <!-- CTA DONASI: ajakan berdonasi; tombol mengarah ke bagian #kampanye di beranda -->
                         <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-6 text-white shadow-md">
                             <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>

@@ -1,5 +1,7 @@
 <?php
 // === 2026_06_28_181214_add_payment_method_to_donations_table: menambah kolom payment_method ke tabel donations ===
+// Migrasi CUSTOM — menambah metode pembayaran pada donasi kampanye
+// (misal 'Transfer Bank', dll.).
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -10,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('donations', function (Blueprint $table) {
-            $table->string('payment_method')->nullable()->after('amount');
+            $table->string('payment_method')->nullable()->after('amount');   // metode pembayaran
         });
     }
 

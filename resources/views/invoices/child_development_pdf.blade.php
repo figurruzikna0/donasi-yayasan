@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<!-- ============================================ -->
+<!-- invoices\child_development_pdf.blade.php — template PDF laporan perkembangan anak -->
+<!-- ============================================ -->
+<!-- Peran     : template cetak (Dompdf) laporan perkembangan anak asuh untuk orang tua asuh, -->
+<!--             terdiri dari 2 halaman: halaman 1 (info & foto) dan halaman 2 (rincian laporan). -->
+<!-- Controller: ChildDevelopmentController — variabel $development (ChildDevelopment), -->
+<!--             $fotoPath (path foto mutlak temp), $profil (ProfilYayasan). -->
+<!-- Alur      : admin melihat daftar laporan perkembangan -> klik cetak PDF -> template ini -->
+<!--             dirender Dompdf -> PDF 2 halaman diunduh pengguna. -->
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -35,6 +44,7 @@
 <body>
 
     {{-- ═══════════ PAGE 1 — INFO & FOTO ═══════════ --}}
+    <!-- HALAMAN 1: kop dokumen laporan perkembangan -->
     <div class="header">
         <table>
             <tr>
@@ -43,6 +53,7 @@
                     <p>Anak Asuh Yayasan Baitul Yatim Sukabumi</p>
                 </td>
                 <td class="right">
+                    <!-- LOGO: public_path() mengambil path absolut file di folder storage agar dibaca Dompdf -->
                     @if($profil?->logo)
                         <img src="{{ public_path('storage/' . $profil->logo) }}" class="logo" alt="Logo">
                     @endif
@@ -53,6 +64,7 @@
         </table>
     </div>
 
+    <!-- TABEL INFO PENERIMA: data orang tua asuh (donatur) beserta order id dan tanggal laporan -->
     <table class="info-table">
         <tr>
             <td class="label">Kepada</td>
@@ -68,6 +80,7 @@
         </tr>
     </table>
 
+    <!-- KARTU ANAK: nama, usia, jenis kelamin, status, dan paket sponsorship anak asuh -->
     <div class="child-card">
         <table style="width:100%;">
             <tr>
@@ -86,6 +99,7 @@
         </table>
     </div>
 
+    <!-- FOTO PERKEMBANGAN: prioritas $fotoPath (foto temp mutlak); bila tidak ada, pakai foto di storage -->
     @if($fotoPath)
         <div class="photo-box">
             <img src="{{ $fotoPath }}" alt="{{ $development->judul }}">
@@ -96,6 +110,7 @@
         </div>
     @endif
 
+    <!-- JUDUL LAPORAN: di bawah foto -->
     <div style="text-align:center; margin-top:8px;">
         <div style="font-size:16px; font-weight:bold; color:#065f46;">{{ $development->judul }}</div>
     </div>
@@ -103,16 +118,19 @@
     <div class="page-number">— Halaman 1 —</div>
 
     {{-- ═══════════ PAGE 2 — RINCIAN LAPORAN ═══════════ --}}
+    <!-- HALAMAN 2: rincian deskripsi laporan (page-break-before memaksa pindah halaman di PDF) -->
     <div class="detail-page">
         <div class="detail-header">
             <h2>Rincian Laporan</h2>
             <div class="date">{{ $development->judul }} &middot; {{ $development->tanggal ? $development->tanggal->format('d M Y') : '-' }}</div>
         </div>
 
+        <!-- ISI DESKRIPSI: nl2br(e(...)) = baris baru menjadi <br> dan karakter HTML di-escape (anti XSS) -->
         <div class="detail-body">
             {!! nl2br(e($development->deskripsi)) !!}
         </div>
 
+        <!-- FOOTER: ucapan terima kasih & identitas yayasan -->
         <div class="footer">
             <p>Terima kasih telah menjadi bagian dari keluarga besar Baitul Yatim.</p>
             <p><strong>— {{ $profil?->nama_yayasan ?? 'Baitul Yatim Sukabumi' }} —</strong></p>
