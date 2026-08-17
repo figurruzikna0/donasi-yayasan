@@ -131,15 +131,15 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-base-100 stagger-enter">
-                        /* Perulangan setiap data sponsorship */
+                        {{-- Perulangan setiap data sponsorship --}}
                         @forelse($sponsorships as $sponsorship)
-                            /* ------------------------------------------------------------------
+                            {{-- ------------------------------------------------------------------
                                 LOGIKA STATUS PER BARIS:
                                 - $isExpiredPeriod: true jika expires_at sudah lewat
                                 - $remainingDays: sisa hari masa aktif
                                 - $statusKey: pending / aktif / kadaluarsa / gagal
                                 (dipakai untuk badge warna & label status)
-                            ------------------------------------------------------------------ */
+                            ------------------------------------------------------------------ --}}
                             @php
                                 $isExpiredPeriod = $sponsorship->expires_at && $sponsorship->expires_at->isPast();
                                 $remainingDays = $sponsorship->expires_at ? now()->diffInDays($sponsorship->expires_at) : null;

@@ -223,19 +223,19 @@
                     </div>
 
                     <div class="divide-y divide-slate-100">
-                        /* Perulangan daftar donasi terbaru */
+                        {{-- Perulangan daftar donasi terbaru --}}
                         @forelse($recentDonations as $txn)
                         <div class="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                            /* Avatar lingkaran berisi huruf pertama nama donatur */
+                            {{-- Avatar lingkaran berisi huruf pertama nama donatur --}}
                             <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center flex-shrink-0 uppercase">{{ substr($txn->donor_name, 0, 1) }}</div>
                             <div class="flex-1 min-w-0">
                                 <div class="font-semibold text-sm text-slate-800 truncate">{{ $txn->donor_name }}</div>
-                                /* Judul kampanye terkait transaksi (fallback "-" jika kampanye dihapus) */
+                                {{-- Judul kampanye terkait transaksi (fallback "-" jika kampanye dihapus) --}}
                                 <div class="text-xs text-slate-400 truncate">{{ $txn->campaign->title ?? '-' }}</div>
                             </div>
                             <div class="text-right flex-shrink-0">
                                 <div class="font-bold text-emerald-700 text-sm">Rp {{ number_format($txn->amount, 0, ',', '.') }}</div>
-                                /* Penentuan warna & teks badge status transaksi */
+                                {{-- Penentuan warna & teks badge status transaksi --}}
                                 @php
                                     $badgeClass = $txn->status === 'success' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : ($txn->status === 'pending' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-rose-50 text-rose-800 border-rose-200');
                                     $badgeText = $txn->status === 'success' ? 'Sukses' : ($txn->status === 'pending' ? 'Tertunda' : 'Ditolak');
