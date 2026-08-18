@@ -11,8 +11,8 @@
  *                      increment campaign.collected_amount, kirim WA notifikasi
  *   3. reject()      → Tolak transaksi: status → failed, simpan rejection_reason, kirim WA
  *   4. destroy($id)  → Hapus data transaksi
- *   5. syncAll()     → Sinkron massal status ke Midtrans (NONAKTIF — Midtrans belum terhubung)
- *   6. sync($id)     → Sinkron satu transaksi ke Midtrans (NONAKTIF)
+ *   5. syncAll()     → [NONAKTIF] Sinkron massal status ke Midtrans (dikomentari — pembayaran manual)
+ *   6. sync($id)     → [NONAKTIF] Sinkron satu transaksi ke Midtrans (dikomentari — pembayaran manual)
  *
  * Identifikasi jenis transaksi:
  *   - ORDER ID diawali "SPONSOR-" → sponsorship
@@ -33,8 +33,8 @@ use App\Models\Sponsorship;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Midtrans\Config;
-use Midtrans\Transaction;
+// use Midtrans\Config;          // Midtrans NONAKTIF (pembayaran manual upload bukti)
+// use Midtrans\Transaction;     // Midtrans NONAKTIF (pembayaran manual upload bukti)
 
 class TransactionController extends Controller
 {
@@ -249,204 +249,22 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'Data transaksi berhasil dihapus dari sistem!');
     }
 
-    // --- SINKRON SEMUA: cek status semua transaksi pending ke Midtrans, update status otomatis, redirect back dengan ringkasan ---
+    // --- SINKRON SEMUA: [NONAKTIF] cek status semua transaksi pending ke Midtrans ---
+    // Midtrans dinonaktifkan sementara (pembayaran pakai upload bukti transfer manual).
+    // Untuk mengaktifkan kembali: hapus tanda komentar pada method ini, import Midtrans di atas,
+    // serta route transactions.sync-all di routes/web.php, lalu pastikan .env berisi MIDTRANS_SERVER_KEY.
     public function syncAll()
     {
-        if (!config('midtrans.server_key')) {
-            return redirect()->back()->with('error', 'Midtrans belum diaktifkan. Fitur sinkronasi otomatis nonaktif.');
-        }
-
-        $results = ['success' => 0, 'failed' => 0, 'pending' => 0, 'errors' => 0];
-
-        $orderIds = Donation::where('status', 'pending')
-            ->whereNotNull('snap_token')
-            ->pluck('order_id')
-            ->concat(
-                Sponsorship::where('status', 'pending')
-                    ->whereNotNull('snap_token')
-                    ->pluck('order_id')
-            );
-
-        if ($orderIds->isEmpty()) {
-            return redirect()->back()->with('info', 'Tidak ada transaksi pending yang perlu disinkronkan.');
-        }
-
-        Config::$serverKey    = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized  = true;
-        Config::$is3ds        = true;
-
-        foreach ($orderIds as $orderId) {
-            try {
-                $status = Transaction::status($orderId);
-            } catch (\Throwable $e) {
-                $results['errors']++;
-                continue;
-            }
-
-            $midtransStatus = $status->transaction_status ?? '';
-
-            if (str_starts_with($orderId, 'SPONSOR-')) {
-                $sponsorship = Sponsorship::where('order_id', $orderId)->first();
-                if (!$sponsorship) continue;
-
-                if (in_array($midtransStatus, ['settlement', 'capture'])) {
-                    $sponsorship->update([
-                        'status'            => 'success',
-                        'rejection_reason'  => null,
-                        'starts_at'         => $sponsorship->starts_at ?? now(),
-                        'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
-                    ]);
-                    $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
-
-                    $results['success']++;
-                } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-                    $sponsorship->update(['status' => 'failed', 'rejection_reason' => null]);
-                    $results['failed']++;
-                } else {
-                    $results['pending']++;
-                }
-            } else {
-                $donation = Donation::where('order_id', $orderId)->first();
-                if (!$donation) continue;
-
-                if (in_array($midtransStatus, ['settlement', 'capture'])) {
-                    if (!$donation->invoice_number) {
-                        $month = now()->format('Ym');
-                        $count = Donation::where('status', 'success')
-                            ->whereNotNull('invoice_number')
-                            ->where('invoice_number', 'like', "INV-DN-{$month}-%")
-                            ->count();
-                        $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
-                        $donation->invoice_number = "INV-DN-{$month}-{$seq}";
-                    }
-                    $donation->update([
-                        'status'           => 'success',
-                        'rejection_reason' => null,
-                    ]);
-                    $donation->campaign?->increment('collected_amount', $donation->amount);
-
-                    $results['success']++;
-                } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-                    $donation->update(['status' => 'failed', 'rejection_reason' => null]);
-                    $results['failed']++;
-                } else {
-                    $results['pending']++;
-                }
-            }
-        }
-
-        $msg = '';
-        if ($results['success'] > 0) {
-            $msg .= "{$results['success']} transaksi berhasil dikonfirmasi. ";
-        }
-        if ($results['failed'] > 0) {
-            $msg .= "{$results['failed']} transaksi gagal. ";
-        }
-        if ($results['pending'] > 0) {
-            $msg .= "{$results['pending']} transaksi masih menunggu pembayaran. ";
-        }
-        if ($results['errors'] > 0) {
-            $msg .= "{$results['errors']} transaksi gagal dihubungi ke Midtrans. ";
-        }
-
-        $msg = trim($msg) ?: 'Tidak ada perubahan status.';
-
-        $redirect = redirect()->back();
-
-        if ($results['success'] > 0) {
-            $redirect->with('success', $msg);
-        }
-        if ($results['failed'] > 0) {
-            $redirect->with('warning', $msg);
-        }
-        if ($results['pending'] > 0 && $results['success'] === 0) {
-            $redirect->with('info', $msg);
-        }
-        if ($results['errors'] > 0 && $results['success'] === 0 && $results['failed'] === 0) {
-            $redirect->with('error', $msg);
-        }
-
-        return $redirect;
+        return redirect()->back()->with('info', 'Fitur sinkronisasi Midtrans sedang nonaktif.');
     }
 
-    // --- SINKRON SATU TRANSAKSI: cek status order tertentu ke Midtrans, update status, redirect back ---
+    // --- SINKRON SATU TRANSAKSI: [NONAKTIF] cek status order tertentu ke Midtrans ---
+    // Midtrans dinonaktifkan sementara (pembayaran pakai upload bukti transfer manual).
+    // Untuk mengaktifkan kembali: hapus tanda komentar pada method ini, import Midtrans di atas,
+    // serta route transactions.sync di routes/web.php, lalu pastikan .env berisi MIDTRANS_SERVER_KEY.
     public function sync($id)
     {
-        if (!config('midtrans.server_key')) {
-            return redirect()->back()->with('error', 'Midtrans belum diaktifkan. Sinkronasi manual nonaktif.');
-        }
-
-        Config::$serverKey    = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized  = true;
-        Config::$is3ds        = true;
-
-        try {
-            $status = Transaction::status($id);
-        } catch (\Throwable $e) {
-            return redirect()->back()->with('error', 'Gagal sync: ' . $e->getMessage());
-        }
-
-        $midtransStatus = $status->transaction_status ?? '';
-
-        if (str_starts_with($id, 'SPONSOR-')) {
-            $sponsorship = Sponsorship::where('order_id', $id)->first();
-            if (!$sponsorship) {
-                return redirect()->back()->with('error', 'Data sponsorship tidak ditemukan.');
-            }
-
-            if (in_array($midtransStatus, ['settlement', 'capture'])) {
-                $sponsorship->update([
-                    'status'            => 'success',
-                    'rejection_reason'  => null,
-                    'starts_at'         => $sponsorship->starts_at ?? now(),
-                    'expires_at'        => $sponsorship->expires_at ?? now()->addMonth(),
-                ]);
-                $sponsorship->fosterChild?->update(['status' => 'Diasuh']);
-
-                return redirect()->back()->with('success', 'Sync: Sponsorship sukses (settlement).');
-            } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-                $sponsorship->update(['status' => 'failed', 'rejection_reason' => null]);
-                return redirect()->back()->with('success', 'Sync: Sponsorship gagal (' . $midtransStatus . ').');
-            } else {
-                return redirect()->back()->with('info', 'Sync: Status Midtrans = ' . $midtransStatus . ' (pending).');
-            }
-        }
-
-        // Deteksi jenis: donasi atau sponsorship
-        $donation = Donation::where('order_id', $id)->first();
-        if (!$donation) {
-            return redirect()->back()->with('error', 'Data donasi tidak ditemukan.');
-        }
-
-        if (in_array($midtransStatus, ['settlement', 'capture'])) {
-            if (!$donation->invoice_number) {
-                $month = now()->format('Ym');
-                $count = Donation::where('status', 'success')
-                    ->whereNotNull('invoice_number')
-                    ->where('invoice_number', 'like', "INV-DN-{$month}-%")
-                    ->count();
-                $seq   = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
-                $donation->invoice_number = "INV-DN-{$month}-{$seq}";
-            }
-            $donation->update([
-                'status'           => 'success',
-                'rejection_reason' => null,
-            ]);
-            $donation->campaign?->increment('collected_amount', $donation->amount);
-
-            if ($donation->donor_phone) {
-                $this->kirimWaDonasi($donation);
-            }
-
-            return redirect()->back()->with('success', 'Sync: Donasi sukses (settlement).');
-        } elseif (in_array($midtransStatus, ['deny', 'cancel', 'expire'])) {
-            $donation->update(['status' => 'failed', 'rejection_reason' => null]);
-            return redirect()->back()->with('success', 'Sync: Donasi gagal (' . $midtransStatus . ').');
-        } else {
-            return redirect()->back()->with('info', 'Sync: Status Midtrans = ' . $midtransStatus . ' (pending).');
-        }
+        return redirect()->back()->with('info', 'Fitur sinkronisasi Midtrans sedang nonaktif.');
     }
 
     private function kirimWaTolakSponsor(Sponsorship $sponsorship, string $reason): void

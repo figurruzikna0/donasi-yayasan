@@ -212,11 +212,11 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // ── KELOLA TRANSAKSI ──
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');  // Daftar transaksi
-    Route::post('/transactions/sync-all', [TransactionController::class, 'syncAll'])->name('transactions.sync-all'); // Sync semua ke Midtrans
+    // Route::post('/transactions/sync-all', [TransactionController::class, 'syncAll'])->name('transactions.sync-all'); // [NONAKTIF] Sync semua ke Midtrans
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');     // Hapus
     Route::patch('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve'); // Setujui
     Route::patch('/transactions/{id}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');   // Tolak dgn alasan
-    Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');   // Sync satu transaksi ke Midtrans
+    // Route::post('/transactions/{id}/sync', [TransactionController::class, 'sync'])->name('transactions.sync');   // [NONAKTIF] Sync satu transaksi ke Midtrans
 
     // ── KELOLA USER ──
     Route::get('/users', [UserController::class, 'index'])->name('users.index');      // Daftar semua user
